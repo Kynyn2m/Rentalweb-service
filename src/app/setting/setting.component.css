@@ -1,0 +1,11 @@
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 22px;
+}
+
+.mdc-list {
+  margin: 0;
+  list-style-type: none;
+}

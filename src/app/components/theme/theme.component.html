@@ -1,0 +1,20 @@
+<div class="content__flex">
+  <section class="section">
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="mat-radio-group" [(ngModel)]="theme">
+      <mat-radio-button class="mat-radio" (change)="onSetTheme(theme.theme)" [checked]="onTheme(theme.theme)"
+        *ngFor="let theme of themes" [value]="theme.theme">
+        <span class="mat-radio-group">{{theme.name}}</span>
+      </mat-radio-button>
+    </mat-radio-group>
+    <div class="mat-radio-group">Your theme is: {{theme}}</div>
+  </section>
+  <section class="section">
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="mat-radio-group" [(ngModel)]="fontSize">
+      <mat-radio-button class="mat-radio" (change)="onSetFontSize(fs.size)" [checked]="onTheme(fs.size)"
+        *ngFor="let fs of fontSizes" [value]="fs.size">
+        <span class="mat-radio-group">{{fs.name}}</span>
+      </mat-radio-button>
+    </mat-radio-group>
+    <div class="mat-radio-group">Your font size is: {{fontSize}}</div>
+  </section>
+</div>

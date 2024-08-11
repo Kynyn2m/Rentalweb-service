@@ -1,0 +1,96 @@
+<div class="banner-container">
+  <img src="banner-image-1.jpg" alt="Banner 1" class="banner-img">
+  <img src="banner-image-2.jpg" alt="Banner 2" class="banner-img">
+</div>
+
+<div class="content-container">
+  <section>
+    <h2>Room</h2>
+    <mat-grid-list cols="4" rowHeight="350px" gutterSize="16px">
+      <mat-grid-tile *ngFor="let room of rooms">
+        <mat-card>
+          <img mat-card-image src="photo-placeholder.jpg" alt="Room Photo">
+          <mat-card-content>
+            <h3>{{ room.title }}</h3>
+            <p>Location: {{ room.location }}</p>
+            <p>Contact: {{ room.contact }}</p>
+            <p>Price: {{ room.price }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary">More</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <button mat-raised-button color="primary">View More</button>
+  </section>
+
+  <section>
+    <h2>House</h2>
+    <mat-grid-list cols="4" rowHeight="350px" gutterSize="16px">
+      <mat-grid-tile *ngFor="let room of rooms">
+        <mat-card>
+          <img mat-card-image [src]="room.imageUrl" alt="{{ room.title }}">
+          <mat-card-content>
+            <h3>{{ room.title }}</h3>
+            <p>Location: {{ room.location }}</p>
+            <p>Contact: {{ room.contact }}</p>
+            <p>Price: {{ room.price }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary">More</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <button mat-raised-button color="primary">View More</button>
+  </section>
+
+  <section>
+    <h2>Land</h2>
+    <mat-grid-list cols="4" rowHeight="350px" gutterSize="16px">
+      <mat-grid-tile *ngFor="let land of lands">
+        <mat-card>
+          <img mat-card-image src="photo-placeholder.jpg" alt="Land Photo">
+          <mat-card-content>
+            <h3>{{ land.title }}</h3>
+            <p>Location: {{ land.location }}</p>
+            <p>Contact: {{ land.contact }}</p>
+            <p>Price: {{ land.price }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary">More</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <button mat-raised-button color="primary">View More</button>
+  </section>
+</div>
+
+<footer class="footer">
+  <div class="footer-section">
+    <h3>Follow Our Page</h3>
+    <p>Rental Web Service</p>
+    <p>Facebook</p>
+    <p>Youtube</p>
+    <p>Instagram</p>
+  </div>
+  <div class="footer-section">
+    <h3>Join Our WebSite For Free</h3>
+    <img src="qr-code-placeholder.jpg" alt="QR Code">
+  </div>
+  <div class="footer-section">
+    <h3>Useful Information</h3>
+    <p>Safety Tip</p>
+    <p>Promote AD</p>
+  </div>
+  <div class="footer-section">
+    <h3>About Rental Web Service</h3>
+    <p>Rental Web Service</p>
+    <p>Facebook</p>
+    <p>Youtube</p>
+    <p>Instagram</p>
+  </div>
+</footer>

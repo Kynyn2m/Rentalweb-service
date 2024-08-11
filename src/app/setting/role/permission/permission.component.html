@@ -1,0 +1,32 @@
+<div class="content">
+  <h1 mat-dialog-title align="center">{{'permission'|transloco}}</h1>
+  <mat-divider></mat-divider>
+  <mat-dialog-content>
+    <section class="example-section" *ngFor="let permissionGroup of rolePermissionAssigned">
+      <span class="example-list-section mat-mdc-subheader">
+        <!-- [color]="task.color" -->
+        <mat-checkbox color="success-color" class="example-margin" [checked]="permissionGroup.completed"
+          [indeterminate]="someComplete(permissionGroup)" (change)="setAll($event.checked,permissionGroup)">
+          {{permissionGroup.category}}
+        </mat-checkbox>
+      </span>
+      <span class="example-list-section">
+        <ul>
+          <li *ngFor="let p of permissionGroup.roleList">
+            <!-- [color]="subtask.color" -->
+            <mat-checkbox [(ngModel)]="p.completed" color="success-color"
+              (ngModelChange)="updateAllComplete(permissionGroup)">
+              {{p.description}}
+            </mat-checkbox>
+          </li>
+        </ul>
+      </span>
+    </section>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button [id]="dataTest.BTN_CLOSE" [name]="dataTest.BTN_CLOSE" mat-raised-button color="success"
+      (click)="onSubmit()">{{'save'|transloco}}</button>
+    <a mat-raised-button color="warn" (click)="close()">{{'close'|transloco}}</a>
+  </mat-dialog-actions>
+  <mat-progress-bar [class.is__loading]="!loading" mode="indeterminate"></mat-progress-bar>
+</div>

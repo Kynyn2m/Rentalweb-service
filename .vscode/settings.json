@@ -1,0 +1,8 @@
+{
+    "i18n-ally.localesPaths": [
+        "src/assets/i18n"
+    ],
+    "editor.formatOnType": true,
+    "i18n-ally.keystyle": "nested",
+    "editor.cursorSmoothCaretAnimation": "on"
+}

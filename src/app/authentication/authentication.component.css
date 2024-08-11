@@ -1,0 +1,81 @@
+section {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  filter: blur(3px);
+  background-image: url(/assets/img/login_background.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: center;
+  overflow: hidden;
+  background-size: cover;
+  top: 0;
+  left: 0;
+}
+.bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* background-color: rgba(255, 255, 255, 0.167); */
+}
+a {
+  text-decoration: none;
+  color: green;
+}
+.title {
+  color: #D5A644;
+}
+.login-container {
+  height: 100%;
+  display: flex;
+}
+mat-form-field {
+  width: 100%;
+}
+
+form {
+  width: 450px;
+  margin: auto;
+}
+.logo {
+  width: 98px;
+  height: 98px;
+  margin: auto;
+  border-radius: 50%;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.language {
+  /* background-color: green; */
+  height: 40px;
+  display: flex;
+  justify-content: end;
+}
+
+mat-card-actions {
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0 0;
+  column-gap: 1rem;
+}
+
+.mat-mdc-card-header {
+  justify-content: center;
+}
+.mat-mdc-icon-button {
+  color: green;
+}
+
+@media screen and (max-width: 480px) {
+  .title {
+    text-align: center;
+  }
+}

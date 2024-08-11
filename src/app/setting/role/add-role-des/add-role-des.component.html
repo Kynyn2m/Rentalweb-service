@@ -1,0 +1,26 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <div align="center">
+        <h1 mat-dialog-title *ngIf="!role.id">{{ 'add' | transloco }} {{ 'role' | transloco }}</h1>
+        <h1 mat-dialog-title *ngIf="role.id">{{ 'update' | transloco }} {{ 'role' | transloco }}</h1>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-dialog-content align="center">
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'name' | transloco }}</mat-label>
+            <input [id]="dataTest.INP_NAME" [name]="dataTest.INP_NAME" type="text" matInput required
+                [(ngModel)]="role.name">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+            <mat-label>{{'description' | transloco }}</mat-label>
+            <input [id]="dataTest.INP_DESC" [name]="dataTest.INP_DESC" type="text" matInput
+                [(ngModel)]="role.description">
+        </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button [id]="dataTest.BTN_SAVE" [name]="dataTest.BTN_SAVE" mat-raised-button color="success">{{'save'|
+            transloco}}</button>
+        <button [id]="dataTest.BTN_CANCEL" [name]="dataTest.BTN_CANCEL" mat-raised-button color="warn"
+            (click)="close()">{{'cancel' | transloco}}</button>
+    </mat-dialog-actions>
+    <mat-progress-bar [class.is__loading]="!loading" mode="indeterminate"></mat-progress-bar>
+</form>

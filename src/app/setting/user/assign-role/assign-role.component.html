@@ -1,0 +1,29 @@
+<form #f="ngForm">
+  <div class="content">
+    <h1 mat-dialog-title align="center">{{ "role" | transloco }} {{ "user" | transloco }}</h1>
+    <mat-divider></mat-divider>
+    <mat-dialog-content>
+      <section>
+        <span>
+          <span class="example-list-section">
+            <li *ngFor="let p of roles">
+              <mat-checkbox color="success-color" (change)="cbChanged($event.checked, p)" [checked]="roleChecked(p)">
+                {{ p.name }}
+              </mat-checkbox>
+            </li>
+          </span>
+        </span>
+      </section>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button [id]="dataTest.BTN_SAVE" [name]="dataTest.BTN_SAVE" mat-raised-button color="success"
+        (click)="onSubmit(f)">
+        {{ "save" | transloco }}
+      </button>
+      <button [id]="dataTest.BTN_CLOSE" [name]="dataTest.BTN_CLOSE" mat-raised-button color="warn" (click)="close()">{{
+        "close" | transloco
+        }}</button>
+    </mat-dialog-actions>
+    <mat-progress-bar [class.is__loading]="!loading" mode="indeterminate"></mat-progress-bar>
+  </div>
+</form>

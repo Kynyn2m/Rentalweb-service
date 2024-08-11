@@ -1,0 +1,93 @@
+<mat-sidenav-container>
+  <!-- Sidenav for Small Screens -->
+  <mat-sidenav #sidenav mode="side" class="left-sidebar">
+    <mat-nav-list>
+      <a mat-list-item routerLink="/home" routerLinkActive="active" matTooltip="Home">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+      <a mat-list-item routerLink="/room" routerLinkActive="active" matTooltip="Room">
+        <mat-icon>meeting_room</mat-icon>
+        <span>Room</span>
+      </a>
+      <a mat-list-item routerLink="/house" routerLinkActive="active" matTooltip="House">
+        <mat-icon>house</mat-icon>
+        <span>House</span>
+      </a>
+      <a mat-list-item routerLink="/land" routerLinkActive="active" matTooltip="Land">
+        <mat-icon>terrain</mat-icon>
+        <span>Land</span>
+      </a>
+      <a mat-list-item routerLink="/contact" routerLinkActive="active" matTooltip="Contact">
+        <mat-icon>contact_mail</mat-icon>
+        <span>Contact</span>
+      </a>
+      <a mat-list-item routerLink="/about" routerLinkActive="active" matTooltip="About">
+        <mat-icon>info</mat-icon>
+        <span>About</span>
+      </a>
+      <a mat-list-item routerLink="/add-post" routerLinkActive="active" matTooltip="Add Post">
+        <mat-icon>post_add</mat-icon>
+        <span>Add Post</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <mat-toolbar>
+      <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isHandset$ | async">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <h1 class="title">RENTAL WEB SERVICE</h1>
+      <div class="spacer"></div>
+
+      <!-- Menu Items (Hidden on Small Screens) -->
+      <div class="menu-items" *ngIf="!(isHandset$ | async)">
+        <a mat-button routerLink="/home" routerLinkActive="active" matTooltip="Home">
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </a>
+        <a mat-button routerLink="/room" routerLinkActive="active" matTooltip="Room">
+          <mat-icon>meeting_room</mat-icon>
+          <span>Room</span>
+        </a>
+        <a mat-button routerLink="/house" routerLinkActive="active" matTooltip="House">
+          <mat-icon>house</mat-icon>
+          <span>House</span>
+        </a>
+        <a mat-button routerLink="/land" routerLinkActive="active" matTooltip="Land">
+          <mat-icon>terrain</mat-icon>
+          <span>Land</span>
+        </a>
+        <a mat-button routerLink="/contact" routerLinkActive="active" matTooltip="Contact">
+          <mat-icon>contact_mail</mat-icon>
+          <span>Contact</span>
+        </a>
+        <a mat-button routerLink="/about" routerLinkActive="active" matTooltip="About">
+          <mat-icon>info</mat-icon>
+          <span>About</span>
+        </a>
+        <a mat-button routerLink="/add-post" routerLinkActive="active" matTooltip="Add Post">
+          <mat-icon>post_add</mat-icon>
+          <span>Add Post</span>
+        </a>
+      </div>
+
+      <a routerLink="/profile" routerLinkActive="active" mat-icon-button aria-label="Profile">
+        <mat-icon>person</mat-icon>
+      </a>
+      <a (click)="logout()" mat-icon-button aria-label="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </a>
+    </mat-toolbar>
+
+    <div class="container-fluid bg-color">
+      <!-- <h2 class="active__route">{{ currentRouter | transloco }}</h2> -->
+      <mat-progress-bar color="success" [class.is__loading]="!_loading" mode="indeterminate"></mat-progress-bar>
+      <div class="content__flex">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

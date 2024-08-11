@@ -1,0 +1,11 @@
+<mat-action-list>
+  <div *ngFor="let d of data">
+    <button mat-list-item class="fkh" (click)="goToRoute(d.routerLink)">
+      <div class="icon-wrapper">
+        <mat-icon>{{d.icon}}</mat-icon>
+        {{d.transloco | transloco}}
+      </div>
+    </button>
+    <mat-divider></mat-divider>
+  </div>
+</mat-action-list>

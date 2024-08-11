@@ -1,0 +1,54 @@
+<div class="mat-card-header-center">
+    <div class="header-content">
+        <img src="assets/svg/ardb-log-512x512.svg" alt="User photo"class="user-photo">
+    </div>
+    <h1 mat-dialog-title>{{ 'edit' | transloco }} {{ 'role' | transloco }}</h1>
+</div>
+<mat-divider></mat-divider>
+
+<form [formGroup]="userForm" (ngSubmit)="onSave()">
+    <div mat-dialog-content class="user-add-content">
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'name' | transloco }}</mat-label>
+            <input name="name" required matInput formControlName="name">
+            <mat-error *ngIf="userForm.get('name')">Name is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'username' | transloco }}</mat-label>
+            <input name="username" required matInput formControlName="username">
+            <mat-error *ngIf="userForm.get('username')">Username is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'gender' | transloco }}</mat-label>
+            <mat-select name="gender" required formControlName="gender">
+                <mat-option value="male">{{ 'male' | transloco }}</mat-option>
+                <mat-option value="female">{{ 'female' | transloco }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="userForm.get('gender')">Gender is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'email' | transloco }}</mat-label>
+            <input name="email" required matInput type="email" formControlName="email">
+            <mat-error *ngIf="userForm.get('email')">Email is required</mat-error>
+            <mat-error *ngIf="userForm.get('email')">Please enter a valid email</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ 'status' | transloco }}</mat-label>
+            <mat-select formControlName="status">
+                <mat-option value="active">{{ 'active' | transloco }}</mat-option>
+                <mat-option value="inactive">{{ 'inactive' | transloco }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="userForm.get('status')">Status is required</mat-error>
+        </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions align="end">
+        <button mat-raised-button color="success">{{ 'save' | transloco }}</button>
+        <button mat-raised-button (click)="onCancel()" color="warn">{{ 'cancel' | transloco }}</button>
+
+    </div>
+</form>

@@ -1,0 +1,130 @@
+:host {
+  font-size: 14px;
+  color: #333;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --color-primary: #a5a5a5;
+  --color-secondary: #15A0BF;
+  --color-primary-light: #49aa40af;
+  --color-accent: #C6CA08;
+  --color-aaebf5a: #D5A644;
+  --color-warn: #BD2525;
+  --bg-color-primary: #ffffff;
+  --delay: 200ms;
+  --nav-bar-height: 65px;
+  --nav-progress-height: 4px;
+  --nav-current-router-height: 40px;
+  --mobile: 480px;
+}
+
+.mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: var(--nav-bar-height);
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.title {
+  padding-inline-start: 2rem;
+  margin: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar .menu-items a {
+  color: white;
+  margin-right: 15px;
+}
+
+.mat-toolbar .menu-items a.mat-button {
+  display: flex;
+  align-items: center;
+}
+
+.mat-toolbar .menu-items a span {
+  margin-left: 8px;
+}
+
+.left-sidebar {
+  width: 250px;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.left-sidebar mat-nav-list {
+  padding: 0;
+}
+
+.left-sidebar mat-nav-list a {
+  font-size: 1.2em;
+  padding: 10px 20px;
+  color: white;
+  border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  transition: background-color var(--delay), border-left-color var(--delay);
+}
+
+.left-sidebar mat-nav-list a.mat-list-item:hover {
+  background-color: var(--color-primary-light);
+  border-left-color: var(--color-accent);
+}
+
+.left-sidebar mat-nav-list a.mat-list-item.active {
+  background-color: var(--color-accent);
+  border-left-color: white;
+  font-weight: bold;
+}
+
+.left-sidebar mat-nav-list a.mat-list-item mat-icon {
+  margin-right: 16px;
+}
+
+.container-fluid {
+  padding: 1rem;
+  background-color: var(--bg-color-primary);
+  height: calc(100vh - var(--nav-bar-height));
+  overflow-y: auto;
+}
+
+.active__route {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.mat-progress-bar {
+  margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 480px) {
+  .menu-items {
+    display: none;
+  }
+
+  .left-sidebar {
+    position: absolute;
+    z-index: 10;
+    width: 250px;
+  }
+
+  .mat-sidenav-content {
+    position: relative;
+  }
+
+  .overlay {
+    display: block;
+    visibility: visible;
+    position: absolute;
+    top: var(--nav-bar-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}

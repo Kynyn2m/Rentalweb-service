@@ -1,0 +1,154 @@
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.40) 0px 10px 25px;
+}
+
+mat-card {
+  max-width: 720px;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+mat-card-actions button mat-card-header {
+  margin: auto;
+}
+
+.user-profile-card {
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.mat-card-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.user-photo {
+  /* width: 220px;
+  height: 220px; */
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgb(193, 193, 193);
+}
+
+mat-divider {
+  padding: 10px;
+}
+
+.mat-card-content-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mat-mdc-card-content {
+  padding-top: 1rem;
+}
+
+.user-info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.full-width-input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.save-button {
+  min-width: 100px;
+}
+
+.change-password-link {
+  text-align: center;
+  margin-block-start: 1rem;
+}
+
+.selected-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.action-button {
+  margin-left: 8px;
+}
+
+.select-profile-picture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 98;
+  opacity: 0;
+  /* cursor: pointer; */
+}
+
+.profile-pic {
+  text-align: center;
+  margin: auto;
+}
+
+.hoverable {
+  /* cursor: pointer; */
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgb(6, 201, 94);
+  position: relative;
+}
+
+.upload {
+  min-width: 150px;
+  width: 150px;
+  position: relative;
+}
+
+.passwd-sm {
+  display: none;
+  visibility: hidden;
+}
+
+@media screen and (max-width: 480px) {
+
+  mat-card {
+    flex-direction: column;
+  }
+
+  .hoverable {
+    max-width: 125px;
+    max-height: 125px;
+  }
+
+  .change-password-link {
+    text-align: center;
+    margin-block-start: 0;
+    margin-block-end: 1rem;
+  }
+
+  .passwd-lg {
+    display: none;
+    visibility: hidden;
+  }
+
+  .passwd-sm {
+    display: block;
+    visibility: visible;
+  }
+}

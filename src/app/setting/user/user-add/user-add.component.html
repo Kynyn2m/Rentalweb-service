@@ -1,0 +1,49 @@
+<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <div align="center">
+    <h2 mat-dialog-title *ngIf="!user.id">
+      {{ "add" | transloco }} {{ "user" | transloco }}
+    </h2>
+    <h2 mat-dialog-title *ngIf="user.id">
+      {{ "update" | transloco }} {{ "user" | transloco }}
+    </h2>
+  </div>
+  <mat-divider></mat-divider>
+  <mat-dialog-content class="user-add-content">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "full name" | transloco }}</mat-label>
+      <input [id]="dataTest.INP_NAME" [name]="dataTest.INP_NAME" type="text" required matInput
+        [(ngModel)]="user.fullName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "username" | transloco }}</mat-label>
+      <input [id]="dataTest.INP_USERNAME" [name]="dataTest.INP_USERNAME" type="text" required matInput
+        [(ngModel)]="user.username" [(ngModel)]="user.username" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "gender" | transloco }}</mat-label>
+      <mat-select [id]="dataTest.SEL_GENDER" type="gender" name="gender" required [(ngModel)]="user.gender">
+        <mat-option [id]="dataTest.SEL_GENDER+'-male'" value="male">{{ "male" | transloco }}</mat-option>
+        <mat-option [id]="dataTest.SEL_GENDER+'-female'" value="female">{{ "female" | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "email" | transloco }}</mat-label>
+      <input [id]="dataTest.INP_EMAIL" [name]="dataTest.INP_EMAIL" type="email" required matInput
+        [(ngModel)]="user.email" />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button [id]="dataTest.BTN_SAVE" [name]="dataTest.BTN_SAVE" mat-raised-button color="success">
+      {{ "save" | transloco }}
+    </button>
+    <button [id]="dataTest.BTN_cancel" [name]="dataTest.BTN_cancel" mat-raised-button type="button" (click)="onCancel()"
+      color="warn">
+      {{ "cancel" | transloco }}
+    </button>
+  </mat-dialog-actions>
+  <mat-progress-bar [class.is__loading]="!loading" mode="indeterminate"></mat-progress-bar>
+</form>

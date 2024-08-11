@@ -1,0 +1,156 @@
+img {
+width: 25px;
+}
+
+.language {
+display: flex;
+align-items: center;
+flex-direction: row;
+column-gap: 0.5rem
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+background-color: red !important;
+}
+
+::ng-deep .mat-select-panel {
+background: red !important;
+}
+
+.mat-mdc-form-field {
+width: 100%;
+}
+
+.mat-mdc-text-field-wrapper {
+background: red;
+}
+
+.only__flag {
+display: none;
+visibility: hidden;
+}
+
+.current-language {
+display: none;
+visibility: hidden;
+}
+
+@media screen and (max-width: 480px) {
+.custom-dropdown{
+display: none;
+}
+.only__flag {
+display: flex;
+visibility: visible;
+}
+
+.select__flag {
+display: none;
+visibility: hidden;
+
+}
+.dropdown-button[_ngcontent-ng-c2091778987] img[_ngcontent-ng-c2091778987]{
+padding: -2px;
+}
+.custom-dropdown {
+position: relative;
+
+}
+
+.custom-dropdown{
+background-color: black;
+}
+ul.show[_ngcontent-ng-c2091778987]{
+display: block;
+margin-left: -43px;
+}
+
+}
+.language-wrapper {
+display: flex;
+align-items: center;
+
+}
+.dropdown-size{
+margin: 9px 0px 0px 0px;
+}
+
+.custom-dropdown {
+position: relative;
+color: black;
+/* border: 1px solid #48aa40; */
+background-color: white;
+border-radius: 5px;
+/* margin: 10px 0px 0px 10px; */
+}
+
+.dropdown-button {
+cursor: pointer;
+display: flex;
+align-items: center;
+border: none;
+background: transparent;
+color: black;
+
+}
+.dropdown-button span,
+.switch-language-button span {
+
+font-size: 16px;
+}
+.dropdown-button img,
+.switch-language-button img {
+margin-right: 8px;
+width: 25px;
+height: 25px;
+}
+
+
+.dropdown-button img {
+margin-right: 8px;
+width: 30px;
+height: 30px;
+}
+.caret-down{
+transform: scale(0.8);
+margin-left: -4px;
+
+}
+ul {
+width: 125px;
+font-size:16px;
+border-radius: 4px;
+list-style: none;
+padding: 0;
+margin: 0;
+position: absolute;
+top: 100%;
+left: 0;
+background-color: #fff;
+box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+border: 1px solid #ccc;
+display: none;
+margin-top: 5px;
+z-index: 99;
+}
+
+ul li {
+cursor: pointer;
+padding: 8px;
+display: flex;
+align-items: center;
+}
+
+ul li img {
+margin-right: 8px;
+width: 30px;
+height: 30px;
+}
+
+ul li:hover {
+background-color: #f0f0f0;
+}
+
+ul.show {
+display: block;
+}

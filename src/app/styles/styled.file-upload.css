@@ -1,0 +1,55 @@
+
+.upload-wrapper {
+  display: flex;
+  position: relative;
+}
+
+.mat-success {
+  background-color: green !important;
+  color: #fff !important;
+}
+
+.upload-wrapper button{
+  border-radius: 1px;
+  box-shadow: none;
+  height: 35px;
+}
+
+.custom-file-upload,
+.custom-browse {
+  border: 1px solid #ccc;
+  display: inline-block;
+  background-color: white;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px 0 0 4px;
+}
+
+input::file-selector-button {
+  font-weight: bold;
+  color: green;
+  background-color: transparent;
+  border:none;
+  border-radius: none;
+  text-align: center;
+  margin-top: auto;
+  padding: 8px 0px 8px 7px;
+}
+
+.custom-file-upload:hover input::file-selector-button {
+  color: white;
+}
+
+.custom-file-upload:hover{
+  background-color: lightgreen;
+  transition: all 0.35s;
+}
+
+.custom-browse {
+  padding: 7px 12px 0px;
+  background-color: #cacaca;
+}

@@ -1,0 +1,41 @@
+.full-width-table {
+  width: 100%;
+}
+
+.table {
+  border-collapse: collapse;
+  height: calc(100vh - var(--nav-bar-height) - 56px - 93px - 40px);
+  max-height: calc(100vh - var(--nav-bar-height) - 56px - 93px - 40px - 1rem);
+  overflow: auto;
+  scroll-behavior: smooth;
+}
+
+table th {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+tr,
+tr th {
+  background-color: var(--clr-body-bg);
+  color: var(--clr-text);
+}
+
+tr:focus td,
+tr:hover td,
+tr:focus button,
+tr:hover button {
+  color: var(--clr-text-over);
+}
+
+tr:focus,
+tr:hover {
+  background-color: var(--clr-card-bg);
+  font-weight: 500;
+  transition: ease-in var(--delay);
+}
+
+@media screen and (max-width: 480px) {
+  .table {
+    height: calc(100vh - var(--nav-bar-height) - 56px - 64px);
+  }
+}

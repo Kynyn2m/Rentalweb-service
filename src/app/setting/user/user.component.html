@@ -1,0 +1,87 @@
+<section class="section">
+  <mat-form-field class="btn-search">
+    <mat-label>{{ 'search' | transloco }} </mat-label>
+    <input [id]="dataTest.INP_SEARCH" [name]="dataTest.INP_SEARCH" type="text" matInput (keyup)="applyFilter($event)">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <div class="button-search">
+    <button [id]="dataTest.BTN_SEARCH" [name]="dataTest.BTN_SEARCH" mat-raised-button color="success">{{
+      'search' |
+      transloco }}</button>
+    <button [id]="dataTest.BTN_ADD" [name]="dataTest.BTN_ADD" mat-raised-button color="secondary"
+      (click)="OnNewDialog()" *ngIf="checkAuth('CREATE_USER')">{{ 'add' | transloco }}</button>
+  </div>
+
+</section>
+<div class=" mat-elevation-z0 table content__flex__1">
+  <table mat-table [dataSource]="dataSource" *ngIf="checkAuth('LIST_USER')">
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> {{'#' | transloco}} </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="fullname">
+      <th mat-header-cell *matHeaderCellDef> {{ 'full-name' | transloco }} </th>
+      <td mat-cell *matCellDef="let element"> {{ element.fullName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef> {{ 'gender' | transloco }} </th>
+      <td mat-cell *matCellDef="let element"> {{ element.gender }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updateby">
+      <th mat-header-cell *matHeaderCellDef> {{ 'update-by' | transloco }} </th>
+      <td mat-cell *matCellDef="let element"> {{ element.updateBy }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="updateat">
+      <th mat-header-cell *matHeaderCellDef>{{ 'update-at' | transloco }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.updateAt }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> {{ 'email' | transloco }}</th>
+      <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="other">
+      <th mat-header-cell *matHeaderCellDef> {{ 'other' | transloco }} </th>
+      <td mat-cell *matCellDef="let element">
+        <button type="button" [id]="'user-btn-menu-'+ element.fullName" name="user-btn-menu" mat-icon-button
+          class="option" [matMenuTriggerFor]="menu" aria-label="requested icon-button with a menu"
+          *ngIf="checkAuth('UPDATE_USER') || checkAuth('DELETE_USER') || checkAuth('ASSIGN_USER_GROUP')"
+          #tooltip="matTooltip" matTooltipPosition="below" [matTooltip]="'menu' | transloco">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button [id]="dataTest.BTN_DELETE+'-'+element.fullName" [name]="dataTest.BTN_DELETE" mat-menu-item
+            (click)="deleteConfirm(element)" *ngIf="checkAuth('DELETE_USER')" #tooltip="matTooltip"
+            matTooltipPosition="left" [matTooltip]="'delete' | transloco">
+            <mat-icon color="warn-color">delete</mat-icon>
+            <span>{{ 'delete' | transloco }}</span>
+          </button>
+          <button [id]="dataTest.BTN_UPDATE+'-'+element.fullName" [name]="dataTest.BTN_UPDATE" mat-menu-item
+            (click)="OnEditDialog(element)" *ngIf="checkAuth('UPDATE_USER')" #tooltip="matTooltip"
+            matTooltipPosition="left" [matTooltip]="'update' | transloco">
+            <mat-icon>edit</mat-icon>
+            <span>{{ 'update' | transloco }}</span>
+          </button>
+          <button [id]="dataTest.BTN_ASSIGN+'-'+element.fullName" [name]="dataTest.BTN_ASSIGN" mat-menu-item
+            (click)="assignRole(element)" *ngIf="checkAuth('ASSIGN_USER_GROUP')" #tooltip4="matTooltip"
+            matTooltipPosition="left" [matTooltip]="'assign role' | transloco">
+            <mat-icon>vpn_key</mat-icon>
+            <span>{{ 'assign role' | transloco }}</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" style="background-color: #d9d9d9;">
+    </tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<mat-paginator #paginator [length]="pagingModel?.totalElements" [pageIndex]="page" [pageSize]="size"
+  [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page" class="paginator">
+</mat-paginator>

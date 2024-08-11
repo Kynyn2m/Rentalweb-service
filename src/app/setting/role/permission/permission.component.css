@@ -1,0 +1,101 @@
+mat-form-field {
+  width: 250px;
+  padding: 9px;
+}
+mat-dialog-content {
+  padding: 40px 24px 20px 24px;
+}
+/* .mdc-checkbox__background {
+  border-color: #49aa40af !important;
+  background-color: #48AA40 !important;
+} */
+ul {
+  list-style-type: none;
+  margin-top: 4px;
+}
+.mat-mdc-subheader{
+  background-color: gainsboro;
+  color: #fff;
+  border-bottom: 0.5px solid #ddd;
+}
+.example-section {
+  margin: 12px 0;
+    overflow: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .example-margin {
+    margin: 0 12px;
+  }
+
+  ul {
+    list-style-type: none;
+    margin-top: 4px;
+  }
+
+  .mat-mdc-subheader{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: gainsboro;
+    color: #fff;
+    border-bottom: 0.5px solid #ddd;
+    padding: 0.5em;
+    padding-left: 0;
+    margin: 0;
+  }
+
+
+
+  .mat-mdc-subheader .mat-mdc-checkbox label {
+    color: #fff;
+  }
+
+  .sub{
+    top: 44.8px;
+    background-color: #ddd;
+    color: green;
+    font-weight: 500;
+  }
+
+  .action-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    padding: 0 0.5em;
+  }
+
+  ::ng-deep .test-class .mat-pseudo-checkbox {
+    display: none !important;
+  }
+
+  .btn-sm{
+    display: none;
+  }
+
+@media only screen and (max-width: 768px) {
+
+  mat-dialog-content{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .example-section{
+    display: block;
+    overflow: unset;
+  }
+
+  .action-buttons{
+    display: none !important;
+  }
+
+  .btn-sm{
+    display: block;
+  }
+
+}
+

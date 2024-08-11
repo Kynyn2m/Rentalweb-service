@@ -1,0 +1,91 @@
+.mdc-list-group__subheader,
+h2 {
+  text-align: center;
+}
+
+mat-dialog-actions {
+  justify-content: end;
+}
+
+mat-list-option {
+  display: flex;
+  flex-direction: row;
+}
+
+mat-form-field {
+  text-align: center;
+  display: flex;
+  text-align: center;
+}
+
+mat-card {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+.list-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-container .btn__transfer {
+  align-self: center;
+}
+.btn__transfer{
+  display: flex;
+}
+
+.btn__transfer button:first-child{
+  margin-left: 1rem;
+}
+
+.btn__transfer button {
+  margin-right: 1rem;
+}
+
+.btn__transfer__moblie {
+  display: none;
+}
+
+.mat-mdc-list-base {
+  max-height: 350px;
+  overflow: hidden;
+}
+
+div.list-trasfer{
+  overflow: auto;
+  max-height: 300px;
+}
+
+div.btn-transfer button:first-child {
+  margin-right: 0.5rem;
+}
+
+@media screen and (max-width: 480px) {
+  .list-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btn__transfer {
+    display: none;
+  }
+
+  .btn__transfer__moblie {
+    display: block;
+  }
+
+  .mat-mdc-list-base {
+    max-height: 100%;
+    overflow: unset;
+  }
+
+  div.list-trasfer{
+    overflow: unset;
+    max-height: 100%;
+  }
+
+  div.btn-transfer button:first-child {
+    margin: 0;
+  }
+}

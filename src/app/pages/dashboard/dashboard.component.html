@@ -1,0 +1,18 @@
+<section class="content card-wrapper">
+  <div class="card-mw" *ngFor="let d of dashboardData">
+    <mat-card [class]="'dashboard-'+d.label">
+      <mat-card-content>
+        <mat-card-title-group class="center">
+          <mat-card-title>
+            <h1>{{ d.total }}</h1>
+          </mat-card-title>
+          <mat-card-subtitle>
+            <div *ngIf="dashboardData">
+              <h3>{{'total' | transloco}} {{d.label| transloco}}</h3>
+            </div>
+          </mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

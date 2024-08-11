@@ -1,0 +1,25 @@
+<div class="language-wrapper">
+    <div class="only__flag">
+        <a [class.current-language]="lan == language.code" *ngFor="let language of languagesList; index as i"
+            mat-icon-button title="{{ language . shorthand }}" (click)="changeLanguage(language.code)">
+            <img [src]="language.imgUrl" [alt]="language.name" />
+        </a>
+    </div>
+    <div class="dropdown-size">
+        <div class="custom-dropdown">
+            <button class="dropdown-button" title="Language" (click)="toggleDropdownWithClick($event)">
+                <img [src]="selectedLanguage.imgUrl" [alt]="selectedLanguage.name" />
+                <div class="select__flag"> <span>{{ (selectedLanguage . name) | transloco }}</span></div>
+                <span class="caret-down"><mat-icon>keyboard_arrow_down</mat-icon></span>
+            </button>
+            <span class="language">
+                <ul [class.show]="isDropdownOpen">
+                    <li *ngFor="let language of languagesList" (click)="changeLanguage(language.code)">
+                        <img [src]="language.imgUrl" [alt]="language.name" />
+                        {{ (language . name) | transloco }}
+                    </li>
+                </ul>
+            </span>
+        </div>
+    </div>
+</div>
