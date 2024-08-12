@@ -1,6 +1,18 @@
 <div class="banner-container">
-  <img src="https://via.placeholder.com/600x200.png?text=Banner+1" alt="Banner 1" class="banner-img">
-  <img src="https://via.placeholder.com/600x200.png?text=Banner+2" alt="Banner 2" class="banner-img">
+  <div class="banner-column">
+    <div class="banner-image-container">
+      <img [src]="banners[0]" alt="Banner 1" class="banner-img">
+      <button class="prev-banner-button" (click)="prevBanner()">&#10094;</button>
+      <button class="next-banner-button" (click)="nextBanner()">&#10095;</button>
+    </div>
+  </div>
+  <div class="banner-column">
+    <div class="banner-image-container">
+      <img [src]="banners[1]" alt="Banner 2" class="banner-img">
+      <button class="prev-banner-button" (click)="prevBanner()">&#10094;</button>
+      <button class="next-banner-button" (click)="nextBanner()">&#10095;</button>
+    </div>
+  </div>
 </div>
 
 <div class="content-container">
@@ -8,7 +20,11 @@
     <h2>Room</h2>
     <div class="card-grid">
       <mat-card *ngFor="let room of rooms">
-        <img mat-card-image [src]="room.imageUrl" alt="{{ room.title }}">
+        <div class="image-container">
+          <img mat-card-image [src]="room.images[room.currentImageIndex]" alt="{{ room.title }}">
+          <button class="prev-image-button" (click)="prevImage(room)">&#10094;</button>
+          <button class="next-image-button" (click)="nextImage(room)">&#10095;</button>
+        </div>
         <mat-card-content>
           <h3>{{ room.title }}</h3>
           <p>Location: {{ room.location }}</p>
@@ -16,18 +32,22 @@
           <p>Price: {{ room.price }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="primary">More</button>
+          <button mat-raised-button color="success">More</button>
         </mat-card-actions>
       </mat-card>
     </div>
-    <button mat-raised-button color="primary">View More</button>
   </section>
+  <button mat-raised-button color="success">View More</button>
 
   <section>
     <h2>House</h2>
     <div class="card-grid">
       <mat-card *ngFor="let house of houses">
-        <img mat-card-image [src]="house.imageUrl" alt="{{ house.title }}">
+        <div class="image-container">
+          <img mat-card-image [src]="house.images[house.currentImageIndex]" alt="{{ house.title }}">
+          <button class="prev-image-button" (click)="prevImage(house)">&#10094;</button>
+          <button class="next-image-button" (click)="nextImage(house)">&#10095;</button>
+        </div>
         <mat-card-content>
           <h3>{{ house.title }}</h3>
           <p>Location: {{ house.location }}</p>
@@ -35,18 +55,22 @@
           <p>Price: {{ house.price }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="primary">More</button>
+          <button mat-raised-button color="success">More</button>
         </mat-card-actions>
       </mat-card>
     </div>
-    <button mat-raised-button color="primary">View More</button>
   </section>
+  <button mat-raised-button color="success">View More</button>
 
   <section>
     <h2>Land</h2>
     <div class="card-grid">
       <mat-card *ngFor="let land of lands">
-        <img mat-card-image [src]="land.imageUrl" alt="{{ land.title }}">
+        <div class="image-container">
+          <img mat-card-image [src]="land.images[land.currentImageIndex]" alt="{{ land.title }}">
+          <button class="prev-image-button" (click)="prevImage(land)">&#10094;</button>
+          <button class="next-image-button" (click)="nextImage(land)">&#10095;</button>
+        </div>
         <mat-card-content>
           <h3>{{ land.title }}</h3>
           <p>Location: {{ land.location }}</p>
@@ -54,12 +78,12 @@
           <p>Price: {{ land.price }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="primary">More</button>
+          <button mat-raised-button color="success">More</button>
         </mat-card-actions>
       </mat-card>
     </div>
-    <button mat-raised-button color="primary">View More</button>
   </section>
+  <button mat-raised-button color="success">View More</button>
 </div>
 
 <app-footer></app-footer>

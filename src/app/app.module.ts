@@ -64,6 +64,7 @@ import { ThemeComponent } from './components/theme/theme.component';
 import { MerchantComponent } from './pages/merchant/merchant.component';
 import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
+import { HouseComponent } from './house/house.component';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
@@ -91,6 +92,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     MerchantComponent,
     HomeComponent,
     FooterComponent,
+    HouseComponent,
   ],
   imports: [
     BrowserModule,

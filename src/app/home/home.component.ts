@@ -9,135 +9,210 @@ import { Component } from '@angular/core';
 export class HomeComponent {
   gridCols = 4; // Default to 4 columns
 
+  // Banner images
+  banners: string[] = [
+    'https://via.placeholder.com/600x200.png?text=Banner+1',
+    'https://via.placeholder.com/600x200.png?text=Banner+2',
+  ];
+  currentBannerIndex: number = 0;
+
+  // Rooms data
   rooms = [
     {
       title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Room+1',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'Room 2',
-      location: 'Location 2',
-      contact: '0987654321',
-      price: '$200',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Room+2',
-    },
-    {
-      title: 'Room 3',
-      location: 'Location 3',
+      title: 'Room 1',
+      location: 'Location 1',
       contact: '1234567890',
-      price: '$150',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Room+3',
+      price: '$100',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'Room 4',
-      location: 'Location 4',
-      contact: '0987654321',
-      price: '$180',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Room+4',
+      title: 'Room 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$100',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
+    {
+      title: 'Room 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$100',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
+      ],
+      currentImageIndex: 0,
+    },
+    // Additional rooms can be added here...
   ];
 
+  // Houses data
   houses = [
     {
       title: 'House 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=House+1',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=House+1',
+        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'House 2',
-      location: 'Location 2',
-      contact: '0987654321',
-      price: '$600',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=House+2',
-    },
-    {
-      title: 'House 3',
-      location: 'Location 3',
+      title: 'House 1',
+      location: 'Location 1',
       contact: '1234567890',
-      price: '$550',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=House+3',
+      price: '$500',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=House+1',
+        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'House 4',
-      location: 'Location 4',
-      contact: '0987654321',
-      price: '$650',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=House+4',
+      title: 'House 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$500',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=House+1',
+        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
+    {
+      title: 'House 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$500',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=House+1',
+        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+      ],
+      currentImageIndex: 0,
+    },
+    // Additional houses can be added here...
   ];
 
+  // Lands data
   lands = [
     {
       title: 'Land 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Land+1',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Land+1',
+        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'Land 2',
-      location: 'Location 2',
-      contact: '0987654321',
-      price: '$400',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Land+2',
-    },
-    {
-      title: 'Land 3',
-      location: 'Location 3',
+      title: 'Land 1',
+      location: 'Location 1',
       contact: '1234567890',
-      price: '$350',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Land+3',
+      price: '$300',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Land+1',
+        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
     {
-      title: 'Land 4',
-      location: 'Location 4',
-      contact: '0987654321',
-      price: '$450',
-      imageUrl: 'https://via.placeholder.com/300x200.png?text=Land+4',
+      title: 'Land 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$300',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Land+1',
+        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
+      ],
+      currentImageIndex: 0,
     },
+    {
+      title: 'Land 1',
+      location: 'Location 1',
+      contact: '1234567890',
+      price: '$300',
+      images: [
+        'https://via.placeholder.com/300x200.png?text=Land+1',
+        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
+      ],
+      currentImageIndex: 0,
+    },
+    // Additional lands can be added here...
   ];
 
   constructor(private breakpointObserver: BreakpointObserver) {
+    this.initializeGridCols();
+  }
+
+  // Get the current banner to display
+  get currentBanner(): string {
+    return this.banners[this.currentBannerIndex];
+  }
+
+  // Navigate to the next banner
+  nextBanner(): void {
+    this.currentBannerIndex =
+      (this.currentBannerIndex + 1) % this.banners.length;
+  }
+
+  // Navigate to the previous banner
+  prevBanner(): void {
+    this.currentBannerIndex =
+      (this.currentBannerIndex - 1 + this.banners.length) % this.banners.length;
+  }
+
+  // Navigate to the next image in a card
+  nextImage(item: any): void {
+    item.currentImageIndex = (item.currentImageIndex + 1) % item.images.length;
+  }
+
+  // Navigate to the previous image in a card
+  prevImage(item: any): void {
+    item.currentImageIndex =
+      (item.currentImageIndex - 1 + item.images.length) % item.images.length;
+  }
+
+  // Initialize the grid columns based on the screen size
+  private initializeGridCols(): void {
+    const breakpoints = [
+      { query: Breakpoints.HandsetPortrait, cols: 1 },
+      { query: Breakpoints.HandsetLandscape, cols: 2 },
+      { query: Breakpoints.TabletPortrait, cols: 2 },
+      { query: Breakpoints.TabletLandscape, cols: 3 },
+      { query: Breakpoints.WebPortrait, cols: 3 },
+      { query: Breakpoints.WebLandscape, cols: 4 },
+    ];
+
     this.breakpointObserver
-      .observe([
-        Breakpoints.HandsetPortrait,
-        Breakpoints.HandsetLandscape,
-        Breakpoints.TabletPortrait,
-        Breakpoints.TabletLandscape,
-        Breakpoints.WebPortrait,
-        Breakpoints.WebLandscape,
-      ])
+      .observe(breakpoints.map((bp) => bp.query))
       .subscribe((result) => {
-        if (result.matches) {
-          if (this.breakpointObserver.isMatched(Breakpoints.HandsetPortrait)) {
-            this.gridCols = 1; // 1 column for small portrait screens (e.g., mobile phones)
-          } else if (
-            this.breakpointObserver.isMatched(Breakpoints.HandsetLandscape)
-          ) {
-            this.gridCols = 2; // 2 columns for small landscape screens
-          } else if (
-            this.breakpointObserver.isMatched(Breakpoints.TabletPortrait)
-          ) {
-            this.gridCols = 2; // 2 columns for tablet portrait screens
-          } else if (
-            this.breakpointObserver.isMatched(Breakpoints.TabletLandscape)
-          ) {
-            this.gridCols = 3; // 3 columns for tablet landscape screens
-          } else if (
-            this.breakpointObserver.isMatched(Breakpoints.WebPortrait)
-          ) {
-            this.gridCols = 3; // 3 columns for web portrait screens
-          } else if (
-            this.breakpointObserver.isMatched(Breakpoints.WebLandscape)
-          ) {
-            this.gridCols = 4; // 4 columns for large landscape screens (e.g., desktops)
-          } else {
-            this.gridCols = 4; // Default to 4 columns
+        for (let bp of breakpoints) {
+          if (result.breakpoints[bp.query]) {
+            this.gridCols = bp.cols;
+            break;
           }
         }
       });

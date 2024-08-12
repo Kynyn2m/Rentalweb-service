@@ -12,6 +12,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { ThemeComponent } from './components/theme/theme.component';
 import { MerchantComponent } from './pages/merchant/merchant.component';
 import { HomeComponent } from './home/home.component';
+import { HouseComponent } from './house/house.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
 
   // Dev
   { path: 'home', component: HomeComponent },
+  { path: 'house', component: HouseComponent },
 
   { path: 'theme', component: ThemeComponent },
 

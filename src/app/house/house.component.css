@@ -143,3 +143,99 @@ mat-card-content p {
     width: calc(100% - 20px);
   }
 }
+.search-container {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  max-width: 100%; /* Allow full width */
+  margin: 0 auto; /* Center the search box */
+}
+
+.search-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.search-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.search-field {
+  flex: 1 1 15%; /* Flex to fit each item within the row */
+  min-width: 150px; /* Ensure a minimum width for each field */
+}
+
+.price-field {
+  display: flex;
+  align-items: center;
+  flex: 1 1 25%; /* Flex the price field to occupy more space */
+}
+
+.price-range {
+  flex: 1;
+}
+
+.price-separator {
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+.search-button-container {
+  width: 100%; /* Take full width */
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.search-button {
+  max-width: 150px;
+  width: 100%;
+}
+
+.banner-container {
+  display: flex;
+  justify-content: center; /* Center the banner horizontally */
+  margin: 20px auto; /* Add vertical spacing and center container */
+  width: 100%; /* Full width to allow centering */
+}
+.banner-column {
+  display: flex;
+  justify-content: center;
+  width: auto; /* Width will adjust based on the image */
+}
+.banner-image-container {
+  width: 100%;
+  max-width: 728px; /* Max width to match common banner sizes, adjust as needed */
+  display: flex;
+  justify-content: center; /* Center image within container */
+}
+.banner-img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+@media only screen and (max-width: 1179px) {
+  .banner-container {
+    flex-direction: column;
+  }
+
+  .banner-img {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .content-container {
+    width: 95%;
+  }
+
+  mat-card {
+    width: calc(50% - 20px);
+  }
+}

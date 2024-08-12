@@ -1,0 +1,74 @@
+<div class="banner-container">
+  <div class="banner-column">
+    <div class="banner-image-container">
+      <img [src]="banners[0]" alt="Banner 1" class="banner-img">
+    </div>
+  </div>
+</div>
+<div class="search-container">
+  <h2>Complete Your Result</h2>
+  <form class="search-fields">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Location</mat-label>
+      <input matInput placeholder="Enter location">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Bedroom</mat-label>
+      <input matInput type="number" placeholder="Enter number of bedrooms">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Bathroom</mat-label>
+      <input matInput type="number" placeholder="Enter number of bathrooms">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Floor</mat-label>
+      <input matInput type="number" placeholder="Enter floor">
+    </mat-form-field>
+
+    <div class="search-field price-field">
+      <mat-form-field appearance="outline" class="price-range">
+        <mat-label>Price From</mat-label>
+        <input matInput type="number" placeholder="From">
+      </mat-form-field>
+      <span class="price-separator">-</span>
+      <mat-form-field appearance="outline" class="price-range">
+        <mat-label>Price To</mat-label>
+        <input matInput type="number" placeholder="To">
+      </mat-form-field>
+    </div>
+
+    <div class="search-button-container">
+      <button mat-raised-button color="success" class="search-button">Find</button>
+    </div>
+  </form>
+</div>
+
+
+
+
+<div class="content-container">
+  <section>
+    <h2>Houses</h2>
+    <div class="card-grid">
+      <mat-card *ngFor="let house of houses">
+        <div class="image-container">
+          <img mat-card-image [src]="house.images[house.currentImageIndex]" alt="{{ house.title }}">
+          <button class="prev-image-button" (click)="prevImage(house)">&#10094;</button>
+          <button class="next-image-button" (click)="nextImage(house)">&#10095;</button>
+        </div>
+        <mat-card-content>
+          <h3>{{ house.title }}</h3>
+          <p>Location: {{ house.location }}</p>
+          <p>Contact: {{ house.contact }}</p>
+          <p>Price: {{ house.price }}</p>
+          <p>Bedrooms: {{ house.bedroom }}</p>
+          <p>Bathrooms: {{ house.bathroom }}</p>
+          <p>Floor: {{ house.floor }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+</div>

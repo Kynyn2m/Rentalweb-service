@@ -1,7 +1,7 @@
 @font-face {
   font-family: "Koh Santepheap";
   src: local("KohSantepheap-Regular"),
-    url(./assets/fonts/KohSantepheap-Regular.ttf) format("truetype");
+    url(./assets/fonts/Roboto-Medium.ttf) format("truetype");
 }
 
 .cdk-global-scrollblock {
@@ -103,9 +103,14 @@ form.form {
 }
 
 .mat-success {
-  background-color: #48AA40 !important;
+  background-color: #fcad0c !important;
+  border-color: #fcad0c !important;
   color: #fff !important;
 }
+/* .mat-primary {
+  background-color: rgba(252, 185, 0, 1)!important;
+  color: #fff !important;
+} */
 
 .mat-success-color {
   color: #48AA40 !important;
