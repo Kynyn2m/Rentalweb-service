@@ -3,6 +3,8 @@
   src: local("KohSantepheap-Regular"),
     url(./assets/fonts/Roboto-Medium.ttf) format("truetype");
 }
+@import "../node_modules/animate.css/animate.min.css";
+
 
 .cdk-global-scrollblock {
   overflow: auto;

@@ -103,8 +103,8 @@
 
     <div class="container-fluid bg-color">
       <mat-progress-bar color="success" [class.is__loading]="!_loading" mode="indeterminate"></mat-progress-bar>
-      <div class="content__flex">
-        <router-outlet></router-outlet>
+      <div [ngClass]="animationClass" class="content__flex">
+        <router-outlet #outlet="outlet"></router-outlet>
       </div>
     </div>
   </mat-sidenav-content>

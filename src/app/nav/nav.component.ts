@@ -10,7 +10,12 @@ import {
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Router } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationStart,
+  Router,
+  RouterOutlet,
+} from '@angular/router';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { ConfirmService } from '../components/confirm/confirm.service';
 import { TranslocoService } from '@ngneat/transloco';
@@ -31,6 +36,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   @ViewChild('sidenavContent', { read: ElementRef })
   sidenavContent!: ElementRef;
+  animationClass = 'animate__animated animate__fadeIn';
 
   isMediumScreen$: Observable<boolean> = this.breakpointObserver
     .observe(['(max-width: 1104px)'])
@@ -64,6 +70,16 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
         if (!isMediumScreen && this.sidenav.opened) {
           this.sidenav.close();
         }
+      }
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.animationClass = 'animate__animated animate__fadeOut';
+      }
+      if (event instanceof NavigationEnd) {
+        setTimeout(() => {
+          this.animationClass = 'animate__animated animate__fadeIn';
+        }, 0);
       }
     });
   }
@@ -124,5 +140,12 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   onDropdown(): void {
     this.dropdown = !this.dropdown;
     localStorage.setItem('isDropdowned', String(this.dropdown));
+  }
+  prepareRoute(outlet: RouterOutlet) {
+    return (
+      outlet &&
+      outlet.activatedRouteData &&
+      outlet.activatedRouteData['animation']
+    );
   }
 }
