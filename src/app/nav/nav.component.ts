@@ -6,6 +6,7 @@ import {
   AfterViewChecked,
   ViewChild,
   AfterViewInit,
+  ElementRef,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
@@ -28,9 +29,11 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   fullRouter?: string;
   @Output() messageEvent = new EventEmitter<boolean>();
   @ViewChild('sidenav') sidenav!: MatSidenav;
+  @ViewChild('sidenavContent', { read: ElementRef })
+  sidenavContent!: ElementRef;
 
-  isHandset$: Observable<boolean> = this.breakpointObserver
-    .observe(Breakpoints.Handset)
+  isMediumScreen$: Observable<boolean> = this.breakpointObserver
+    .observe(['(max-width: 1104px)'])
     .pipe(
       map((result) => result.matches),
       shareReplay()
@@ -38,6 +41,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
 
   public collapsed: boolean = true;
   public dropdown: boolean = true;
+  public menuOpen: boolean = false;
   _loading: boolean = false;
   _theme: string = 'default';
   _fontSize: string = 'medium';
@@ -55,13 +59,25 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.isHandset$.subscribe((isHandset) => {
+    this.isMediumScreen$.subscribe((isMediumScreen) => {
       if (this.sidenav) {
-        if (!isHandset && this.sidenav.opened) {
+        if (!isMediumScreen && this.sidenav.opened) {
           this.sidenav.close();
         }
       }
     });
+  }
+
+  // onSidenavToggle(isOpened: boolean): void {
+  //   if (isOpened) {
+  //     this.sidenavContent.nativeElement.classList.add('sidenav-opened');
+  //   } else {
+  //     this.sidenavContent.nativeElement.classList.remove('sidenav-opened');
+  //   }
+  // }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
   }
 
   private initializeSettings(): void {
@@ -79,6 +95,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       confirmText: this.transloco.translate('yes'),
     };
 
+    // Uncomment and complete the logout logic if needed
     // this.confirmService
     //   .open(options)
     //   .afterClosed()

@@ -63,6 +63,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { ThemeComponent } from './components/theme/theme.component';
 import { MerchantComponent } from './pages/merchant/merchant.component';
 import { HomeComponent } from './home/home.component';
+import { FooterComponent } from './footer/footer.component';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
@@ -89,6 +90,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     ThemeComponent,
     MerchantComponent,
     HomeComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
