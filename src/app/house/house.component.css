@@ -144,11 +144,10 @@ mat-card-content p {
 }
 .search-container {
   border: 1px solid #ccc;
-  padding: 20px;
-  margin-bottom: 20px;
+  /* padding: 20px; */
   border-radius: 10px;
-  max-width: 100%; /* Allow full width */
-  margin: 0 auto; /* Center the search box */
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 .search-container h2 {
@@ -159,6 +158,7 @@ mat-card-content p {
 
 .search-fields {
   display: flex;
+  padding: 20px;
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
@@ -190,7 +190,7 @@ mat-card-content p {
   width: 100%; /* Take full width */
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  /* margin-top: 15px; */
 }
 
 .search-button {
@@ -207,11 +207,11 @@ mat-card-content p {
 .banner-column {
   display: flex;
   justify-content: center;
-  width: auto; /* Width will adjust based on the image */
+  width: auto;
 }
 .banner-image-container {
   width: 100%;
-  max-width: 728px; /* Max width to match common banner sizes, adjust as needed */
+  max-width: 700px; /* Max width to match common banner sizes, adjust as needed */
   display: flex;
   justify-content: center; /* Center image within container */
 }
@@ -236,5 +236,63 @@ mat-card-content p {
 
   mat-card {
     width: calc(50% - 20px);
+  }
+}
+.result-header {
+  background-color: #fcad0c ; /* Green background color */
+  border-radius: 8px 8px 0 0; /* Rounded corners at the top */
+  text-align: center;
+  color: white; /* White text color */
+}
+
+
+
+
+.search-field {
+  flex: 1 1 30%;
+  min-width: 200px;
+}
+
+.price-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-range {
+  flex: 1;
+}
+
+.price-separator {
+  color: #333;
+  font-weight: bold;
+}
+
+.search-button-container {
+  display: flex;
+  justify-content: center;
+  /* margin-top: 20px; */
+}
+
+.search-button {
+  background-color: #388e3c;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.search-button:hover {
+  background-color: #2e7d32;
+}
+
+@media only screen and (max-width: 768px) {
+  .search-fields {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-field {
+    width: 100%;
   }
 }
