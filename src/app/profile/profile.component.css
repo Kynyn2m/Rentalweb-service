@@ -1,154 +1,118 @@
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: rgba(0, 0, 0, 0.40) 0px 10px 25px;
-}
-
-mat-card {
-  max-width: 720px;
-  margin: auto;
+.banner-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
+  margin: 20px 0;
+  gap: 20px;
+}
+h2{
+  padding: 1rem
 }
 
-mat-card-actions button mat-card-header {
-  margin: auto;
+.banner-column {
+  flex: 1;
 }
 
-.user-profile-card {
-  text-align: center;
+.banner-image-container {
+  position: relative;
+}
+
+.banner-img {
   width: 100%;
-  max-width: 500px;
+  height: auto;
+  border-radius: 5px;
 }
 
-.mat-card-header-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-}
-
-.user-photo {
-  /* width: 220px;
-  height: 220px; */
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid rgb(193, 193, 193);
-}
-
-mat-divider {
+.prev-banner-button, .next-banner-button {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
   padding: 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
-.mat-card-content-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.prev-banner-button {
+  left: 10px;
 }
 
-.mat-mdc-card-content {
-  padding-top: 1rem;
+.next-banner-button {
+  right: 10px;
 }
 
-.user-info-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.prev-banner-button:hover, .next-banner-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
-.full-width-input {
+
+
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+.profile-header-bar {
   width: 100%;
-  margin-bottom: 10px;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
-}
-
-.save-button {
-  min-width: 100px;
-}
-
-.change-password-link {
-  text-align: center;
-  margin-block-start: 1rem;
-}
-
-.selected-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.action-button {
-  margin-left: 8px;
-}
-
-.select-profile-picture {
+  height: 70px;
+  background-color: #f96507;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 98;
-  opacity: 0;
-  /* cursor: pointer; */
 }
 
-.profile-pic {
+.profile-photo {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
   text-align: center;
-  margin: auto;
 }
 
-.hoverable {
-  /* cursor: pointer; */
-  width: 210px;
-  height: 210px;
+.user-photo {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgb(6, 201, 94);
-  position: relative;
+  border: 2px solid #e0e0e0;
+  background-color: white;
+  box-shadow: 0px 4px 12px rgb(0 0 0 / 49%);
 }
 
-.upload {
-  min-width: 150px;
-  width: 150px;
-  position: relative;
+.user-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
-.passwd-sm {
-  display: none;
-  visibility: hidden;
+.full-width {
+  width: 100%;
 }
 
-@media screen and (max-width: 480px) {
-
-  mat-card {
-    flex-direction: column;
-  }
-
-  .hoverable {
-    max-width: 125px;
-    max-height: 125px;
-  }
-
-  .change-password-link {
-    text-align: center;
-    margin-block-start: 0;
-    margin-block-end: 1rem;
-  }
-
-  .passwd-lg {
-    display: none;
-    visibility: hidden;
-  }
-
-  .passwd-sm {
-    display: block;
-    visibility: visible;
-  }
+.profile-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.change-photo-icon {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+.mat-icon{
+  overflow: visible !important;
 }

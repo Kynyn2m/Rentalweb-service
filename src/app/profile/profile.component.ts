@@ -9,89 +9,40 @@ import { ChangePasswordComponent } from '../authentication/change-password/chang
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css', './../styles/styed.profile-2.css'],
+  styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
-  error = '';
-  loading: boolean = false;
-  profile: USER_TYPE = new USER_TYPE();
-  durationInSeconds = 3;
-  constructor(
-    private _snackBar: MatSnackBar,
-    public dialog: MatDialog,
-    private profileService: ProfileService,
-  ) { }
+export class ProfileComponent {
+  banners: string[] = [
+    '/assets/img/phnompenfooter.jpg',
+    'https://via.placeholder.com/600x200.png?text=ads+2',
+  ];
+  user = {
+    id: '12345',
+    username: 'Kiny',
+    gender: 'male',
+    address: '123 Main St, Anytown, Phnom penh',
+    phoneNumber: '123-456-7890',
+    photo: '/assets/img/pp.jpg',
+  };
 
-  ngOnInit(): void {
-    this.getProfile();
-  }
-
-  getProfile() {
-    this.loading = true;
-    this.profileService.getProfile().subscribe((resp: { data: USER_TYPE }) => {
-      this.profile = resp.data;
-      if (
-        this.profile.profilePic == 'null' ||
-        this.profile.profilePic == null
-      ) {
-        this.loading = true;
-      } else {
-        this.loading = false;
-      }
-    });
-  }
-
-  selectFile(event: any) {
-    if (event.target.files) {
-      let reader = new FileReader()
-      reader.readAsDataURL(event.target.files[0])
-      reader.onload = (event: any) => {
-      }
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.user.photo = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  filechange(event: Event) {
-    const _files = (event.target as HTMLInputElement).files;
-    if (_files == null) {
-      return;
-    }
-
-    if (_files.length <= 0) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(_files[0]);
-    reader.onload = () => {
-      this.profile.profilePic = reader.result?.toString().split(',')[1];
-    }
-    this.loading = false;
+  saveProfile() {
+    console.log('Profile saved', this.user);
+    // Implement save functionality here
   }
 
-  onSubmit(f: NgForm) {
-    if (!f.valid) {
-      return;
-    }
-    const oldurl = this.profile.profilePic
-    this.profileService.updateProfile(this.profile).subscribe(
-      (data) => {
-        this.profile.profilePic = oldurl
-        this._snackBar.open("Success", "Close", {
-          duration: this.durationInSeconds * 1000
-        });
-      },
-      (error) => {
-        this.error = error;
-      }
-    );
-  }
-
-  OpenChangePassword(): void {
-    const dialogRef = this.dialog.open(ChangePasswordComponent, {
-      width: '400px',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed', result);
-    });
+  cancelEdit() {
+    console.log('Edit cancelled');
+    // Implement cancel functionality here
   }
 }

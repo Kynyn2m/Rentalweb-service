@@ -1,55 +1,54 @@
-<div class="section">
+<div class="profile-container">
+  <div class="profile-header-bar"></div>
+  <!-- <h2>User Profile</h2> -->
+
+  <div class="profile-photo">
+    <img [src]="user.photo" alt="User Photo" class="user-photo">
+    <input type="file" (change)="onFileSelected($event)" hidden #fileInput>
+    <button mat-icon-button color="primary" (click)="fileInput.click()" class="change-photo-icon">
+      <mat-icon>camera_alt</mat-icon>
+    </button>
+  </div>
+
+
+
   <mat-card>
-    <mat-card-header class="mat-card-header-center">
-      <div class="hoverable">
-        <img class="user-photo" alt="profilePic" *ngIf="!profile.profilePic" src="/assets/img/png/profile-icon.png" />
-        <!-- <img alt="profilePic" *ngIf="!loading && profile.profilePic"
-          [src]="profile.profilePic!.includes('http') ? profile.profilePic : 'data:image/jpeg;base64  ,' + profile.profilePic" /> -->
-        <div class="background"></div>
-      </div>
-      <div class="upload">
-        <div class="round" #tooltip="matTooltip" matTooltipPosition="above" [matTooltip]="'profilepic' | transloco">
-          <input type="file" required accept="image/png, image/gif, image/jpeg" (change)="filechange($event )" />
-          <mat-icon>camera_alt</mat-icon>
-          <mat-icon>camera_alt</mat-icon>
-        </div>
-      </div>
-      <div class="change-password-link passwd-lg">
-        <a mat-button style="color: blue" (click)="OpenChangePassword()">{{
-          "change-password" | transloco
-          }}</a>
-      </div>
-    </mat-card-header>
-    <mat-divider></mat-divider>
     <mat-card-content>
-      <form #f="ngForm" (ngSubmit)="onSubmit(f)">
-        <mat-form-field class="full-width-input">
-          <mat-label>{{ "name" | transloco }}</mat-label>
-          <input type="text" matInput name="fullName" required [(ngModel)]="profile.fullName" />
+      <div class="user-info-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>User ID</mat-label>
+          <input matInput [value]="user.id" readonly>
         </mat-form-field>
-        <br />
-        <mat-form-field class="full-width-input">
-          <mat-label>{{ "email" | transloco }}</mat-label>
-          <input type="email" name="email" required matInput [(ngModel)]="profile.email" />
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="user.username">
         </mat-form-field>
-        <mat-form-field class="full-width-input">
-          <mat-label>{{ "gender" | transloco }}</mat-label>
-          <mat-select [(ngModel)]="profile.gender" name="gender" required placeholder=" Gender">
-            <mat-option value="male">{{ "male" | transloco }}</mat-option>
-            <mat-option value="female">{{ "female" | transloco }}</mat-option>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Gender</mat-label>
+          <mat-select [(ngModel)]="user.gender">
+            <mat-option value="male">Male</mat-option>
+            <mat-option value="female">Female</mat-option>
+            <mat-option value="other">Other</mat-option>
           </mat-select>
         </mat-form-field>
-        <div class="actions">
-          <button mat-raised-button color="success" class="action-button">
-            {{ "save" | transloco }}
-          </button>
-        </div>
-      </form>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Current Address</mat-label>
+          <input matInput [(ngModel)]="user.address">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone Number</mat-label>
+          <input matInput [(ngModel)]="user.phoneNumber" type="tel">
+        </mat-form-field>
+      </div>
+
+      <div class="profile-actions">
+        <button mat-raised-button color="success" (click)="saveProfile()">Save</button>
+        <button mat-raised-button color="warn" (click)="cancelEdit()">Cancel</button>
+      </div>
     </mat-card-content>
-    <div class="change-password-link passwd-sm">
-      <a mat-button style="color: blue" (click)="OpenChangePassword()">{{
-        "change-password" | transloco
-        }}</a>
-    </div>
   </mat-card>
 </div>

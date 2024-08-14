@@ -9,9 +9,9 @@ import * as AOS from 'aos';
   styleUrls: ['./house.component.css'],
 })
 export class HouseComponent implements OnInit {
-  gridCols = 2; // Set to 4 columns for a 4x5 grid
+  gridCols = 2;
   banners: string[] = [
-    'https://via.placeholder.com/600x200.png?text=ads+1',
+    '/assets/img/phnompenfooter.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
@@ -23,7 +23,7 @@ export class HouseComponent implements OnInit {
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
+        'assets/imges/phnompenfooter.jpg',
         'https://via.placeholder.com/300x200.png?text=House+1+Alt',
       ],
       currentImageIndex: 0,

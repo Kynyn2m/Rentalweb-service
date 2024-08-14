@@ -6,7 +6,13 @@
         <mat-icon style="color: red;">close</mat-icon>
       </button>
     </div>
-    <mat-nav-list>
+
+    <!-- Logo for small screens -->
+    <div style="text-align: center; margin: 20px 0;">
+      <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 150px; height: auto;" />
+    </div>
+
+    <mat-nav-list routerLinkActive="active">
       <a mat-list-item routerLink="/home" routerLinkActive="active" matTooltip="Home">
         <mat-icon>home</mat-icon>
         <span>Home</span>
@@ -36,6 +42,7 @@
         <span>Add Post</span>
       </a>
     </mat-nav-list>
+
     <div class="social-icons">
       <a href="https://facebook.com" target="_blank">
         <mat-icon>facebook</mat-icon>
@@ -58,6 +65,12 @@
       <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isMediumScreen$ | async">
         <mat-icon>menu</mat-icon>
       </button>
+
+      <!-- Logo for large screens -->
+      <div style="background-color: white; padding: 5px; border-radius: 5px; ">
+        <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 50px; height: auto;" />
+      </div>
+
       <h1 class="title">RENTAL WEB SERVICE</h1>
       <div class="spacer"></div>
 
