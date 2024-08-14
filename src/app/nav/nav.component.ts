@@ -103,7 +103,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     this.dropdown = localStorage.getItem('isDropdowned') !== 'false';
   }
 
-  logout(): void {
+  logout() {
     const options = {
       title: this.transloco.translate('logout'),
       message: this.transloco.translate('logout-confirm'),
@@ -111,17 +111,14 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       confirmText: this.transloco.translate('yes'),
     };
 
-    // Uncomment and complete the logout logic if needed
-    // this.confirmService
-    //   .open(options)
-    //   .afterClosed()
-    //   .subscribe((confirmed) => {
-    //     if (confirmed) {
-    //       this.authenticationService.logout();
-    //       this.messageEvent.emit(false);
-    //       this.router.navigate(['/login']);
-    //     }
-    //   });
+    this.confirmService.open(options);
+    this.confirmService.confirmed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.authenticationService.logout();
+        this.messageEvent.emit(false);
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   ngAfterViewChecked(): void {

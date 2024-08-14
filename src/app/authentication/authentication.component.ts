@@ -1,4 +1,10 @@
-import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { Router } from '@angular/router';
 import { FormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
@@ -7,7 +13,7 @@ import { first } from 'rxjs/operators';
 @Component({
   selector: 'app-authentication',
   templateUrl: './authentication.component.html',
-  styleUrls: ['./authentication.component.css']
+  styleUrls: ['./authentication.component.css'],
 })
 export class AuthenticationComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<boolean>();
@@ -21,9 +27,10 @@ export class AuthenticationComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private formBuilder: FormBuilder,
-    private router: Router) {
+    private router: Router
+  ) {
     if (this.authenticationService.currentUserValue) {
-      this.router.navigate(['/home']);
+      // this.router.navigate(['/login']);
     }
   }
 
@@ -44,34 +51,38 @@ export class AuthenticationComponent implements OnInit {
 
   onSubmit(): void {
     // Dev no auth
-    this.returnUrl = '/dashboard';
+    // this.returnUrl = '/dashboard';
     window.location.replace(this.returnUrl);
 
+    const faToken =
+      '{"id":0,"fullname":"SYSTEM","token":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzeXN0ZW0iLCJyb2xlcyI6IlJPTEVfRFVNTVkiLCJpYXQiOjE3MjM2MDQzOTIsImV4cCI6MTcyMzY3NjM5Mn0.zeHzqH7Vd0zK4bd9b8y4e8Yz6CsT5rcqn5nqLF85ElDDvS_kzL8ZUaBtfckAHzxqKgarvnRGccCNoH5OYskbCw"}';
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
     }
     this.loading = true;
-    this.authenticationService
-      .login(this.f.username.value, this.f.password.value)
-      .pipe(first())
-      .subscribe(
-        (data) => {
-          this.messageEvent.emit(true);
-          window.location.replace(this.returnUrl);
-          this.loading = false;
-        },
-        (error) => {
-          this.error = error;
-          this.loading = false;
-        }
-      );
+    localStorage.setItem('currentUser', JSON.stringify(faToken));
+
+    // this.authenticationService
+    //   .login(this.f.username.value, this.f.password.value)
+    //   .pipe(first())
+    //   .subscribe(
+    //     (data) => {
+    //       this.messageEvent.emit(true);
+    //       window.location.replace(this.returnUrl);
+    //       this.loading = false;
+    //     },
+    //     (error) => {
+    //       this.error = error;
+    //       this.loading = false;
+    //     }
+    //   );
   }
 
   contacts: any;
 
   @HostListener('keydown.enter')
   public onEsc() {
-    this.onSubmit()
+    this.onSubmit();
   }
 }

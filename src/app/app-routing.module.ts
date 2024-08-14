@@ -13,11 +13,13 @@ import { ThemeComponent } from './components/theme/theme.component';
 import { MerchantComponent } from './pages/merchant/merchant.component';
 import { HomeComponent } from './home/home.component';
 import { HouseComponent } from './house/house.component';
+import { ReginsterComponent } from './authentication/reginster/reginster.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
   { path: 'confirm-password', component: ConfirmPasswordComponent },
   { path: 'login', component: AuthenticationComponent },
+  { path: 'reginster', component: ReginsterComponent },
 
   // // Auth
   // { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
@@ -34,7 +36,7 @@ const routes: Routes = [
   { path: 'theme', component: ThemeComponent },
 
   // otherwise redirect to index
-  { path: '**', redirectTo: 'home' },
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({

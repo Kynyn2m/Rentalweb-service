@@ -11,7 +11,7 @@ import { ResponseModel } from '../_helpers/response-model';
 })
 export class AuthenticationService {
   getToken() {
-      throw new Error('Method not implemented.');
+    throw new Error('Method not implemented.');
   }
   private currentUserSubject: BehaviorSubject<Token | null>;
   public currentUser: Observable<Token | null>;
@@ -45,7 +45,8 @@ export class AuthenticationService {
       .pipe(
         map((responseModel: ResponseModel) => {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(responseModel.data));
+          // localStorage.setItem('currentUser', JSON.stringify(responseModel.data));
+
           this.currentUserSubject.next(responseModel.data as Token);
           return responseModel;
         })

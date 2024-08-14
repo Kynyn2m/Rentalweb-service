@@ -1,0 +1,74 @@
+<section>
+  <div class="bg"></div>
+</section>
+<div class="login-container animate__animated animate__fadeInUp">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <mat-card class="example-card">
+
+      <!-- Logo Section -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 250px; height: auto;" />
+      </div>
+
+      <mat-card-header>
+        <mat-card-title>
+          <h2 class="title">REGISTER</h2>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-divider></mat-divider>
+        <br />
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "full_name" | transloco }} </mat-label>
+          <input type="text" formControlName="fullName" matInput />
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "phone_number" | transloco }}</mat-label>
+          <input type="text" formControlName="phoneNumber" matInput />
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "password" | transloco }}</mat-label>
+          <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" />
+          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide">
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "confirm_password" | transloco }}</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="hide ? 'password' : 'text'" />
+          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide">
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <br />
+        <button type="submit" id="btnsubmit" color="primary" style="
+            background-color:#f96507;
+            width: 100%;
+            color: white;
+            height: 40px;
+          " mat-raised-button>
+          {{ "submit" | transloco }}
+        </button>
+        <br /><br />
+        <a type="button" color="primary" style="
+            width: 100%;
+            color: white;
+            height: 40px;
+            display: inline-block;
+            text-align: center;
+            padding: 10px 0;
+            text-decoration: none;
+          " mat-raised-button (click)="navigateToLogin()">
+          {{ "Back to Login" | transloco }}
+        </a>
+      </mat-card-content>
+    </mat-card>
+  </form>
+</div>

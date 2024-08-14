@@ -13,14 +13,23 @@ import {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 'QR-attendance';
+  title = 'rental-web-serivce';
   isAuth: boolean = true;
   animationClass = 'animate__animated animate__fadeIn';
 
   constructor(
     private authenticationService: AuthenticationService,
     private router: Router
-  ) {}
+  ) {
+    const token = localStorage.getItem('currentUser');
+    if (token == null) {
+      this.isAuth = false;
+      this.router.navigate(['/login']);
+    } else {
+      this.router.navigate(['/home']);
+    }
+    console.log(token, 'ffff');
+  }
 
   ngOnInit() {
     this.router.events.subscribe((event) => {

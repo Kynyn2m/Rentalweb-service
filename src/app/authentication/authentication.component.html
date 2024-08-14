@@ -1,41 +1,44 @@
 <section>
   <div class="bg"></div>
 </section>
-<div class="login-container">
+<div class="login-container animate__animated animate__fadeInUp">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-card class="example-card">
+
+      <!-- Logo Section -->
+      <div style="text-align: center; ">
+        <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 250px;; height: auto;" />
+      </div>
+
       <mat-card-header>
         <mat-card-title>
-          <h1 class="title">RENTAL WEB SERVICE</h1>
+          <h2 class="title">Login</h2>
         </mat-card-title>
       </mat-card-header>
 
       <mat-card-content>
         <mat-divider></mat-divider>
-        <div class="language">
-          <app-language-selector></app-language-selector>
-        </div>
         <br />
 
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>{{ "username" | transloco }} </mat-label>
-          <input type="text" formControlName="username" matInput formControlName="username" />
+          <input type="text" formControlName="username" matInput />
           <a mat-icon-button matSuffix>
             <mat-icon>person</mat-icon>
           </a>
         </mat-form-field>
         <br />
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <mat-label>{{ "password" | transloco }}</mat-label>
-          <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" formControlName="password" />
-          <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+          <input matInput formControlName="password" [type]="hide ? 'password' : 'text'" />
+          <a mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide">
             <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-          </button>
+          </a>
         </mat-form-field>
         <br />
         <button type="submit" id="btnsubmit" color="succes" style="
-            background-color: green;
+            background-color: #f96507;
             width: 100%;
             color: white;
             height: 40px;
@@ -43,9 +46,15 @@
           {{ "login" | transloco }}
         </button>
         <mat-card-actions>
-          <a routerLink="/forget-password">{{
-            "forget-password" | transloco
-            }}</a>
+          <div class="actions">
+            <span>
+              <a style="margin-left: 43px;" routerLink="/reginster">{{
+                "Register" | transloco
+                }}</a></span>
+            <a routerLink="/forget-password">{{
+              "forget-password" | transloco
+              }}</a>
+          </div>
         </mat-card-actions>
       </mat-card-content>
       <mat-progress-bar [class.is__loading]="!loading" mode="indeterminate"></mat-progress-bar>

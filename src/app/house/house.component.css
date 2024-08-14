@@ -211,9 +211,9 @@ mat-card-content p {
 }
 .banner-image-container {
   width: 100%;
-  max-width: 700px; /* Max width to match common banner sizes, adjust as needed */
+  max-width: 700px;
   display: flex;
-  justify-content: center; /* Center image within container */
+  justify-content: center;
 }
 .banner-img {
   width: 100%;
@@ -239,7 +239,7 @@ mat-card-content p {
   }
 }
 .result-header {
-  background-color: #fcad0c ; /* Green background color */
+  background-color: #f96507 ; /* Green background color */
   border-radius: 8px 8px 0 0; /* Rounded corners at the top */
   text-align: center;
   color: white; /* White text color */
