@@ -14,6 +14,8 @@ import { MerchantComponent } from './pages/merchant/merchant.component';
 import { HomeComponent } from './home/home.component';
 import { HouseComponent } from './house/house.component';
 import { ReginsterComponent } from './authentication/reginster/reginster.component';
+import { RoomComponent } from './pages/room/room.component';
+import { LandComponent } from './pages/land/land.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -32,6 +34,8 @@ const routes: Routes = [
   // Dev
   { path: 'home', component: HomeComponent },
   { path: 'house', component: HouseComponent },
+  { path: 'room', component: RoomComponent },
+  { path: 'land', component: LandComponent },
 
   { path: 'theme', component: ThemeComponent },
 

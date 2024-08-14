@@ -66,6 +66,8 @@ import { HomeComponent } from './home/home.component';
 import { FooterComponent } from './footer/footer.component';
 import { HouseComponent } from './house/house.component';
 import { ReginsterComponent } from './authentication/reginster/reginster.component';
+import { RoomComponent } from './pages/room/room.component';
+import { LandComponent } from './pages/land/land.component';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
@@ -95,6 +97,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     FooterComponent,
     HouseComponent,
     ReginsterComponent,
+    RoomComponent,
+    LandComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,43 +1,30 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
-// @ts-ignore
+import { Component } from '@angular/core';
 import * as AOS from 'aos';
 
 @Component({
-  selector: 'app-house',
-  templateUrl: './house.component.html',
-  styleUrls: ['./house.component.css'],
+  selector: 'app-room',
+  templateUrl: './room.component.html',
+  styleUrls: ['./room.component.css']
 })
-export class HouseComponent implements OnInit {
-<<<<<<< HEAD
-  gridCols = 2;
-  banners: string[] = [
-    '/assets/img/phnompenfooter.jpg',
-=======
-   
+export class RoomComponent {
   gridCols = 2; // Set to 4 columns for a 4x5 grid
   // banners!: string; 
   banners: string[] = [
     '../../assets/img/pp1.jpg',
->>>>>>> fc502c1d11c15043a90ff746f1b5524fcd0c0d21
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
-  // Houses data
-  houses = [
+  // Room data
+  room = [
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-<<<<<<< HEAD
-        'assets/imges/phnompenfooter.jpg',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-=======
         '../../assets/img/pp1.jpg',
         '../../assets/img/pp.jpg',
->>>>>>> fc502c1d11c15043a90ff746f1b5524fcd0c0d21
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -45,13 +32,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -59,13 +46,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -73,13 +60,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -87,13 +74,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -101,13 +88,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -115,13 +102,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -129,13 +116,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -143,13 +130,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -157,13 +144,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -171,13 +158,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -185,13 +172,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -199,13 +186,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -213,13 +200,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -227,13 +214,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -241,13 +228,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -255,13 +242,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -269,13 +256,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -283,13 +270,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -297,13 +284,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -311,13 +298,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -325,13 +312,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -339,13 +326,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -353,13 +340,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -367,13 +354,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -381,13 +368,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -395,13 +382,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -409,13 +396,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -423,13 +410,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -437,13 +424,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -451,13 +438,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -465,13 +452,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -479,13 +466,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -493,13 +480,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -507,13 +494,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -521,13 +508,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -535,13 +522,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -549,13 +536,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -563,13 +550,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -577,13 +564,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -591,13 +578,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -605,13 +592,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -619,13 +606,13 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
@@ -633,40 +620,40 @@ export class HouseComponent implements OnInit {
       floor: 1,
     },
     {
-      title: 'House 1',
+      title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
+        'https://via.placeholder.com/300x200.png?text=Room+1',
+        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
       ],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
       floor: 1,
     },
-    // Additional house objects...
+    // Additional room objects...
   ];
 
   // Pagination properties
   currentPage = 0;
-  itemsPerPage = 20; // 4 columns * 5 rows = 20 houses per page
+  itemsPerPage = 20; // 4 columns * 5 rows = 20 room per page
 
   constructor(private breakpointObserver: BreakpointObserver) {
     this.initializeGridCols();
      
   }
 
-  // Get the paginated houses for the current page
-  get paginatedHouses() {
+  // Get the paginated room for the current page
+  get paginatedRoom() {
     const startIndex = this.currentPage * this.itemsPerPage;
-    return this.houses.slice(startIndex, startIndex + this.itemsPerPage);
+    return this.room.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   // Calculate the total number of pages
   get totalPages() {
-    return Math.ceil(this.houses.length / this.itemsPerPage);
+    return Math.ceil(this.room.length / this.itemsPerPage);
   }
 
   // Navigate to the next image in a card
