@@ -11,7 +11,7 @@ import * as AOS from 'aos';
 export class HouseComponent implements OnInit {
   gridCols = 2; // Set to 4 columns for a 4x5 grid
   banners: string[] = [
-    'https://via.placeholder.com/600x200.png?text=ads+1',
+    '',
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
