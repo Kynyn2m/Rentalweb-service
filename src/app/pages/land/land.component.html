@@ -1,7 +1,8 @@
 <div class="banner-container">
     <div class="banner-column">
       <div class="banner-image-container">
-        <img [src]="banners[0]" alt="Banner 1" class="banner-img">
+        <img [src]="banners[0]" alt="Banner 1" class="banner-img" >
+        <!-- (click)="onClick($event)" -->
       </div>
     </div>
   </div>
@@ -53,21 +54,21 @@
     <section>
       <h2>Land</h2>
       <div class="card-grid">
-        <mat-card *ngFor="let house of paginatedland" data-aos="fade-up" class="animate__animated animate__fadeIn">
+        <mat-card *ngFor="let land of paginatedland" data-aos="fade-up" class="animate__animated animate__fadeIn">
           <!-- Animate.css animation -->
           <div class="image-container">
-            <img mat-card-image [src]="house.images[house.currentImageIndex]" alt="{{ house.title }}">
-            <button class="prev-image-button" (click)="prevImage(house)">&#10094;</button>
-            <button class="next-image-button" (click)="nextImage(house)">&#10095;</button>
+            <img mat-card-image [src]="land.images[land.currentImageIndex]" alt="{{ land.title }}" >
+            <button class="prev-image-button" (click)="prevImage(land)">&#10094;</button>
+            <button class="next-image-button" (click)="nextImage(land)">&#10095;</button>
           </div>
           <mat-card-content>
-            <h3>{{ house.title }}</h3>
-            <p>Location: {{ house.location }}</p>
-            <p>Contact: {{ house.contact }}</p>
-            <p>Price: {{ house.price }}</p>
-            <p>Bedrooms: {{ house.bathland }}</p>
-            <p>Bathrooms: {{ house.bathland }}</p>
-            <p>Floor: {{ house.floor }}</p>
+            <h3>{{ land.title }}</h3>
+            <p>Location: {{ land.location }}</p>
+            <p>Contact: {{ land.contact }}</p>
+            <p>Price: {{ land.price }}</p>
+            <p>Bedrooms: {{ land.bathland }}</p>
+            <p>Bathrooms: {{ land.bathland }}</p>
+            <p>Floor: {{ land.floor }}</p>
           </mat-card-content>
         </mat-card>
       </div>

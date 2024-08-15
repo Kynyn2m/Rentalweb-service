@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component } from '@angular/core';
+import { Component, VERSION } from '@angular/core';
 import * as AOS from 'aos';
 
 @Component({
@@ -8,13 +8,20 @@ import * as AOS from 'aos';
   styleUrls: ['./land.component.css']
 })
 export class LandComponent {
+  // LandModalComponent= new LandModalComponent
   gridCols = 2; // Set to 4 columns for a 4x5 grid
   // banners!: string; 
   banners: string[] = [
     '../../assets/img/pp1.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
-
+  // onClick(event: { target: any; srcElement: any; currentTarget: any; }){
+  //   const imgElem = event.target;
+  //   var target = event.target || event.srcElement || event.currentTarget;
+  //   var srcAttr = target.attributes.src;
+  //   this.LandModalComponent = srcAttr.nodeValue;
+  //   console.log("jdsifsuid=========")
+  // }
   // land data
   land = [
     {
@@ -37,7 +44,7 @@ export class LandComponent {
       contact: '1234567890',
       price: '$500',
       images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
+        '../../assets/img/pp1.jpg',
         'https://via.placeholder.com/300x200.png?text=land+1+Alt',
       ],
       currentImageIndex: 0,

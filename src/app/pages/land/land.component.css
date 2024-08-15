@@ -76,6 +76,7 @@
   }
   
   .image-container img {
+    transition: transform .2s;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
@@ -296,4 +297,9 @@
       width: 100%;
     }
   }
-  
+   
+    /* .image-container img:hover {
+        -ms-transform: scale(1.5);  
+        -webkit-transform: scale(1.5);  
+        transform: scale(1.5); 
+      } */

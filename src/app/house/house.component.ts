@@ -9,17 +9,9 @@ import * as AOS from 'aos';
   styleUrls: ['./house.component.css'],
 })
 export class HouseComponent implements OnInit {
-<<<<<<< HEAD
   gridCols = 2;
   banners: string[] = [
     '/assets/img/phnompenfooter.jpg',
-=======
-   
-  gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string; 
-  banners: string[] = [
-    '../../assets/img/pp1.jpg',
->>>>>>> fc502c1d11c15043a90ff746f1b5524fcd0c0d21
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
@@ -31,13 +23,8 @@ export class HouseComponent implements OnInit {
       contact: '1234567890',
       price: '$500',
       images: [
-<<<<<<< HEAD
-        'assets/imges/phnompenfooter.jpg',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-=======
         '../../assets/img/pp1.jpg',
         '../../assets/img/pp.jpg',
->>>>>>> fc502c1d11c15043a90ff746f1b5524fcd0c0d21
       ],
       currentImageIndex: 0,
       bedroom: 3,
