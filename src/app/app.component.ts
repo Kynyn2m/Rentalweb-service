@@ -13,7 +13,7 @@ import {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 'rental-web-serivce';
+  title = 'rental-web-service';
   isAuth: boolean = true;
   animationClass = 'animate__animated animate__fadeIn';
 
@@ -21,17 +21,26 @@ export class AppComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private router: Router
   ) {
-    const token = localStorage.getItem('currentUser');
-    if (token == null) {
-      this.isAuth = false;
-      this.router.navigate(['/login']);
-    } else {
-      this.router.navigate(['/home']);
-    }
-    console.log(token, 'ffff');
+    this.checkAuthentication();
   }
 
   ngOnInit() {
+    this.handleRouteAnimations();
+    this.restoreLastRoute();
+  }
+
+  private checkAuthentication() {
+    const token = localStorage.getItem('currentUser');
+    if (!token) {
+      this.isAuth = false;
+      this.router.navigate(['/login']);
+    } else {
+      this.isAuth = true;
+    }
+    console.log(token, 'User token retrieved');
+  }
+
+  private handleRouteAnimations() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.animationClass = 'animate__animated animate__fadeOut';
@@ -39,9 +48,18 @@ export class AppComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         setTimeout(() => {
           this.animationClass = 'animate__animated animate__fadeIn';
+          // Store the last route in localStorage
+          localStorage.setItem('lastRoute', event.urlAfterRedirects);
         }, 0);
       }
     });
+  }
+
+  private restoreLastRoute() {
+    const lastRoute = localStorage.getItem('lastRoute');
+    if (lastRoute && lastRoute !== '/login') {
+      this.router.navigateByUrl(lastRoute);
+    }
   }
 
   prepareRoute(outlet: RouterOutlet) {

@@ -9,7 +9,7 @@ import {
   ElementRef,
 } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import {
   NavigationEnd,
   NavigationStart,
@@ -20,8 +20,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { ConfirmService } from '../components/confirm/confirm.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { map, shareReplay } from 'rxjs/operators';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ThemeComponent } from '../components/theme/theme.component';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
@@ -72,6 +71,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
         }
       }
     });
+
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.animationClass = 'animate__animated animate__fadeOut';
@@ -79,18 +79,17 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       if (event instanceof NavigationEnd) {
         setTimeout(() => {
           this.animationClass = 'animate__animated animate__fadeIn';
+          this.scrollToTop();
         }, 0);
       }
     });
   }
 
-  // onSidenavToggle(isOpened: boolean): void {
-  //   if (isOpened) {
-  //     this.sidenavContent.nativeElement.classList.add('sidenav-opened');
-  //   } else {
-  //     this.sidenavContent.nativeElement.classList.remove('sidenav-opened');
-  //   }
-  // }
+  private scrollToTop(): void {
+    if (this.sidenavContent && this.sidenavContent.nativeElement) {
+      this.sidenavContent.nativeElement.scrollTop = 0;
+    }
+  }
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
@@ -103,7 +102,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     this.dropdown = localStorage.getItem('isDropdowned') !== 'false';
   }
 
-  logout() {
+  logout(): void {
     const options = {
       title: this.transloco.translate('logout'),
       message: this.transloco.translate('logout-confirm'),
@@ -129,7 +128,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     }
   }
 
-  OnCollapse(): void {
+  onCollapse(): void {
     this.collapsed = !this.collapsed;
     localStorage.setItem('isCollapsed', String(this.collapsed));
   }
@@ -138,7 +137,8 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     this.dropdown = !this.dropdown;
     localStorage.setItem('isDropdowned', String(this.dropdown));
   }
-  prepareRoute(outlet: RouterOutlet) {
+
+  prepareRoute(outlet: RouterOutlet): boolean | string {
     return (
       outlet &&
       outlet.activatedRouteData &&

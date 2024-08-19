@@ -176,3 +176,6 @@ mat-sidenav-content {
 .mat-nav-list {
   flex-grow: 1;
 }
+.mat-list-item.active {
+  background-color: #690b0b; /* or any color you want */
+}

@@ -29,7 +29,8 @@
         <mat-icon>terrain</mat-icon>
         <span>Land</span>
       </a>
-      <a mat-list-item routerLink="/contact" routerLinkActive="active" matTooltip="Contact">
+      <a mat-list-item routerLink="/contact" routerLinkActive="active" matTooltip="Contact"
+        [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon>contact_mail</mat-icon>
         <span>Contact</span>
       </a>

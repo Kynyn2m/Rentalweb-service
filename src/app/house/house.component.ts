@@ -9,9 +9,10 @@ import * as AOS from 'aos';
   styleUrls: ['./house.component.css'],
 })
 export class HouseComponent implements OnInit {
-  gridCols = 2;
+  gridCols = 2; // Set to 4 columns for a 4x5 grid
+  // banners!: string;
   banners: string[] = [
-    '/assets/img/phnompenfooter.jpg',
+    '../../assets/img/pp1.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
@@ -22,10 +23,7 @@ export class HouseComponent implements OnInit {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        '../../assets/img/pp1.jpg',
-        '../../assets/img/pp.jpg',
-      ],
+      images: ['../../assets/img/pp1.jpg', '../../assets/img/pp.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -642,7 +640,6 @@ export class HouseComponent implements OnInit {
 
   constructor(private breakpointObserver: BreakpointObserver) {
     this.initializeGridCols();
-     
   }
 
   // Get the paginated houses for the current page

@@ -1,6 +1,6 @@
 @font-face {
-  font-family: "Koh Santepheap";
-  src: local("KohSantepheap-Regular"),
+  font-family: "Roboto";
+  src: local("Roboto-Medium"),
     url(./assets/fonts/Roboto-Medium.ttf) format("truetype");
 }
 @import "../node_modules/animate.css/animate.min.css";
@@ -15,9 +15,10 @@ body {
   height: 100vh;
   overflow: hidden;
   margin: 0;
-  font-family: Roboto, "Koh Santepheap";
+  font-family: Roboto, "Roboto";
   font-size: large;
   background-color: #d9d9d9;
+  scroll-behavior: smooth;
 }
 
 h1,
@@ -39,7 +40,7 @@ mat-label,
 body .mdc-floating-label,
 .mat-mdc-card-title,
 .mat-mdc-card-subtitle {
-  font-family: "Koh Santepheap" !important;
+  font-family: "Roboto" !important;
   margin: 0;
 }
 
