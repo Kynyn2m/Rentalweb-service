@@ -73,7 +73,7 @@ import { ReginsterComponent } from './authentication/reginster/reginster.compone
 import { RoomComponent } from './pages/room/room.component';
 import { LandComponent } from './pages/land/land.component';
 import { ContactComponent } from './contact/contact.component';
-import { GoogleMapsModule } from '@angular/google-maps';
+// import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
@@ -150,7 +150,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     ColorPickerModule,
     QRCodeModule,
     CdkDrag,
-    GoogleMapsModule,
+    // GoogleMapsModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
