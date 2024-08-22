@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.handleRouteAnimations();
-    this.restoreLastRoute();
+    // this.restoreLastRoute();
   }
 
   private checkAuthentication() {
@@ -55,12 +55,12 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private restoreLastRoute() {
-    const lastRoute = localStorage.getItem('lastRoute');
-    if (lastRoute && lastRoute !== '/login') {
-      this.router.navigateByUrl(lastRoute);
-    }
-  }
+  // private restoreLastRoute() {
+  //   const lastRoute = localStorage.getItem('lastRoute');
+  //   if (lastRoute && lastRoute !== '/login') {
+  //     this.router.navigateByUrl(lastRoute);
+  //   }
+  // }
 
   prepareRoute(outlet: RouterOutlet) {
     return (
