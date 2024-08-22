@@ -29,6 +29,25 @@ import { MatSidenav } from '@angular/material/sidenav';
   styleUrls: ['./nav.component.css'],
 })
 export class NavComponent implements AfterViewChecked, AfterViewInit {
+  menuItems = [
+    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home' },
+    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room' },
+    { router: '/house', icon: 'house', title: 'House', tooltip: 'House' },
+    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land' },
+    {
+      router: '/contact',
+      icon: 'contact_mail',
+      title: 'Contact',
+      tooltip: 'Contact',
+    },
+    { router: '/about', icon: 'info', title: 'About', tooltip: 'About' },
+    {
+      router: '/add-post',
+      icon: 'post_add',
+      title: 'Add Post',
+      tooltip: 'Add Post',
+    },
+  ];
   currentRouter?: string;
   fullRouter?: string;
   @Output() messageEvent = new EventEmitter<boolean>();

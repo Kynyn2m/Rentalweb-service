@@ -62,15 +62,18 @@ span a{
 .left-sidebar mat-nav-list {
   padding: 0;
 }
+mat-list-item a mat-icon span {
+ color: black;
+}
 
-.left-sidebar mat-nav-list a {
+ mat-nav-list a {
+  text-decoration: none;
   font-size: 1.2em;
-  padding: 10px 20px;
-  color: white;
+  padding: 10px 10px;
+  color: black;
   border-left: 3px solid transparent;
   display: flex;
   align-items: center;
-  transition: background-color var(--delay), border-left-color var(--delay);
 }
 
 .left-sidebar mat-nav-list a.mat-list-item:hover {
@@ -142,7 +145,6 @@ mat-sidenav-content {
   text-align: right;
   padding: 10px;
 }
-
 .mat-nav-list a, .mat-list-item {
   display: flex;
   align-items: center;
@@ -177,5 +179,30 @@ mat-sidenav-content {
   flex-grow: 1;
 }
 .mat-list-item.active {
-  background-color: #690b0b; /* or any color you want */
+  background-color: #690b0b;
+}
+
+.left-sidebar mat-nav-list a span{
+  margin-left: 10px;
+}
+
+.active span {
+  /* background: #f96507; */
+  color: white;
+  text-shadow: 1px 2px 2px rgb(0, 0, 0);
+}
+
+ .active a {
+  background: #f96507;
+  border-radius: radius;
+  color: white;
+  border-radius: 7px;
+
+  mat-icon {
+    color: white;
+    text-shadow: 1px 2px 2px rgb(0, 0, 0);
+  }
+}
+menu-items .active mat-icon {
+  background-color: #15A0BF;
 }

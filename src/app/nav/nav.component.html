@@ -12,37 +12,15 @@
       <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 150px; height: auto;" />
     </div>
 
-    <mat-nav-list routerLinkActive="active">
-      <a mat-list-item routerLink="/home" routerLinkActive="active" matTooltip="Home">
-        <mat-icon>home</mat-icon>
-        <span>Home</span>
-      </a>
-      <a mat-list-item routerLink="/room" routerLinkActive="active" matTooltip="Room">
-        <mat-icon>meeting_room</mat-icon>
-        <span>Room</span>
-      </a>
-      <a mat-list-item routerLink="/house" routerLinkActive="active" matTooltip="House">
-        <mat-icon>house</mat-icon>
-        <span>House</span>
-      </a>
-      <a mat-list-item routerLink="/land" routerLinkActive="active" matTooltip="Land">
-        <mat-icon>terrain</mat-icon>
-        <span>Land</span>
-      </a>
-      <a mat-list-item routerLink="/contact" routerLinkActive="active" matTooltip="Contact"
-        [routerLinkActiveOptions]="{ exact: true }">
-        <mat-icon>contact_mail</mat-icon>
-        <span>Contact</span>
-      </a>
-      <a mat-list-item routerLink="/about" routerLinkActive="active" matTooltip="About">
-        <mat-icon>info</mat-icon>
-        <span>About</span>
-      </a>
-      <a mat-list-item routerLink="/add-post" routerLinkActive="active" matTooltip="Add Post">
-        <mat-icon>post_add</mat-icon>
-        <span>Add Post</span>
-      </a>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let item of menuItems" routerLinkActive="active">
+        <a [routerLink]="item.router" matTooltip="{{item.tooltip}}">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.title }}</span>
+        </a>
+      </mat-list-item>
     </mat-nav-list>
+
 
     <div class="social-icons">
       <a href="https://facebook.com" target="_blank">
@@ -59,6 +37,7 @@
       </a>
     </div>
   </mat-sidenav>
+
 
   <!-- Main Content -->
   <mat-sidenav-content class="sidenav-content">
@@ -77,35 +56,13 @@
 
       <!-- Menu Items (Hidden on Small Screens) -->
       <div class="menu-items" *ngIf="!(isMediumScreen$ | async)">
-        <a mat-button routerLink="/home" routerLinkActive="active" matTooltip="Home">
-          <mat-icon>home</mat-icon>
-          <span>Home</span>
-        </a>
-        <a mat-button routerLink="/room" routerLinkActive="active" matTooltip="Room">
-          <mat-icon>meeting_room</mat-icon>
-          <span>Room</span>
-        </a>
-        <a mat-button routerLink="/house" routerLinkActive="active" matTooltip="House">
-          <mat-icon>house</mat-icon>
-          <span>House</span>
-        </a>
-        <a mat-button routerLink="/land" routerLinkActive="active" matTooltip="Land">
-          <mat-icon>terrain</mat-icon>
-          <span>Land</span>
-        </a>
-        <a mat-button routerLink="/contact" routerLinkActive="active" matTooltip="Contact">
-          <mat-icon>contact_mail</mat-icon>
-          <span>Contact</span>
-        </a>
-        <a mat-button routerLink="/about" routerLinkActive="active" matTooltip="About">
-          <mat-icon>info</mat-icon>
-          <span>About</span>
-        </a>
-        <a mat-button routerLink="/add-post" routerLinkActive="active" matTooltip="Add Post">
-          <mat-icon>post_add</mat-icon>
-          <span>Add Post</span>
+        <a mat-button *ngFor="let item of menuItems" [routerLink]="item.router" routerLinkActive="active"
+          [matTooltip]="item.tooltip">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.title }}</span>
         </a>
       </div>
+
 
       <a routerLink="/profile" routerLinkActive="active" mat-icon-button aria-label="Profile">
         <mat-icon>person</mat-icon>
