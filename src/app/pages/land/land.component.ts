@@ -5,12 +5,12 @@ import * as AOS from 'aos';
 @Component({
   selector: 'app-land',
   templateUrl: './land.component.html',
-  styleUrls: ['./land.component.css']
+  styleUrls: ['./land.component.css'],
 })
 export class LandComponent {
   // LandModalComponent= new LandModalComponent
   gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string; 
+  // banners!: string;
   banners: string[] = [
     '../../assets/img/pp1.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
@@ -29,10 +29,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        '../../assets/img/pp1.jpg',
-        '../../assets/img/pp.jpg',
-      ],
+      images: ['../../../assets/land/L1.jpg', '../../../assets/land/L2.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -43,10 +40,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        '../../assets/img/pp1.jpg',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L1.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -57,10 +51,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L3.jpg', '../../../assets/land/L1.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -71,10 +62,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L4.jpg', '../../../assets/land/L2.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -85,10 +73,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L1.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -99,10 +84,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L3.jpg', '../../../assets/land/L4.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -113,10 +95,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L1.jpg', '../../../assets/land/L2.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -127,10 +106,7 @@ export class LandComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
+      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L2.jpg'],
       currentImageIndex: 0,
       bedland: 3,
       bathland: 2,
@@ -649,7 +625,6 @@ export class LandComponent {
 
   constructor(private breakpointObserver: BreakpointObserver) {
     this.initializeGridCols();
-     
   }
 
   // Get the paginated land for the current page

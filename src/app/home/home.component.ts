@@ -11,8 +11,8 @@ export class HomeComponent {
 
   // Banner images
   banners: string[] = [
-    'https://via.placeholder.com/600x200.png?text=Banner+1',
-    'https://via.placeholder.com/600x200.png?text=Banner+2',
+    '../../assets/homepage/h1r.jpg',
+    '../../assets/homepage/h1r.jpg',
   ];
   currentBannerIndex: number = 0;
 
@@ -23,10 +23,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../assets/room/r1.jpg', '../../assets/room/r1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -34,10 +31,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../assets/room/r4.jpg', '../../assets/room/r1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -45,10 +39,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../assets/room/r3.jpg', '../../assets/room/r1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -56,10 +47,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../assets/room/r2.jpg', '../../assets/room/r2.jpg'],
       currentImageIndex: 0,
     },
     // Additional rooms can be added here...
@@ -72,10 +60,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
+      images: ['../../assets/house/h1.jpeg', '../../assets/house/h1.jpeg'],
       currentImageIndex: 0,
     },
     {
@@ -83,10 +68,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
+      images: ['../../assets/house/h4.jpg', '../../assets/house/h1.jpeg'],
       currentImageIndex: 0,
     },
     {
@@ -94,10 +76,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
+      images: ['../../assets/house/h3.jpg', '../../assets/house/h1.jpeg'],
       currentImageIndex: 0,
     },
     {
@@ -105,10 +84,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
+      images: ['../../assets/house/h2.jpg', '../../assets/house/h1.jpeg'],
       currentImageIndex: 0,
     },
     // Additional houses can be added here...
@@ -121,10 +97,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Land+1',
-        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
-      ],
+      images: ['../../assets/land/L1.jpg', '../../assets/land/L1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -132,10 +105,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Land+1',
-        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
-      ],
+      images: ['../../assets/land/L4.jpg', '../../assets/land/L1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -143,10 +113,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Land+1',
-        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
-      ],
+      images: ['../../assets/land/L3.jpg', '../../assets/land/L1.jpg'],
       currentImageIndex: 0,
     },
     {
@@ -154,10 +121,7 @@ export class HomeComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Land+1',
-        'https://via.placeholder.com/300x200.png?text=Land+1+Alt',
-      ],
+      images: ['../../assets/land/L2.jpg', '../../assets/land/L1.jpg'],
       currentImageIndex: 0,
     },
     // Additional lands can be added here...

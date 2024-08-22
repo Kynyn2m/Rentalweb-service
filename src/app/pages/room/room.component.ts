@@ -5,11 +5,11 @@ import * as AOS from 'aos';
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css']
+  styleUrls: ['./room.component.css'],
 })
 export class RoomComponent {
   gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string; 
+  // banners!: string;
   banners: string[] = [
     '../../assets/img/pp1.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
@@ -22,10 +22,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        '../../assets/img/pp1.jpg',
-        '../../assets/img/pp.jpg',
-      ],
+      images: ['../../../assets/room/r1.jpg', '../../../assets/room/r2.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -36,10 +33,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r2.jpg', '../../../assets/room/r3.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -50,10 +44,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -64,10 +55,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r1.jpg', '../../../assets/room/r3.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -78,10 +66,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -92,10 +77,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r2.jpg', '../../../assets/room/r1.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -106,10 +88,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r4.jpg', '../../../assets/room/r3.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -120,10 +99,7 @@ export class RoomComponent {
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
+      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
       currentImageIndex: 0,
       bedroom: 3,
       bathroom: 2,
@@ -642,7 +618,6 @@ export class RoomComponent {
 
   constructor(private breakpointObserver: BreakpointObserver) {
     this.initializeGridCols();
-     
   }
 
   // Get the paginated room for the current page
