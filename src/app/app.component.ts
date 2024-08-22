@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
         setTimeout(() => {
           this.animationClass = 'animate__animated animate__fadeIn';
           // Store the last route in localStorage
-          localStorage.setItem('lastRoute', event.urlAfterRedirects);
+          // localStorage.setItem('lastRoute', event.urlAfterRedirects);
         }, 0);
       }
     });

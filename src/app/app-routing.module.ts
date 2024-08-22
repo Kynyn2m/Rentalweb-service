@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'theme', component: ThemeComponent },
 
   // Fallback route
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'home' },
 ];
 
 const routerOptions: ExtraOptions = {
