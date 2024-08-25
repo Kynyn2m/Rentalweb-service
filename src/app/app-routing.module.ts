@@ -11,6 +11,7 @@ import { HouseComponent } from './house/house.component';
 import { RoomComponent } from './pages/room/room.component';
 import { LandComponent } from './pages/land/land.component';
 import { ThemeComponent } from './components/theme/theme.component';
+import { AddPostComponent } from './add-post/add-post.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'house', component: HouseComponent },
   { path: 'room', component: RoomComponent },
   { path: 'land', component: LandComponent },
+  { path: 'add-post', component: AddPostComponent },
 
   { path: 'theme', component: ThemeComponent },
 

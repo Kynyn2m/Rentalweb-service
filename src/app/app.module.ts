@@ -73,6 +73,7 @@ import { ReginsterComponent } from './authentication/reginster/reginster.compone
 import { RoomComponent } from './pages/room/room.component';
 import { LandComponent } from './pages/land/land.component';
 import { ContactComponent } from './contact/contact.component';
+import { AddPostComponent } from './add-post/add-post.component';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -106,6 +107,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     RoomComponent,
     LandComponent,
     ContactComponent,
+    AddPostComponent,
   ],
   imports: [
     BrowserModule,
