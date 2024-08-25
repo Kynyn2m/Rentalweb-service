@@ -74,6 +74,7 @@ import { RoomComponent } from './pages/room/room.component';
 import { LandComponent } from './pages/land/land.component';
 import { ContactComponent } from './contact/contact.component';
 import { AddPostComponent } from './add-post/add-post.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -152,6 +153,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     ColorPickerModule,
     QRCodeModule,
     CdkDrag,
+    FlexLayoutModule,
     // GoogleMapsModule,
   ],
   providers: [

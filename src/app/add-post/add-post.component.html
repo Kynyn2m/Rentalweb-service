@@ -1,89 +1,107 @@
-<form class="add-post-form" [formGroup]="addPostForm" (ngSubmit)="onSubmit()">
-  <mat-form-field appearance="outline">
-    <mat-label>Category</mat-label>
-    <mat-select formControlName="category">
-      <mat-option *ngFor="let category of categories" [value]="category.value">
-        {{ category.viewValue }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<div class="form-container" fxLayout="column" fxLayoutAlign="center center">
+  <div class="form-header">
+    <h2 class="form-title">Add New Post</h2>
+  </div>
+  <form [formGroup]="addPostForm" (ngSubmit)="onSubmit()" class="add-post-form" fxLayout="column" fxLayoutGap="16px">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Post ID</mat-label>
-    <input matInput formControlName="postId" />
-  </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category.value">
+          {{ category.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Date</mat-label>
-    <input matInput [matDatepicker]="picker" formControlName="date" />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Post ID</mat-label>
+        <input matInput formControlName="postId" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>User ID</mat-label>
-    <input matInput formControlName="userId" />
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Title</mat-label>
-    <input matInput formControlName="title" />
-  </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>User ID</mat-label>
+        <input matInput formControlName="userId" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Location</mat-label>
-    <input matInput formControlName="location" />
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Price</mat-label>
-    <input matInput formControlName="price" />
-  </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="100%">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" />
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Width</mat-label>
-    <input matInput formControlName="width" />
-  </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
+        <mat-label>Price</mat-label>
+        <input matInput formControlName="price" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Length</mat-label>
-    <input matInput formControlName="length" />
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
+        <mat-label>Width</mat-label>
+        <input matInput formControlName="width" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Floor</mat-label>
-    <input matInput formControlName="floor" />
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
+        <mat-label>Length</mat-label>
+        <input matInput formControlName="length" />
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Phone Number</mat-label>
-    <input matInput formControlName="phoneNumber" />
-  </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Floor</mat-label>
+        <input matInput formControlName="floor" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Description</mat-label>
-    <textarea matInput formControlName="description"></textarea>
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" />
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Bathroom</mat-label>
-    <input matInput formControlName="bathroom" />
-  </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="100%">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Bedroom</mat-label>
-    <input matInput formControlName="bedroom" />
-  </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Bathroom</mat-label>
+        <input matInput formControlName="bathroom" />
+      </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Link Map</mat-label>
-    <input matInput formControlName="linkMap" />
-  </mat-form-field>
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+        <mat-label>Bedroom</mat-label>
+        <input matInput formControlName="bedroom" />
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Photo</mat-label>
-    <input type="file" (change)="onFileSelected($event)" />
-  </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="100%">
+      <mat-label>Link Map</mat-label>
+      <input matInput formControlName="linkMap" />
+    </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit">Submit</button>
-</form>
+    <div class="file-input-container" fxFlex="100%">
+      <label for="file-upload" class="file-upload-label">Photo</label>
+      <input id="file-upload" type="file" (change)="onFileSelected($event)" class="file-input" />
+    </div>
+
+    <button mat-raised-button class="mat-success" type="submit">Submit</button>
+  </form>
+</div>
+
+<app-footer></app-footer>

@@ -1,37 +1,38 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-post',
   templateUrl: './add-post.component.html',
   styleUrls: ['./add-post.component.css'],
 })
-export class AddPostComponent {
-  addPostForm: FormGroup;
+export class AddPostComponent implements OnInit {
+  addPostForm!: FormGroup;
   categories = [
     { value: 'rent', viewValue: 'Rent' },
     { value: 'sale', viewValue: 'Sale' },
-    // Add more categories as needed
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
     this.addPostForm = this.fb.group({
-      category: [''],
-      postId: [''],
-      date: [''],
-      userId: [''],
-      title: [''],
-      location: [''],
-      price: [''],
-      width: [''],
-      length: [''],
-      floor: [''],
-      phoneNumber: [''],
-      description: [''],
-      bathroom: [''],
-      bedroom: [''],
-      linkMap: [''],
-      photo: [null],
+      category: ['', Validators.required],
+      postId: ['', Validators.required],
+      date: ['', Validators.required],
+      userId: ['', Validators.required],
+      title: ['', Validators.required],
+      location: ['', Validators.required],
+      price: ['', Validators.required],
+      width: ['', Validators.required],
+      length: ['', Validators.required],
+      floor: ['', Validators.required],
+      phoneNumber: ['', Validators.required],
+      description: ['', Validators.required],
+      bathroom: ['', Validators.required],
+      bedroom: ['', Validators.required],
+      linkMap: ['', Validators.required],
+      photo: [null, Validators.required],
     });
   }
 
