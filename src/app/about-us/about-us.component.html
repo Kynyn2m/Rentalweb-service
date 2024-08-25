@@ -1,0 +1,126 @@
+<div class="about-us-container" fxLayout="column" fxLayoutAlign="center stretch">
+  <mat-card class="hero-section">
+    <img mat-card-image src="/assets/img/phnompenfooter.jpg" alt="Hero Image" class="hero-image">
+    <mat-card-content>
+      <h1 class="hero-title">About Us</h1>
+      <p class="hero-description">Welcome to Rental web service, your trusted partner in finding the perfect property
+        for rent or sale.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <section class="mission-vision-section" fxLayout="row wrap" fxLayoutGap="32px" fxLayoutAlign="center stretch">
+    <mat-card class="section-card" fxFlex="100%" fxFlex.gt-sm="45%">
+      <mat-card-header>
+        <mat-card-title>Our Mission</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/mission.jpg" alt="Mission Image" class="section-image">
+      <mat-card-content>
+        <p>To provide the most comprehensive and user-friendly platform for renting and selling properties, connecting
+          buyers, sellers, and renters with ease.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section-card" fxFlex="100%" fxFlex.gt-sm="45%">
+      <mat-card-header>
+        <mat-card-title>Our Vision</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/vision.jpg" alt="Vision Image" class="section-image">
+      <mat-card-content>
+        <p>To be the leading real estate platform, offering innovative solutions that simplify the property search
+          process for everyone.</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="history-section" fxLayout="column" fxLayoutAlign="center stretch">
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Our History</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/history.jpg" alt="History Image" class="section-image">
+      <mat-card-content>
+        <p>Founded in [Year], [Your Company Name] has grown from a small startup into a trusted name in the real estate
+          industry.</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="team-section" fxLayout="column" fxLayoutAlign="center stretch">
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Meet Our Team</mat-card-title>
+      </mat-card-header>
+      <mat-grid-list cols="1" rowHeight="2:1" fxHide fxShow.gt-sm="false">
+        <mat-grid-tile *ngFor="let member of teamMembers">
+          <img [src]="member.photoUrl" alt="{{ member.name }}" class="team-member-image">
+          <mat-grid-tile-footer>
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.position }}</p>
+          </mat-grid-tile-footer>
+        </mat-grid-tile>
+      </mat-grid-list>
+
+      <mat-grid-list cols="3" rowHeight="2:1" fxHide.lt-md="true">
+        <mat-grid-tile *ngFor="let member of teamMembers">
+          <img [src]="member.photoUrl" alt="{{ member.name }}" class="team-member-image">
+          <mat-grid-tile-footer>
+            <h3>{{ member.name }}</h3>
+            <p>{{ member.position }}</p>
+          </mat-grid-tile-footer>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-card>
+  </section>
+
+  <section class="services-section" fxLayout="row wrap" fxLayoutGap="32px" fxLayoutAlign="center stretch">
+    <mat-card class="section-card" fxFlex="100%" fxFlex.gt-sm="30%">
+      <mat-card-header>
+        <mat-card-title>Property Listings</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/service1.jpg" alt="Service Image">
+      <mat-card-content>
+        <p>Browse a wide range of properties for sale and rent, with detailed descriptions, high-quality images, and
+          virtual tours.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section-card" fxFlex="100%" fxFlex.gt-sm="30%">
+      <mat-card-header>
+        <mat-card-title>Consulting Services</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/service2.jpg" alt="Service Image">
+      <mat-card-content>
+        <p>Our experts provide personalized consulting services to help you make informed decisions in the real estate
+          market.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="section-card" fxFlex="100%" fxFlex.gt-sm="30%">
+      <mat-card-header>
+        <mat-card-title>Property Management</mat-card-title>
+      </mat-card-header>
+      <img mat-card-image src="assets/images/service3.jpg" alt="Service Image">
+      <mat-card-content>
+        <p>We offer comprehensive property management services, ensuring your investments are well-maintained and
+          profitable.</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="contact-section" fxLayout="column" fxLayoutAlign="center stretch">
+    <mat-card class="section-card">
+      <mat-card-header>
+        <mat-card-title>Get In Touch</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>We would love to hear from you! Whether you’re looking to buy, sell, or rent, our team is here to assist you
+          every step of the way.</p>
+        <p>Email: contact@yourcompany.com | Phone: +123-456-7890</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary">Contact Us</button>
+      </mat-card-actions>
+    </mat-card>
+  </section>
+</div>
+<app-footer></app-footer>
