@@ -1,0 +1,62 @@
+.details-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.details-card {
+  position: relative;
+}
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+img[mat-card-image] {
+  width: 100%;
+  height: auto;
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 18px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.prev-button {
+  left: 10px;
+}
+
+.next-button {
+  right: 10px;
+}
+
+.related-posts {
+  margin-top: 40px;
+}
+
+.related-post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.related-post-card img {
+  height: 140px;
+  object-fit: cover;
+}
+
+mat-card {
+  margin-bottom: 20px;
+}
+
+button[mat-icon-button] {
+  margin-bottom: 20px;
+}

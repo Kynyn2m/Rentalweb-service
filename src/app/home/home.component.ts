@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +20,7 @@ export class HomeComponent {
   // Rooms data
   rooms = [
     {
+      id: 1,
       title: 'Room 1',
       location: 'Location 1',
       contact: '1234567890',
@@ -27,7 +29,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Room 1',
+      id: 2,
+      title: 'Room 2',
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
@@ -35,7 +38,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Room 1',
+      id: 3,
+      title: 'Room 3',
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
@@ -43,7 +47,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Room 1',
+      id: 4,
+      title: 'Room 4',
       location: 'Location 1',
       contact: '1234567890',
       price: '$100',
@@ -53,9 +58,9 @@ export class HomeComponent {
     // Additional rooms can be added here...
   ];
 
-  // Houses data
   houses = [
     {
+      id: 1,
       title: 'House 1',
       location: 'Location 1',
       contact: '1234567890',
@@ -64,7 +69,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'House 1',
+      id: 2,
+      title: 'House 2',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
@@ -72,7 +78,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'House 1',
+      id: 3,
+      title: 'House 3',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
@@ -80,7 +87,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'House 1',
+      id: 4,
+      title: 'House 4',
       location: 'Location 1',
       contact: '1234567890',
       price: '$500',
@@ -90,9 +98,9 @@ export class HomeComponent {
     // Additional houses can be added here...
   ];
 
-  // Lands data
   lands = [
     {
+      id: 1,
       title: 'Land 1',
       location: 'Location 1',
       contact: '1234567890',
@@ -101,7 +109,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Land 1',
+      id: 2,
+      title: 'Land 2',
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
@@ -109,7 +118,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Land 1',
+      id: 3,
+      title: 'Land 3',
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
@@ -117,7 +127,8 @@ export class HomeComponent {
       currentImageIndex: 0,
     },
     {
-      title: 'Land 1',
+      id: 4,
+      title: 'Land 4',
       location: 'Location 1',
       contact: '1234567890',
       price: '$300',
@@ -127,7 +138,10 @@ export class HomeComponent {
     // Additional lands can be added here...
   ];
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private router: Router
+  ) {
     this.initializeGridCols();
   }
 
@@ -180,5 +194,8 @@ export class HomeComponent {
           }
         }
       });
+  }
+  goToDetails(type: string): void {
+    this.router.navigate(['/details'], { queryParams: { type } });
   }
 }

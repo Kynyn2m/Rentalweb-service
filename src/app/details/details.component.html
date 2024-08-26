@@ -1,0 +1,32 @@
+<div class="details-container" *ngIf="property">
+  <button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <mat-card class="details-card">
+    <div class="image-container">
+      <img mat-card-image [src]="property.images[property.currentImageIndex]" alt="{{ property.title }}">
+      <button class="nav-button prev-button" (click)="prevImage()">&#10094;</button>
+      <button class="nav-button next-button" (click)="nextImage()">&#10095;</button>
+    </div>
+    <mat-card-content>
+      <h2>{{ property.title }}</h2>
+      <p><strong>Location:</strong> {{ property.location }}</p>
+      <p><strong>Contact:</strong> {{ property.contact }}</p>
+      <p><strong>Price:</strong> {{ property.price }}</p>
+      <p><strong>Description:</strong> {{ property.description }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="related-posts">
+    <h3>Related Posts</h3>
+    <div class="related-post-grid">
+      <mat-card *ngFor="let post of property.relatedPosts" class="related-post-card">
+        <img mat-card-image [src]="post.image" alt="{{ post.title }}">
+        <mat-card-content>
+          <h4>{{ post.title }}</h4>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
