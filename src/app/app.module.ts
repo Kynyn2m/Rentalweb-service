@@ -77,6 +77,7 @@ import { AddPostComponent } from './add-post/add-post.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { DetailsComponent } from './details/details.component';
+import { AdsComponent } from './ads/ads.component';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -113,6 +114,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AddPostComponent,
     AboutUsComponent,
     DetailsComponent,
+    AdsComponent,
   ],
   imports: [
     BrowserModule,
