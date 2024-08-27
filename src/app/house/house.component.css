@@ -19,7 +19,8 @@
   border-radius: 5px;
 }
 
-.prev-banner-button, .next-banner-button {
+.prev-banner-button,
+.next-banner-button {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
@@ -39,7 +40,8 @@
   right: 10px;
 }
 
-.prev-banner-button:hover, .next-banner-button:hover {
+.prev-banner-button:hover,
+.next-banner-button:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -80,7 +82,8 @@ mat-card {
   border-top-right-radius: 10px;
 }
 
-.prev-image-button, .next-image-button {
+.prev-image-button,
+.next-image-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -100,7 +103,8 @@ mat-card {
   right: 10px;
 }
 
-.prev-image-button:hover, .next-image-button:hover {
+.prev-image-button:hover,
+.next-image-button:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -239,14 +243,11 @@ mat-card-content p {
   }
 }
 .result-header {
-  background-color: #f96507 ; /* Green background color */
+  background-color: #f96507; /* Green background color */
   border-radius: 8px 8px 0 0; /* Rounded corners at the top */
   text-align: center;
   color: white; /* White text color */
 }
-
-
-
 
 .search-field {
   flex: 1 1 30%;
@@ -295,4 +296,8 @@ mat-card-content p {
   .search-field {
     width: 100%;
   }
+}
+img {
+  height: 220px;
+  object-fit: cover;
 }
