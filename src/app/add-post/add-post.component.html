@@ -3,36 +3,21 @@
     <h2 class="form-title">Add New Post</h2>
   </div>
   <form [formGroup]="addPostForm" (ngSubmit)="onSubmit()" class="add-post-form" fxLayout="column" fxLayoutGap="16px">
-
     <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
       <mat-label>Category</mat-label>
-      <mat-select formControlName="category">
+      <mat-select formControlName="category" (selectionChange)="onCategoryChange($event.value)">
         <mat-option *ngFor="let category of categories" [value]="category.value">
           {{ category.viewValue }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-
     <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Post ID</mat-label>
-        <input matInput formControlName="postId" />
-      </mat-form-field>
-
       <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
         <mat-label>Date</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="date" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
-    </div>
-
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>User ID</mat-label>
-        <input matInput formControlName="userId" />
-      </mat-form-field>
-
       <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" />
@@ -44,51 +29,42 @@
       <input matInput formControlName="location" />
     </mat-form-field>
 
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
-        <mat-label>Price</mat-label>
-        <input matInput formControlName="price" />
-      </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="100%">
+      <mat-label>Price</mat-label>
+      <input matInput formControlName="price" />
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
+
+    <div *ngIf="isLandCategory" fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%">
+        <mat-label>Land Size</mat-label>
+        <input matInput formControlName="landSize" placeholder="Enter land size in square meters" />
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="isHouseOrRoomCategory" fxLayout="row wrap" fxLayoutGap="16px">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
         <mat-label>Width</mat-label>
         <input matInput formControlName="width" />
       </mat-form-field>
-
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="30%">
+      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
         <mat-label>Length</mat-label>
         <input matInput formControlName="length" />
       </mat-form-field>
-    </div>
-
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+      <mat-form-field appearance="outline" fxFlex="100%">
         <mat-label>Floor</mat-label>
         <input matInput formControlName="floor" />
       </mat-form-field>
-
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Phone Number</mat-label>
-        <input matInput formControlName="phoneNumber" />
-      </mat-form-field>
     </div>
+    <mat-form-field appearance="outline" fxFlex="100%">
+      <mat-label>Phone Number</mat-label>
+      <input matInput formControlName="phoneNumber" />
+    </mat-form-field>
 
     <mat-form-field appearance="outline" fxFlex="100%">
       <mat-label>Description</mat-label>
       <textarea matInput formControlName="description"></textarea>
     </mat-form-field>
-
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Bathroom</mat-label>
-        <input matInput formControlName="bathroom" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Bedroom</mat-label>
-        <input matInput formControlName="bedroom" />
-      </mat-form-field>
-    </div>
 
     <mat-form-field appearance="outline" fxFlex="100%">
       <mat-label>Link Map</mat-label>

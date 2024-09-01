@@ -8,6 +8,7 @@
   overflow: hidden;
 }
 
+
 .form-title {
   text-align: center;
   font-size: 24px;
@@ -44,6 +45,14 @@
   width: 100%;
   margin-bottom: 30px;
 }
-.mat-success{
-margin-bottom: 20px;
+
+.mat-success {
+  margin-bottom: 20px;
+}
+
+.invisible {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
 }
