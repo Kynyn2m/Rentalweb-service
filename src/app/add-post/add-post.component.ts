@@ -9,9 +9,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class AddPostComponent implements OnInit {
   addPostForm!: FormGroup;
   categories = [
-    { value: 'Room', viewValue: 'room' },
-    { value: 'House', viewValue: 'house' },
-    { value: 'Land', viewValue: 'land' },
+    { value: 'Room', viewValue: 'Room' },
+    { value: 'House', viewValue: 'House' },
+    { value: 'Land', viewValue: 'Land' },
   ];
 
   isLandCategory: boolean = false;
