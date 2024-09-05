@@ -14,6 +14,8 @@ import { ThemeComponent } from './components/theme/theme.component';
 import { AddPostComponent } from './add-post/add-post.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { DetailsComponent } from './details/details.component';
+import { RoleComponent } from './setting/role/role.component';
+import { UserComponent } from './setting/user/user.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -23,6 +25,8 @@ const routes: Routes = [
 
   { path: 'profile', component: ProfileComponent },
   { path: 'contact', component: ContactComponent },
+  { path: 'role', component: RoleComponent },
+  { path: 'user', component: UserComponent },
 
   { path: 'home', component: HomeComponent },
   { path: 'house', component: HouseComponent },
