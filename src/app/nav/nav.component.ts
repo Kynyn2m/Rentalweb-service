@@ -41,6 +41,9 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       tooltip: 'Contact',
     },
     { router: '/about-us', icon: 'info', title: 'About', tooltip: 'About' },
+    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User' },
+    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role' },
+
     {
       router: '/add-post',
       icon: 'post_add',
