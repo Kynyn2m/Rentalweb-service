@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { UserAddComponent } from './user-add/user-add.component';
@@ -15,157 +15,57 @@ import { environment } from 'src/environments/environment';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { USER } from './data.test';
-
+ 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css', '../../styles/styled.table.css']
 })
-export class UserComponent implements OnInit {
-  dataTest = USER;
-  @ViewChild(MatPaginator, { read: true }) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<USER_TYPE>;
+export class UserComponent  {
 
+  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
 
-  displayedColumns: string[] = ['id', 'fullname', 'gender', 'updateby', 'updateat', 'email', 'other'];
-  size = environment.pageSize;
-  page = environment.currentPage;
-  error: any;
-  searchText: string = '';
-  searchUpdate = new Subject<string>();
-  currentPage = 0;
-  rowClicked = -1;
-  pageSizeOptions: number[] = environment.pageSizeOptions;
-  dataSource = new MatTableDataSource<USER_TYPE>();
-  pagingModel?: PaggingModel;
-  template: Template = new Template()
-  _filter: FilterTemplate = new FilterTemplate()
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
 
-
-  constructor(
-    private dialog: MatDialog,
-    private userService: UserService,
-    private navComponent: NavComponent,
-    private confirmService: ConfirmService,
-    private changeDetectorRef: ChangeDetectorRef,
-    private readonly translocoService: TranslocoService,
-    private authenticationService: AuthenticationService) {
-
-  }
-
-  ngOnInit(): void {
-    this.getAll();
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
   }
 
 
-  OnNewDialog() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '600px';
-    dialogConfig.data = new USER_TYPE();
+  readonly dialog = inject(MatDialog);
 
-    this.dialog
-      .open(UserAddComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((result) => {
-        this.getAll();
-      });
-  };
-
-  OnEditDialog(user: USER_TYPE): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '750px';
-    dialogConfig.data = user;
-
-    this.dialog
-      .open(UserAddComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((result) => {
-        this.getAll();
-      });
-  };
-
-  getAll() {
-    this.navComponent._loading = true;
-    this.userService.gets(this.page, this.size, this.searchText, this._filter).subscribe((res) => {
-      const pagingModel = (res as ResponseModel).data;
-      this.pagingModel = pagingModel;
-      this.dataSource.data = (pagingModel as PaggingModel).result;
-      this.changeDetectorRef.detectChanges();
-      this.navComponent._loading = false;
-    },
-      (error) => {
-        this.error = error;
-        this.navComponent._loading = false;
-      });
-  }
-
-  assignRole(user: any): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '600px';
-    dialogConfig.data = user;
-    const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
-      }
-    });
-  }
-
-  editForm(user: USER_TYPE): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '750px';
-    dialogConfig.data = user;
-
-    const dialogRef = this.dialog.open(UserAddComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
-        console.log('Dialog result:', result);
-
-      }
-    });
-  }
-
-  deleteConfirm(user: USER_TYPE) {
-    const options = {
-      title: `${this.translocoService.translate('delete')} ${this.translocoService.translate('user')}`,
-      message: `${this.translocoService.translate(
-        'delete-confirmation'
-      )} ${user.fullName}?`,
-      cancelText: this.translocoService.translate('cancel'),
-      confirmText: this.translocoService.translate('yes'),
-    };
-
-    this.confirmService.open(options);
-
-    this.confirmService.confirmed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.userService.delete(user.id).subscribe(
-          (data) => {
-            this.getAll();
-          }
-        );
-      }
-    });
-  }
-  pageChanged(event: PageEvent) {
-    this.size = event.pageSize;
-    this.page = event.pageIndex;
-    this.getAll();
-  }
-
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-
-  checkAuth(roleName: string): boolean {
-    return this.authenticationService.existAuthorization(roleName);
+  openDialog() {
+    this.dialog.open(UserAddComponent );
   }
 }
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
+/** Builds and returns a new User. */
+const ELEMENT_DATA: PeriodicElement[] = [
+  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
+  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
+  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
+  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
+  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
+  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
+  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
+  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
+  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
+  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+  {position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na'},
+  {position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg'},
+  {position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al'},
+  {position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si'},
+  {position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P'},
+  {position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S'},
+  {position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl'},
+  {position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar'},
+  {position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K'},
+  {position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca'},
+];
