@@ -64,8 +64,7 @@
         </a>
       </div>
 
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-        <div class="header-munu">
+        <div class="header-munu" [matMenuTriggerFor]="menu">
           <img class="user-photo2 raised pd-1"
                src="../../assets/icon images/computer.png"
                alt="profile" />
@@ -78,7 +77,7 @@
               </span>
           </div> -->
       </div>
-      </button>
+      
       <mat-menu #menu="matMenu">
         <button mat-menu-item [routerLink]="'/profile'">
             <mat-icon>person</mat-icon>

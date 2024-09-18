@@ -210,8 +210,7 @@ menu-items .active mat-icon {
   width: 45px;
   height: 45px;
   align-items: center;
-  margin-top: -0.5rem;
-  margin-left: -1rem;
+  margin-left: -0.5rem;
 }
 .selected-menu-item {
   background-color: #ff7043;
