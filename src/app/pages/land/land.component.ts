@@ -32,8 +32,8 @@ export class LandComponent {
       price: '$500',
       images: ['../../../assets/land/L1.jpg', '../../../assets/land/L2.jpg'],
       currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
+      LandSize: 3,
+      SolidLayout: 2,
       floor: 1,
     },
     {
@@ -44,7 +44,7 @@ export class LandComponent {
       images: ['../../../assets/land/L2.jpg', '../../../assets/land/L1.jpg'],
       currentImageIndex: 0,
       bedland: 3,
-      bathland: 2,
+      LandSize: 2,
       floor: 1,
     },
     {
