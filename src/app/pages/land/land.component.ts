@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, VERSION } from '@angular/core';
+import { Route, Router } from '@angular/router';
 import * as AOS from 'aos';
 
 @Component({
@@ -587,7 +588,7 @@ export class LandComponent {
   currentPage = 0;
   itemsPerPage = 20; // 4 columns * 5 rows = 20 land per page
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
     this.initializeGridCols();
   }
 
@@ -690,5 +691,8 @@ export class LandComponent {
           }
         }
       });
+  }
+  goToDetails(type: string): void {
+    this.router.navigate(['/details'], { queryParams: { type } });
   }
 }

@@ -29,6 +29,7 @@ import { MatSidenav } from '@angular/material/sidenav';
   styleUrls: ['./nav.component.css'],
 })
 export class NavComponent implements AfterViewChecked, AfterViewInit {
+
   menuItems = [
     { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home' },
     { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room' },
@@ -51,6 +52,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       tooltip: 'Add Post',
     },
   ];
+  selectedItem: any = null;
   currentRouter?: string;
   fullRouter?: string;
   @Output() messageEvent = new EventEmitter<boolean>();
@@ -166,5 +168,8 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       outlet.activatedRouteData &&
       outlet.activatedRouteData['animation']
     );
+  }
+  selectItem(item: any) {
+    this.selectedItem = item;
   }
 }

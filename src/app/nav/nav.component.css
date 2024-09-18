@@ -206,3 +206,14 @@ mat-sidenav-content {
 menu-items .active mat-icon {
   background-color: #15A0BF;
 }
+.user-photo2 {
+  width: 45px;
+  height: 45px;
+  align-items: center;
+  margin-top: -0.5rem;
+  margin-left: -1rem;
+}
+.selected-menu-item {
+  background-color: #ff7043;
+   /* Change 'yourColor' to the desired color */
+}

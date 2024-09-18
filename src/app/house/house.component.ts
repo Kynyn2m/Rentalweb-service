@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 // @ts-ignore
 import * as AOS from 'aos';
 
@@ -581,7 +582,7 @@ export class HouseComponent implements OnInit {
   currentPage = 0;
   itemsPerPage = 20; // 4 columns * 5 rows = 20 houses per page
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
     this.initializeGridCols();
   }
 
@@ -684,5 +685,9 @@ export class HouseComponent implements OnInit {
           }
         }
       });
+  }
+
+  goToDetails(type: string): void {
+    this.router.navigate(['/details'], { queryParams: { type } });
   }
 }

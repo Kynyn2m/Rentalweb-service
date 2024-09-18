@@ -63,6 +63,9 @@
           <p>Bathrooms: {{ house.bathroom }}</p>
           <p>Floor: {{ house.floor }}</p>
         </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="success" (click)="goToDetails('house')">More</button>
+        </mat-card-actions>
       </mat-card>
     </div>
 
