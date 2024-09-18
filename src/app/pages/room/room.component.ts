@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import * as AOS from 'aos';
 
 @Component({
@@ -580,7 +581,7 @@ export class RoomComponent {
   currentPage = 0;
   itemsPerPage = 20; // 4 columns * 5 rows = 20 room per page
 
-  constructor(private breakpointObserver: BreakpointObserver) {
+  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
     this.initializeGridCols();
   }
 
@@ -683,5 +684,9 @@ export class RoomComponent {
           }
         }
       });
+  }
+
+  goToDetails(type: string): void {
+    this.router.navigate(['/details'], { queryParams: { type } });
   }
 }

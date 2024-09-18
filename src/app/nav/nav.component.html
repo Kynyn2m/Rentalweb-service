@@ -57,19 +57,38 @@
       <!-- Menu Items (Hidden on Small Screens) -->
       <div class="menu-items" *ngIf="!(isMediumScreen$ | async)">
         <a mat-button *ngFor="let item of menuItems" [routerLink]="item.router" routerLinkActive="active"
-          [matTooltip]="item.tooltip">
+          [matTooltip]="item.tooltip" (click)="selectItem(item)"
+          [class.selected-menu-item]="selectedItem === item">
           <mat-icon>{{ item.icon }}</mat-icon>
           <span>{{ item.title }}</span>
         </a>
       </div>
 
-
-      <a routerLink="/profile" routerLinkActive="active" mat-icon-button aria-label="Profile">
-        <mat-icon>person</mat-icon>
-      </a>
-      <a (click)="logout()" mat-icon-button aria-label="Logout">
-        <mat-icon>exit_to_app</mat-icon>
-      </a>
+        <div class="header-munu" [matMenuTriggerFor]="menu">
+          <img class="user-photo2 raised pd-1"
+               src="../../assets/icon images/computer.png"
+               alt="profile" />
+          <!-- <div class="d-flex-name">
+              <span>
+                  <p>{{ profile.familyName }}</p>
+              </span>
+              <span>
+                  <p>{{ profile.email }}</p>
+              </span>
+          </div> -->
+      </div>
+      
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [routerLink]="'/profile'">
+            <mat-icon>person</mat-icon>
+          <span>Profile</span>    
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span> Logout</span>
+        </button>
+      </mat-menu>
     </mat-toolbar>
 
     <div class="container-fluid bg-color">
