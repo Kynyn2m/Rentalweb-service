@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { SettingComponent } from './setting/setting.component';
 import { RoleComponent } from './setting/role/role.component';
@@ -78,6 +77,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { DetailsComponent } from './details/details.component';
 import { AdsComponent } from './ads/ads.component';
+import { DashboardComponent } from './dashboard/dashboard.component'; // Import Dashboard Component
+
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -115,6 +116,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AboutUsComponent,
     DetailsComponent,
     AdsComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

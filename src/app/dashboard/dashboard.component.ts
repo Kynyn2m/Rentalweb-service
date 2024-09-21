@@ -1,36 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
-  // Fake data for dashboard statistics
-  totalUsers = 128;
-  totalProperties = 76;
-  newMessages = 15;
-  totalBookings = 45;
+export class DashboardComponent {
+  totalUsers = 500;
+  totalProperties = 120;
+  newMessages = 10;
+  totalBookings = 85;
 
-  // Fake recent activities data
   recentActivities = [
-    { activity: 'New user registered: John Doe', timestamp: '2023-09-21 12:45' },
-    { activity: 'New property listed: Ocean View Apartment', timestamp: '2023-09-20 15:30' },
-    { activity: 'Booking confirmed for: Luxury Villa', timestamp: '2023-09-20 10:15' },
-    { activity: 'Message received from: Jane Smith', timestamp: '2023-09-19 17:25' },
-    { activity: 'Property removed: City Center Apartment', timestamp: '2023-09-18 14:50' },
+    { activity: 'User John booked a property', timestamp: '2024-09-21 10:00' },
+    { activity: 'Property Listing Updated', timestamp: '2024-09-20 16:30' }
   ];
 
-  // Fake properties data
   properties = [
-    { name: 'Ocean View Apartment', location: 'Miami Beach', price: 1200, status: 'Available' },
-    { name: 'Luxury Villa', location: 'Los Angeles', price: 2500, status: 'Booked' },
-    { name: 'City Center Apartment', location: 'New York', price: 1800, status: 'Available' },
+    { name: 'Villa Sunset', location: 'California', price: 2000, status: 'Available' },
+    { name: 'City Apartment', location: 'New York', price: 1500, status: 'Booked' }
   ];
 
-  constructor() { }
-
-  ngOnInit(): void {
-    // Initialization logic if needed
-  }
+  displayedColumns: string[] = ['name', 'location', 'price', 'status'];
 }
