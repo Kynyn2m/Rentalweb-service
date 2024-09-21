@@ -16,25 +16,30 @@ import { AboutUsComponent } from './about-us/about-us.component';
 import { DetailsComponent } from './details/details.component';
 import { RoleComponent } from './setting/role/role.component';
 import { UserComponent } from './setting/user/user.component';
+import { AuthGuard } from './authentication/auth.guard';
+import { UserAuthGuard } from './authentication/user-auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
-  { path: 'forget-password', component: ForgetPasswordComponent },
+  { path: 'forget-password', component: ForgetPasswordComponent, },
   { path: 'confirm-password', component: ConfirmPasswordComponent },
   { path: 'login', component: AuthenticationComponent },
   { path: 'reginster', component: ReginsterComponent },
 
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+
   { path: 'profile', component: ProfileComponent },
   { path: 'contact', component: ContactComponent },
-  { path: 'role', component: RoleComponent },
-  { path: 'user', component: UserComponent },
+  { path: 'role', component: RoleComponent ,canActivate:[AuthGuard] },
+  { path: 'user', component: UserComponent ,canActivate:[AuthGuard]},
 
-  { path: 'home', component: HomeComponent },
-  { path: 'house', component: HouseComponent },
-  { path: 'room', component: RoomComponent },
-  { path: 'land', component: LandComponent },
-  { path: 'add-post', component: AddPostComponent },
-  { path: 'about-us', component: AboutUsComponent },
-  { path: 'details', component: DetailsComponent },
+  { path: 'home', component: HomeComponent ,canActivate:[UserAuthGuard]},
+  { path: 'house', component: HouseComponent ,canActivate:[UserAuthGuard]},
+  { path: 'room', component: RoomComponent,canActivate:[UserAuthGuard] },
+  { path: 'land', component: LandComponent,canActivate:[UserAuthGuard] },
+  { path: 'add-post', component: AddPostComponent,canActivate:[UserAuthGuard] },
+  { path: 'about-us', component: AboutUsComponent,canActivate:[UserAuthGuard] },
+  { path: 'details', component: DetailsComponent ,canActivate:[UserAuthGuard]},
 
   { path: 'theme', component: ThemeComponent },
 

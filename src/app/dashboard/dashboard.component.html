@@ -1,0 +1,57 @@
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Rental Web Service - Admin Dashboard</h1>
+
+  <!-- Statistics Section -->
+  <div class="dashboard-statistics">
+    <div class="stat-card">
+      <h3>Total Users</h3>
+      <p>{{ totalUsers }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Properties</h3>
+      <p>{{ totalProperties }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>New Messages</h3>
+      <p>{{ newMessages }}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Bookings</h3>
+      <p>{{ totalBookings }}</p>
+    </div>
+  </div>
+
+  <!-- Recent Activities Section -->
+  <div class="dashboard-section">
+    <h2>Recent Activities</h2>
+    <ul class="activities-list">
+      <li *ngFor="let activity of recentActivities">
+        <span>{{ activity.activity }}</span>
+        <span class="timestamp">{{ activity.timestamp }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Property Listings Section -->
+  <div class="dashboard-section">
+    <h2>Properties Overview</h2>
+    <table class="properties-table">
+      <thead>
+        <tr>
+          <th>Property Name</th>
+          <th>Location</th>
+          <th>Price ($)</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let property of properties">
+          <td>{{ property.name }}</td>
+          <td>{{ property.location }}</td>
+          <td>{{ property.price }}</td>
+          <td>{{ property.status }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

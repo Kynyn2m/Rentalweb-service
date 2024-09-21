@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,9 +10,6 @@ import { ResponseModel } from '../_helpers/response-model';
   providedIn: 'root',
 })
 export class AuthenticationService {
-  getToken() {
-    throw new Error('Method not implemented.');
-  }
   private currentUserSubject: BehaviorSubject<Token | null>;
   public currentUser: Observable<Token | null>;
 
@@ -28,12 +25,18 @@ export class AuthenticationService {
   }
 
   public existAuthorization(roleName: string): boolean {
-    // console.log('roleName:::', roleName);
-    return RoleListData.exist(roleName);
+    // Ensure that currentUserValue is not null before checking the role
+    return !!this.currentUserValue && RoleListData.exist(roleName);
   }
 
-  public getUserId(): number {
-    return this.currentUserValue!.id;
+
+  public isAdmin(): boolean {
+    // Check if the current user has an admin role
+    return this.existAuthorization('admin');
+  }
+
+  public getUserId(): number | null {
+    return this.currentUserValue ? this.currentUserValue.id : null;
   }
 
   login(username: string, password: string) {
@@ -45,7 +48,7 @@ export class AuthenticationService {
       .pipe(
         map((responseModel: ResponseModel) => {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
-          // localStorage.setItem('currentUser', JSON.stringify(responseModel.data));
+          localStorage.setItem('currentUser', JSON.stringify(responseModel.data));
 
           this.currentUserSubject.next(responseModel.data as Token);
           return responseModel;

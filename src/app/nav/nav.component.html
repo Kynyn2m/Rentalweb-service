@@ -1,20 +1,28 @@
 <mat-sidenav-container>
   <!-- Sidenav for Small Screens -->
-  <mat-sidenav #sidenav mode="over" class="left-sidebar" (backdropClick)="sidenav.close()">
+  <mat-sidenav #sidenav
+               mode="over"
+               class="left-sidebar"
+               (backdropClick)="sidenav.close()">
     <div class="close-btn">
-      <button mat-icon-button (click)="sidenav.close()">
+      <button mat-icon-button
+              (click)="sidenav.close()">
         <mat-icon style="color: red;">close</mat-icon>
       </button>
     </div>
 
     <!-- Logo for small screens -->
     <div style="text-align: center; margin: 20px 0;">
-      <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 150px; height: auto;" />
+      <img src="/assets/img/ren_logo-2.png"
+           alt="Logo"
+           style="width: 150px; height: auto;" />
     </div>
 
     <mat-nav-list>
-      <mat-list-item *ngFor="let item of menuItems" routerLinkActive="active">
-        <a [routerLink]="item.router" matTooltip="{{item.tooltip}}">
+      <mat-list-item *ngFor="let item of menuItems"
+                     routerLinkActive="active">
+        <a [routerLink]="item.router"
+           matTooltip="{{item.tooltip}}">
           <mat-icon>{{ item.icon }}</mat-icon>
           <span>{{ item.title }}</span>
         </a>
@@ -23,16 +31,20 @@
 
 
     <div class="social-icons">
-      <a href="https://facebook.com" target="_blank">
+      <a href="https://facebook.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://twitter.com" target="_blank">
+      <a href="https://twitter.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://linkedin.com" target="_blank">
+      <a href="https://linkedin.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://plus.google.com" target="_blank">
+      <a href="https://plus.google.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
     </div>
@@ -42,33 +54,54 @@
   <!-- Main Content -->
   <mat-sidenav-content class="sidenav-content">
     <mat-toolbar>
-      <button mat-icon-button (click)="sidenav.toggle()" *ngIf="isMediumScreen$ | async">
+      <button mat-icon-button
+              (click)="sidenav.toggle()"
+              *ngIf="isMediumScreen$ | async">
         <mat-icon>menu</mat-icon>
       </button>
 
       <!-- Logo for large screens -->
       <div style="background-color: white; padding: 5px; border-radius: 5px; ">
-        <img src="/assets/img/ren_logo-2.png" alt="Logo" style="width: 50px; height: auto;" />
+        <img src="/assets/img/ren_logo-2.png"
+             alt="Logo"
+             style="width: 50px; height: auto;" />
       </div>
 
       <h1 class="title">RENTAL WEB SERVICE</h1>
       <div class="spacer"></div>
 
       <!-- Menu Items (Hidden on Small Screens) -->
-      <div class="menu-items" *ngIf="!(isMediumScreen$ | async)">
-        <a mat-button *ngFor="let item of menuItems" [routerLink]="item.router" routerLinkActive="active"
-          [matTooltip]="item.tooltip" (click)="selectItem(item)"
-          [class.selected-menu-item]="selectedItem === item">
-          <mat-icon>{{ item.icon }}</mat-icon>
-          <span>{{ item.title }}</span>
-        </a>
+      <div class="menu-items"
+           *ngIf="!(isMediumScreen$ | async)">
+        <!-- Loop through the menu items -->
+        <ng-container *ngFor="let item of menuItems">
+          <!-- Show items based on the user's role and item visibility settings -->
+          <ng-container *ngIf="(!item.adminOnly || isAdmin) && (!item.hideForAdmin || !isAdmin)">
+            <a mat-button
+               [routerLink]="item.router"
+               routerLinkActive="active"
+               [matTooltip]="item.tooltip"
+               (click)="selectItem(item)"
+               [class.selected-menu-item]="selectedItem === item">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <span>{{ item.title }}</span>
+            </a>
+          </ng-container>
+        </ng-container>
       </div>
 
-        <div class="header-munu" [matMenuTriggerFor]="menu">
-          <img class="user-photo2 raised pd-1"
-               src="../../assets/icon images/computer.png"
-               alt="profile" />
-          <!-- <div class="d-flex-name">
+
+
+
+
+
+
+      <div class="header-munu"
+           [matMenuTriggerFor]="menu">
+        <img class="user-photo2 raised pd-1"
+             src="../../assets/icon images/computer.png"
+             alt="profile" />
+        <!-- <div class="d-flex-name">
               <span>
                   <p>{{ profile.familyName }}</p>
               </span>
@@ -77,14 +110,16 @@
               </span>
           </div> -->
       </div>
-      
+
       <mat-menu #menu="matMenu">
-        <button mat-menu-item [routerLink]="'/profile'">
-            <mat-icon>person</mat-icon>
-          <span>Profile</span>    
+        <button mat-menu-item
+                [routerLink]="'/profile'">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item (click)="logout()">
+        <button mat-menu-item
+                (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
           <span> Logout</span>
         </button>
@@ -92,8 +127,11 @@
     </mat-toolbar>
 
     <div class="container-fluid bg-color">
-      <mat-progress-bar color="success" [class.is__loading]="!_loading" mode="indeterminate"></mat-progress-bar>
-      <div [ngClass]="animationClass" class="content__flex">
+      <mat-progress-bar color="success"
+                        [class.is__loading]="!_loading"
+                        mode="indeterminate"></mat-progress-bar>
+      <div [ngClass]="animationClass"
+           class="content__flex">
         <router-outlet #outlet="outlet"></router-outlet>
       </div>
     </div>
