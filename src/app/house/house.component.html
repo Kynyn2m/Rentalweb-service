@@ -5,40 +5,59 @@
     <h2>Complete Your Result</h2>
   </div>
   <form class="search-fields">
-    <mat-form-field appearance="outline" class="search-field">
+    <mat-form-field appearance="outline"
+                    class="search-field">
       <mat-label>Location</mat-label>
-      <input matInput placeholder="Enter location">
+      <input matInput
+             placeholder="Enter location">
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="search-field">
+    <mat-form-field appearance="outline"
+                    class="search-field">
       <mat-label>Bedroom</mat-label>
-      <input matInput type="number" placeholder="Enter number of bedrooms">
+      <input matInput
+             type="number"
+             placeholder="Enter number of bedrooms">
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="search-field">
+    <mat-form-field appearance="outline"
+                    class="search-field">
       <mat-label>Bathroom</mat-label>
-      <input matInput type="number" placeholder="Enter number of bathrooms">
+      <input matInput
+             type="number"
+             placeholder="Enter number of bathrooms">
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="search-field">
+    <mat-form-field appearance="outline"
+                    class="search-field">
       <mat-label>Floor</mat-label>
-      <input matInput type="number" placeholder="Enter floor">
+      <input matInput
+             type="number"
+             placeholder="Enter floor">
     </mat-form-field>
 
     <div class="search-field price-field">
-      <mat-form-field appearance="outline" class="price-range">
+      <mat-form-field appearance="outline"
+                      class="price-range">
         <mat-label>Price From</mat-label>
-        <input matInput type="number" placeholder="From">
+        <input matInput
+               type="number"
+               placeholder="From">
       </mat-form-field>
       <span class="price-separator">-</span>
-      <mat-form-field appearance="outline" class="price-range">
+      <mat-form-field appearance="outline"
+                      class="price-range">
         <mat-label>Price To</mat-label>
-        <input matInput type="number" placeholder="To">
+        <input matInput
+               type="number"
+               placeholder="To">
       </mat-form-field>
     </div>
 
     <div class="search-button-container">
-      <button mat-raised-button color="success" class="search-button">Find</button>
+      <button mat-raised-button
+              color="success"
+              class="search-button">Find</button>
     </div>
   </form>
 </div>
@@ -47,12 +66,18 @@
   <section>
     <h2>Houses</h2>
     <div class="card-grid">
-      <mat-card *ngFor="let house of paginatedHouses" data-aos="fade-up" class="animate__animated animate__fadeIn">
+      <mat-card *ngFor="let house of paginatedHouses"
+                data-aos="fade-up"
+                class="animate__animated animate__fadeIn">
         <!-- Animate.css animation -->
         <div class="image-container">
-          <img mat-card-image [src]="house.images[house.currentImageIndex]" alt="{{ house.title }}">
-          <button class="prev-image-button" (click)="prevImage(house)">&#10094;</button>
-          <button class="next-image-button" (click)="nextImage(house)">&#10095;</button>
+          <img mat-card-image
+               [src]="house.images[house.currentImageIndex]"
+               alt="{{ house.title }}">
+          <button class="prev-image-button"
+                  (click)="prevImage(house)">&#10094;</button>
+          <button class="next-image-button"
+                  (click)="nextImage(house)">&#10095;</button>
         </div>
         <mat-card-content>
           <h3>{{ house.title }}</h3>
@@ -64,15 +89,21 @@
           <p>Floor: {{ house.floor }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="success" (click)="goToDetails('house')">More</button>
+          <button mat-raised-button
+                  color="success"
+                  (click)="goToDetails('house')">More</button>
         </mat-card-actions>
       </mat-card>
     </div>
 
 
     <!-- Pagination controls -->
-    <div class="pagination-buttons" style="text-align: center;">
-      <button mat-raised-button color="primary" (click)="prevPage()" [disabled]="currentPage === 0">
+    <div class="pagination-buttons"
+         style="text-align: center; margin-top: 50px;">
+      <button mat-raised-button
+              color="primary"
+              (click)="prevPage()"
+              [disabled]="currentPage === 0">
         Previous
       </button>
 
@@ -81,13 +112,18 @@
           <span>...</span>
         </ng-container>
         <ng-container *ngIf="page !== -1">
-          <button mat-button (click)="changePage(page)" [disabled]="page === currentPage">
+          <button mat-button
+                  (click)="changePage(page)"
+                  [disabled]="page === currentPage">
             {{ page + 1 }}
           </button>
         </ng-container>
       </ng-container>
 
-      <button mat-raised-button color="primary" (click)="nextPage()" [disabled]="currentPage === totalPages - 1">
+      <button mat-raised-button
+              color="primary"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages - 1">
         Next
       </button>
     </div>
