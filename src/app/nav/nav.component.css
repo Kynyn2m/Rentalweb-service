@@ -247,3 +247,20 @@ menu-items .active mat-icon {
   color: white;
   font-size: 18px;
 }
+/* Style for active menu item */
+.active-menu-item {
+  background-color: #f96507; /* Background color when the menu item is active */
+  color: white; /* Text color when active */
+  border-radius: 4px; /* Optional: Add some border radius for better appearance */
+}
+
+.active-menu-item a {
+  color: white !important; /* Ensure the text inside the link is white */
+  text-decoration: none; /* Remove underline */
+}
+
+/* Optional: Hover effect for menu items */
+.menu-items a:hover {
+  background-color: #f9a027; /* Hover background color */
+  color: white;
+}

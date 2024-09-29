@@ -7,6 +7,7 @@ import {
   ViewChild,
   AfterViewInit,
   ElementRef,
+  OnInit,
 } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -28,13 +29,14 @@ import { MatSidenav } from '@angular/material/sidenav';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })
-export class NavComponent implements AfterViewChecked, AfterViewInit {
+export class NavComponent implements AfterViewChecked, AfterViewInit ,OnInit{
 
   menuItems = [
     { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', adminOnly: false },
     { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', adminOnly: false },
     { router: '/house', icon: 'house', title: 'House', tooltip: 'House', adminOnly: false },
     { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', adminOnly: false },
+    { router: '/add-post', icon: 'add', title: 'Add Post', tooltip: 'Add Post', adminOnly: false },
     { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', adminOnly: false },
     { router: '/about-us', icon: 'info', title: 'About Us', tooltip: 'About Us', adminOnly: false },
 
@@ -76,7 +78,9 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     private transloco: TranslocoService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private changeDetectorRef: ChangeDetectorRef
+
   ) {
     this.initializeSettings();
     this.checkUserRole();
@@ -102,6 +106,19 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
         }, 0);
       }
     });
+  }
+  ngOnInit(): void {
+    // Subscribe to the currentUser observable to update the isAdmin flag when the user changes
+    this.authenticationService.currentUser.subscribe(user => {
+      if (user) {
+        this.isAdmin = user.id === 0;  // Update isAdmin based on the user's id
+        this.changeDetectorRef.detectChanges();  // Trigger change detection to update the view
+      } else {
+        this.isAdmin = false;  // Default to non-admin if no user is logged in
+      }
+    });
+
+    this.checkUserRole();  // Also run the role check on component initialization
   }
 
 

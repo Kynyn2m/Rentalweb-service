@@ -94,7 +94,7 @@
             <ng-container *ngIf="!item.adminOnly">
               <a mat-button
                  [routerLink]="item.router"
-                 routerLinkActive="active"
+                 routerLinkActive="active-menu-item"
                  [matTooltip]="item.tooltip">
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title }}</span>
@@ -109,7 +109,7 @@
             <ng-container *ngIf="item.adminOnly">
               <a mat-button
                  [routerLink]="item.router"
-                 routerLinkActive="active"
+                 routerLinkActive="active-menu-item"
                  [matTooltip]="item.tooltip">
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title }}</span>
