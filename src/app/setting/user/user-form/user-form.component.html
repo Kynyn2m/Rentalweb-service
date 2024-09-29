@@ -1,1 +1,74 @@
-<p>user-form works!</p>
+<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <div align="center">
+    <h2 mat-dialog-title *ngIf="!user.id">
+      {{ "add" | transloco }} {{ "user" | transloco }}
+    </h2>
+    <h2 mat-dialog-title *ngIf="user.id">
+      {{ "update" | transloco }} {{ "user" | transloco }}
+    </h2>
+  </div>
+  <mat-divider></mat-divider>
+  <mat-dialog-content class="user-add-content">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "firstName" | transloco }}</mat-label>
+      <input type="text" required matInput [(ngModel)]="user.firstName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "familyName" | transloco }}</mat-label>
+      <input type="text" required matInput [(ngModel)]="user.familyName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "username" | transloco }}</mat-label>
+      <input type="text" required matInput [(ngModel)]="user.username" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "gender" | transloco }}</mat-label>
+      <mat-select
+        type="gender"
+        name="gender"
+        required
+        [(ngModel)]="user.gender"
+      >
+        <mat-option value="male">{{ "male" | transloco }}</mat-option>
+        <mat-option value="female">{{ "female" | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "email" | transloco }}</mat-label>
+      <input
+        type="email"
+        name="email"
+        required
+        matInput
+        [(ngModel)]="user.email"
+      />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "password" | transloco }}</mat-label>
+      <input
+        type="password"
+        name="password"
+        required
+        matInput
+        [(ngModel)]="user.password"
+      />
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="success">
+      {{ "save" | transloco }}
+    </button>
+    <button mat-raised-button type="button" (click)="onCancel()" color="warn">
+      {{ "cancel" | transloco }}
+    </button>
+  </mat-dialog-actions>
+  <mat-progress-bar
+    [class.is__loading]="!loading"
+    mode="indeterminate"
+  ></mat-progress-bar>
+</form>
