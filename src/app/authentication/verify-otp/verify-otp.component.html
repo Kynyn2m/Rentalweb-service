@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>Verify OTP</h1>
+<div mat-dialog-content>
+  <form [formGroup]="otpForm"
+        (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline"
+                    style="width: 100%;">
+      <mat-label>Enter OTP</mat-label>
+      <input matInput
+             formControlName="otp" />
+
+      <mat-error *ngIf="error">{{ error }}</mat-error>
+    </mat-form-field>
+
+    <div *ngIf="loading"
+         style="text-align: center; margin-top: 10px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button
+          (click)="onCancel()"
+          color="warn">Cancel</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="otpForm.invalid || loading"
+          (click)="onSubmit()">
+    Verify
+  </button>
+</div>

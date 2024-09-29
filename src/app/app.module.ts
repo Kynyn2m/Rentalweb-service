@@ -77,7 +77,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { DetailsComponent } from './details/details.component';
 import { AdsComponent } from './ads/ads.component';
-import { DashboardComponent } from './dashboard/dashboard.component'; // Import Dashboard Component
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { VerifyOtpComponent } from './authentication/verify-otp/verify-otp.component'; // Import Dashboard Component
 
 // import { GoogleMapsModule } from '@angular/google-maps';
 
@@ -116,7 +117,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AboutUsComponent,
     DetailsComponent,
     AdsComponent,
-    DashboardComponent
+    DashboardComponent,
+    VerifyOtpComponent
   ],
   imports: [
     BrowserModule,

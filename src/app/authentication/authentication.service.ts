@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Token } from './token';  // Updated Token class
+import { User } from './models/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -50,6 +51,9 @@ export class AuthenticationService {
           return responseModel;
         })
       );
+  }
+  register(user: User): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/public/users`, user);
   }
 
   // Logout method to remove user data from local storage
