@@ -31,18 +31,19 @@ import { MatSidenav } from '@angular/material/sidenav';
 export class NavComponent implements AfterViewChecked, AfterViewInit {
 
   menuItems = [
-    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', },
-    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', },
-    { router: '/house', icon: 'house', title: 'House', tooltip: 'House', },
-    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', },
-    { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', },
-    { router: '/about-us', icon: 'info', title: 'About', tooltip: 'About', },
-    // The following will be visible only to admin users
+    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', adminOnly: false },
+    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', adminOnly: false },
+    { router: '/house', icon: 'house', title: 'House', tooltip: 'House', adminOnly: false },
+    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', adminOnly: false },
+    { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', adminOnly: false },
+    { router: '/about-us', icon: 'info', title: 'About Us', tooltip: 'About Us', adminOnly: false },
+
+    // Admin-only menu items
     { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', adminOnly: true },
     { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', adminOnly: true },
-    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', adminOnly: true },
-    { router: '/add-post', icon: 'post_add', title: 'Add Post', tooltip: 'Add Post', },
+    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', adminOnly: true }
   ];
+
   selectedItem: any = null;
   currentRouter?: string;
   fullRouter?: string;

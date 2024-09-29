@@ -18,16 +18,33 @@
            style="width: 150px; height: auto;" />
     </div>
 
-    <mat-nav-list *ngFor="let item of menuItems">
-      <mat-list-item *ngIf="!item.adminOnly || isAdmin"
-                     routerLinkActive="active">
-        <a [routerLink]="item.router"
-           matTooltip="{{item.tooltip}}">
-          <mat-icon>{{ item.icon }}</mat-icon>
-          <span>{{ item.title }}</span>
-        </a>
-      </mat-list-item>
+    <!-- Non-admin Menu Items (Hide for Admins) -->
+    <mat-nav-list *ngIf="!isAdmin">
+      <ng-container *ngFor="let item of menuItems">
+        <mat-list-item routerLinkActive="active"
+                       *ngIf="item.adminOnly === false || item.adminOnly === undefined">
+          <a [routerLink]="item.router"
+             matTooltip="{{item.tooltip}}">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.title }}</span>
+          </a>
+        </mat-list-item>
+      </ng-container>
     </mat-nav-list>
+
+    <mat-nav-list *ngIf="isAdmin">
+      <ng-container *ngFor="let item of menuItems">
+        <mat-list-item routerLinkActive="active"
+                       *ngIf="item.adminOnly === true">
+          <a [routerLink]="item.router"
+             matTooltip="{{item.tooltip}}">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.title }}</span>
+          </a>
+        </mat-list-item>
+      </ng-container>
+    </mat-nav-list>
+
 
     <div class="social-icons">
       <a href="https://facebook.com"
@@ -68,23 +85,40 @@
       <h1 class="title">RENTAL WEB SERVICE</h1>
       <div class="spacer"></div>
 
-      <!-- Show navigation menu if user is logged in, else show login button -->
+      <!-- Menu Items for Large Screens -->
       <div class="menu-items"
            *ngIf="!(isMediumScreen$ | async)">
-        <ng-container *ngFor="let item of menuItems">
-          <ng-container *ngIf="!item.adminOnly || isAdmin">
-            <a mat-button
-               [routerLink]="item.router"
-               routerLinkActive="active"
-               [matTooltip]="item.tooltip"
-               (click)="selectItem(item)"
-               [class.selected-menu-item]="selectedItem === item">
-              <mat-icon>{{ item.icon }}</mat-icon>
-              <span>{{ item.title }}</span>
-            </a>
+        <!-- Non-admin Menu Items (Hide for Admins) -->
+        <ng-container *ngIf="!isAdmin">
+          <ng-container *ngFor="let item of menuItems">
+            <ng-container *ngIf="!item.adminOnly">
+              <a mat-button
+                 [routerLink]="item.router"
+                 routerLinkActive="active"
+                 [matTooltip]="item.tooltip">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.title }}</span>
+              </a>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <!-- Admin-only Menu Items (Show for Admins Only) -->
+        <ng-container *ngIf="isAdmin">
+          <ng-container *ngFor="let item of menuItems">
+            <ng-container *ngIf="item.adminOnly">
+              <a mat-button
+                 [routerLink]="item.router"
+                 routerLinkActive="active"
+                 [matTooltip]="item.tooltip">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.title }}</span>
+              </a>
+            </ng-container>
           </ng-container>
         </ng-container>
       </div>
+
 
       <!-- User Profile Section (Shown only when logged in) -->
       <div *ngIf="isLoggedIn"
