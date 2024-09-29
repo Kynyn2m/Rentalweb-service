@@ -5,21 +5,24 @@ import { ResponseModel } from '../_helpers/response-model';
 import { Injectable } from '@angular/core';
 import { USER_TYPE } from '../setting/user/user';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getProfile(): Observable<ResponseModel> {
-    return this.http.get<ResponseModel>(`${environment.apiUrl}/users/v1/view-profile`);
+    return this.http.get<ResponseModel>(
+      `${environment.apiUrl}/users/v1/view-profile`
+    );
   }
 
   updateProfile(user: USER_TYPE): Observable<USER_TYPE> {
-    if (user.profilePic?.includes('http')) user.profilePic = undefined
-    return this.http.put<USER_TYPE>(`${environment.apiUrl}/users/v1/update-profile`, user);
+    if (user.profilePic?.includes('http')) user.profilePic = undefined;
+    return this.http.put<USER_TYPE>(
+      `${environment.apiUrl}/users/v1/update-profile`,
+      user
+    );
   }
 
   profileImage(id: string) {

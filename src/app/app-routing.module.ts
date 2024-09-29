@@ -27,9 +27,13 @@ const routes: Routes = [
   { path: 'reginster', component: ReginsterComponent },
 
   // Admin-only routes (protected by AuthGuard)
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'role', component: RoleComponent, canActivate: [AuthGuard] },
-  { path: 'user', component: UserComponent, canActivate: [AuthGuard] },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: 'role', component: RoleComponent },
+  { path: 'user', component: UserComponent },
 
   // Publicly accessible routes
   { path: 'home', component: HomeComponent },
@@ -41,13 +45,17 @@ const routes: Routes = [
   { path: 'theme', component: ThemeComponent },
 
   // Add post route (requires user to be logged in)
-  { path: 'add-post', component: AddPostComponent, canActivate: [UserAuthGuard] },
+  {
+    path: 'add-post',
+    component: AddPostComponent,
+    canActivate: [UserAuthGuard],
+  },
 
   // Default route
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   // Wildcard route
-  { path: '**', redirectTo: 'home' }
+  { path: '**', redirectTo: 'home' },
 ];
 
 const routerOptions: ExtraOptions = {

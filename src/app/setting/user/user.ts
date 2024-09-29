@@ -16,6 +16,15 @@ export class USER_TYPE {
   gender!: string;
   isView?: boolean;
   profilePic?: string | undefined;
+
+  firstName!: string;
+  familyName!: string;
+  status!: string;
+  enabled!: string;
+  createdAt!: string;
+  updatedAt!: string;
+  password!: string;
+  // creator!: Creator;
 }
 
 export class RoleAssigned {
@@ -25,16 +34,16 @@ export class RoleAssigned {
   }
 }
 export class FilterTemplate {
-  status!: string
-  categories!: string
+  status!: string;
+  categories!: string;
 }
 export class Template {
-  status!: CodeValue[]
-  categories!: CodeValue[]
-  genders!: CodeValue[]
+  status!: CodeValue[];
+  categories!: CodeValue[];
+  genders!: CodeValue[];
 }
 
 export class RecommentFilter {
-  category?: number
-  attenderCategory?: number
+  category?: number;
+  attenderCategory?: number;
 }
