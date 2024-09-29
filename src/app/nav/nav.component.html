@@ -19,8 +19,7 @@
     </div>
 
     <mat-nav-list *ngFor="let item of menuItems">
-      <mat-list-item *ngIf="(!item.adminOnly || isAdmin) && (!item.hideForAdmin || !isAdmin)"
-                     routerLinkActive="active">
+      <mat-list-item routerLinkActive="active">
         <a [routerLink]="item.router"
            matTooltip="{{item.tooltip}}">
           <mat-icon>{{ item.icon }}</mat-icon>
@@ -28,7 +27,6 @@
         </a>
       </mat-list-item>
     </mat-nav-list>
-
 
     <div class="social-icons">
       <a href="https://facebook.com"
@@ -50,7 +48,6 @@
     </div>
   </mat-sidenav>
 
-
   <!-- Main Content -->
   <mat-sidenav-content class="sidenav-content">
     <mat-toolbar>
@@ -61,7 +58,7 @@
       </button>
 
       <!-- Logo for large screens -->
-      <div style="background-color: white; padding: 5px; border-radius: 5px; ">
+      <div style="background-color: white; padding: 5px; border-radius: 5px;">
         <img src="/assets/img/ren_logo-2.png"
              alt="Logo"
              style="width: 50px; height: auto;" />
@@ -70,13 +67,11 @@
       <h1 class="title">RENTAL WEB SERVICE</h1>
       <div class="spacer"></div>
 
-      <!-- Menu Items (Hidden on Small Screens) -->
+      <!-- Show navigation menu if user is logged in, else show login button -->
       <div class="menu-items"
            *ngIf="!(isMediumScreen$ | async)">
-        <!-- Loop through the menu items -->
         <ng-container *ngFor="let item of menuItems">
-          <!-- Show items based on the user's role and item visibility settings -->
-          <ng-container *ngIf="(!item.adminOnly || isAdmin) && (!item.hideForAdmin || !isAdmin)">
+          <ng-container>
             <a mat-button
                [routerLink]="item.router"
                routerLinkActive="active"
@@ -90,27 +85,23 @@
         </ng-container>
       </div>
 
-
-
-
-
-
-
-      <div class="header-munu"
+      <!-- User Profile Section (Shown only when logged in) -->
+      <div *ngIf="isLoggedIn"
+           class="header-munu"
            [matMenuTriggerFor]="menu">
         <img class="user-photo2 raised pd-1"
              src="../../assets/icon images/computer.png"
              alt="profile" />
-        <!-- <div class="d-flex-name">
-              <span>
-                  <p>{{ profile.familyName }}</p>
-              </span>
-              <span>
-                  <p>{{ profile.email }}</p>
-              </span>
-          </div> -->
       </div>
 
+      <!-- Login/Sign-up Button (Shown only when not logged in) -->
+      <div *ngIf="!isLoggedIn">
+        <a mat-button
+           [routerLink]="'/login'"
+           class="login-button">Login / Sign up</a>
+      </div>
+
+      <!-- User Menu -->
       <mat-menu #menu="matMenu">
         <button mat-menu-item
                 [routerLink]="'/profile'">
@@ -121,7 +112,7 @@
         <button mat-menu-item
                 (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
-          <span> Logout</span>
+          <span>Logout</span>
         </button>
       </mat-menu>
     </mat-toolbar>

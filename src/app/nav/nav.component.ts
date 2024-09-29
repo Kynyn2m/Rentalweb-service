@@ -31,17 +31,17 @@ import { MatSidenav } from '@angular/material/sidenav';
 export class NavComponent implements AfterViewChecked, AfterViewInit {
 
   menuItems = [
-    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', hideForAdmin: true },
-    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', hideForAdmin: true },
-    { router: '/house', icon: 'house', title: 'House', tooltip: 'House', hideForAdmin: true },
-    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', hideForAdmin: true },
-    { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', hideForAdmin: true },
-    { router: '/about-us', icon: 'info', title: 'About', tooltip: 'About', hideForAdmin: true },
+    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', },
+    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', },
+    { router: '/house', icon: 'house', title: 'House', tooltip: 'House', },
+    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', },
+    { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', },
+    { router: '/about-us', icon: 'info', title: 'About', tooltip: 'About', },
     // The following will be visible only to admin users
-    { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', adminOnly: true },
-    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', adminOnly: true },
-    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', adminOnly: true },
-    { router: '/add-post', icon: 'post_add', title: 'Add Post', tooltip: 'Add Post', hideForAdmin: true },
+    { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', },
+    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', },
+    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', },
+    { router: '/add-post', icon: 'post_add', title: 'Add Post', tooltip: 'Add Post', },
   ];
   selectedItem: any = null;
   currentRouter?: string;
@@ -137,7 +137,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
       if (confirmed) {
         this.authenticationService.logout();
         this.messageEvent.emit(false);
-        this.router.navigate(['/login']);
+        // this.router.navigate(['/login']);
       }
     });
   }
@@ -169,5 +169,8 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   }
   selectItem(item: any) {
     this.selectedItem = item;
+  }
+  get isLoggedIn(): boolean {
+    return !!this.authenticationService.currentUserValue?.token;
   }
 }

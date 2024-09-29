@@ -11,7 +11,7 @@ import { NavService } from './nav/nav.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'Agricultural News';
+  title = 'Rental Web Service';
   public isAuth: boolean = false; // Initialize isAuth to false
 
   constructor(
@@ -32,5 +32,8 @@ export class AppComponent {
   // This will receive updates from the login component or other components
   receiveMessage($event: boolean) {
     this.isAuth = $event;
+  }
+  get isLoggedIn(): boolean {
+    return !!this.authenticationService.currentUserValue?.token;
   }
 }

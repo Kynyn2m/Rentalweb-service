@@ -21,30 +21,33 @@ import { UserAuthGuard } from './authentication/user-auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
-  { path: 'forget-password', component: ForgetPasswordComponent, },
+  { path: 'forget-password', component: ForgetPasswordComponent },
   { path: 'confirm-password', component: ConfirmPasswordComponent },
   { path: 'login', component: AuthenticationComponent },
   { path: 'reginster', component: ReginsterComponent },
 
+  // Admin-only routes (protected by AuthGuard)
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'role', component: RoleComponent, canActivate: [AuthGuard] },
+  { path: 'user', component: UserComponent, canActivate: [AuthGuard] },
 
-  { path: 'profile', component: ProfileComponent },
-  { path: 'contact', component: ContactComponent },
-  { path: 'role', component: RoleComponent ,canActivate:[AuthGuard] },
-  { path: 'user', component: UserComponent ,canActivate:[AuthGuard]},
-
-  { path: 'home', component: HomeComponent ,},
-  { path: 'house', component: HouseComponent ,},
-  { path: 'room', component: RoomComponent, },
-  { path: 'land', component: LandComponent, },
-  { path: 'add-post', component: AddPostComponent, },
-  { path: 'about-us', component: AboutUsComponent, },
-  { path: 'details', component: DetailsComponent ,},
-
+  // Publicly accessible routes
+  { path: 'home', component: HomeComponent },
+  { path: 'house', component: HouseComponent },
+  { path: 'room', component: RoomComponent },
+  { path: 'land', component: LandComponent },
+  { path: 'about-us', component: AboutUsComponent },
+  { path: 'details', component: DetailsComponent },
   { path: 'theme', component: ThemeComponent },
 
-  // Fallback route
-  { path: '**', redirectTo: 'home' },
+  // Add post route (requires user to be logged in)
+  { path: 'add-post', component: AddPostComponent, canActivate: [UserAuthGuard] },
+
+  // Default route
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+
+  // Wildcard route
+  { path: '**', redirectTo: 'home' }
 ];
 
 const routerOptions: ExtraOptions = {
