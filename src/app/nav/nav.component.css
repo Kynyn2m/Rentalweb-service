@@ -261,6 +261,6 @@ menu-items .active mat-icon {
 
 /* Optional: Hover effect for menu items */
 .menu-items a:hover {
-  background-color: #f9a027; /* Hover background color */
+  background-color: #f9640750; /* Hover background color */
   color: white;
 }

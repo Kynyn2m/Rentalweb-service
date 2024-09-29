@@ -20,7 +20,7 @@ import {
 import { AuthenticationService } from '../authentication/authentication.service';
 import { ConfirmService } from '../components/confirm/confirm.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { map, shareReplay } from 'rxjs/operators';
+import { map, shareReplay, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 
@@ -108,17 +108,13 @@ export class NavComponent implements AfterViewChecked, AfterViewInit ,OnInit{
     });
   }
   ngOnInit(): void {
-    // Subscribe to the currentUser observable to update the isAdmin flag when the user changes
-    this.authenticationService.currentUser.subscribe(user => {
-      if (user) {
-        this.isAdmin = user.id === 0;  // Update isAdmin based on the user's id
-        this.changeDetectorRef.detectChanges();  // Trigger change detection to update the view
-      } else {
-        this.isAdmin = false;  // Default to non-admin if no user is logged in
-      }
-    });
-
-    this.checkUserRole();  // Also run the role check on component initialization
+    this.authenticationService.currentUser
+      .pipe(
+        tap(user => {
+          this.isAdmin = user?.id === 0;  // Set isAdmin based on user.id
+        })
+      )
+      .subscribe();
   }
 
 

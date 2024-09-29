@@ -1,6 +1,7 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
 import { AuthenticationService } from './authentication/authentication.service';
 import { NavService } from './nav/nav.service';
+import { NavComponent } from './nav/nav.component';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,9 @@ import { NavService } from './nav/nav.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements  OnInit  {
+export class AppComponent implements OnInit  {
+  @ViewChild(NavComponent) navComponent!: NavComponent;
+
   title = 'Rental Web Service';
   public isAuth: boolean = false;
   isAdmin = false;
