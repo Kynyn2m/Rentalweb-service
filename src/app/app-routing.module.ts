@@ -33,13 +33,13 @@ const routes: Routes = [
   { path: 'role', component: RoleComponent ,canActivate:[AuthGuard] },
   { path: 'user', component: UserComponent ,canActivate:[AuthGuard]},
 
-  { path: 'home', component: HomeComponent ,canActivate:[UserAuthGuard]},
-  { path: 'house', component: HouseComponent ,canActivate:[UserAuthGuard]},
-  { path: 'room', component: RoomComponent,canActivate:[UserAuthGuard] },
-  { path: 'land', component: LandComponent,canActivate:[UserAuthGuard] },
-  { path: 'add-post', component: AddPostComponent,canActivate:[UserAuthGuard] },
-  { path: 'about-us', component: AboutUsComponent,canActivate:[UserAuthGuard] },
-  { path: 'details', component: DetailsComponent ,canActivate:[UserAuthGuard]},
+  { path: 'home', component: HomeComponent ,},
+  { path: 'house', component: HouseComponent ,},
+  { path: 'room', component: RoomComponent, },
+  { path: 'land', component: LandComponent, },
+  { path: 'add-post', component: AddPostComponent, },
+  { path: 'about-us', component: AboutUsComponent, },
+  { path: 'details', component: DetailsComponent ,},
 
   { path: 'theme', component: ThemeComponent },
 

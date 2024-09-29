@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   roleAdmin: 'ADMIN',
-  apiUrl: 'http://localhost:8181/att/api',
+  apiUrl: 'http://localhost:8080',
   pageSize: 10,
   sizeZero: 0,
   currentPage: 0,

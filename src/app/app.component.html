@@ -1,2 +1,3 @@
-<app-nav *ngIf="isAuth" (messageEvent)="receiveMessage($event)"></app-nav>
+<app-nav *ngIf="isAuth"
+         (messageEvent)="receiveMessage($event)"></app-nav>
 <router-outlet *ngIf="!isAuth"></router-outlet>

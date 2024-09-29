@@ -1,75 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication/authentication.service';
-import {
-  Router,
-  NavigationEnd,
-  NavigationStart,
-  RouterOutlet,
-} from '@angular/router';
+import { NavService } from './nav/nav.service';
 
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  title = 'rental-web-service';
-  isAuth: boolean = true;
-  animationClass = 'animate__animated animate__fadeIn';
+export class AppComponent {
+  title = 'Agricultural News';
+  public isAuth: boolean = false; // Initialize isAuth to false
 
   constructor(
     private authenticationService: AuthenticationService,
-    private router: Router
+    private readonly navService: NavService,
   ) {
-    this.checkAuthentication();
-  }
-
-  ngOnInit() {
-    this.handleRouteAnimations();
-    // this.restoreLastRoute();
-  }
-
-  private checkAuthentication() {
-    const token = localStorage.getItem('currentUser');
-    if (!token) {
-      this.isAuth = false;
-      this.router.navigate(['/login']);
-    } else {
-      this.isAuth = true;
-    }
-    console.log(token, 'User token retrieved');
-  }
-
-  private handleRouteAnimations() {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.animationClass = 'animate__animated animate__fadeOut';
-      }
-      if (event instanceof NavigationEnd) {
-        setTimeout(() => {
-          this.animationClass = 'animate__animated animate__fadeIn';
-          // Store the last route in localStorage
-          // localStorage.setItem('lastRoute', event.urlAfterRedirects);
-        }, 0);
-      }
+    // Subscribe to authEmitter in navService to track authentication state
+    this.navService.authEmitter.subscribe((isEmitterAuth: boolean) => {
+      this.isAuth = isEmitterAuth;
     });
   }
 
-  // private restoreLastRoute() {
-  //   const lastRoute = localStorage.getItem('lastRoute');
-  //   if (lastRoute && lastRoute !== '/login') {
-  //     this.router.navigateByUrl(lastRoute);
-  //   }
-  // }
-
-  prepareRoute(outlet: RouterOutlet) {
-    return (
-      outlet &&
-      outlet.activatedRouteData &&
-      outlet.activatedRouteData['animation']
-    );
+  ngOnInit(): void {
+    // Set isAuth based on whether there is a valid token in the currentUser
+    this.isAuth = !!this.authenticationService.currentUserValue?.token;
   }
 
+  // This will receive updates from the login component or other components
   receiveMessage($event: boolean) {
     this.isAuth = $event;
   }

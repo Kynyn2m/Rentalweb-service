@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { RoleListData, Token } from './token';
-import { ResponseModel } from '../_helpers/response-model';
+import { Token } from './token';  // Updated Token class
 
 @Injectable({
   providedIn: 'root',
@@ -14,51 +13,58 @@ export class AuthenticationService {
   public currentUser: Observable<Token | null>;
 
   constructor(private http: HttpClient) {
+    // Retrieve the current user from localStorage if present
+    const savedUser = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<Token | null>(
-      JSON.parse(localStorage.getItem('currentUser') || '{}')
+      savedUser ? JSON.parse(savedUser) : null
     );
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
+  // Getter for current user value
   public get currentUserValue(): Token | null {
     return this.currentUserSubject.value;
   }
 
-  public existAuthorization(roleName: string): boolean {
-    // Ensure that currentUserValue is not null before checking the role
-    return !!this.currentUserValue && RoleListData.exist(roleName);
-  }
-
-
-  public isAdmin(): boolean {
-    // Check if the current user has an admin role
-    return this.existAuthorization('admin');
-  }
-
-  public getUserId(): number | null {
-    return this.currentUserValue ? this.currentUserValue.id : null;
-  }
-
-  login(username: string, password: string) {
+  // Login method
+  login(phoneNumber: string, password: string): Observable<any> {
     return this.http
-      .post<any>(`${environment.apiUrl}/users/v1/authenticate`, {
-        username,
-        password,
-      })
+      .post<any>(`${environment.apiUrl}/login`, { phoneNumber, password })
       .pipe(
-        map((responseModel: ResponseModel) => {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(responseModel.data));
+        map((responseModel) => {
+          // Ensure the response contains the necessary data
+          if (responseModel && responseModel.result) {
+            const user: Token = {
+              id: responseModel.result.id,
+              fullname: responseModel.result.fullname || '',  // Add fullname if available
+              token: responseModel.result.accessToken,  // Access token from API
+              roleList: responseModel.result.roleList || [],  // Role list from API
+              accessToken: responseModel.result.accessToken,  // Access token
+              refreshToken: responseModel.result.refreshToken,  // Refresh token
+            };
 
-          this.currentUserSubject.next(responseModel.data as Token);
+            // Store user details and token in local storage
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);  // Update the currentUserSubject
+          }
           return responseModel;
         })
       );
   }
 
-  logout() {
-    // remove user from local storage to log user out
+  // Logout method to remove user data from local storage
+  logout(): void {
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+  }
+
+  // Check if the current user has a specific role
+  public existAuthorization(roleName: string): boolean {
+    return this.currentUserValue?.roleList.some(role => role.name === roleName) ?? false;
+  }
+
+  // Get current user ID
+  public getUserId(): number | null {
+    return this.currentUserValue ? this.currentUserValue.id : null;
   }
 }

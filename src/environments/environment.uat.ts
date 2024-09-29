@@ -1,11 +1,7 @@
-// This file can be replaced during build by using the `fileReplacements` array.
-// `ng build` replaces `environment.ts` with `environment.prod.ts`.
-// The list of file replacements can be found in `angular.json`.
-
 export const environment = {
   production: false,
   roleAdmin: 'ADMIN',
-  apiUrl:'http://10.0.166.36:8080/att/api',
+  apiUrl: 'http://localhost:8080',
   pageSize: 10,
   sizeZero: 0,
   currentPage: 0,
@@ -14,13 +10,30 @@ export const environment = {
   durationInSeconds: 5,
   profileDuration: 10,
   intervalTime: 3500,
-  acceptType: "application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.slideshow, application/vnd.openxmlformats-officedocument.presentationml.presentation, .doc, .docx, text/plain, application/vnd.ms-powerpoint, application/msword, application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, image/png, image/gif, image/jpeg",
-  acceptExcel: ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel,",
-  viewAbleExtension: ['pdf', 'PDF', 'xlsx', 'XLSX', 'jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF', 'docx', 'DOCX'],
+  acceptType:
+    'application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.slideshow, application/vnd.openxmlformats-officedocument.presentationml.presentation, .doc, .docx, text/plain, application/vnd.ms-powerpoint, application/msword, application/pdf,.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, image/png, image/gif, image/jpeg',
+  acceptExcel:
+    '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel,',
+  viewAbleExtension: [
+    'pdf',
+    'PDF',
+    'xlsx',
+    'XLSX',
+    'jpg',
+    'JPG',
+    'jpeg',
+    'JPEG',
+    'png',
+    'PNG',
+    'gif',
+    'GIF',
+    'docx',
+    'DOCX',
+  ],
   imgExtension: ['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG', 'gif', 'GIF'],
   pdfExtension: ['pdf', 'PDF'],
   excelExtension: ['xlsx', 'XLSX'],
-  wordExtension: ['docx', 'DOCX']
+  wordExtension: ['docx', 'DOCX'],
 };
 
 /*
