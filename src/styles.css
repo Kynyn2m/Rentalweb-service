@@ -88,6 +88,7 @@ form.form {
   flex-direction: column;
   height: calc(100% - 4px - var(--fnts-hight) - 1rem);
   padding-top: 1rem;
+  background-color: #e1e0e0;
 }
 
 .content__flex__1 {

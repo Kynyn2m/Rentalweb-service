@@ -138,6 +138,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
         this.authenticationService.logout();
         this.messageEvent.emit(false);
         // this.router.navigate(['/login']);
+        window.location.reload(); // Reload the page after logout
       }
     });
   }

@@ -93,15 +93,14 @@
              src="../../assets/icon images/computer.png"
              alt="profile" />
       </div>
-
-      <!-- Login/Sign-up Button (Shown only when not logged in) -->
-      <div *ngIf="!isLoggedIn">
-        <a mat-button
-           [routerLink]="'/login'"
-           class="login-button">Login / Sign up</a>
+      <div class="auth-container"
+           *ngIf="!isLoggedIn">
+        <span [routerLink]="'/login'"
+              class="login-link">Login</span>
+        <span class="separator"> / </span>
+        <span [routerLink]="'/reginster'"
+              class="signup-link">Sign up</span>
       </div>
-
-      <!-- User Menu -->
       <mat-menu #menu="matMenu">
         <button mat-menu-item
                 [routerLink]="'/profile'">
@@ -118,9 +117,9 @@
     </mat-toolbar>
 
     <div class="container-fluid bg-color">
-      <mat-progress-bar color="success"
+      <!-- <mat-progress-bar color="success"
                         [class.is__loading]="!_loading"
-                        mode="indeterminate"></mat-progress-bar>
+                        mode="indeterminate"></mat-progress-bar> -->
       <div [ngClass]="animationClass"
            class="content__flex">
         <router-outlet #outlet="outlet"></router-outlet>

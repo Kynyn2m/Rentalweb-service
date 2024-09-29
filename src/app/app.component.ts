@@ -10,7 +10,7 @@ import { NavService } from './nav/nav.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
+export class AppComponent  {
   title = 'Rental Web Service';
   public isAuth: boolean = false; // Initialize isAuth to false
 
