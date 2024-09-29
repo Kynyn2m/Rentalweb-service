@@ -19,7 +19,8 @@
     </div>
 
     <mat-nav-list *ngFor="let item of menuItems">
-      <mat-list-item routerLinkActive="active">
+      <mat-list-item *ngIf="!item.adminOnly || isAdmin"
+                     routerLinkActive="active">
         <a [routerLink]="item.router"
            matTooltip="{{item.tooltip}}">
           <mat-icon>{{ item.icon }}</mat-icon>
@@ -71,7 +72,7 @@
       <div class="menu-items"
            *ngIf="!(isMediumScreen$ | async)">
         <ng-container *ngFor="let item of menuItems">
-          <ng-container>
+          <ng-container *ngIf="!item.adminOnly || isAdmin">
             <a mat-button
                [routerLink]="item.router"
                routerLinkActive="active"

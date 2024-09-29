@@ -38,9 +38,9 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', },
     { router: '/about-us', icon: 'info', title: 'About', tooltip: 'About', },
     // The following will be visible only to admin users
-    { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', },
-    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', },
-    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', },
+    { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', adminOnly: true },
+    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', adminOnly: true },
+    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', adminOnly: true },
     { router: '/add-post', icon: 'post_add', title: 'Add Post', tooltip: 'Add Post', },
   ];
   selectedItem: any = null;
@@ -51,6 +51,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
   @ViewChild('sidenavContent', { read: ElementRef })
   sidenavContent!: ElementRef;
   animationClass = 'animate__animated animate__fadeIn';
+
 
   isMediumScreen$: Observable<boolean> = this.breakpointObserver
     .observe(['(max-width: 1104px)'])
@@ -102,9 +103,11 @@ export class NavComponent implements AfterViewChecked, AfterViewInit {
     });
   }
 
+
   checkUserRole(): void {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    this.isAdmin = currentUser && currentUser.role === 'admin';  // Set isAdmin to true if the user is an admin
+    // Check if the user's ID is 0 (Admin)
+    this.isAdmin = currentUser && currentUser.id === 0;
   }
 
   private scrollToTop(): void {

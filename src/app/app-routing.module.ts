@@ -19,6 +19,7 @@ import { UserComponent } from './setting/user/user.component';
 import { AuthGuard } from './authentication/auth.guard';
 import { UserAuthGuard } from './authentication/user-auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdminGuard } from './authentication/admin.guard';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -30,10 +31,10 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AdminGuard],
   },
-  { path: 'role', component: RoleComponent },
-  { path: 'user', component: UserComponent },
+  { path: 'role', component: RoleComponent ,canActivate: [AdminGuard]},
+  { path: 'user', component: UserComponent,canActivate: [AdminGuard] },
 
   // Publicly accessible routes
   { path: 'home', component: HomeComponent },

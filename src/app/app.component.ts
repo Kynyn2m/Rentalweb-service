@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { AuthenticationService } from './authentication/authentication.service';
 import { NavService } from './nav/nav.service';
 
@@ -10,9 +10,10 @@ import { NavService } from './nav/nav.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent  {
+export class AppComponent implements  OnInit  {
   title = 'Rental Web Service';
-  public isAuth: boolean = false; // Initialize isAuth to false
+  public isAuth: boolean = false;
+  isAdmin = false;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -27,6 +28,12 @@ export class AppComponent  {
   ngOnInit(): void {
     // Set isAuth based on whether there is a valid token in the currentUser
     this.isAuth = !!this.authenticationService.currentUserValue?.token;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+    if (currentUser && currentUser.id !== undefined) {
+      // Check if the user's ID is 0 (Admin)
+      this.isAdmin = currentUser.id === 0;
+    }
   }
 
   // This will receive updates from the login component or other components
