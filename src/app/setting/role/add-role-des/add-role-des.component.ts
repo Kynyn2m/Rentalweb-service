@@ -12,64 +12,55 @@ import { ROLE_FORM } from './data.test';
   styleUrls: ['./add-role-des.component.css']
 })
 export class AddRoleDesComponent  {
-  // dataTest = ROLE_FORM;
-  // role: ROLE_TYPE = new ROLE_TYPE();
-  // error = '';
-  // loading = false;
+  roleForm: FormGroup;
+  isEditMode: boolean = false;
 
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<AddRoleDesComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ROLE_TYPE,
+    private roleService: RoleService
+  ) {
+    this.isEditMode = !!data?.id;
+    this.roleForm = this.fb.group({
+      name: [data.name || '', [Validators.required, Validators.minLength(3)]],
+      description: [data.description || '', [Validators.required]],
+    });
+  }
 
-  // constructor(
-  //   public dialogRef: MatDialogRef<AddRoleDesComponent>,
-  //   private roleService: RoleService,
-  //   @Inject(MAT_DIALOG_DATA) public data: ROLE_TYPE,
-  // ) {
-  //   this.dialogRef.updateSize('400px')
-  //   this.role = data;
-  // }
-  // ngOnInit(): void { }
+  save(): void {
+    if (this.roleForm.valid) {
+      const roleData: ROLE_TYPE = {
+        id: this.data?.id,
+        ...this.roleForm.value,
+      };
 
-  // exist(permission_name: string): boolean {
-  //   return PermissionData.exist(permission_name);
-  // }
+      if (this.isEditMode) {
 
+        this.roleService.updateRole(roleData).subscribe(
+          (res) => {
+            console.log('Role updated successfully', res);
+            this.dialogRef.close(roleData);
+          },
+          (error) => {
+            console.error('Error updating role:', error);
+          }
+        );
+      } else {
 
-
-  // onSubmit(f: NgForm) {
-  //   if (!f.valid) {
-  //     return;
-  //   }
-
-  //   this.loading = true;
-  //   if (this.role.id) {
-  //     this.roleService.put(this.role.id, this.role).subscribe(
-  //       (data) => {
-  //         this.dialogRef.close();
-  //       },
-  //       (error) => {
-  //         this.error = error;
-  //         this.loading = false;
-  //       }
-  //     );
-  //   } else {
-  //     this.roleService.post(this.role).subscribe(
-  //       (data) => {
-  //         this.dialogRef.close();
-  //       },
-  //       (error) => {
-  //         this.error = error;
-  //         this.loading = false;
-  //       }
-  //     );
-  //   }
-  // }
-
-
-  // close() {
-  //   this.dialogRef.close();
-  // }
-
-  // @HostListener('keydown.esc')
-  // public onEsc() {
-  //   this.close();
-  // }
+        this.roleService.createRole(roleData).subscribe(
+          (res) => {
+            console.log('Role created successfully', res);
+            this.dialogRef.close(roleData);
+          },
+          (error) => {
+            console.error('Error creating role:', error);
+          }
+        );
+      }
+    }
+  }
+  close(): void {
+    this.dialogRef.close();
+  }
 }

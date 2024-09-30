@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ResponseModel, PaggingModel } from 'src/app/_helpers/response-model';
+import { ROLE_TYPE } from './role';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +22,23 @@ export class RoleService {
       },
     });
   }
+  createRole(role: ROLE_TYPE): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/roles`, {
+      name: role.name,
+      description: role.description,
+    });
+  }
 
-  // Delete role by ID
-  delete(roleId: number): Observable<ResponseModel> {
-    return this.http.delete<ResponseModel>(`${environment.apiUrl}/roles/${roleId}`);
+
+  updateRole(role: ROLE_TYPE): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/roles/${role.id}`, {
+      name: role.name,
+      description: role.description,
+    });
+  }
+
+  // Method to delete role
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${environment.apiUrl}/roles/${id}`);
   }
 }

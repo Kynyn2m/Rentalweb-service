@@ -25,6 +25,7 @@ import { AddRoleDesComponent } from './add-role-des/add-role-des.component';
 import { NavComponent } from 'src/app/nav/nav.component';
 import { ROLE } from './data.test';
 import { Subject } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-role',
@@ -36,7 +37,7 @@ export class RoleComponent implements AfterViewInit, OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<ROLE_TYPE>;
 
-  displayedColumns: string[] = ['id', 'name', 'description', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'description', 'other'];
   dataSource = new MatTableDataSource<ROLE_TYPE>([]);
   isLoading = true;
   pagingModel?: PaggingModel;
@@ -56,7 +57,8 @@ export class RoleComponent implements AfterViewInit, OnInit {
     private confirmService: ConfirmService,
     private changeDetectorRef: ChangeDetectorRef,
     private translocoService: TranslocoService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -92,9 +94,6 @@ export class RoleComponent implements AfterViewInit, OnInit {
       }
     );
   }
-
-
-  // Open dialog for creating new role
   newDialog(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -106,21 +105,29 @@ export class RoleComponent implements AfterViewInit, OnInit {
       .afterClosed()
       .subscribe(() => this.getAll());
   }
-
-  // Open dialog for updating existing role
   updateDialog(role: ROLE_TYPE): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = role;
 
-    this.dialog
-      .open(AddRoleDesComponent, dialogConfig)
-      .afterClosed()
-      .subscribe(() => this.getAll());
+    this.dialog.open(AddRoleDesComponent, dialogConfig).afterClosed().subscribe((updatedRole: ROLE_TYPE) => {
+      if (updatedRole) {
+        this.roleService.updateRole(updatedRole).subscribe(
+          (res) => {
+            const message = res?.message || 'Role updated successfully';
+            this.snackBar.open(message, 'Close', { duration: 3000 });
+            this.getAll();  // Refresh the role list after update
+          },
+          (error) => {
+            this.snackBar.open('Error updating role', 'Close', { duration: 3000 });
+            console.error('Error:', error);
+          }
+        );
+      }
+    });
   }
 
-  // Confirm delete role
   deleteConfirm(role: ROLE_TYPE): void {
     const options = {
       title: `${this.translocoService.translate('delete')} ${this.translocoService.translate('role')}`,
@@ -132,10 +139,21 @@ export class RoleComponent implements AfterViewInit, OnInit {
     this.confirmService.open(options);
     this.confirmService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
-        this.roleService.delete(role.id).subscribe(() => this.getAll());
+        this.roleService.delete(role.id).subscribe(
+          (res) => {
+            const message = res?.message || 'Role deleted successfully';
+            this.snackBar.open(message, 'Close', { duration: 3000 });
+            this.getAll();
+          },
+          (error) => {
+            this.snackBar.open('Error deleting role', 'Close', { duration: 3000 });
+            console.error('Error:', error);
+          }
+        );
       }
     });
   }
+
 
   // Handle pagination change
   pageChanged(event: PageEvent): void {
