@@ -32,7 +32,7 @@ export class AuthenticationComponent implements OnInit {
   ngOnInit(): void {
     // Initialize the login form
     this.loginForm = this.formBuilder.group({
-      phoneNumber: ['', Validators.required],
+      username: ['', Validators.required],
       password: ['', Validators.required],
     });
 
@@ -56,7 +56,7 @@ export class AuthenticationComponent implements OnInit {
 
     // Call the login method from the authentication service
     this.authenticationService
-      .login(this.f.phoneNumber.value, this.f.password.value)
+      .login(this.f.username.value, this.f.password.value)
       .pipe(first())
       .subscribe(
         (data) => {

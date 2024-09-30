@@ -28,9 +28,9 @@ export class AuthenticationService {
   }
 
   // Login method
-  login(phoneNumber: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<any> {
     return this.http
-      .post<any>(`${environment.apiUrl}/login`, { phoneNumber, password })
+      .post<any>(`${environment.apiUrl}/login`, { username, password })
       .pipe(
         map((responseModel) => {
           // Ensure the response contains the necessary data
