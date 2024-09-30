@@ -20,6 +20,7 @@ import { AuthGuard } from './authentication/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminGuard } from './authentication/admin.guard';
 import { NonAdminGuard } from './authentication/non-admin.guard';
+import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -44,7 +45,8 @@ const routes: Routes = [
   { path: 'about-us', component: AboutUsComponent ,canActivate: [NonAdminGuard]},
   { path: 'details', component: DetailsComponent ,canActivate: [NonAdminGuard]},
   { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
-  {path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard]},
+  { path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard] },
+  {path: 'add-post/house', component: AddPostHouseComponent, },
 
   // Add post route (requires user to be logged in)
   {

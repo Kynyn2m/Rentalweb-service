@@ -1,0 +1,286 @@
+<!-- ========== Start Section ========== -->
+<div class="form-container"
+     fxLayout="column"
+     fxLayoutAlign="center center">
+  <div class="form-header">
+    <h2 class="form-title">Add New Post</h2>
+  </div>
+  <form [formGroup]="addPostForm"
+        (ngSubmit)="onSubmit()"
+        class="add-post-form"
+        fxLayout="column"
+        fxLayoutGap="16px">
+    <mat-form-field appearance="outline"
+                    fxFlex="100%"
+                    fxFlex.gt-sm="48%">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category"
+                  (selectionChange)="onCategoryChange($event.value)">
+        <mat-option *ngFor="let category of categories"
+                    [value]="category.value">
+          {{ category.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Date</mat-label>
+        <input matInput
+               [matDatepicker]="picker"
+               formControlName="date" />
+        <mat-datepicker-toggle matSuffix
+                               [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Title</mat-label>
+        <input matInput
+               formControlName="title" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline"
+                    fxFlex="100%">
+      <mat-label>Location</mat-label>
+      <input matInput
+             formControlName="location" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"
+                    fxFlex="100%">
+      <mat-label>Price</mat-label>
+      <input matInput
+             formControlName="price" />
+    </mat-form-field>
+
+
+    <div *ngIf="isLandCategory"
+         fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%">
+        <mat-label>Land Size</mat-label>
+        <input matInput
+               formControlName="landSize"
+               placeholder="Enter land size in square meters" />
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="isHouseOrRoomCategory"
+         fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Width</mat-label>
+        <input matInput
+               formControlName="width" />
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Length</mat-label>
+        <input matInput
+               formControlName="length" />
+      </mat-form-field>
+      <mat-form-field appearance="outline"
+                      fxFlex="100%">
+        <mat-label>Floor</mat-label>
+        <input matInput
+               formControlName="floor" />
+      </mat-form-field>
+    </div>
+    <mat-form-field appearance="outline"
+                    fxFlex="100%">
+      <mat-label>Phone Number</mat-label>
+      <input matInput
+             formControlName="phoneNumber" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"
+                    fxFlex="100%">
+      <mat-label>Description</mat-label>
+      <textarea matInput
+                formControlName="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"
+                    fxFlex="100%">
+      <mat-label>Link Map</mat-label>
+      <input matInput
+             formControlName="linkMap" />
+    </mat-form-field>
+
+    <div class="file-input-container"
+         fxFlex="100%">
+      <label for="file-upload"
+             class="file-upload-label">Photo</label>
+      <input id="file-upload"
+             type="file"
+             (change)="onFileSelected($event)"
+             class="file-input" />
+    </div>
+
+    <button mat-raised-button
+            class="mat-success"
+            type="submit">Submit</button>
+  </form>
+</div>
+
+<app-footer></app-footer>
+<!-- ========== End Section ========== -->
+css
+.form-container {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+
+.form-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 40px;
+  color: #ffffff;
+}
+
+.file-input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-upload-label {
+  font-family: Roboto, sans-serif;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+}
+
+.file-input {
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+  padding: 10px;
+  font-family: Roboto, sans-serif;
+  font-size: 16px;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.form-header {
+  background-color: #ff7043;
+  height: 110px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.mat-success {
+  margin-bottom: 20px;
+}
+
+.invisible {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+===========
+typescript=
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+@Component({
+  selector: 'app-add-post',
+  templateUrl: './add-post.component.html',
+  styleUrls: ['./add-post.component.css'],
+})
+export class AddPostComponent implements OnInit {
+  addPostForm!: FormGroup;
+  categories = [
+    { value: 'Room', viewValue: 'Room' },
+    { value: 'House', viewValue: 'House' },
+    { value: 'Land', viewValue: 'Land' },
+  ];
+
+  isLandCategory: boolean = false;
+  isHouseOrRoomCategory: boolean = false;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.addPostForm = this.fb.group({
+      category: ['', Validators.required],
+      date: ['', Validators.required],
+      title: ['', Validators.required],
+      location: ['', Validators.required],
+      price: ['', Validators.required],
+      landSize: [''],
+      width: [''],
+      length: [''],
+      floor: [''],
+      phoneNumber: ['', Validators.required],
+      description: [''],
+      linkMap: [''],
+      photo: [null],
+    });
+    this.onCategoryChange(this.addPostForm.get('category')?.value);
+  }
+
+  onCategoryChange(category: string): void {
+    this.isLandCategory = category === 'Land';
+    this.isHouseOrRoomCategory = category === 'House' || category === 'Room';
+    if (this.isLandCategory) {
+      this.addPostForm.get('landSize')?.setValidators([Validators.required]);
+      this.clearHouseOrRoomValidators();
+    } else if (this.isHouseOrRoomCategory) {
+      this.addPostForm.get('width')?.setValidators([Validators.required]);
+      this.addPostForm.get('length')?.setValidators([Validators.required]);
+      this.addPostForm.get('floor')?.setValidators([Validators.required]);
+      this.clearLandValidators();
+    }
+    this.addPostForm.updateValueAndValidity();
+  }
+
+  clearLandValidators(): void {
+    this.addPostForm.get('landSize')?.clearValidators();
+    this.addPostForm.get('landSize')?.updateValueAndValidity();
+  }
+
+  clearHouseOrRoomValidators(): void {
+    this.addPostForm.get('width')?.clearValidators();
+    this.addPostForm.get('length')?.clearValidators();
+    this.addPostForm.get('floor')?.clearValidators();
+    this.addPostForm.get('width')?.updateValueAndValidity();
+    this.addPostForm.get('length')?.updateValueAndValidity();
+    this.addPostForm.get('floor')?.updateValueAndValidity();
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload a valid image file.');
+        return;
+      }
+      this.addPostForm.patchValue({ photo: file });
+    }
+  }
+
+  onSubmit(): void {
+    if (this.addPostForm.valid) {
+      console.log(this.addPostForm.value);
+    } else {
+      this.addPostForm.markAllAsTouched();
+    }
+  }
+}
+

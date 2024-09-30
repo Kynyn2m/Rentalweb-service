@@ -1,83 +1,43 @@
-<div class="form-container" fxLayout="column" fxLayoutAlign="center center">
-  <div class="form-header">
-    <h2 class="form-title">Add New Post2</h2>
-  </div>
-  <form [formGroup]="addPostForm" (ngSubmit)="onSubmit()" class="add-post-form" fxLayout="column" fxLayoutGap="16px">
-    <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-      <mat-label>Category</mat-label>
-      <mat-select formControlName="category" (selectionChange)="onCategoryChange($event.value)">
-        <mat-option *ngFor="let category of categories" [value]="category.value">
-          {{ category.viewValue }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="date" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Title</mat-label>
-        <input matInput formControlName="title" />
-      </mat-form-field>
+<!-- Main Container for Home Page -->
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <h1>Welcome to Rental Post</h1>
+    <p>Choose an option below to add a new listing for a room, house, or land.</p>
+  </section>
+
+  <!-- Cards Section -->
+  <section class="cards-section">
+    <!-- Room Card -->
+    <div class="card-container"
+         [routerLink]="['/add-post', { category: 'Room' }]">
+      <div class="card-content">
+        <mat-icon class="card-icon">meeting_room</mat-icon>
+        <h3>Add Room</h3>
+        <p>List your available rooms for rent and connect with renters quickly.</p>
+      </div>
     </div>
 
-    <mat-form-field appearance="outline" fxFlex="100%">
-      <mat-label>Location</mat-label>
-      <input matInput formControlName="location" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fxFlex="100%">
-      <mat-label>Price</mat-label>
-      <input matInput formControlName="price" />
-    </mat-form-field>
-
-
-    <div *ngIf="isLandCategory" fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%">
-        <mat-label>Land Size</mat-label>
-        <input matInput formControlName="landSize" placeholder="Enter land size in square meters" />
-      </mat-form-field>
+    <!-- House Card -->
+    <div class="card-container"
+         (click)="navigateToPost('House')">
+      <div class="card-content">
+        <mat-icon class="card-icon">house</mat-icon>
+        <h3>Add House</h3>
+        <p>Have a house for rent? Add a listing now to attract potential renters.</p>
+      </div>
     </div>
 
-    <div *ngIf="isHouseOrRoomCategory" fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Width</mat-label>
-        <input matInput formControlName="width" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
-        <mat-label>Length</mat-label>
-        <input matInput formControlName="length" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" fxFlex="100%">
-        <mat-label>Floor</mat-label>
-        <input matInput formControlName="floor" />
-      </mat-form-field>
+
+    <!-- Land Card -->
+    <div class="card-container"
+         [routerLink]="['/add-post', { category: 'Land' }]">
+      <div class="card-content">
+        <mat-icon class="card-icon">terrain</mat-icon>
+        <h3>Add Land</h3>
+        <p>Post details about land available for lease or rent, and get connected.</p>
+      </div>
     </div>
-    <mat-form-field appearance="outline" fxFlex="100%">
-      <mat-label>Phone Number</mat-label>
-      <input matInput formControlName="phoneNumber" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fxFlex="100%">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description"></textarea>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" fxFlex="100%">
-      <mat-label>Link Map</mat-label>
-      <input matInput formControlName="linkMap" />
-    </mat-form-field>
-
-    <div class="file-input-container" fxFlex="100%">
-      <label for="file-upload" class="file-upload-label">Photo</label>
-      <input id="file-upload" type="file" (change)="onFileSelected($event)" class="file-input" />
-    </div>
-
-    <button mat-raised-button class="mat-success" type="submit">Submit</button>
-  </form>
+  </section>
 </div>
-
 <app-footer></app-footer>
