@@ -32,70 +32,71 @@ import { Subject } from 'rxjs';
   styleUrls: ['./role.component.css', '../../styles/styled.table.css']
 })
 export class RoleComponent implements AfterViewInit, OnInit {
-  dataTest = ROLE;
-  @ViewChild(MatPaginator, { read: true }) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<ROLE_TYPE>;
+
+  displayedColumns: string[] = ['id', 'name', 'description', 'actions'];
+  dataSource = new MatTableDataSource<ROLE_TYPE>([]);
+  isLoading = true;
   pagingModel?: PaggingModel;
-  searchText: string = '';
-  searchUpdate = new Subject<string>();
   currentPage = 0;
-  error = '';
-  rowClicked = -1;
-  displayedColumns = ['id', 'name', 'description', 'updateBy', 'updateAt', 'other'];
-  dataSource = new MatTableDataSource<ROLE_TYPE>();
-  page = environment.currentPage;
+  searchText = '';
+  searchUpdate = new Subject<string>();
   size = environment.pageSize;
   pageSizeOptions: number[] = environment.pageSizeOptions;
-  _filter: FilterTemplate = new FilterTemplate()
+  filter: FilterTemplate = new FilterTemplate();
+  error = '';
+
+  page = environment.currentPage;
 
   constructor(
     public dialog: MatDialog,
     private roleService: RoleService,
-    private navComponent: NavComponent,
     private confirmService: ConfirmService,
     private changeDetectorRef: ChangeDetectorRef,
-    private readonly translocoService: TranslocoService,
+    private translocoService: TranslocoService,
     private authenticationService: AuthenticationService
-  ) { }
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    // this.table.dataSource = this.dataSource;
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getAll();
   }
 
-  changeTableRowColor(idx: any) {
-    this.rowClicked = idx;
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
-  exist(permission_name: string): boolean {
-    return PermissionData.exist(permission_name);
-  }
-
+  // Fetch all roles with pagination and search
   getAll() {
-    this.navComponent._loading = true;
-    this.roleService.gets(this.page, this.size, this.searchText, this._filter).subscribe((res) => {
-      const pagingModel = (res as ResponseModel).data;
-      this.pagingModel = pagingModel;
-      console.log("resr:::", res);
-      console.log("ddddddddddd:::", pagingModel.result);
-
-      this.dataSource.data = (pagingModel as PaggingModel).result;
-      this.changeDetectorRef.detectChanges();
-      this.navComponent._loading = false;
-    },
+    this.isLoading = true;
+    this.roleService.gets(this.currentPage, this.size, this.searchText, this.filter).subscribe(
+      (res: ResponseModel) => {
+        if (res && res.result && res.result.result) {
+          const pagingModel = res.result;
+          this.pagingModel = pagingModel;
+          console.log("API Response:", res);
+          console.log("Roles:", pagingModel.result);
+          this.dataSource.data = pagingModel.result;
+        } else {
+          console.error('Unexpected API response structure:', res);
+        }
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      },
       (error) => {
-        this.error = error;
-      });
+        this.error = 'Error fetching roles';
+        console.error('Error:', error);
+        this.isLoading = false;
+      }
+    );
   }
 
-  newDailog() {
-    const dialogConfig = new MatDialogConfig();
 
+  // Open dialog for creating new role
+  newDialog(): void {
+    const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = new ROLE_TYPE();
@@ -103,14 +104,12 @@ export class RoleComponent implements AfterViewInit, OnInit {
     this.dialog
       .open(AddRoleDesComponent, dialogConfig)
       .afterClosed()
-      .subscribe((result) => {
-        this.getAll();
-      });
+      .subscribe(() => this.getAll());
   }
 
-  updateDailog(role: ROLE_TYPE) {
+  // Open dialog for updating existing role
+  updateDialog(role: ROLE_TYPE): void {
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = role;
@@ -118,58 +117,40 @@ export class RoleComponent implements AfterViewInit, OnInit {
     this.dialog
       .open(AddRoleDesComponent, dialogConfig)
       .afterClosed()
-      .subscribe((result) => {
-        this.getAll();
-      });
+      .subscribe(() => this.getAll());
   }
 
-  deleteConfirm(role: ROLE_TYPE) {
+  // Confirm delete role
+  deleteConfirm(role: ROLE_TYPE): void {
     const options = {
       title: `${this.translocoService.translate('delete')} ${this.translocoService.translate('role')}`,
-      message: `${this.translocoService.translate('delete-confirmation')} ${this.translocoService.translate('role')} ${role.name}?`,
+      message: `${this.translocoService.translate('delete-confirmation')} ${role.name}?`,
       cancelText: this.translocoService.translate('cancel'),
       confirmText: this.translocoService.translate('yes'),
     };
 
     this.confirmService.open(options);
-
     this.confirmService.confirmed().subscribe((confirmed) => {
       if (confirmed) {
-        this.roleService.delete(role.id).subscribe(
-          (data) => {
-            this.getAll();
-          },
-          (error) => { }
-        );
+        this.roleService.delete(role.id).subscribe(() => this.getAll());
       }
     });
   }
 
-  updatePermission(role: ROLE_TYPE) {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = role;
-
-    this.dialog
-      .open(PermissionComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((result) => {
-        this.getAll();
-      });
-  }
-  pageChanged(event: PageEvent) {
+  // Handle pagination change
+  pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
-    this.page = event.pageIndex;
+    this.currentPage = event.pageIndex;
     this.getAll();
   }
 
-  applyFilter(event: Event) {
+  // Apply table filter
+  applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
+  // Check if user has authorization
   checkAuth(roleName: string): boolean {
     return this.authenticationService.existAuthorization(roleName);
   }

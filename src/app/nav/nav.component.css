@@ -93,7 +93,7 @@ mat-list-item a mat-icon span {
 
 .container-fluid {
   /* padding: 1rem; */
-  background-color: var(--bg-color-primary);
+  background-color: #ebe8e8;
   height: calc(100vh - var(--nav-bar-height));
   overflow-y: auto;
 }

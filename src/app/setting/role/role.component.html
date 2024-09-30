@@ -1,80 +1,81 @@
 <section class="section">
   <mat-form-field class="btn-search">
-    <mat-label>{{ 'search' | transloco }}</mat-label>
-    <input [id]="dataTest.INP_SEARCH" [name]="dataTest.INP_SEARCH" type="text" matInput (keyup)="applyFilter($event)">
+    <mat-label>{{ "search" | transloco }}</mat-label>
+    <input type="text"
+           matInput
+           (keyup)="applyFilter($event)"
+           placeholder="Search roles" />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
+
   <div class="button-search">
-    <button [id]="dataTest.BTN_SEARCH" [name]="dataTest.BTN_SEARCH" mat-raised-button color="success">{{ 'search' |
-      transloco
-      }}</button>
-    <button [id]="dataTest.BTN_ADD" [name]="dataTest.BTN_ADD" button mat-raised-button color="secondary"
-      (click)="newDailog()" *ngIf="checkAuth('CREATE_GROUP')">{{'add'|transloco}}</button>
+    <button mat-raised-button
+            color="success"
+            (click)="getAll()">
+      {{ "search" | transloco }}
+    </button>
+    <button mat-raised-button
+            color="primary"
+            (click)="newDialog()">
+      {{ "add" | transloco }}
+    </button>
   </div>
 </section>
-
-<div class="mat-elevation-z0 table">
-  <table [dataSource]="dataSource" mat-table *ngIf="checkAuth('LIST_GROUP')">
-
+<div class="mat-elevation-z8">
+  <table mat-table
+         [dataSource]="dataSource"
+         class="mat-elevation-z8">
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> {{'#' | transloco}} </th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      <th mat-header-cell
+          *matHeaderCellDef>{{ "#" | transloco }}</th>
+      <td mat-cell
+          *matCellDef="let element">{{ element.id }}</td>
     </ng-container>
-
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>{{ 'name' | transloco }}</th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+      <th mat-header-cell
+          *matHeaderCellDef>{{ "name" | transloco }}</th>
+      <td mat-cell
+          *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
-
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>{{ 'description' | transloco }}</th>
-      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+      <th mat-header-cell
+          *matHeaderCellDef>{{ "description" | transloco }}</th>
+      <td mat-cell
+          *matCellDef="let element">{{ element.description }}</td>
     </ng-container>
-
-    <ng-container matColumnDef="updateBy">
-      <th mat-header-cell *matHeaderCellDef>{{ 'update-by' | transloco }}</th>
-      <td mat-cell *matCellDef="let element">{{ element.updateBy }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="updateAt">
-      <th mat-header-cell *matHeaderCellDef>{{ 'update-at' | transloco }}</th>
-      <td mat-cell *matCellDef="let element">{{ element.updateAt }}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="other">
-      <th mat-header-cell *matHeaderCellDef> {{ 'other' | transloco }} </th>
-      <td mat-cell *matCellDef="let element">
-        <a [id]="dataTest.BTN_MORE+element.name" mat-icon-button class="option" [matMenuTriggerFor]="menu"
-          aria-label="requested icon-button with a menu" *ngIf="checkAuth('UPDATE_USER')" #tooltip="matTooltip"
-          matTooltipPosition="below" [matTooltip]="'menu' | transloco">
-          <mat-icon>more_vert</mat-icon>
-        </a>
-        <mat-menu #menu="matMenu">
-          <button [id]="dataTest.BTN_DELETE+'-'+element.name" [name]="dataTest.BTN_DELETE" mat-menu-item
-            (click)="deleteConfirm(element)" *ngIf="checkAuth('DELETE_GROUP')" #tooltip="matTooltip"
-            matTooltipPosition="left" [matTooltip]="'delete' | transloco">
-            <mat-icon color="warn-color">delete</mat-icon>
-            <span>{{ 'delete' | transloco }}</span>
-          </button>
-          <button [id]="dataTest.BTN_UPDATE+'-'+element.name" [name]="dataTest.BTN_UPDATE" mat-menu-item
-            (click)="updateDailog(element)" *ngIf="checkAuth('UPDATE_GROUP')" #tooltip="matTooltip"
-            matTooltipPosition="left" [matTooltip]="'update' | transloco">
-            <mat-icon>edit</mat-icon>
-            <span>{{ 'update' | transloco }}</span>
-          </button>
-          <button [id]="dataTest.BTN_ASSIGN+'-'+element.name" [name]="dataTest.BTN_ASSIGN" mat-menu-item
-            (click)="updatePermission(element)" *ngIf="checkAuth('ASSIGN_ROLE_GROUP')" #tooltip="matTooltip"
-            matTooltipPosition="left" [matTooltip]="'assign-permission' | transloco">
-            <mat-icon>vpn_key</mat-icon>
-            <span>{{ 'assign-permission' | transloco }}</span>
-          </button>
-        </mat-menu>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell
+          *matHeaderCellDef>{{ "actions" | transloco }}</th>
+      <td mat-cell
+          *matCellDef="let element">
+        <!-- <button mat-icon-button
+                (click)="updateDialog(element)"
+                matTooltip="{{ 'edit' | transloco }}">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button
+                color="warn"
+                (click)="deleteConfirm(element)"
+                matTooltip="{{ 'delete' | transloco }}">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button
+                matTooltip="{{ 'permissions' | transloco }}">
+          <mat-icon>vpn_key</mat-icon>
+        </button> -->
       </td>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" style="background-color: #d9d9d9;"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-header-row
+        *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row
+        *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+  <mat-paginator #paginator
+                 [length]="pagingModel?.totalElements"
+                 [pageIndex]="page"
+                 [pageSize]="size"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="pageChanged($event)"
+                 aria-label="Select page">
+  </mat-paginator>
 </div>
-<mat-paginator #paginator [length]="pagingModel?.totalElements" [pageIndex]="page" [pageSize]="size"
-  [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" aria-label="Select page" class="paginator">
-</mat-paginator>

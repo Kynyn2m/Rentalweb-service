@@ -43,7 +43,8 @@ const routes: Routes = [
   { path: 'land', component: LandComponent,canActivate: [NonAdminGuard] },
   { path: 'about-us', component: AboutUsComponent ,canActivate: [NonAdminGuard]},
   { path: 'details', component: DetailsComponent ,canActivate: [NonAdminGuard]},
-  { path: 'theme', component: ThemeComponent,canActivate: [NonAdminGuard] },
+  { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
+  {path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard]},
 
   // Add post route (requires user to be logged in)
   {
