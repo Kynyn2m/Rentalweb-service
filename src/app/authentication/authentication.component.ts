@@ -60,8 +60,10 @@ export class AuthenticationComponent implements OnInit {
       .pipe(first())
       .subscribe(
         (data) => {
-          // On successful login, redirect to home
-          this.router.navigate([this.returnUrl]);
+          // On successful login, redirect to returnUrl or fallback to home
+          const redirectUrl = this.authenticationService.getRedirectUrl() || this.returnUrl;
+          this.authenticationService.clearRedirectUrl();  // Clear the redirect URL after use
+          this.router.navigate([redirectUrl]);  // Navigate to the redirect URL
           this.loading = false;
         },
         (error) => {

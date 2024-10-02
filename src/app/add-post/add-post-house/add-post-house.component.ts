@@ -17,7 +17,7 @@ export class AddPostHouseComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpClient // Ensure HttpClient is injected for API requests
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -35,7 +35,6 @@ export class AddPostHouseComponent implements OnInit {
     });
   }
 
-  // Handle multiple file selection and preview
   onFileSelected(event: any): void {
     const files: File[] = Array.from(event.target.files); // Convert FileList to Array
 

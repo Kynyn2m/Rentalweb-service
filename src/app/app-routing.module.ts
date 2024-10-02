@@ -46,7 +46,7 @@ const routes: Routes = [
   { path: 'details', component: DetailsComponent ,canActivate: [NonAdminGuard]},
   { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard] },
-  {path: 'add-post/house', component: AddPostHouseComponent, },
+  {path: 'add-post-house', component: AddPostHouseComponent,canActivate:[AuthGuard] },
 
   // Add post route (requires user to be logged in)
   {

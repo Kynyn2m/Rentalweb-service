@@ -12,6 +12,7 @@ import { User } from './models/user.interface';
 export class AuthenticationService {
   private currentUserSubject: BehaviorSubject<Token | null>;
   public currentUser: Observable<Token | null>;
+  private redirectUrl: string | null = null;
 
   constructor(private http: HttpClient) {
     // Retrieve the current user from localStorage if present
@@ -26,6 +27,23 @@ export class AuthenticationService {
   public get currentUserValue(): Token | null {
     return this.currentUserSubject.value;
   }
+  isLoggedIn(): boolean {
+    return !!this.currentUserValue?.token;
+  }
+    // Set the URL to redirect after login
+    setRedirectUrl(url: string): void {
+      this.redirectUrl = url;
+    }
+
+    // Get the URL to redirect after login
+    getRedirectUrl(): string | null {
+      return this.redirectUrl;
+    }
+
+    // Clear the stored redirect URL after navigating
+    clearRedirectUrl(): void {
+      this.redirectUrl = null;
+    }
 
   // Login method
   login(username: string, password: string): Observable<any> {
@@ -55,6 +73,7 @@ export class AuthenticationService {
   register(user: User): Observable<any> {
     return this.http.post(`${environment.apiUrl}/public/users`, user);
   }
+
 
   // Logout method to remove user data from local storage
   logout(): void {
