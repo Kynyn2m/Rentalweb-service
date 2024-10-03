@@ -1,8 +1,9 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// @ts-ignore
+import { HouseService } from 'src/app/Service/house.service'; // Import the HouseService for fetching houses
 import * as AOS from 'aos';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-house',
@@ -10,629 +11,87 @@ import * as AOS from 'aos';
   styleUrls: ['./house.component.css'],
 })
 export class HouseComponent implements OnInit {
-  gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string;
+  gridCols = 2;
+  imageSrc: string | null = null;
   banners: string[] = [
     '../../assets/img/pp1.jpg',
     'https://via.placeholder.com/600x200.png?text=ads+2',
   ];
 
-  // Houses data
-  houses = [
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h4.jpg', '../../assets/house/h2.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h2.jpg', '../../assets/house/h1.jpeg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h3.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h3.jpg', '../../assets/house/h2.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h2.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h2.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h4.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h3.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h5.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h6.jpg', '../../assets/house/h5.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h7.jpg', '../../assets/house/h6.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h8.jpg', '../../assets/house/h9.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h9.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h11.jpg', '../../assets/house/h4.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h12.jpg', '../../assets/house/h5.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h13.webp', '../../assets/house/h6.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h15.webp', '../../assets/house/h8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h16.webp', '../../assets/house/h8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h17.webp', '../../assets/house/h8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h19.jpeg', '../../assets/house/h8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=House+1',
-        'https://via.placeholder.com/300x200.png?text=House+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    // Additional house objects...
-  ];
-
-  // Pagination properties
+  houses: any[] = [];
   currentPage = 0;
-  itemsPerPage = 20; // 4 columns * 5 rows = 20 houses per page
+  totalPages = 1; // Total pages for pagination
+  itemsPerPage = 6; // Number of houses per page
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private houseService: HouseService, // Inject the HouseService
+    private router: Router,
+    private sanitizer: DomSanitizer
+  ) {
     this.initializeGridCols();
   }
 
-  // Get the paginated houses for the current page
-  get paginatedHouses() {
-    const startIndex = this.currentPage * this.itemsPerPage;
-    return this.houses.slice(startIndex, startIndex + this.itemsPerPage);
+  ngOnInit(): void {
+    this.fetchHouses(); // Fetch the house data when component initializes
+    AOS.init({
+      duration: 1200, // Duration of the animation in milliseconds
+      once: true, // Whether animation should happen only once
+      mirror: false, // Whether elements should animate out while scrolling past them
+    });
   }
 
-  // Calculate the total number of pages
-  get totalPages() {
-    return Math.ceil(this.houses.length / this.itemsPerPage);
+  // Fetch houses from the service
+  fetchHouses(): void {
+    this.houseService.getHouses().subscribe((response) => {
+      this.houses = response.result.result;
+      this.houses.forEach((house) => {
+        this.loadImage(house);
+      });
+    });
+  }
+
+  // Method to load image with headers
+  loadImage(house: any): void {
+    this.houseService.getImage(house.imagePath).subscribe((imageBlob) => {
+      const objectURL = URL.createObjectURL(imageBlob);
+      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL); // Sanitizing image URL
+    });
   }
 
   // Navigate to the next image in a card
-  nextImage(item: any): void {
-    item.currentImageIndex = (item.currentImageIndex + 1) % item.images.length;
+  nextImage(house: any): void {
+    house.currentImageIndex = (house.currentImageIndex + 1) % house.images.length;
   }
 
   // Navigate to the previous image in a card
-  prevImage(item: any): void {
-    item.currentImageIndex =
-      (item.currentImageIndex - 1 + item.images.length) % item.images.length;
-  }
-
-  changePage(page: number) {
-    this.currentPage = page;
-    AOS.refresh(); // Refresh AOS to trigger animations on new content
+  prevImage(house: any): void {
+    house.currentImageIndex =
+      (house.currentImageIndex - 1 + house.images.length) % house.images.length;
   }
 
   // Navigate to the next page
-  nextPage() {
+  nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
+      this.fetchHouses(); // Fetch the next page of houses
     }
   }
 
   // Navigate to the previous page
-  prevPage() {
+  prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
+      this.fetchHouses(); // Fetch the previous page of houses
     }
   }
 
-  ngOnInit() {
-    AOS.init({
-      duration: 1200, // Duration of the animation in milliseconds
-      once: true, // Whether animation should happen only once - while scrolling down
-      mirror: false, // Whether elements should animate out while scrolling past them
-    });
+  // Handle page change when user clicks on a specific page number
+  changePage(page: number): void {
+    if (page >= 0 && page < this.totalPages) {
+      this.currentPage = page;
+      this.fetchHouses(); // Fetch houses for the selected page
+    }
   }
 
   // Get the pages to display with "..." if there are many pages
@@ -687,7 +146,8 @@ export class HouseComponent implements OnInit {
       });
   }
 
-  goToDetails(type: string): void {
-    this.router.navigate(['/details'], { queryParams: { type } });
+  // Go to house details page
+  goToDetails(houseId: string): void {
+    this.router.navigate(['/house-details', houseId]);
   }
 }
