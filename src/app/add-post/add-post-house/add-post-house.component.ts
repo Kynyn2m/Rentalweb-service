@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HouseService } from 'src/app/Service/house.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-post-house',
@@ -17,7 +18,7 @@ export class AddPostHouseComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpClient
+    private houseService: HouseService
   ) { }
 
   ngOnInit(): void {
@@ -31,12 +32,12 @@ export class AddPostHouseComponent implements OnInit {
       floor: ['', Validators.required],
       width: ['', Validators.required],
       height: ['', Validators.required],
-      photo: [null, Validators.required],
+      image: [null, Validators.required]
     });
   }
 
   onFileSelected(event: any): void {
-    const files: File[] = Array.from(event.target.files); // Convert FileList to Array
+    const files: File[] = Array.from(event.target.files);
 
     // Clear previous selections
     this.selectedFiles = [];
@@ -44,10 +45,10 @@ export class AddPostHouseComponent implements OnInit {
 
     files.forEach((file) => {
       if (file && file.type.startsWith('image/')) {
-        this.selectedFiles.push(file); // Store file in array
+        this.selectedFiles.push(file);  // Store file in array
         const reader = new FileReader();
         reader.onload = () => {
-          this.imagePreviews.push(reader.result as string); // Store image preview
+          this.imagePreviews.push(reader.result as string);  // Store image preview
         };
         reader.readAsDataURL(file);
       } else {
@@ -57,18 +58,19 @@ export class AddPostHouseComponent implements OnInit {
 
     if (this.selectedFiles.length === 0) {
       this.imageError = 'No valid image files selected';
+      this.addPostForm.get('image')?.setErrors({ required: true });
     } else {
-      this.imageError = ''; // Clear error if valid images are selected
+      this.imageError = '';
+      this.addPostForm.get('image')?.setValue(this.selectedFiles);
+      this.addPostForm.get('image')?.updateValueAndValidity();
     }
   }
 
-  // Remove a specific image preview
   removeImage(index: number): void {
     this.imagePreviews.splice(index, 1);
     this.selectedFiles.splice(index, 1);
   }
 
-  // Submit the form with multiple images
   onSubmit(): void {
     if (this.addPostForm.valid) {
       const formData = new FormData();
@@ -82,24 +84,35 @@ export class AddPostHouseComponent implements OnInit {
       formData.append('width', this.addPostForm.get('width')?.value);
       formData.append('height', this.addPostForm.get('height')?.value);
 
-      this.selectedFiles.forEach((file, index) => {
-        formData.append(`photo_${index}`, file); // Append each file to form data
+      this.selectedFiles.forEach((file) => {
+        formData.append('image', file);
       });
 
-      // Replace with your API endpoint URL
-      const apiUrl = 'https://example.com/api/upload-house-post';
-      this.http.post(apiUrl, formData).subscribe(
+      this.houseService.createPost(formData).subscribe(
         (response) => {
-          console.log('Post created successfully:', response);
-          // Redirect or display success message after successful post
-          this.router.navigate(['/some-success-page']);
+            Swal.fire({
+            title: 'Success!',
+            text: 'Your post has been successfully created.',
+            icon: 'success',
+            showCancelButton: true,
+            cancelButtonText: 'Close',
+            confirmButtonText: 'Go to House Listings'
+            }).then((result) => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/house']);
+            }
+            });
         },
         (error) => {
           console.error('Error creating post:', error);
         }
       );
     } else {
-      this.addPostForm.markAllAsTouched();
+      console.log('Form is invalid, please check inputs.');
+      Object.keys(this.addPostForm.controls).forEach(key => {
+        const control = this.addPostForm.get(key);
+        console.log(key, control?.valid, control?.errors);
+      });
     }
   }
 

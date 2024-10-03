@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';  // Import MatSnackBar
 import { AuthenticationService } from '../authentication/authentication.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-post',
@@ -42,11 +43,21 @@ export class AddPostComponent implements OnInit {
         this.router.navigate(['/add-post-land']);
       }
     } else {
-      this.snackBar.open('You need to login to add a post.', 'Close', {   // Show snackbar message
-        duration: 3000,  // Duration in milliseconds
-        horizontalPosition: 'center',
+      // Show SweetAlert instead of Snackbar
+      Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: ' ្នកត្រូវតែចូលដើម្បីបន្ថែមការផុស។ You need to login to add a post',
+        confirmButtonText: 'Go to Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);  // Redirect to login if the user clicks "Go to Login"
+        }
       });
-      this.router.navigate(['/login']);  // Redirect to login if the user is not logged in
     }
   }
 
