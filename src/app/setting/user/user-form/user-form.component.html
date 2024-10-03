@@ -10,18 +10,25 @@
   <mat-divider></mat-divider>
   <mat-dialog-content class="user-add-content">
     <mat-form-field appearance="fill">
-      <mat-label>{{ "firstName" | transloco }}</mat-label>
-      <input type="text" required matInput [(ngModel)]="user.firstName" />
+      <mat-label>{{ "fullName" | transloco }}</mat-label>
+      <input
+        type="text"
+        required
+        matInput
+        [(ngModel)]="user.fullName"
+        name="fullName"
+      />
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>{{ "familyName" | transloco }}</mat-label>
-      <input type="text" required matInput [(ngModel)]="user.familyName" />
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>{{ "username" | transloco }}</mat-label>
-      <input type="text" required matInput [(ngModel)]="user.username" />
+      <mat-label>{{ "email" | transloco }}</mat-label>
+      <input
+        type="email"
+        required
+        matInput
+        [(ngModel)]="user.email"
+        name="email"
+      />
     </mat-form-field>
 
     <mat-form-field appearance="fill">
@@ -38,25 +45,28 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>{{ "email" | transloco }}</mat-label>
+      <mat-label>{{ "phoneNumber	" | transloco }}</mat-label>
       <input
-        type="email"
-        name="email"
+        type="text"
+        name="username	"
         required
         matInput
-        [(ngModel)]="user.email"
+        [(ngModel)]="user.username"
       />
+      <mat-icon matSuffix>phone</mat-icon>
+      <!-- <mat-hint>Include area code</mat-hint> -->
     </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>{{ "password" | transloco }}</mat-label>
-      <input
-        type="password"
-        name="password"
+    <!-- <mat-form-field appearance="fill">
+      <mat-label>phoneNumber</mat-label>
+      <example-tel-input
+        formControlName="tel"
         required
         matInput
-        [(ngModel)]="user.password"
-      />
-    </mat-form-field>
+        [(ngModel)]="user.phoneNumber"
+      ></example-tel-input>
+      <mat-icon matSuffix>phone</mat-icon>
+      <mat-hint>Include area code</mat-hint>
+    </mat-form-field> -->
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
