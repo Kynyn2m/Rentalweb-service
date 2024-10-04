@@ -28,22 +28,35 @@ export class UserService {
     return this.http.get<ResponseModel>(url);
   }
 
-  post(user: USER_TYPE): Observable<ResponseModel> {
-    return this.http.post<ResponseModel>(
-      `${environment.apiUrl}${this.uri}/register`,
-      user
-    );
-  }
+  // createUser(user: USER_TYPE): Observable<ResponseModel> {
+  //   return this.http.post<ResponseModel>(
+  //     `${environment.apiUrl}${this.uri}/register`,
+  //     user
+  //   );
+  // }
 
-  put(user: USER_TYPE): Observable<ResponseModel> {
+  // put(user: USER_TYPE): Observable<ResponseModel> {
+  //   return this.http.put<ResponseModel>(
+  //     `${environment.apiUrl}${this.uri}/users`,
+  //     user
+  //   );
+  // }
+
+  updateUser(user: USER_TYPE, id: number): Observable<ResponseModel> {
     return this.http.put<ResponseModel>(
-      `${environment.apiUrl}${this.uri}/update`,
-      user
+      `${environment.apiUrl}/users/${id}`,
+      user,
+      {
+        headers: {
+          key: 'Api-Version',
+          value: '1',
+        },
+      }
     );
   }
 
-  delete(id: number) {
-    return this.http.delete(`${environment.apiUrl}${this.uri}/delete/${id}`);
+  deleteUser(id: number) {
+    return this.http.delete(`${environment.apiUrl}/users/${id}`);
   }
 
   postForgetPasswordRequest(mail: string): Observable<Signature> {
@@ -73,11 +86,30 @@ export class UserService {
       changePassword
     );
   }
-  getAssignedRole(userId: number): Observable<ResponseModel> {
-    return this.http.get<ResponseModel>(
-      `${environment.apiUrl}/users/v1/get-user-group/${userId}`
-    );
+
+  // getAssignedRoles(
+  //   id: number,
+  //   roles: { roleId: number }[]
+  // ): Observable<ResponseModel> {
+  //   const url = `${environment.apiUrl}/users/${id}/roles`; // Correctly construct the URL
+  //   return this.http.post<ResponseModel>(url, roles);
+  // }
+  getAssignedRoles(id: number): Observable<ResponseModel> {
+    const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL as needed
+    return this.http.get<ResponseModel>(url); // Use GET for fetching assigned roles
   }
+
+  // getUserRoles(id: number): Observable<ResponseModel> {
+  //   return this.http.get<ResponseModel>(' ${environment.apiUrl}/users/${id}');
+  // }
+  getUserRoles(
+    id: number,
+    roles: { roleId: number }[]
+  ): Observable<ResponseModel> {
+    const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL for assigning roles
+    return this.http.post<ResponseModel>(url, roles);
+  }
+
   postUserRole(
     userId: number,
     roleAssigned: RoleAssigned[]

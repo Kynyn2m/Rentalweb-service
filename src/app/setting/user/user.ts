@@ -3,28 +3,16 @@ import { ROLE_TYPE } from '../role/role';
 import { CodeValue } from 'src/app/_helpers/code-value';
 
 export class USER_TYPE {
-  changePassword(resetPassword: ResetPassword) {
-    throw new Error('Method not implemented.');
-  }
-  updateBy!: string;
-  updateAt!: string;
   id!: number;
-  uuid!: string;
+  fullName!: string;
   username!: string;
   email!: string;
-  fullName!: string;
+  phoneNumber!: number;
   gender!: string;
   isView?: boolean;
   profilePic?: string | undefined;
 
-  firstName!: string;
-  familyName!: string;
   status!: string;
-  enabled!: string;
-  createdAt!: string;
-  updatedAt!: string;
-  password!: string;
-  // creator!: Creator;
 }
 
 export class RoleAssigned {

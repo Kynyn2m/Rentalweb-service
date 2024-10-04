@@ -21,6 +21,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
 import { USER } from './data.test';
 import { UserFormComponent } from './user-form/user-form.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user',
@@ -65,6 +66,7 @@ export class UserComponent {
   // }
   constructor(
     // private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private userService: UserService,
     private navComponent: NavComponent,
     private confirmService: ConfirmService,
@@ -90,19 +92,114 @@ export class UserComponent {
         }
       );
   }
+  updateUser(user: USER_TYPE) {
+    if (user.status === 'DEL') return; // Make sure the status check is correct
 
-  openDialog() {
+    console.log('User to be updated:', user); // Check if fullName is included
+
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
+    dialogConfig.disableClose = true;
     dialogConfig.width = '750px';
-    dialogConfig.data = new USER_TYPE();
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = user;
 
     this.dialog
       .open(UserFormComponent, dialogConfig)
       .afterClosed()
       .subscribe((result) => {
-        this.getAll();
+        this.getAll(); // Refresh data after dialog closes
       });
+  }
+  deleteConfirm(user: USER_TYPE) {
+    const options = {
+      title: `${this.translocoService.translate(
+        'delete'
+      )} ${this.translocoService.translate('user')}`,
+      message: `${this.translocoService.translate('delete-confirmation')} ${
+        user.username
+      }?`,
+      cancelText: this.translocoService.translate('cancel'),
+      confirmText: this.translocoService.translate('yes'),
+    };
+
+    this.confirmService.open(options);
+
+    this.confirmService.confirmed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.userService.deleteUser(user.id).subscribe((data) => {
+          this.getAll();
+        });
+      }
+    });
+  }
+
+  // assignRole(user: USER_TYPE) {
+  //   console.log('Assign role to user:', user);
+  //   const dialogConfig = new MatDialogConfig();
+  //   dialogConfig.autoFocus = true;
+  //   dialogConfig.width = '600px';
+  //   dialogConfig.data = user;
+  //   const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     if (result && result.assignedRoles) {
+  //       const roles = result.assignedRoles.map((role: { id: number }) => ({
+  //         roleId: role.id,
+  //       }));
+  //       this.userService.getUserRoles(roles).subscribe(
+  //         (response) => {
+  //           console.log('User assigned successfully:', response);
+  //           this.getAll();
+  //           this.snackBar.open('User assigned successfully', 'Close', {
+  //             duration: 3000,
+  //           });
+  //         },
+  //         (error) => {
+  //           console.error('Error assigning User:', error);
+  //           this.snackBar.open('Error assigning user', 'Close', {
+  //             duration: 3000,
+  //           });
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
+  assignRole(user: USER_TYPE) {
+    console.log('Assign role to user:', user);
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '600px';
+    dialogConfig.data = user;
+
+    const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.assignedRoles && result.assignedRoles.length > 0) {
+        const roles = result.assignedRoles.map((role: { id: number }) => ({
+          roleId: role.id,
+        }));
+
+        // Ensure both user.id and roles are provided
+        this.userService.getUserRoles(user.id, roles).subscribe(
+          (response) => {
+            console.log('User assigned successfully:', response);
+            this.getAll();
+            this.snackBar.open('User assigned successfully', 'Close', {
+              duration: 3000,
+            });
+          },
+          (error) => {
+            console.error('Error assigning User:', error);
+            this.snackBar.open('Error assigning user', 'Close', {
+              duration: 3000,
+            });
+          }
+        );
+      } else {
+        console.error('No roles selected');
+        this.snackBar.open('No roles selected', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   pageChanged(event: PageEvent) {
@@ -111,32 +208,3 @@ export class UserComponent {
     this.getAll();
   }
 }
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-/** Builds and returns a new User. */
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-  { position: 11, name: 'Sodium', weight: 22.9897, symbol: 'Na' },
-  { position: 12, name: 'Magnesium', weight: 24.305, symbol: 'Mg' },
-  { position: 13, name: 'Aluminum', weight: 26.9815, symbol: 'Al' },
-  { position: 14, name: 'Silicon', weight: 28.0855, symbol: 'Si' },
-  { position: 15, name: 'Phosphorus', weight: 30.9738, symbol: 'P' },
-  { position: 16, name: 'Sulfur', weight: 32.065, symbol: 'S' },
-  { position: 17, name: 'Chlorine', weight: 35.453, symbol: 'Cl' },
-  { position: 18, name: 'Argon', weight: 39.948, symbol: 'Ar' },
-  { position: 19, name: 'Potassium', weight: 39.0983, symbol: 'K' },
-  { position: 20, name: 'Calcium', weight: 40.078, symbol: 'Ca' },
-];

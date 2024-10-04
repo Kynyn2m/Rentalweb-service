@@ -8,10 +8,6 @@
     <button mat-raised-button color="success">
       {{ "search" | transloco }}
     </button>
-    <button button mat-raised-button color="secondary" (click)="openDialog()">
-      {{ "add" | transloco }}
-    </button>
-    <!-- (click)="openDialog()" -->
   </div>
 </section>
 <div class="mat-elevation-z8">
@@ -57,24 +53,36 @@
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <!-- <button [id]="dataTest.BTN_DELETE+'-'+element.fullName" [name]="dataTest.BTN_DELETE" mat-menu-item
-            (click)="deleteConfirm(element)" #tooltip="matTooltip" matTooltipPosition="left"
-            [matTooltip]="'delete' | transloco">
+          <button
+            mat-menu-item
+            #tooltip="matTooltip"
+            matTooltipPosition="left"
+            [matTooltip]="'delete' | transloco"
+            (click)="deleteConfirm(element)"
+          >
             <mat-icon color="warn-color">delete</mat-icon>
-            <span>{{ 'delete' | transloco }}</span>
+            <span>{{ "delete" | transloco }}</span>
           </button>
-          <button [id]="dataTest.BTN_UPDATE+'-'+element.fullName" [name]="dataTest.BTN_UPDATE" mat-menu-item
-            (click)="OnEditDialog(element)" #tooltip="matTooltip" matTooltipPosition="left"
-            [matTooltip]="'update' | transloco">
+          <button
+            mat-menu-item
+            #tooltip="matTooltip"
+            matTooltipPosition="left"
+            (click)="updateUser(element)"
+            [matTooltip]="'update' | transloco"
+          >
             <mat-icon>edit</mat-icon>
-            <span>{{ 'update' | transloco }}</span>
+            <span>{{ "update" | transloco }}</span>
           </button>
-          <button [id]="dataTest.BTN_ASSIGN+'-'+element.fullName" [name]="dataTest.BTN_ASSIGN" mat-menu-item
-            (click)="assignRole(element)" #tooltip4="matTooltip" matTooltipPosition="left"
-            [matTooltip]="'assign role' | transloco">
+          <button
+            mat-menu-item
+            #tooltip4="matTooltip"
+            matTooltipPosition="left"
+            [matTooltip]="'assign role' | transloco"
+            (click)="assignRole(element)"
+          >
             <mat-icon>vpn_key</mat-icon>
-            <span>{{ 'assign role' | transloco }}</span>
-          </button> -->
+            <span>{{ "assign role" | transloco }}</span>
+          </button>
         </mat-menu>
       </td>
     </ng-container>
