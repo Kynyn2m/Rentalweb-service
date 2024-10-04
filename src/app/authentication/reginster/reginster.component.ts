@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../authentication.service';
-import { User } from '../models/user.interface';
 import { VerifyOtpComponent } from '../verify-otp/verify-otp.component';
 import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-reginster',
@@ -18,27 +19,26 @@ export class ReginsterComponent implements OnInit {
   error = '';
   hide: boolean = true;
 
-
   constructor(
     private formBuilder: FormBuilder,
-    private authenticationService: AuthenticationService,
+    private readonly authenticationService: AuthenticationService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      username: ['', [Validators.required, Validators.required]],
+      password: ['', [Validators.required, Validators.minLength(6), this.passwordValidator]],
       confirmPassword: ['', Validators.required]
     }, {
       validator: this.passwordMatchValidator // Add the custom validator here
     });
   }
 
-  // Custom validator to check if password and confirmPassword match
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
@@ -46,6 +46,16 @@ export class ReginsterComponent implements OnInit {
       form.get('confirmPassword')?.setErrors({ mismatch: true });
     } else {
       form.get('confirmPassword')?.setErrors(null);
+    }
+    return null;
+  }
+
+  passwordValidator(control: AbstractControl) {
+    const password = control.value;
+    // Updated regex to allow special characters and ensure basic requirements
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      return { invalidPassword: true };
     }
     return null;
   }
@@ -68,7 +78,7 @@ export class ReginsterComponent implements OnInit {
     const user = {
       fullName: this.f['fullName'].value,
       email: this.f['email'].value,
-      phoneNumber: this.f['phoneNumber'].value,
+      username: this.f['username'].value,
       password: this.f['password'].value,
       confirmPassword: this.f['confirmPassword'].value
     };
@@ -80,14 +90,22 @@ export class ReginsterComponent implements OnInit {
         // Open the VerifyOtp dialog after successful registration
         const dialogRef = this.dialog.open(VerifyOtpComponent, {
           width: '400px',
-          data: { phoneNumber: user.phoneNumber }
+          data: { username: user.username }
         });
 
         // Handle dialog result
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
-            // OTP verified, navigate to home or dashboard
-            this.router.navigate(['/home']);
+            // OTP verified, show success alert
+            Swal.fire({
+              icon: 'success',
+              title: 'Registration Successful',
+              text: 'Your registration was successful. Please log in.',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              // Navigate to login page after alert is closed
+              this.router.navigate(['/login']);
+            });
           } else {
             // OTP verification failed or canceled
             console.log('OTP verification canceled');
@@ -97,9 +115,55 @@ export class ReginsterComponent implements OnInit {
       error: (err) => {
         this.error = err;
         this.loading = false;
+
+        // Check if the API returned a code in the response
+        if (err.error?.code) {
+          switch (err.error.code) {
+            case 400.9:
+              this.snackBar.open('This email is already registered. Please try logging in or use a different email.', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+              break;
+            case 400.0:
+              if (err.error?.errors) {
+                err.error.errors.forEach((error: any) => {
+                  this.snackBar.open(`${error.name}: ${error.messages.join(', ')}`, 'Close', {
+                    duration: 5000,
+                    horizontalPosition: 'center',
+                    verticalPosition: 'top',
+                  });
+                });
+              } else {
+                this.snackBar.open(err.error.message || 'Your request is incorrect.', 'Close', {
+                  duration: 5000,
+                  horizontalPosition: 'center',
+                  verticalPosition: 'top',
+                });
+              }
+              break;
+            default:
+              // Handle other status codes
+              this.snackBar.open(err.error.message || 'An unexpected error occurred.', 'Close', {
+                duration: 5000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+              });
+              break;
+          }
+        } else {
+          // General error handling if no code is provided
+          this.snackBar.open('An error occurred. Please try again later.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+          });
+        }
       }
     });
   }
+
   navigateToLogin(): void {
     this.router.navigate(['/login']);
   }

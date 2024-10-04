@@ -18,8 +18,11 @@ export class VerifyOtpComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private dialogRef: MatDialogRef<VerifyOtpComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { phoneNumber: string }  // Inject phone number data
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: { username: string }  // Inject phone number data
+  ) {
+    // Prevent dialog from closing when clicking outside
+    this.dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
     // Initialize the form with the OTP field
@@ -42,7 +45,7 @@ export class VerifyOtpComponent implements OnInit {
 
     // Prepare the body for the API request
     const otpData = {
-      phoneNumber: this.data.phoneNumber,  // Phone number from the dialog data
+      username: this.data.username,  // Phone number from the dialog data
       otp: this.f['otp'].value             // OTP from the form
     };
 
