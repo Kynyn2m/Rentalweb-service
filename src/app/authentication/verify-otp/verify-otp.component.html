@@ -1,6 +1,7 @@
 <h1 mat-dialog-title
     align="center">Verify OTP</h1>
 <div mat-dialog-content>
+  <p style="font-size: 14px; color: #f96507;">OTP will be sent to your email: <strong>{{ data.email }}</strong></p>
   <form [formGroup]="otpForm"
         (ngSubmit)="onSubmit()">
     <mat-form-field appearance="outline">

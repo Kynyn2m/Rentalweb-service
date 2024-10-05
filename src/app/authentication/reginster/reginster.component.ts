@@ -31,14 +31,16 @@ export class ReginsterComponent implements OnInit {
     this.registerForm = this.formBuilder.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      username: ['', [Validators.required, Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6), this.passwordValidator]],
+      username: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6), this.passwordValidator]], // Password Validator applied here
       confirmPassword: ['', Validators.required]
     }, {
-      validator: this.passwordMatchValidator // Add the custom validator here
+      validator: this.passwordMatchValidator // Ensure passwords match
     });
+
   }
 
+  // Custom validator to check if passwords match
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
@@ -50,15 +52,19 @@ export class ReginsterComponent implements OnInit {
     return null;
   }
 
+  // Custom password validator
   passwordValidator(control: AbstractControl) {
     const password = control.value;
-    // Updated regex to allow special characters and ensure basic requirements
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/;
+    // Updated regex to enforce the presence of numbers, lowercase, uppercase, and special characters
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+
     if (!passwordRegex.test(password)) {
       return { invalidPassword: true };
     }
+
     return null;
   }
+
 
   // Convenience getter for easy access to form fields
   get f() {
@@ -68,7 +74,6 @@ export class ReginsterComponent implements OnInit {
   // Handle form submission
   onSubmit(): void {
     this.submitted = true;
-
     if (this.registerForm.invalid) {
       return;
     }
@@ -90,7 +95,7 @@ export class ReginsterComponent implements OnInit {
         // Open the VerifyOtp dialog after successful registration
         const dialogRef = this.dialog.open(VerifyOtpComponent, {
           width: '400px',
-          data: { username: user.username }
+          data: { username: user.username,email: user.email }
         });
 
         // Handle dialog result

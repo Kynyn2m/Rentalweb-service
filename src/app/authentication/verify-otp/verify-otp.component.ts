@@ -18,7 +18,7 @@ export class VerifyOtpComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private dialogRef: MatDialogRef<VerifyOtpComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { username: string }  // Inject phone number data
+    @Inject(MAT_DIALOG_DATA) public data: { username: string,email: string }  // Inject phone number data
   ) {
     // Prevent dialog from closing when clicking outside
     this.dialogRef.disableClose = true;
