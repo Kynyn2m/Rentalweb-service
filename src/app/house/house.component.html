@@ -64,6 +64,12 @@
           <p>Height: {{ house.height }}m</p>
           <p>Floor: {{ house.floor }}</p>
           <p>Phone: {{ house.phoneNumber }}</p>
+          <p>Likes: {{ house.likeCount }}</p>
+          <button mat-raised-button
+                  color="primary"
+                  (click)="likeHouse(house.id)">
+            Like
+          </button>
         </mat-card-content>
       </mat-card>
     </div>

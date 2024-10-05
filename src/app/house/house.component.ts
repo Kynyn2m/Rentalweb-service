@@ -170,6 +170,14 @@ export class HouseComponent implements OnInit {
 
     return pages;
   }
+  likeHouse(houseId: number): void {
+    this.houseService.likeHouse(houseId).subscribe(() => {
+      const house = this.houses.find(h => h.id === houseId);
+      if (house) {
+        house.likeCount += 1; // Increment the like count on the UI
+      }
+    });
+  }
 
   // Load house images safely
   loadImage(house: any): void {

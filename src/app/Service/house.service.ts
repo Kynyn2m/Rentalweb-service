@@ -43,6 +43,10 @@ export class HouseService {
 
     return this.http.get<any>(this.apiUrl, { headers, params: httpParams });
   }
+  likeHouse(houseId: number): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.put<any>(`${this.apiUrl}/like/${houseId}`, {}, { headers });
+  }
 
   // Fetch image with headers
   getImage(imageUrl: string): Observable<Blob> {
