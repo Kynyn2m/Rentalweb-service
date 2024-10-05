@@ -16,6 +16,7 @@ export class HouseComponent implements OnInit {
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 12; // 12 houses per page
+  autoFetchInterval: any;
 
   searchForm!: FormGroup;
 
@@ -38,7 +39,7 @@ export class HouseComponent implements OnInit {
       toPrice: [''],
     });
 
-    // Listen for query parameter changes and fetch houses based on the changes
+    // Fetch houses when query parameters change
     this.route.queryParams.subscribe(params => {
       const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
       const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
@@ -49,6 +50,15 @@ export class HouseComponent implements OnInit {
       // Fetch the houses based on query parameters
       this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
     });
+
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
   }
 
   // Fetch houses based on query params
