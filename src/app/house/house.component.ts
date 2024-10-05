@@ -1,7 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HouseService } from 'src/app/Service/house.service'; // Import the HouseService for fetching houses
+import { HouseService } from 'src/app/Service/house.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -14,31 +14,29 @@ export class HouseComponent implements OnInit {
   gridCols = 2;
   houses: any[] = [];
   currentPage = 0;
-  totalPages = 1; // Total pages for pagination
-  itemsPerPage = 6; // Number of houses per page
+  totalPages = 1;
+  itemsPerPage = 6;
 
-  searchForm!: FormGroup;  // Define the form group
+  searchForm!: FormGroup;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private houseService: HouseService, // Inject the HouseService
+    private houseService: HouseService,
     private router: Router,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
-    private fb: FormBuilder // Inject FormBuilder
+    private fb: FormBuilder
   ) {
     this.initializeGridCols();
   }
 
   ngOnInit(): void {
-    // Initialize the search form with default values
     this.searchForm = this.fb.group({
-      search: [''], // Search field (optional)
-      fromPrice: [''], // From price field (optional)
-      toPrice: [''], // To price field (optional)
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
     });
 
-    // Subscribe to query parameters from the route
     this.route.queryParams.subscribe(params => {
       const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
       const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
@@ -72,7 +70,7 @@ export class HouseComponent implements OnInit {
       this.houses.forEach((house) => {
         this.loadImage(house);
       });
-      this.totalPages = response.result.totalPages; // Update total pages for pagination
+      this.totalPages = response.result.totalPages;
     });
   }
 
@@ -89,7 +87,7 @@ export class HouseComponent implements OnInit {
         fromPrice: fromPrice || null,
         toPrice: toPrice || null,
       },
-      queryParamsHandling: 'merge', // Merge with existing query params
+      queryParamsHandling: 'merge',
     });
 
     // Call fetchHouses to apply the search
@@ -119,7 +117,7 @@ export class HouseComponent implements OnInit {
   loadImage(house: any): void {
     this.houseService.getImage(house.imagePath).subscribe((imageBlob) => {
       const objectURL = URL.createObjectURL(imageBlob);
-      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL); // Sanitizing image URL
+      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
     });
   }
 
@@ -138,7 +136,7 @@ export class HouseComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.fetchHouses(); // Fetch the next page of houses
+      this.fetchHouses();
     }
   }
 
@@ -146,19 +144,19 @@ export class HouseComponent implements OnInit {
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.fetchHouses(); // Fetch the previous page of houses
+      this.fetchHouses();
     }
   }
 
-  // Handle page change when user clicks on a specific page number
+
   changePage(page: number): void {
     if (page >= 0 && page < this.totalPages) {
       this.currentPage = page;
-      this.fetchHouses(); // Fetch houses for the selected page
+      this.fetchHouses();
     }
   }
 
-  // Get the pages to display with "..." if there are many pages
+
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
     const half = Math.floor(totalVisiblePages / 2);

@@ -96,15 +96,15 @@ export class NavComponent implements AfterViewChecked, AfterViewInit ,OnInit{
     });
 
     this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        this.animationClass = 'animate__animated animate__fadeOut';
-      }
-      if (event instanceof NavigationEnd) {
-        setTimeout(() => {
-          this.animationClass = 'animate__animated animate__fadeIn';
-          this.scrollToTop();
-        }, 0);
-      }
+      // if (event instanceof NavigationStart) {
+      //   this.animationClass = 'animate__animated animate__fadeOut';
+      // }
+      // if (event instanceof NavigationEnd) {
+      //   setTimeout(() => {
+      //     this.animationClass = 'animate__animated animate__fadeIn';
+      //     this.scrollToTop();
+      //   }, 0);
+      // }
     });
   }
   ngOnInit(): void {
