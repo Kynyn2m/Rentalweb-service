@@ -4,39 +4,47 @@
   <div class="result-header">
     <h2>Complete Your Result</h2>
   </div>
-  <form class="search-fields">
-    <mat-form-field appearance="outline"
-                    class="search-field">
-      <mat-label>search</mat-label>
+  <form [formGroup]="searchForm"
+        (ngSubmit)="onSearch()">
+    <mat-form-field class="full-waith"
+                    appearance="outline">
+      <mat-label>Search</mat-label>
       <input matInput
+             formControlName="search"
              placeholder="Enter location">
     </mat-form-field>
 
     <div class="search-field price-field">
-      <mat-form-field appearance="outline"
-                      class="price-range">
-        <mat-label>from Price</mat-label>
+      <mat-form-field appearance="outline">
+        <mat-label>From Price</mat-label>
         <input matInput
+               formControlName="fromPrice"
                type="number"
-               placeholder="From">
+               placeholder="From Price">
       </mat-form-field>
+
       <span class="price-separator">-</span>
-      <mat-form-field appearance="outline"
-                      class="price-range">
-        <mat-label>to Price</mat-label>
+
+      <mat-form-field appearance="outline">
+        <mat-label>To Price</mat-label>
         <input matInput
+               formControlName="toPrice"
                type="number"
-               placeholder="To">
+               placeholder="To Price">
       </mat-form-field>
     </div>
+
     <div class="search-button-container">
-      <button mat-raised-button
-              color="success"
-              class="search-button">Find</button>
+      <button class="full-waith"
+              mat-raised-button
+              color="success">Find</button>
+      <button class="full-waith"
+              mat-raised-button
+              color="warn"
+              (click)="onClear()">Clear</button>
     </div>
   </form>
 </div>
-
 <div class="content-container">
   <section>
     <h2>Houses</h2>

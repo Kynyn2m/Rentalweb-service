@@ -1,9 +1,9 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HouseService } from 'src/app/Service/house.service'; // Import the HouseService for fetching houses
-import * as AOS from 'aos';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-house',
@@ -12,43 +12,107 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class HouseComponent implements OnInit {
   gridCols = 2;
-  imageSrc: string | null = null;
-  banners: string[] = [
-    '../../assets/img/pp1.jpg',
-    'https://via.placeholder.com/600x200.png?text=ads+2',
-  ];
-
   houses: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 6; // Number of houses per page
 
+  searchForm!: FormGroup;  // Define the form group
+
   constructor(
     private breakpointObserver: BreakpointObserver,
     private houseService: HouseService, // Inject the HouseService
     private router: Router,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
+    private fb: FormBuilder // Inject FormBuilder
   ) {
     this.initializeGridCols();
   }
 
   ngOnInit(): void {
-    this.fetchHouses(); // Fetch the house data when component initializes
-    AOS.init({
-      duration: 1200, // Duration of the animation in milliseconds
-      once: true, // Whether animation should happen only once
-      mirror: false, // Whether elements should animate out while scrolling past them
+    // Initialize the search form with default values
+    this.searchForm = this.fb.group({
+      search: [''], // Search field (optional)
+      fromPrice: [''], // From price field (optional)
+      toPrice: [''], // To price field (optional)
+    });
+
+    // Subscribe to query parameters from the route
+    this.route.queryParams.subscribe(params => {
+      const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
+      const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
+      const search = params['search'] || '';
+
+      // Fetch the houses based on query parameters
+      this.fetchHouses(fromPrice, toPrice, search);
     });
   }
 
-  // Fetch houses from the service
-  fetchHouses(): void {
-    this.houseService.getHouses().subscribe((response) => {
+  // Fetch houses based on query params
+  fetchHouses(fromPrice?: number, toPrice?: number, search?: string): void {
+    const params: any = {
+      page: this.currentPage,
+      itemsPerPage: this.itemsPerPage,
+    };
+
+    // Add search parameters if they exist
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
+    }
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
+    }
+    if (search) {
+      params.search = search;
+    }
+
+    this.houseService.getHouses(params).subscribe((response) => {
       this.houses = response.result.result;
       this.houses.forEach((house) => {
         this.loadImage(house);
       });
+      this.totalPages = response.result.totalPages; // Update total pages for pagination
     });
+  }
+
+  // Method to handle form submission and query parameters update
+  onSearch(): void {
+    const search = this.searchForm.get('search')?.value;
+    const fromPrice = this.searchForm.get('fromPrice')?.value;
+    const toPrice = this.searchForm.get('toPrice')?.value;
+
+    // Set query parameters in the URL
+    this.router.navigate([], {
+      queryParams: {
+        search: search || null,
+        fromPrice: fromPrice || null,
+        toPrice: toPrice || null,
+      },
+      queryParamsHandling: 'merge', // Merge with existing query params
+    });
+
+    // Call fetchHouses to apply the search
+    this.fetchHouses(fromPrice, toPrice, search);
+  }
+
+  // Method to clear the form and reset the search
+  onClear(): void {
+    // Reset the form values
+    this.searchForm.reset();
+
+    // Clear the query params and fetch all houses again
+    this.router.navigate([], {
+      queryParams: {
+        search: null,
+        fromPrice: null,
+        toPrice: null,
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    // Fetch unfiltered houses
+    this.fetchHouses();
   }
 
   // Method to load image with headers
