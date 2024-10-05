@@ -50,7 +50,8 @@
   <section>
     <h2>Houses</h2>
     <div class="card-grid">
-      <mat-card *ngFor="let house of houses">
+      <mat-card *ngFor="let house of houses"
+                (click)="goToDetails(house.id)">
         <div class="image-container">
           <img mat-card-image
                [src]="house.safeImagePath"
@@ -64,14 +65,15 @@
           <p>Height: {{ house.height }}m</p>
           <p>Floor: {{ house.floor }}</p>
           <p>Phone: {{ house.phoneNumber }}</p>
+          <p>Views: {{ house.viewCount }}</p>
           <p>Likes: {{ house.likeCount }}</p>
           <button mat-raised-button
                   color="primary"
-                  (click)="likeHouse(house.id)">
-            Like
-          </button>
+                  (click)="likeHouse(house.id); $event.stopPropagation()">Like</button>
         </mat-card-content>
       </mat-card>
+
+
     </div>
 
     <!-- Pagination controls -->

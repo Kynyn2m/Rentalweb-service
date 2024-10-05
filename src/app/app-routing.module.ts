@@ -43,7 +43,7 @@ const routes: Routes = [
   { path: 'room', component: RoomComponent ,canActivate: [NonAdminGuard]},
   { path: 'land', component: LandComponent,canActivate: [NonAdminGuard] },
   { path: 'about-us', component: AboutUsComponent ,canActivate: [NonAdminGuard]},
-  { path: 'details', component: DetailsComponent ,canActivate: [NonAdminGuard]},
+  { path: 'details/:id', component: DetailsComponent ,canActivate: [NonAdminGuard]},
   { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard] },
   {path: 'add-post-house', component: AddPostHouseComponent,canActivate:[AuthGuard] },

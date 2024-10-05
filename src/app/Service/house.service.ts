@@ -53,4 +53,16 @@ export class HouseService {
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.get(imageUrl, { headers, responseType: 'blob' });
   }
+  getHouseById(id: string): Observable<any> {
+    const url = `${this.apiUrl}/${id}`; // Assuming this.apiUrl is set to your base API URL
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.get<any>(url, { headers });
+  }
+  viewHouse(houseId: number): Observable<any> {
+    const url = `${environment.apiUrl}/public/houses/view/${houseId}`;
+    return this.http.put(url, {}); // Sending an empty body since it's a view count
+  }
+
+
+
 }

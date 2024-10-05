@@ -220,8 +220,12 @@ export class HouseComponent implements OnInit {
       });
   }
 
-  // Navigate to house details
-  goToDetails(houseId: string): void {
-    this.router.navigate(['/house-details', houseId]);
+  goToDetails(houseId: number): void {
+    // Call the API to count the view
+    this.houseService.viewHouse(houseId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['/details', houseId]);
+    });
   }
+
 }

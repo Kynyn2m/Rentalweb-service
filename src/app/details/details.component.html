@@ -1,32 +1,54 @@
-<div class="details-container" *ngIf="property">
-  <button mat-icon-button (click)="goBack()">
+<div class="details-container">
+  <!-- Back Button -->
+  <button mat-icon-button
+          (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
+
+  <!-- Main Property Card -->
   <mat-card class="details-card">
+    <!-- Image Section with Navigation -->
     <div class="image-container">
-      <img mat-card-image [src]="property.images[property.currentImageIndex]" alt="{{ property.title }}">
-      <button class="nav-button prev-button" (click)="prevImage()">&#10094;</button>
-      <button class="nav-button next-button" (click)="nextImage()">&#10095;</button>
+      <img mat-card-image
+           [src]="house.safeImagePath"
+           alt="{{ house.title }}">
     </div>
+
+    <!-- Property Details -->
     <mat-card-content>
-      <h2>{{ property.title }}</h2>
-      <p><strong>Location:</strong> {{ property.location }}</p>
-      <p><strong>Contact:</strong> {{ property.contact }}</p>
-      <p><strong>Price:</strong> {{ property.price }}</p>
-      <p><strong>Description:</strong> {{ property.description }}</p>
+      <h2>{{ house.title }}</h2>
+      <p><strong>Location:</strong> {{ house.location }}</p>
+      <p><strong>Contact:</strong> {{ house.phoneNumber }}</p>
+      <p><strong>Price:</strong> ${{ house.price }}</p>
+      <p><strong>Description:</strong> {{ house.description }}</p>
+      <p><strong>Width:</strong> {{ house.width }}m</p>
+      <p><strong>Height:</strong> {{ house.height }}m</p>
+      <p><strong>Floor:</strong> {{ house.floor }}</p>
+      <p><strong>Phone Number:</strong> {{ house.phoneNumber }}</p>
+      <p><strong>Map Link:</strong> <a [href]="house.linkMap"
+           target="_blank">View on Map</a></p>
+      <p><strong>Likes:</strong> {{ house.likeCount }}</p>
+      <button mat-raised-button
+              (click)="likeHouse(house.id)"
+              color="primary">Like</button>
     </mat-card-content>
   </mat-card>
 
+  <!-- Related Posts Section -->
   <div class="related-posts">
     <h3>Related Posts</h3>
     <div class="related-post-grid">
-      <mat-card *ngFor="let post of property.relatedPosts" class="related-post-card">
-        <img mat-card-image [src]="post.image" alt="{{ post.title }}">
+      <!-- <mat-card *ngFor="let post of relatedPosts"
+                (click)="goToDetails(post.id)">
+        <img mat-card-image
+             [src]="post.imagePath"
+             alt="{{ post.title }}">
         <mat-card-content>
           <h4>{{ post.title }}</h4>
         </mat-card-content>
-      </mat-card>
+      </mat-card> -->
     </div>
   </div>
 </div>
+
 <app-footer></app-footer>
