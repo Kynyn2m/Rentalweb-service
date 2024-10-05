@@ -14,8 +14,8 @@ export class HouseComponent implements OnInit {
   gridCols = 2;
   houses: any[] = [];
   currentPage = 0;
-  totalPages = 1;
-  itemsPerPage = 6;
+  totalPages = 1; // Total pages for pagination
+  itemsPerPage = 12; // 12 houses per page
 
   searchForm!: FormGroup;
 
@@ -31,30 +31,33 @@ export class HouseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initialize the search form
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
       toPrice: [''],
     });
 
+    // Listen for query parameter changes and fetch houses based on the changes
     this.route.queryParams.subscribe(params => {
       const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
       const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
       const search = params['search'] || '';
+      const page = params['page'] ? +params['page'] : 0; // Default to page 0
+      this.currentPage = page;
 
       // Fetch the houses based on query parameters
-      this.fetchHouses(fromPrice, toPrice, search);
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
     });
   }
 
   // Fetch houses based on query params
-  fetchHouses(fromPrice?: number, toPrice?: number, search?: string): void {
+  fetchHouses(fromPrice?: number, toPrice?: number, search?: string, page: number = 0): void {
     const params: any = {
-      page: this.currentPage,
-      itemsPerPage: this.itemsPerPage,
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
     };
 
-    // Add search parameters if they exist
     if (fromPrice !== undefined) {
       params.fromPrice = fromPrice;
     }
@@ -65,98 +68,81 @@ export class HouseComponent implements OnInit {
       params.search = search;
     }
 
-    this.houseService.getHouses(params).subscribe((response) => {
+    this.houseService.getHouses(params).subscribe(response => {
       this.houses = response.result.result;
-      this.houses.forEach((house) => {
+      this.totalPages = response.result.totalPage; // Update the total number of pages
+
+      // Load images safely
+      this.houses.forEach(house => {
         this.loadImage(house);
       });
-      this.totalPages = response.result.totalPages;
     });
   }
 
-  // Method to handle form submission and query parameters update
+  // Handle the search form submission
   onSearch(): void {
     const search = this.searchForm.get('search')?.value;
     const fromPrice = this.searchForm.get('fromPrice')?.value;
     const toPrice = this.searchForm.get('toPrice')?.value;
 
-    // Set query parameters in the URL
+    // Update the query parameters in the URL
     this.router.navigate([], {
       queryParams: {
         search: search || null,
         fromPrice: fromPrice || null,
         toPrice: toPrice || null,
+        page: 0, // Reset to page 0 on search
       },
       queryParamsHandling: 'merge',
     });
 
-    // Call fetchHouses to apply the search
-    this.fetchHouses(fromPrice, toPrice, search);
+    // Fetch houses after search
+    this.fetchHouses(fromPrice, toPrice, search, 0);
   }
 
-  // Method to clear the form and reset the search
+  // Clear the search form and reload all houses
   onClear(): void {
-    // Reset the form values
-    this.searchForm.reset();
-
-    // Clear the query params and fetch all houses again
+    this.searchForm.reset(); // Reset the search form
     this.router.navigate([], {
       queryParams: {
         search: null,
         fromPrice: null,
         toPrice: null,
+        page: 0, // Reset to page 0
       },
       queryParamsHandling: 'merge',
     });
-
-    // Fetch unfiltered houses
-    this.fetchHouses();
+    this.fetchHouses(); // Fetch houses without filters
   }
 
-  // Method to load image with headers
-  loadImage(house: any): void {
-    this.houseService.getImage(house.imagePath).subscribe((imageBlob) => {
-      const objectURL = URL.createObjectURL(imageBlob);
-      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    });
-  }
-
-  // Navigate to the next image in a card
-  nextImage(house: any): void {
-    house.currentImageIndex = (house.currentImageIndex + 1) % house.images.length;
-  }
-
-  // Navigate to the previous image in a card
-  prevImage(house: any): void {
-    house.currentImageIndex =
-      (house.currentImageIndex - 1 + house.images.length) % house.images.length;
-  }
-
-  // Navigate to the next page
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.fetchHouses();
-    }
-  }
-
-  // Navigate to the previous page
+  // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.fetchHouses();
+      this.fetchHousesFromQueryParams();
     }
   }
 
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.fetchHousesFromQueryParams();
+    }
+  }
 
   changePage(page: number): void {
-    if (page >= 0 && page < this.totalPages) {
-      this.currentPage = page;
-      this.fetchHouses();
-    }
+    this.currentPage = page;
+    this.fetchHousesFromQueryParams();
   }
 
+  fetchHousesFromQueryParams(): void {
+    const search = this.searchForm.get('search')?.value || '';
+    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
+    const toPrice = this.searchForm.get('toPrice')?.value || '';
+    this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+  }
 
+  // Dynamically generate page numbers
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
     const half = Math.floor(totalVisiblePages / 2);
@@ -185,7 +171,15 @@ export class HouseComponent implements OnInit {
     return pages;
   }
 
-  // Initialize the grid columns based on the screen size
+  // Load house images safely
+  loadImage(house: any): void {
+    this.houseService.getImage(house.imagePath).subscribe(imageBlob => {
+      const objectURL = URL.createObjectURL(imageBlob);
+      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    });
+  }
+
+  // Dynamically adjust the number of columns based on the screen size
   private initializeGridCols(): void {
     const breakpoints = [
       { query: Breakpoints.HandsetPortrait, cols: 1 },
@@ -197,8 +191,8 @@ export class HouseComponent implements OnInit {
     ];
 
     this.breakpointObserver
-      .observe(breakpoints.map((bp) => bp.query))
-      .subscribe((result) => {
+      .observe(breakpoints.map(bp => bp.query))
+      .subscribe(result => {
         for (let bp of breakpoints) {
           if (result.breakpoints[bp.query]) {
             this.gridCols = bp.cols;
@@ -208,7 +202,7 @@ export class HouseComponent implements OnInit {
       });
   }
 
-  // Go to house details page
+  // Navigate to house details
   goToDetails(houseId: string): void {
     this.router.navigate(['/house-details', houseId]);
   }

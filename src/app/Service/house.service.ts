@@ -17,7 +17,7 @@ export class HouseService {
     return this.http.post<any>(this.apiUrl, formData);
   }
 
-  // Method to fetch houses with optional filters (fromPrice, toPrice, search)
+  // Method to fetch houses with optional filters (fromPrice, toPrice, search, page, size)
   getHouses(params?: any): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
 
@@ -33,11 +33,11 @@ export class HouseService {
       if (params.search) {
         httpParams = httpParams.set('search', params.search);
       }
-      if (params.page) {
+      if (params.page !== undefined) {
         httpParams = httpParams.set('page', params.page.toString());
       }
-      if (params.itemsPerPage) {
-        httpParams = httpParams.set('itemsPerPage', params.itemsPerPage.toString());
+      if (params.size !== undefined) {
+        httpParams = httpParams.set('size', params.size.toString()); // Use 'size' instead of 'itemsPerPage'
       }
     }
 
