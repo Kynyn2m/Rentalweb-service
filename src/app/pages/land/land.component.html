@@ -4,60 +4,46 @@
   <div class="result-header">
     <h2>Complete Your Result</h2>
   </div>
-  <form class="search-fields">
-    <mat-form-field appearance="outline"
-                    class="search-field">
-      <mat-label>Location</mat-label>
-      <input matInput
-             placeholder="Enter location">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline"
-                    class="search-field">
-      <mat-label>Bedroom</mat-label>
-      <input matInput
-             type="number"
-             placeholder="Enter number of bedrooms">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline"
-                    class="search-field">
-      <mat-label>Bathroom</mat-label>
-      <input matInput
-             type="number"
-             placeholder="Enter number of bathrooms">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline"
-                    class="search-field">
-      <mat-label>Floor</mat-label>
-      <input matInput
-             type="number"
-             placeholder="Enter floor">
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+    <mat-form-field class="full-waith" appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput formControlName="search" placeholder="Enter location" />
     </mat-form-field>
 
     <div class="search-field price-field">
-      <mat-form-field appearance="outline"
-                      class="price-range">
-        <mat-label>Price From</mat-label>
-        <input matInput
-               type="number"
-               placeholder="From">
+      <mat-form-field appearance="outline">
+        <mat-label>From Price</mat-label>
+        <input
+          matInput
+          formControlName="fromPrice"
+          type="number"
+          placeholder="From Price"
+        />
       </mat-form-field>
+
       <span class="price-separator">-</span>
-      <mat-form-field appearance="outline"
-                      class="price-range">
-        <mat-label>Price To</mat-label>
-        <input matInput
-               type="number"
-               placeholder="To">
+
+      <mat-form-field appearance="outline">
+        <mat-label>To Price</mat-label>
+        <input
+          matInput
+          formControlName="toPrice"
+          type="number"
+          placeholder="To Price"
+        />
       </mat-form-field>
     </div>
 
     <div class="search-button-container">
-      <button mat-raised-button
-              color="success"
-              class="search-button">Find</button>
+      <button class="full-waith" mat-raised-button color="success">Find</button>
+      <button
+        class="full-waith"
+        mat-raised-button
+        color="warn"
+        (click)="onClear()"
+      >
+        Clear
+      </button>
     </div>
   </form>
 </div>
@@ -66,44 +52,41 @@
   <section>
     <h2>Land</h2>
     <div class="card-grid">
-      <mat-card *ngFor="let land of paginatedland"
-                data-aos="fade-up"
-                class="animate__animated animate__fadeIn">
-        <!-- Animate.css animation -->
+      <mat-card *ngFor="let l of land" (click)="goToDetails(l.id)">
         <div class="image-container">
-          <img mat-card-image
-               [src]="land.images[land.currentImageIndex]"
-               alt="{{ land.title }}">
-          <button class="prev-image-button"
-                  (click)="prevImage(land)">&#10094;</button>
-          <button class="next-image-button"
-                  (click)="nextImage(land)">&#10095;</button>
+          <img mat-card-image [src]="l.safeImagePath" alt="{{ l.title }}" />
         </div>
         <mat-card-content>
-          <h3>{{ land.title }}</h3>
-          <p>Location: {{ land.location }}</p>
-          <p>Contact: {{ land.contact }}</p>
-          <p>Price: {{ land.price }}</p>
-          <p>Solid layout: {{ land.bathland }}</p>
-          <p>Land size: {{ land.bathland }}</p>
-          <p>Contract 2years Deposit 2months: {{ land.floor }}</p>
+          <h3>{{ l.title }}</h3>
+          <p>Location: {{ l.location }}</p>
+          <p>Price: ${{ l.price }}</p>
+          <p>landSize: {{ l.landSize }}m</p>
+          <!-- <p>linkMap: {{ l.linkMap }}m</p> -->
+          <p>Phone: {{ l.phoneNumber }}</p>
+          <p>Views: {{ l.viewCount }}</p>
+          <p>Likes: {{ l.likeCount }}</p>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="likeLand(l.id); $event.stopPropagation()"
+          >
+            Like
+          </button>
         </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button
-                  color="success"
-                  (click)="goToDetails('land')">More</button>
-        </mat-card-actions>
       </mat-card>
     </div>
 
-
     <!-- Pagination controls -->
-    <div class="pagination-buttons"
-         style="text-align: center; margin-top: 50px;">
-      <button mat-raised-button
-              color="primary"
-              (click)="prevPage()"
-              [disabled]="currentPage === 0">
+    <div
+      class="pagination-buttons"
+      style="text-align: center; margin-top: 50px"
+    >
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="prevPage()"
+        [disabled]="currentPage === 0"
+      >
         Previous
       </button>
 
@@ -112,22 +95,26 @@
           <span>...</span>
         </ng-container>
         <ng-container *ngIf="page !== -1">
-          <button mat-button
-                  (click)="changePage(page)"
-                  [disabled]="page === currentPage">
+          <button
+            mat-button
+            (click)="changePage(page)"
+            [disabled]="page === currentPage"
+          >
             {{ page + 1 }}
           </button>
         </ng-container>
       </ng-container>
 
-      <button mat-raised-button
-              color="primary"
-              (click)="nextPage()"
-              [disabled]="currentPage === totalPages - 1">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages - 1"
+      >
         Next
       </button>
     </div>
-
   </section>
 </div>
+
 <app-footer></app-footer>

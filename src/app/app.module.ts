@@ -80,8 +80,8 @@ import { AdsComponent } from './ads/ads.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { VerifyOtpComponent } from './authentication/verify-otp/verify-otp.component';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
+import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component'; // Import Dashboard Component
 import { HouseListComponent } from './dashboard/house-list/house-list.component'; // Import Dashboard Component
-
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -122,6 +122,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     DashboardComponent,
     VerifyOtpComponent,
     AddPostHouseComponent,
+    AddPostLandComponent
     HouseListComponent
   ],
   imports: [

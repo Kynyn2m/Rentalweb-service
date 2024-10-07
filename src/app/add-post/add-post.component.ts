@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';  // Import MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 import { AuthenticationService } from '../authentication/authentication.service';
 import Swal from 'sweetalert2';
 
@@ -16,14 +16,14 @@ export class AddPostComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private snackBar: MatSnackBar  // Inject MatSnackBar
+    private snackBar: MatSnackBar // Inject MatSnackBar
   ) {}
 
   ngOnInit(): void {
     // Listen for category changes from the route parameters
     this.route.params.subscribe((params) => {
       this.category = params['category'];
-      this.onCategoryChange(this.category);  // Handle category change logic
+      this.onCategoryChange(this.category); // Handle category change logic
     });
   }
 
@@ -55,7 +55,7 @@ export class AddPostComponent implements OnInit {
         cancelButtonColor: '#d33',
       }).then((result) => {
         if (result.isConfirmed) {
-          this.router.navigate(['/login']);  // Redirect to login if the user clicks "Go to Login"
+          this.router.navigate(['/login']); // Redirect to login if the user clicks "Go to Login"
         }
       });
     }

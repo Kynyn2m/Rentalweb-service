@@ -21,6 +21,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminGuard } from './authentication/admin.guard';
 import { NonAdminGuard } from './authentication/non-admin.guard';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
+import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component';
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
 
 const routes: Routes = [
@@ -35,20 +36,46 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AdminGuard],
   },
+
+  { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
+  { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
+
   { path: 'role', component: RoleComponent ,canActivate: [AdminGuard]},
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
   { path: 'house-list', component: HouseListComponent,canActivate: [AdminGuard] },
 
+
   // Publicly accessible routes
-  { path: 'home', component: HomeComponent ,canActivate: [NonAdminGuard] },
-  { path: 'house', component: HouseComponent ,canActivate: [NonAdminGuard] },
-  { path: 'room', component: RoomComponent ,canActivate: [NonAdminGuard]},
-  { path: 'land', component: LandComponent,canActivate: [NonAdminGuard] },
-  { path: 'about-us', component: AboutUsComponent ,canActivate: [NonAdminGuard]},
-  { path: 'details/:id', component: DetailsComponent ,canActivate: [NonAdminGuard]},
+  { path: 'home', component: HomeComponent, canActivate: [NonAdminGuard] },
+  { path: 'house', component: HouseComponent, canActivate: [NonAdminGuard] },
+  { path: 'room', component: RoomComponent, canActivate: [NonAdminGuard] },
+  { path: 'land', component: LandComponent, canActivate: [NonAdminGuard] },
+  {
+    path: 'about-us',
+    component: AboutUsComponent,
+    canActivate: [NonAdminGuard],
+  },
+  {
+    path: 'details/:id',
+    component: DetailsComponent,
+    canActivate: [NonAdminGuard],
+  },
   { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
-  { path: 'profile', component: ProfileComponent, canActivate: [NonAdminGuard] },
-  {path: 'add-post-house', component: AddPostHouseComponent,canActivate:[AuthGuard] },
+  {
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [NonAdminGuard],
+  },
+  {
+    path: 'add-post-house',
+    component: AddPostHouseComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'add-post-land',
+    component: AddPostLandComponent,
+    canActivate: [AuthGuard],
+  },
 
   // Add post route (requires user to be logged in)
   {
