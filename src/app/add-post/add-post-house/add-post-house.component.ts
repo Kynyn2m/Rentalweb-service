@@ -36,6 +36,7 @@ export class AddPostHouseComponent implements OnInit {
     });
   }
 
+  // Handle file selection and preview generation
   onFileSelected(event: any): void {
     const files: File[] = Array.from(event.target.files);
 
@@ -45,7 +46,7 @@ export class AddPostHouseComponent implements OnInit {
 
     files.forEach((file) => {
       if (file && file.type.startsWith('image/')) {
-        this.selectedFiles.push(file);  // Store file in array
+        this.selectedFiles.push(file);  // Store valid image files
         const reader = new FileReader();
         reader.onload = () => {
           this.imagePreviews.push(reader.result as string);  // Store image preview
@@ -56,6 +57,7 @@ export class AddPostHouseComponent implements OnInit {
       }
     });
 
+    // Validate image selection
     if (this.selectedFiles.length === 0) {
       this.imageError = 'No valid image files selected';
       this.addPostForm.get('image')?.setErrors({ required: true });
@@ -66,11 +68,16 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
+  // Remove image preview
   removeImage(index: number): void {
     this.imagePreviews.splice(index, 1);
     this.selectedFiles.splice(index, 1);
+    if (this.selectedFiles.length === 0) {
+      this.addPostForm.get('image')?.setErrors({ required: true });
+    }
   }
 
+  // Submit the form and post data
   onSubmit(): void {
     if (this.addPostForm.valid) {
       const formData = new FormData();
@@ -84,27 +91,29 @@ export class AddPostHouseComponent implements OnInit {
       formData.append('width', this.addPostForm.get('width')?.value);
       formData.append('height', this.addPostForm.get('height')?.value);
 
+      // Append selected image files
       this.selectedFiles.forEach((file) => {
         formData.append('image', file);
       });
 
       this.houseService.createPost(formData).subscribe(
         (response) => {
-            Swal.fire({
+          Swal.fire({
             title: 'Success!',
             text: 'Your post has been successfully created.',
             icon: 'success',
-            showCancelButton: true,
+            confirmButtonText: 'Go to House Listings',
             cancelButtonText: 'Close',
-            confirmButtonText: 'Go to House Listings'
-            }).then((result) => {
+            showCancelButton: true,
+          }).then((result) => {
             if (result.isConfirmed) {
               this.router.navigate(['/house']);
             }
-            });
+          });
         },
         (error) => {
           console.error('Error creating post:', error);
+          Swal.fire('Error', 'Failed to create post, please try again later.', 'error');
         }
       );
     } else {
@@ -116,6 +125,7 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
+  // Navigate back to the previous route
   goBack(): void {
     this.router.navigate(['/add-post']);
   }

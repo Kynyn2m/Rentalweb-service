@@ -15,127 +15,42 @@
 
     <mat-card class="stat-card blue-card">
       <mat-card-header>
-        <mat-icon class="card-icon">home</mat-icon>
-        <mat-card-title>Total Properties</mat-card-title>
+        <mat-icon class="card-icon">totalRoom</mat-icon>
+        <mat-card-title>totalRoom</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ totalProperties }}</p>
+        <p>{{ totalRoom }}</p>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="stat-card red-card">
       <mat-card-header>
         <mat-icon class="card-icon">message</mat-icon>
-        <mat-card-title>New Messages</mat-card-title>
+        <mat-card-title>totalLand</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ newMessages }}</p>
+        <p>{{ totalLand }}</p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card teal-card">
+    <mat-card class="stat-card teal-card"
+              (click)="goToHouseList()">
       <mat-card-header>
         <mat-icon class="card-icon">attach_money</mat-icon>
-        <mat-card-title>Total Bookings</mat-card-title>
+        <mat-card-title>totalHouse</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <p>{{ totalBookings }}</p>
+        <p>{{ totalHouse }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card green-card">
+      <mat-card-header>
+        <mat-icon class="card-icon">attach_money</mat-icon>
+        <mat-card-title>totalPost</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ totalPost }}</p>
       </mat-card-content>
     </mat-card>
   </div>
-
-  <mat-grid-tile>
-    <mat-card class="stat-card">
-      <mat-card-header>
-        <mat-card-title>Total Properties</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalProperties }}</p>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-
-  <mat-grid-tile>
-    <mat-card class="stat-card">
-      <mat-card-header>
-        <mat-card-title>New Messages</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ newMessages }}</p>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-
-  <mat-grid-tile>
-    <mat-card class="stat-card">
-      <mat-card-header>
-        <mat-card-title>Total Bookings</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalBookings }}</p>
-      </mat-card-content>
-    </mat-card>
-  </mat-grid-tile>
-
-
-  <!-- Recent Activities Section -->
-  <div class="dashboard-section">
-    <h2>Recent Activities</h2>
-    <mat-divider></mat-divider>
-    <mat-list>
-      <mat-list-item *ngFor="let activity of recentActivities">
-        <div mat-line>{{ activity.activity }}</div>
-        <div mat-line
-             class="timestamp">{{ activity.timestamp }}</div>
-      </mat-list-item>
-    </mat-list>
-  </div>
-
-  <!-- Property Listings Section -->
-  <div class="dashboard-section">
-    <h2>Properties Overview</h2>
-    <mat-divider></mat-divider>
-    <table mat-table
-           [dataSource]="properties"
-           class="mat-elevation-z8 properties-table">
-
-      <!-- Property Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell
-            *matHeaderCellDef> Property Name </th>
-        <td mat-cell
-            *matCellDef="let property"> {{ property.name }} </td>
-      </ng-container>
-
-      <!-- Location Column -->
-      <ng-container matColumnDef="location">
-        <th mat-header-cell
-            *matHeaderCellDef> Location </th>
-        <td mat-cell
-            *matCellDef="let property"> {{ property.location }} </td>
-      </ng-container>
-
-      <!-- Price Column -->
-      <ng-container matColumnDef="price">
-        <th mat-header-cell
-            *matHeaderCellDef> Price ($) </th>
-        <td mat-cell
-            *matCellDef="let property"> {{ property.price }} </td>
-      </ng-container>
-
-      <!-- Status Column -->
-      <ng-container matColumnDef="status">
-        <th mat-header-cell
-            *matHeaderCellDef> Status </th>
-        <td mat-cell
-            *matCellDef="let property"> {{ property.status }} </td>
-      </ng-container>
-
-      <!-- Define Header and Rows -->
-      <tr mat-header-row
-          *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row
-          *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
-</div>

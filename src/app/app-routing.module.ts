@@ -22,6 +22,7 @@ import { AdminGuard } from './authentication/admin.guard';
 import { NonAdminGuard } from './authentication/non-admin.guard';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
 import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component';
+import { HouseListComponent } from './dashboard/house-list/house-list.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -35,8 +36,14 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AdminGuard],
   },
+
   { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
+
+  { path: 'role', component: RoleComponent ,canActivate: [AdminGuard]},
+  { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
+  { path: 'house-list', component: HouseListComponent,canActivate: [AdminGuard] },
+
 
   // Publicly accessible routes
   { path: 'home', component: HomeComponent, canActivate: [NonAdminGuard] },
@@ -84,14 +91,8 @@ const routes: Routes = [
   { path: '**', redirectTo: 'home' },
 ];
 
-const routerOptions: ExtraOptions = {
-  scrollPositionRestoration: 'enabled',
-  anchorScrolling: 'enabled',
-  onSameUrlNavigation: 'reload',
-};
-
 @NgModule({
-  imports: [RouterModule.forRoot(routes, routerOptions)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
