@@ -1,7 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { HouseService } from '../Service/house.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
+
+interface House {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  price: number;
+  width: number;
+  height: number;
+  floor: number;
+  phoneNumber: string;
+  imagePath: string;
+  safeImagePath?: SafeUrl; // Safe image URL after sanitization
+  likeCount: number;
+  linkMap: string;
+  viewCount: number;
+  createdAt: string;
+}
 
 @Component({
   selector: 'app-details',
@@ -9,8 +28,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./details.component.css'],
 })
 export class DetailsComponent implements OnInit {
-  house: any; // Store the house details
-  houses: any[] = [];
+  house: House | null = null; // Use proper type for house
 
   constructor(
     private route: ActivatedRoute,
@@ -19,40 +37,50 @@ export class DetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get the house id from the route params
     const houseId = this.route.snapshot.paramMap.get('id');
-
     if (houseId) {
       this.getHouseDetails(houseId);
     }
-  }
-  likeHouse(houseId: number): void {
-    this.houseService.likeHouse(houseId).subscribe(() => {
-      const house = this.houses.find(h => h.id === houseId);
-      if (house) {
-        house.likeCount += 1; // Increment the like count on the UI
-      }
-    });
-  }
-  loadImage(house: any): void {
-    this.houseService.getImage(house.imagePath).subscribe(imageBlob => {
-      const objectURL = URL.createObjectURL(imageBlob);
-      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    });
-  }
-  goBack(): void {
-    window.history.back();
   }
 
   // Fetch house details based on the ID
   getHouseDetails(id: string): void {
     this.houseService.getHouseById(id).subscribe(
       (response) => {
-        this.house = response.result; // Assuming the house data is in response.result
+        this.house = response.result as House; // Map API result to house object
+        if (this.house) {
+          this.loadImage(this.house); // Load and sanitize the image
+        }
       },
       (error) => {
         console.error('Error fetching house details:', error);
       }
     );
+  }
+
+  // Load and sanitize the house image
+  loadImage(house: House): void {
+    this.houseService.getImage(house.imagePath).subscribe(
+      (imageBlob) => {
+        const objectURL = URL.createObjectURL(imageBlob);
+        house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      (error) => {
+        console.error('Error loading image:', error);
+      }
+    );
+  }
+
+  // Handle like functionality
+  likeHouse(houseId: number): void {
+    if (!this.house) return;
+
+    this.houseService.likeHouse(houseId).subscribe(() => {
+      this.house!.likeCount += 1; // Update like count for the current house
+    });
+  }
+
+  goBack(): void {
+    window.history.back();
   }
 }
