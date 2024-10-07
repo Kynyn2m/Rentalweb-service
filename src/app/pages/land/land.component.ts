@@ -1,7 +1,10 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, VERSION } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import * as AOS from 'aos';
+import { LandService } from 'src/app/add-post/add-post-land/land.service';
 
 @Component({
   selector: 'app-land',
@@ -9,639 +12,153 @@ import * as AOS from 'aos';
   styleUrls: ['./land.component.css'],
 })
 export class LandComponent {
-  // LandModalComponent= new LandModalComponent
-  gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string;
-  banners: string[] = [
-    '../../assets/img/pp1.jpg',
-    'https://via.placeholder.com/600x200.png?text=ads+2',
-  ];
-  // onClick(event: { target: any; srcElement: any; currentTarget: any; }){
-  //   const imgElem = event.target;
-  //   var target = event.target || event.srcElement || event.currentTarget;
-  //   var srcAttr = target.attributes.src;
-  //   this.LandModalComponent = srcAttr.nodeValue;
-  //   console.log("jdsifsuid=========")
-  // }
-  // land data
-  land = [
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L1.jpg', '../../../assets/land/L2.jpg'],
-      currentImageIndex: 0,
-      LandSize: 3,
-      SolidLayout: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      LandSize: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L3.jpg', '../../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L4.jpg', '../../../assets/land/L2.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L3.jpg', '../../../assets/land/L4.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L1.jpg', '../../../assets/land/L2.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L2.jpg', '../../../assets/land/L2.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L5.jpg', '../../../assets/land/L6.jpeg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L7.jpeg', '../../../assets/land/L4.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L8.jpeg', '../../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L10.jpeg', '../../../assets/land/L2.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L11.jpg', '../../../assets/land/L3.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L12.jpeg', '../../../assets/land/L5.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L13.jpeg', '../../../assets/land/L6.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L14.jpeg', '../../../assets/land/L7.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L15.jpg', '../../../assets/land/L4.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L16.jpg', '../../../assets/land/L9.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L17.jpg', '../../../assets/land/L10.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/land/L3.jpg', '../../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    {
-      title: 'land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=land+1',
-        'https://via.placeholder.com/300x200.png?text=land+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedland: 3,
-      bathland: 2,
-      floor: 1,
-    },
-    // Additional land objects...
-  ];
-
-  // Pagination properties
+  gridCols = 2;
+  land: any[] = [];
   currentPage = 0;
-  itemsPerPage = 20; // 4 columns * 5 rows = 20 land per page
+  totalPages = 1; // Total pages for pagination
+  itemsPerPage = 12; // 12 lands per page
+  autoFetchInterval: any;
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
+  searchForm!: FormGroup;
+
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private landService: LandService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {
     this.initializeGridCols();
   }
 
-  // Get the paginated land for the current page
-  get paginatedland() {
-    const startIndex = this.currentPage * this.itemsPerPage;
-    return this.land.slice(startIndex, startIndex + this.itemsPerPage);
+  ngOnInit(): void {
+    // Initialize the search form
+    this.searchForm = this.fb.group({
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
+    });
+
+    // Fetch lands when query parameters change
+    this.route.queryParams.subscribe((params) => {
+      const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
+      const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
+      const search = params['search'] || '';
+      const page = params['page'] ? +params['page'] : 0; // Default to page 0
+      this.currentPage = page;
+
+      // Fetch the lands based on query parameters
+      this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+    });
+
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
   }
 
-  // Calculate the total number of pages
-  get totalPages() {
-    return Math.ceil(this.land.length / this.itemsPerPage);
-  }
+  // Fetch lands based on query params
+  fetchLands(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0
+  ): void {
+    const params: any = {
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
+    };
 
-  // Navigate to the next image in a card
-  nextImage(item: any): void {
-    item.currentImageIndex = (item.currentImageIndex + 1) % item.images.length;
-  }
-
-  // Navigate to the previous image in a card
-  prevImage(item: any): void {
-    item.currentImageIndex =
-      (item.currentImageIndex - 1 + item.images.length) % item.images.length;
-  }
-
-  changePage(page: number) {
-    this.currentPage = page;
-    AOS.refresh(); // Refresh AOS to trigger animations on new content
-  }
-
-  // Navigate to the next page
-  nextPage() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
     }
-  }
-
-  // Navigate to the previous page
-  prevPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
     }
-  }
+    if (search) {
+      params.search = search;
+    }
 
-  ngOnInit() {
-    AOS.init({
-      duration: 1200, // Duration of the animation in milliseconds
-      once: true, // Whether animation should happen only once - while scrolling down
-      mirror: false, // Whether elements should animate out while scrolling past them
+    this.landService.getLand(params).subscribe((response) => {
+      this.land = response.result.result;
+      this.totalPages = response.result.totalPage; // Update the total number of pages
+
+      // Load images safely
+      this.land.forEach((land) => {
+        this.loadImage(land);
+      });
     });
   }
 
-  // Get the pages to display with "..." if there are many pages
+  // Handle the search form submission
+  onSearch(): void {
+    const search = this.searchForm.get('search')?.value;
+    const fromPrice = this.searchForm.get('fromPrice')?.value;
+    const toPrice = this.searchForm.get('toPrice')?.value;
+
+    // Update the query parameters in the URL
+    this.router.navigate([], {
+      queryParams: {
+        search: search || null,
+        fromPrice: fromPrice || null,
+        toPrice: toPrice || null,
+        page: 0, // Reset to page 0 on search
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    // Fetch lands after search
+    this.fetchLands(fromPrice, toPrice, search, 0);
+  }
+
+  // Clear the search form and reload all lands
+  onClear(): void {
+    this.searchForm.reset(); // Reset the search form
+    this.router.navigate([], {
+      queryParams: {
+        search: null,
+        fromPrice: null,
+        toPrice: null,
+        page: 0, // Reset to page 0
+      },
+      queryParamsHandling: 'merge',
+    });
+    this.fetchLands(); // Fetch lands without filters
+  }
+
+  // Pagination methods
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.fetchLandFromQueryParams();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.fetchLandFromQueryParams();
+    }
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+    this.fetchLandFromQueryParams();
+  }
+
+  fetchLandFromQueryParams(): void {
+    const search = this.searchForm.get('search')?.value || '';
+    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
+    const toPrice = this.searchForm.get('toPrice')?.value || '';
+    this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+  }
+
+  // Dynamically generate page numbers
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
     const half = Math.floor(totalVisiblePages / 2);
@@ -669,8 +186,24 @@ export class LandComponent {
 
     return pages;
   }
+  likeLand(landId: number): void {
+    this.landService.likeLand(landId).subscribe(() => {
+      const land = this.land.find((h) => h.id === landId);
+      if (land) {
+        land.likeCount += 1; // Increment the like count on the UI
+      }
+    });
+  }
 
-  // Initialize the grid columns based on the screen size
+  // Load land images safely
+  loadImage(land: any): void {
+    this.landService.getImage(land.imagePath).subscribe((imageBlob) => {
+      const objectURL = URL.createObjectURL(imageBlob);
+      land.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    });
+  }
+
+  // Dynamically adjust the number of columns based on the screen size
   private initializeGridCols(): void {
     const breakpoints = [
       { query: Breakpoints.HandsetPortrait, cols: 1 },
@@ -692,7 +225,12 @@ export class LandComponent {
         }
       });
   }
-  goToDetails(type: string): void {
-    this.router.navigate(['/details'], { queryParams: { type } });
+
+  goToDetails(landId: number): void {
+    // Call the API to count the view
+    this.landService.viewLand(landId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['', landId]);
+    });
   }
 }
