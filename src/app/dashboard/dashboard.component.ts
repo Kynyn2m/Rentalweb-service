@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,20 +7,33 @@ import { Component } from '@angular/core';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
-  totalUsers = 500;
-  totalProperties = 120;
-  newMessages = 10;
-  totalBookings = 85;
+  totalUsers: number = 0;
+  totalRoom: number = 0;
+  totalLand: number = 0;
+  totalHouse: number = 0;
+  totalPost: number = 0;
 
-  recentActivities = [
-    { activity: 'User John booked a property', timestamp: '2024-09-21 10:00' },
-    { activity: 'Property Listing Updated', timestamp: '2024-09-20 16:30' }
-  ];
+  constructor(private readonly dashboardService: DashboardService) {}
 
-  properties = [
-    { name: 'Villa Sunset', location: 'California', price: 2000, status: 'Available' },
-    { name: 'City Apartment', location: 'New York', price: 1500, status: 'Booked' }
-  ];
+  ngOnInit(): void {
+    this.fetchDashboardData();
+  }
 
-  displayedColumns: string[] = ['name', 'location', 'price', 'status'];
+  fetchDashboardData(): void {
+    this.dashboardService.getDashboardData().subscribe(
+      (response) => {
+        if (response.code === 200) {
+          const result = response.result;
+          this.totalUsers = result.totalUser;
+          this.totalRoom = result.totalRoom;
+          this.totalLand = result.totalLand;
+          this.totalHouse = result.totalHouse;
+          this.totalPost = result.totalPost;
+        }
+      },
+      (error) => {
+        console.error('Error fetching dashboard data:', error);
+      }
+    );
+  }
 }
