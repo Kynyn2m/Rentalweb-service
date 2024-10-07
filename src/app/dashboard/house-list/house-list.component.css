@@ -1,0 +1,12 @@
+.house-list-container {
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+img {
+  object-fit: cover;
+  border-radius: 8px;
+}

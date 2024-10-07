@@ -21,6 +21,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminGuard } from './authentication/admin.guard';
 import { NonAdminGuard } from './authentication/non-admin.guard';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
+import { HouseListComponent } from './dashboard/house-list/house-list.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -35,7 +36,8 @@ const routes: Routes = [
     canActivate: [AdminGuard],
   },
   { path: 'role', component: RoleComponent ,canActivate: [AdminGuard]},
-  { path: 'user', component: UserComponent,canActivate: [AdminGuard] },
+  { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
+  { path: 'house-list', component: HouseListComponent,canActivate: [AdminGuard] },
 
   // Publicly accessible routes
   { path: 'home', component: HomeComponent ,canActivate: [NonAdminGuard] },

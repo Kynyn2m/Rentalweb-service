@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { DashboardService } from './dashboard.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +14,9 @@ export class DashboardComponent {
   totalHouse: number = 0;
   totalPost: number = 0;
 
-  constructor(private readonly dashboardService: DashboardService) {}
+  constructor(private readonly dashboardService: DashboardService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchDashboardData();
@@ -35,5 +38,8 @@ export class DashboardComponent {
         console.error('Error fetching dashboard data:', error);
       }
     );
+  }
+  goToHouseList(): void {
+    this.router.navigate(['/house-list']);
   }
 }

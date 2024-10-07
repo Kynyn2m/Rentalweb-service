@@ -1,0 +1,96 @@
+<div class="house-list-container">
+  <h2>House List</h2>
+  <table mat-table
+         [dataSource]="houses"
+         class="mat-elevation-z8">
+
+    <!-- Image Column -->
+    <ng-container matColumnDef="image">
+      <th mat-header-cell
+          *matHeaderCellDef> Image </th>
+      <td mat-cell
+          *matCellDef="let house">
+        <img [src]="house?.safeImagePath"
+             alt="{{ house?.title }}"
+             style="width: 100px; height: 100px;">
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="title">
+      <th mat-header-cell
+          *matHeaderCellDef> Title </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.title}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="location">
+      <th mat-header-cell
+          *matHeaderCellDef> Location </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.location}} </td>
+    </ng-container>
+
+    <!-- Price Column -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell
+          *matHeaderCellDef> Price </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.price | currency}} </td>
+    </ng-container>
+
+    <!-- Width Column -->
+    <ng-container matColumnDef="width">
+      <th mat-header-cell
+          *matHeaderCellDef> Width </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.width}} m² </td>
+    </ng-container>
+
+    <!-- Height Column -->
+    <ng-container matColumnDef="height">
+      <th mat-header-cell
+          *matHeaderCellDef> Height </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.height}} m² </td>
+    </ng-container>
+
+    <!-- Floor Column -->
+    <ng-container matColumnDef="floor">
+      <th mat-header-cell
+          *matHeaderCellDef> Floor </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.floor}} </td>
+    </ng-container>
+
+    <!-- Like Count Column -->
+    <ng-container matColumnDef="likeCount">
+      <th mat-header-cell
+          *matHeaderCellDef> Likes </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.likeCount}} </td>
+    </ng-container>
+
+    <!-- View Count Column -->
+    <ng-container matColumnDef="viewCount">
+      <th mat-header-cell
+          *matHeaderCellDef> Views </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.viewCount}} </td>
+    </ng-container>
+
+    <!-- CreatedAt Column -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell
+          *matHeaderCellDef> Created At </th>
+      <td mat-cell
+          *matCellDef="let house"> {{house.createdAt | date:'short'}} </td>
+    </ng-container>
+
+    <!-- Define Header and Rows -->
+    <tr mat-header-row
+        *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row
+        *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
