@@ -12,7 +12,7 @@ export class HomeComponent {
 
   // Banner images
   banners: string[] = [
-    '../../assets/homepage/h1r.jpg',
+    '../../assets/ads&baner/Thesis.jpg',
     '../../assets/homepage/h1r.jpg',
   ];
   currentBannerIndex: number = 0;
