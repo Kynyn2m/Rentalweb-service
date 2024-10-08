@@ -1,31 +1,54 @@
 <div class="profile-container">
   <div class="profile-header-bar"></div>
-  <!-- <h2>User Profile</h2> -->
 
   <div class="profile-photo">
-    <img [src]="user.photo" alt="User Photo" class="user-photo">
-    <input type="file" (change)="onFileSelected($event)" hidden #fileInput>
-    <button mat-icon-button color="primary" (click)="fileInput.click()" class="change-photo-icon">
+    <img [src]="imagePreview || '/assets/img/user.png'"
+         alt="User Photo"
+         class="user-photo"
+         (error)="onImageError($event)">
+    <input type="file"
+           (change)="onFileSelected($event)"
+           hidden
+           #fileInput>
+    <button mat-icon-button
+            color="primary"
+            (click)="fileInput.click()"
+            class="change-photo-icon">
       <mat-icon>camera_alt</mat-icon>
     </button>
   </div>
 
-
-
   <mat-card>
     <mat-card-content>
       <div class="user-info-grid">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>User ID</mat-label>
-          <input matInput [value]="user.id" readonly>
+        <!-- ID (readonly) -->
+        <mat-form-field appearance="outline"
+                        class="full-width">
+          <mat-label>ID</mat-label>
+          <input matInput
+                 [value]="user.id"
+                 readonly>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <!-- Full Name -->
+        <mat-form-field appearance="outline"
+                        class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput
+                 [(ngModel)]="user.fullName">
+        </mat-form-field>
+
+        <!-- Username -->
+        <mat-form-field appearance="outline"
+                        class="full-width">
           <mat-label>Username</mat-label>
-          <input matInput [(ngModel)]="user.username">
+          <input matInput
+                 [(ngModel)]="user.username">
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
+        <!-- Gender -->
+        <mat-form-field appearance="outline"
+                        class="full-width">
           <mat-label>Gender</mat-label>
           <mat-select [(ngModel)]="user.gender">
             <mat-option value="male">Male</mat-option>
@@ -34,20 +57,22 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Current Address</mat-label>
-          <input matInput [(ngModel)]="user.address">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Phone Number</mat-label>
-          <input matInput [(ngModel)]="user.phoneNumber" type="tel">
+        <!-- Email -->
+        <mat-form-field appearance="outline"
+                        class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput
+                 [(ngModel)]="user.email">
         </mat-form-field>
       </div>
 
       <div class="profile-actions">
-        <button mat-raised-button color="success" (click)="saveProfile()">Save</button>
-        <button mat-raised-button color="warn" (click)="cancelEdit()">Cancel</button>
+        <button mat-raised-button
+                color="primary"
+                (click)="saveProfile()">Save</button>
+        <button mat-raised-button
+                color="warn"
+                (click)="cancelEdit()">Cancel</button>
       </div>
     </mat-card-content>
   </mat-card>
