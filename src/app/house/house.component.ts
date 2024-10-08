@@ -189,13 +189,46 @@ export class HouseComponent implements OnInit {
     });
   }
 
-  // Load house images safely
   loadImage(house: any): void {
-    this.houseService.getImage(house.imagePath).subscribe(imageBlob => {
-      const objectURL = URL.createObjectURL(imageBlob);
-      house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    });
+    if (house.imagePaths && house.imagePaths.length > 0) {
+      house.safeImagePaths = [];
+      house.imagePaths.forEach((imageUrl: string) => {
+        this.houseService.getImage(imageUrl).subscribe(imageBlob => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          house.safeImagePaths.push(safeUrl);
+        });
+      });
+      house.currentImageIndex = 0; // Start with the first image
+    } else {
+      // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
+      house.safeImagePaths = [];
+      house.currentImageIndex = 0;
+    }
   }
+
+
+  // Navigate to the next image
+// Navigate to the next image (loop to the first image if it's the last one)
+nextImage(house: any): void {
+  if (house.currentImageIndex < house.safeImagePaths.length - 1) {
+    house.currentImageIndex++;
+  } else {
+    house.currentImageIndex = 0; // Loop back to the first image
+  }
+}
+
+// Navigate to the previous image (loop to the last image if it's the first one)
+prevImage(house: any): void {
+  if (house.currentImageIndex > 0) {
+    house.currentImageIndex--;
+  } else {
+    house.currentImageIndex = house.safeImagePaths.length - 1; // Loop back to the last image
+  }
+}
+
+
+
 
   // Dynamically adjust the number of columns based on the screen size
   private initializeGridCols(): void {

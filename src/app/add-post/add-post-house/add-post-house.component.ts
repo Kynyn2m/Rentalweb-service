@@ -93,7 +93,7 @@ export class AddPostHouseComponent implements OnInit {
 
       // Append selected image files
       this.selectedFiles.forEach((file) => {
-        formData.append('image', file);
+        formData.append('images', file);
       });
 
       this.houseService.createPost(formData).subscribe(

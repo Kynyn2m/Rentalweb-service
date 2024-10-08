@@ -91,7 +91,7 @@ export class AddPostLandComponent implements OnInit {
       // formData.append('height', this.addPostForm.get('height')?.value);
 
       this.selectedFiles.forEach((file) => {
-        formData.append('image', file);
+        formData.append('images', file);
       });
 
       this.landService.createPost(formData).subscribe(

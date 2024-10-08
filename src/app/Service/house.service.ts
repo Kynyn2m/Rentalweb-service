@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment'; // Ensure you have the environment file properly set up
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class HouseService {
 
   private apiUrl = `${environment.apiUrl}/public/houses`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private sanitizer: DomSanitizer) { }
 
   // Method to create a new house post
   createPost(formData: FormData): Observable<any> {
@@ -49,9 +50,15 @@ export class HouseService {
   }
 
   // Fetch image with headers
-  getImage(imageUrl: string): Observable<Blob> {
+  getImage(imageUrl: string): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.get(imageUrl, { headers, responseType: 'blob' });
+  }
+
+  // Method to safely convert Blob to a URL and sanitize it
+  createImageUrl(imageBlob: Blob): any {
+    const objectURL = URL.createObjectURL(imageBlob);
+    return this.sanitizer.bypassSecurityTrustUrl(objectURL); // Safe URL for Angular templates
   }
   getHouseById(id: string): Observable<any> {
     const url = `${this.apiUrl}/${id}`; // Assuming this.apiUrl is set to your base API URL

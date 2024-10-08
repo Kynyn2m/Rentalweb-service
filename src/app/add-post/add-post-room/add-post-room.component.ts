@@ -32,7 +32,7 @@ export class AddPostRoomComponent {
       floor: ['', Validators.required],
       width: ['', Validators.required],
       height: ['', Validators.required],
-      image: [null, Validators.required],
+      images: [null, Validators.required],
     });
   }
 
@@ -99,7 +99,7 @@ export class AddPostRoomComponent {
 
       // Append selected image files
       this.selectedFiles.forEach((file) => {
-        formData.append('image', file);
+        formData.append('images', file);
       });
 
       this.roomService.createPost(formData).subscribe(
