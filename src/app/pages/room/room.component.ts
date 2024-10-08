@@ -1,7 +1,10 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as AOS from 'aos';
+import { RoomService } from 'src/app/Service/room.service';
 
 @Component({
   selector: 'app-room',
@@ -9,632 +12,153 @@ import * as AOS from 'aos';
   styleUrls: ['./room.component.css'],
 })
 export class RoomComponent {
-  gridCols = 2; // Set to 4 columns for a 4x5 grid
-  // banners!: string;
-  banners: string[] = [
-    '../../assets/img/pp1.jpg',
-    'https://via.placeholder.com/600x200.png?text=ads+2',
-  ];
-
-  // Room data
-  room = [
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r1.jpg', '../../../assets/room/r2.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r2.jpg', '../../../assets/room/r3.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r1.jpg', '../../../assets/room/r3.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r2.jpg', '../../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r4.jpg', '../../../assets/room/r3.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r3.jpg', '../../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r5.jpg', '../../../assets/room/r3.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r6.jpg', '../../../assets/room/r5.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r7.jpg', '../../../assets/room/r2.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r8.jpg', '../../../assets/room/r5.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r9.jpg', '../../../assets/room/r7.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r10.jpg', '../../../assets/room/r8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r11.jpg', '../../../assets/room/r8.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r12.jpg', '../../../assets/room/r5.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r13.jpg', '../../../assets/room/r10.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r14.jpg', '../../../assets/room/r11.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r15.jpg', '../../../assets/room/r12.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../../assets/room/r16.jpg', '../../../assets/room/r14.jpg'],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    {
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: [
-        'https://via.placeholder.com/300x200.png?text=Room+1',
-        'https://via.placeholder.com/300x200.png?text=Room+1+Alt',
-      ],
-      currentImageIndex: 0,
-      bedroom: 3,
-      bathroom: 2,
-      floor: 1,
-    },
-    // Additional room objects...
-  ];
-
-  // Pagination properties
+  gridCols = 2;
+  rooms: any[] = [];
   currentPage = 0;
-  itemsPerPage = 20; // 4 columns * 5 rows = 20 room per page
+  totalPages = 1; // Total pages for pagination
+  itemsPerPage = 12; // 12 rooms per page
+  autoFetchInterval: any;
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router) {
+  searchForm!: FormGroup;
+
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private roomService: RoomService,
+    private router: Router,
+    private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
+    private fb: FormBuilder
+  ) {
     this.initializeGridCols();
   }
 
-  // Get the paginated room for the current page
-  get paginatedRoom() {
-    const startIndex = this.currentPage * this.itemsPerPage;
-    return this.room.slice(startIndex, startIndex + this.itemsPerPage);
+  ngOnInit(): void {
+    // Initialize the search form
+    this.searchForm = this.fb.group({
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
+    });
+
+    // Fetch rooms when query parameters change
+    this.route.queryParams.subscribe((params) => {
+      const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
+      const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
+      const search = params['search'] || '';
+      const page = params['page'] ? +params['page'] : 0; // Default to page 0
+      this.currentPage = page;
+
+      // Fetch the rooms based on query parameters
+      this.fetchRooms(fromPrice, toPrice, search, this.currentPage);
+    });
+
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchRooms(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
   }
 
-  // Calculate the total number of pages
-  get totalPages() {
-    return Math.ceil(this.room.length / this.itemsPerPage);
-  }
+  // Fetch rooms based on query params
+  fetchRooms(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0
+  ): void {
+    const params: any = {
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
+    };
 
-  // Navigate to the next image in a card
-  nextImage(item: any): void {
-    item.currentImageIndex = (item.currentImageIndex + 1) % item.images.length;
-  }
-
-  // Navigate to the previous image in a card
-  prevImage(item: any): void {
-    item.currentImageIndex =
-      (item.currentImageIndex - 1 + item.images.length) % item.images.length;
-  }
-
-  changePage(page: number) {
-    this.currentPage = page;
-    AOS.refresh(); // Refresh AOS to trigger animations on new content
-  }
-
-  // Navigate to the next page
-  nextPage() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
     }
-  }
-
-  // Navigate to the previous page
-  prevPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
     }
-  }
+    if (search) {
+      params.search = search;
+    }
 
-  ngOnInit() {
-    AOS.init({
-      duration: 1200, // Duration of the animation in milliseconds
-      once: true, // Whether animation should happen only once - while scrolling down
-      mirror: false, // Whether elements should animate out while scrolling past them
+    this.roomService.getRooms(params).subscribe((response) => {
+      this.rooms = response.result.result;
+      this.totalPages = response.result.totalPage; // Update the total number of pages
+
+      // Load images safely
+      this.rooms.forEach((room) => {
+        this.loadImage(room);
+      });
     });
   }
 
-  // Get the pages to display with "..." if there are many pages
+  // Handle the search form submission
+  onSearch(): void {
+    const search = this.searchForm.get('search')?.value;
+    const fromPrice = this.searchForm.get('fromPrice')?.value;
+    const toPrice = this.searchForm.get('toPrice')?.value;
+
+    // Update the query parameters in the URL
+    this.router.navigate([], {
+      queryParams: {
+        search: search || null,
+        fromPrice: fromPrice || null,
+        toPrice: toPrice || null,
+        page: 0, // Reset to page 0 on search
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    // Fetch rooms after search
+    this.fetchRooms(fromPrice, toPrice, search, 0);
+  }
+
+  // Clear the search form and reload all rooms
+  onClear(): void {
+    this.searchForm.reset(); // Reset the search form
+    this.router.navigate([], {
+      queryParams: {
+        search: null,
+        fromPrice: null,
+        toPrice: null,
+        page: 0, // Reset to page 0
+      },
+      queryParamsHandling: 'merge',
+    });
+    this.fetchRooms(); // Fetch rooms without filters
+  }
+
+  // Pagination methods
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.fetchRoomsFromQueryParams();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.fetchRoomsFromQueryParams();
+    }
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+    this.fetchRoomsFromQueryParams();
+  }
+
+  fetchRoomsFromQueryParams(): void {
+    const search = this.searchForm.get('search')?.value || '';
+    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
+    const toPrice = this.searchForm.get('toPrice')?.value || '';
+    this.fetchRooms(fromPrice, toPrice, search, this.currentPage);
+  }
+
+  // Dynamically generate page numbers
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
     const half = Math.floor(totalVisiblePages / 2);
@@ -662,8 +186,24 @@ export class RoomComponent {
 
     return pages;
   }
+  likeRoom(roomId: number): void {
+    this.roomService.likeRoom(roomId).subscribe(() => {
+      const room = this.rooms.find((h) => h.id === roomId);
+      if (room) {
+        room.likeCount += 1; // Increment the like count on the UI
+      }
+    });
+  }
 
-  // Initialize the grid columns based on the screen size
+  // Load room images safely
+  loadImage(room: any): void {
+    this.roomService.getImage(room.imagePath).subscribe((imageBlob) => {
+      const objectURL = URL.createObjectURL(imageBlob);
+      room.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+    });
+  }
+
+  // Dynamically adjust the number of columns based on the screen size
   private initializeGridCols(): void {
     const breakpoints = [
       { query: Breakpoints.HandsetPortrait, cols: 1 },
@@ -686,7 +226,11 @@ export class RoomComponent {
       });
   }
 
-  goToDetails(type: string): void {
-    this.router.navigate(['/details'], { queryParams: { type } });
+  goToDetails(roomId: number): void {
+    // Call the API to count the view
+    this.roomService.viewRoom(roomId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['/', roomId]);
+    });
   }
 }

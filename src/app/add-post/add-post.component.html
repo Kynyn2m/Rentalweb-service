@@ -11,10 +11,7 @@
   <!-- Cards Section -->
   <section class="cards-section">
     <!-- Room Card -->
-    <div
-      class="card-container"
-      [routerLink]="['/add-post', { category: 'Room' }]"
-    >
+    <div class="card-container" (click)="navigateToPost('Room')">
       <div class="card-content">
         <mat-icon class="card-icon">meeting_room</mat-icon>
         <h3>Add Room</h3>
