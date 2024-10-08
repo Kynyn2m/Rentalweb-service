@@ -83,7 +83,9 @@ import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.
 import { HouseUpdateDialogComponent } from './dashboard/house-update-dialog/house-update-dialog.component';
 import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component'; // Import Dashboard Component
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
-import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component'; // Import Dashboard Component
+import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component';
+import { RoomListComponent } from './dashboard/room-list/room-list.component';
+import { RoomFormComponent } from './dashboard/room-list/room-form/room-form.component'; // Import Dashboard Component
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -127,7 +129,9 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AddPostLandComponent,
     HouseListComponent,
     AddPostRoomComponent,
-    HouseUpdateDialogComponent
+    HouseUpdateDialogComponent,
+    RoomListComponent,
+    RoomFormComponent
   ],
   imports: [
     BrowserModule,

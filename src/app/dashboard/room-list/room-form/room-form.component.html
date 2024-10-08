@@ -1,0 +1,178 @@
+<h2 align="center" mat-dialog-title>Update Room</h2>
+
+<mat-dialog-content [formGroup]="roomForm" class="example-form">
+  <div class="form-grid">
+    <!-- Room Name -->
+    <mat-form-field class="form-item">
+      <mat-label>Room Name</mat-label>
+      <input matInput formControlName="title" placeholder="Enter room name" />
+      <mat-error
+        *ngIf="roomForm.get('title')?.invalid && roomForm.get('title')?.touched"
+      >
+        Room name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Address -->
+    <mat-form-field class="form-item">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="location" placeholder="Enter address" />
+      <mat-error
+        *ngIf="
+          roomForm.get('location')?.invalid && roomForm.get('location')?.touched
+        "
+      >
+        Address is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Price -->
+    <mat-form-field class="form-item">
+      <mat-label>Price</mat-label>
+      <input
+        matInput
+        formControlName="price"
+        type="number"
+        placeholder="Enter price"
+      />
+      <mat-error
+        *ngIf="roomForm.get('price')?.invalid && roomForm.get('price')?.touched"
+      >
+        Price is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field class="form-item" style="grid-column: span 2">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        placeholder="Enter description"
+      ></textarea>
+      <mat-error
+        *ngIf="
+          roomForm.get('description')?.invalid &&
+          roomForm.get('description')?.touched
+        "
+      >
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Phone Number -->
+    <mat-form-field class="form-item">
+      <mat-label>Phone Number</mat-label>
+      <input
+        matInput
+        formControlName="phoneNumber"
+        type="tel"
+        placeholder="Enter phone number"
+      />
+      <mat-error
+        *ngIf="
+          roomForm.get('phoneNumber')?.invalid &&
+          roomForm.get('phoneNumber')?.touched
+        "
+      >
+        Phone number is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Link Map -->
+    <mat-form-field class="form-item">
+      <mat-label>Map Link</mat-label>
+      <input matInput formControlName="linkMap" placeholder="Enter map link" />
+      <mat-error
+        *ngIf="
+          roomForm.get('linkMap')?.invalid && roomForm.get('linkMap')?.touched
+        "
+      >
+        Map link is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Floor -->
+    <mat-form-field class="form-item">
+      <mat-label>Floor</mat-label>
+      <input
+        matInput
+        formControlName="floor"
+        type="number"
+        placeholder="Enter number of floors"
+      />
+      <mat-error
+        *ngIf="roomForm.get('floor')?.invalid && roomForm.get('floor')?.touched"
+      >
+        Floor number is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Width -->
+    <mat-form-field class="form-item">
+      <mat-label>Width (in meters)</mat-label>
+      <input
+        matInput
+        formControlName="width"
+        type="number"
+        placeholder="Enter width"
+      />
+      <mat-error
+        *ngIf="roomForm.get('width')?.invalid && roomForm.get('width')?.touched"
+      >
+        Width is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Height -->
+    <mat-form-field class="form-item">
+      <mat-label>Height (in meters)</mat-label>
+      <input
+        matInput
+        formControlName="height"
+        type="number"
+        placeholder="Enter height"
+      />
+      <mat-error
+        *ngIf="
+          roomForm.get('height')?.invalid && roomForm.get('height')?.touched
+        "
+      >
+        Height is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="file-input-wrapper">
+    <label for="file-upload" class="custom-file-upload">
+      <mat-icon>cloud_upload</mat-icon> Upload New Image
+    </label>
+    <input
+      id="file-upload"
+      type="file"
+      (change)="onFileSelected($event)"
+      accept="image/*"
+    />
+  </div>
+
+  <!-- Image Preview -->
+  <div class="image-preview" *ngIf="imagePreview">
+    <img [src]="imagePreview" alt="Image Preview" class="preview-img" />
+    <!-- Cancel Button -->
+    <button
+      mat-button
+      (click)="onCancelImage()"
+      color="warn"
+      class="cancel-image-btn"
+    >
+      <mat-icon>cancel</mat-icon> Cancel Image
+    </button>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onCancel()" color="warn">Cancel</button>
+  <button mat-raised-button (click)="onSubmit()" color="primary">
+    Update Room
+  </button>
+</mat-dialog-actions>

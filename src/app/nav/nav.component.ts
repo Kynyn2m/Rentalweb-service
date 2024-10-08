@@ -30,23 +30,97 @@ import { ProfileService } from '../profile/profile.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })
+
 export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
   fullName: string | null = null;
   email: string | null = null;
-
   menuItems = [
-    { router: '/home', icon: 'home', title: 'Home', tooltip: 'Home', adminOnly: false },
-    { router: '/room', icon: 'meeting_room', title: 'Room', tooltip: 'Room', adminOnly: false },
-    { router: '/house', icon: 'house', title: 'House', tooltip: 'House', adminOnly: false },
-    { router: '/land', icon: 'terrain', title: 'Land', tooltip: 'Land', adminOnly: false },
-    { router: '/add-post', icon: 'add', title: 'Add Post', tooltip: 'Add Post', adminOnly: false },
-    { router: '/contact', icon: 'contact_mail', title: 'Contact', tooltip: 'Contact', adminOnly: false },
-    { router: '/about-us', icon: 'info', title: 'About Us', tooltip: 'About Us', adminOnly: false },
+    {
+      router: '/home',
+      icon: 'home',
+      title: 'Home',
+      tooltip: 'Home',
+      adminOnly: false,
+    },
+    {
+      router: '/room',
+      icon: 'meeting_room',
+      title: 'Room',
+      tooltip: 'Room',
+      adminOnly: false,
+    },
+    {
+      router: '/house',
+      icon: 'house',
+      title: 'House',
+      tooltip: 'House',
+      adminOnly: false,
+    },
+    {
+      router: '/land',
+      icon: 'terrain',
+      title: 'Land',
+      tooltip: 'Land',
+      adminOnly: false,
+    },
+    {
+      router: '/add-post',
+      icon: 'add',
+      title: 'Add Post',
+      tooltip: 'Add Post',
+      adminOnly: false,
+    },
+    {
+      router: '/contact',
+      icon: 'contact_mail',
+      title: 'Contact',
+      tooltip: 'Contact',
+      adminOnly: false,
+    },
+    {
+      router: '/about-us',
+      icon: 'info',
+      title: 'About Us',
+      tooltip: 'About Us',
+      adminOnly: false,
+    },
 
     // Admin-only menu items
-    { router: '/dashboard', icon: 'dashboard', title: 'Dashboard', tooltip: 'Dashboard', adminOnly: true },
-    { router: '/user', icon: 'perm_identity', title: 'User', tooltip: 'User', adminOnly: true },
-    { router: '/role', icon: 'border_color', title: 'Role', tooltip: 'Role', adminOnly: true }
+    {
+      router: '/dashboard',
+      icon: 'dashboard',
+      title: 'Dashboard',
+      tooltip: 'Dashboard',
+      adminOnly: true,
+    },
+    {
+      router: '/user',
+      icon: 'perm_identity',
+      title: 'User',
+      tooltip: 'User',
+      adminOnly: true,
+    },
+    {
+      router: '/role',
+      icon: 'border_color',
+      title: 'Role',
+      tooltip: 'Role',
+      adminOnly: true,
+    },
+    {
+      router: '/house-list',
+      icon: 'house',
+      title: 'House',
+      tooltip: 'house',
+      adminOnly: true,
+    },
+    {
+      router: '/room-list',
+      icon: 'meeting_room',
+      title: 'Room',
+      tooltip: 'Room',
+      adminOnly: true,
+    },
   ];
 
   selectedItem: any = null;
@@ -57,7 +131,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
   @ViewChild('sidenavContent', { read: ElementRef })
   sidenavContent!: ElementRef;
   animationClass = 'animate__animated animate__fadeIn';
-
 
   isMediumScreen$: Observable<boolean> = this.breakpointObserver
     .observe(['(max-width: 1104px)'])
@@ -84,7 +157,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
     private profileService: ProfileService,
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef
-
   ) {
     this.initializeSettings();
     this.checkUserRole();
@@ -115,8 +187,8 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
     const loggedIn = this.isLoggedIn;
     this.authenticationService.currentUser
       .pipe(
-        tap(user => {
-          this.isAdmin = user?.id === 0;  // Set isAdmin based on user.id
+        tap((user) => {
+          this.isAdmin = user?.id === 0; // Set isAdmin based on user.id
         })
       )
       .subscribe();
@@ -124,7 +196,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
         this.loadUserProfile();
       }
   }
-
 
   checkUserRole(): void {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
