@@ -22,13 +22,20 @@ export class ProfileComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   imagePreview: SafeUrl | null = null;
+  houses: any[] = [];  // Store the list of user's houses
+  lands: any[] = [];   // Store the list of user's lands
+  rooms: any[] = [];
 
   constructor(private profileService: ProfileService, private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+
   ) {}
 
   ngOnInit(): void {
     this.fetchProfile();
+    this.fetchUserHouses();
+    this.fetchUserLands();
+    this.fetchUserRooms();
   }
 
   fetchProfile(): void {
@@ -95,5 +102,44 @@ export class ProfileComponent implements OnInit {
   cancelEdit(): void {
     console.log('Cancelling profile edit');
     this.fetchProfile();
+  }
+  fetchUserHouses(): void {
+    this.profileService.getUserHouses().subscribe(response => {
+      if (response.code === 200) {
+        this.houses = response.result.result;
+        this.houses.forEach(house => this.loadImage(house, 'house'));
+      }
+    });
+  }
+
+  fetchUserLands(): void {
+    this.profileService.getUserLands().subscribe(response => {
+      if (response.code === 200) {
+        this.lands = response.result.result;
+        this.lands.forEach(land => this.loadImage(land, 'land'));
+      }
+    });
+  }
+
+  fetchUserRooms(): void {
+    this.profileService.getUserRooms().subscribe(response => {
+      if (response.code === 200) {
+        this.rooms = response.result.result;
+        this.rooms.forEach(room => this.loadImage(room, 'room'));
+      }
+    });
+  }
+
+  // Load image and sanitize the URL
+  loadImage(item: any, type: string): void {
+    this.profileService.getImage(item.imagePath).subscribe(
+      (imageBlob) => {
+        const objectURL = URL.createObjectURL(imageBlob);
+        item.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      (error) => {
+        console.error(`Error loading ${type} image:`, error);
+      }
+    );
   }
 }

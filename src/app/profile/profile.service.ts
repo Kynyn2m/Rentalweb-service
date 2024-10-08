@@ -8,6 +8,9 @@ import { environment } from 'src/environments/environment';
 })
 export class ProfileService {
   private apiUrl = `${environment.apiUrl}/profile`;
+  private userHousesUrl = `${environment.apiUrl}/public/houses/me`;
+  private userlandUrl = `${environment.apiUrl}/public/lands/me`;
+  private userroomUrl = `${environment.apiUrl}/public/rooms/me`;
 
   constructor(private http: HttpClient) { }
 
@@ -20,5 +23,17 @@ export class ProfileService {
     });
 
     return this.http.put<any>(this.apiUrl, profileData, { headers });
+  }
+  getUserHouses(): Observable<any> {
+    return this.http.get<any>(this.userHousesUrl);
+  }
+  getUserLands(): Observable<any> {
+    return this.http.get<any>(this.userlandUrl);
+  }
+  getUserRooms(): Observable<any> {
+    return this.http.get<any>(this.userroomUrl);
+  }
+  getImage(imageUrl: string): Observable<Blob> {
+    return this.http.get(imageUrl, { responseType: 'blob' });
   }
 }
