@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HouseService } from '../Service/house.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from './image-dialog.component';
 
 interface House {
   id: number;
@@ -14,8 +15,8 @@ interface House {
   height: number;
   floor: number;
   phoneNumber: string;
-  imagePath: string;
-  safeImagePath?: SafeUrl; // Safe image URL after sanitization
+  imagePaths: string[];
+  safeImagePaths?: SafeUrl[];
   likeCount: number;
   linkMap: string;
   viewCount: number;
@@ -28,12 +29,14 @@ interface House {
   styleUrls: ['./details.component.css'],
 })
 export class DetailsComponent implements OnInit {
-  house: House | null = null; // Use proper type for house
+  house: House | null = null;
+  selectedImage: SafeUrl | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private houseService: HouseService
+    private houseService: HouseService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -43,13 +46,12 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  // Fetch house details based on the ID
   getHouseDetails(id: string): void {
     this.houseService.getHouseById(id).subscribe(
       (response) => {
-        this.house = response.result as House; // Map API result to house object
+        this.house = response.result as House;
         if (this.house) {
-          this.loadImage(this.house); // Load and sanitize the image
+          this.loadImages(this.house);
         }
       },
       (error) => {
@@ -58,29 +60,42 @@ export class DetailsComponent implements OnInit {
     );
   }
 
-  // Load and sanitize the house image
-  loadImage(house: House): void {
-    this.houseService.getImage(house.imagePath).subscribe(
-      (imageBlob) => {
-        const objectURL = URL.createObjectURL(imageBlob);
-        house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      },
-      (error) => {
-        console.error('Error loading image:', error);
-      }
-    );
+  loadImages(house: House): void {
+    if (house.imagePaths && house.imagePaths.length > 0) {
+      house.safeImagePaths = [];
+      house.imagePaths.forEach((imagePath) => {
+        this.houseService.getImage(imagePath).subscribe(
+          (imageBlob) => {
+            const objectURL = URL.createObjectURL(imageBlob);
+            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            house.safeImagePaths!.push(safeUrl);
+          },
+          (error) => {
+            console.error('Error loading image:', error);
+          }
+        );
+      });
+    }
   }
 
-  // Handle like functionality
+  // Open the image in the full-screen dialog
+  openImageInFullScreen(image: SafeUrl): void {
+    this.dialog.open(ImageDialogComponent, {
+      data: { image },
+      panelClass: 'full-screen-modal'
+    });
+  }
+
   likeHouse(houseId: number): void {
     if (!this.house) return;
 
     this.houseService.likeHouse(houseId).subscribe(() => {
-      this.house!.likeCount += 1; // Update like count for the current house
+      this.house!.likeCount += 1;
     });
   }
 
   goBack(): void {
     window.history.back();
   }
+
 }

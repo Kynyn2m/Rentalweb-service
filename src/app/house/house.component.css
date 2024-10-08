@@ -133,22 +133,16 @@ button.mat-raised-button {
   border-radius: 5px;
 }
 
-button.mat-raised-button:hover {
-  background-color: #2e7d32; /* Darker green on hover */
-}
-
 button.like-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background-color: #ff6f00; /* Custom orange for the like button */
+  background-color: #3463e3; /* Custom orange for the like button */
   color: white;
 }
 
-button.like-button:hover {
-  background-color: #e65100; /* Darker orange on hover */
-}
+
 .image-container {
   position: relative;
 }
@@ -629,13 +623,13 @@ button[disabled] {
  color: white;
 }
 
-.like-button:hover {
+/* .like-button:hover {
   color: #1565c0;
 }
 
 .like-button:hover mat-icon {
   color: #1565c0;
-}
+} */
 
 /* Image container for previous/next buttons */
 .image-container {

@@ -102,6 +102,7 @@
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
             <button mat-raised-button
+                    color="primary"
                     class="like-button"
                     (click)="likeHouse(house.id); $event.stopPropagation()">
               <mat-icon>thumb_up</mat-icon>
@@ -110,7 +111,7 @@
 
             <!-- View Details Button (aligned to the right) -->
             <button mat-raised-button
-                    color="accent"
+                    color="success"
                     class="details-button"
                     (click)="goToDetails(house.id)">
               View Details
