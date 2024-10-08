@@ -23,6 +23,7 @@ import { NonAdminGuard } from './authentication/non-admin.guard';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
 import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component';
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
+import { FooterComponent } from './footer/footer.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },

@@ -10,3 +10,7 @@ img {
   object-fit: cover;
   border-radius: 8px;
 }
+.header{
+  padding: 1rem;
+  text-align: center;
+}

@@ -63,6 +63,13 @@ export class HouseService {
     return this.http.put(url, {}); // Sending an empty body since it's a view count
   }
 
+  updateHouse(id: number, formData: FormData): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
+  }
+  deleteHouse(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 
 
 }
