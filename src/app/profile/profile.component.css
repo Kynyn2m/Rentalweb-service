@@ -98,7 +98,10 @@ h2{
 .profile-actions {
   margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: flex-start;
 }
 .change-photo-icon {
   position: absolute;

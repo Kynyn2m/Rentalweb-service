@@ -43,6 +43,7 @@
                         class="full-width">
           <mat-label>Username</mat-label>
           <input matInput
+                 disabled
                  [(ngModel)]="user.username">
         </mat-form-field>
 
@@ -70,9 +71,6 @@
         <button mat-raised-button
                 color="primary"
                 (click)="saveProfile()">Save</button>
-        <button mat-raised-button
-                color="warn"
-                (click)="cancelEdit()">Cancel</button>
       </div>
     </mat-card-content>
   </mat-card>
