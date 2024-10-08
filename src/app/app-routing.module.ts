@@ -24,6 +24,7 @@ import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.
 import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component';
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
 import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component';
+import { RoomListComponent } from './dashboard/room-list/room-list.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -35,6 +36,11 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'room-list',
+    component: RoomListComponent,
     canActivate: [AdminGuard],
   },
 

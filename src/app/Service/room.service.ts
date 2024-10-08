@@ -61,4 +61,12 @@ export class RoomService {
     const url = `${environment.apiUrl}/public/rooms/view/${roomId}`;
     return this.http.put(url, {}); // Sending an empty body since it's a view count
   }
+
+  updateRoom(id: number, formData: FormData): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
+  }
+  deleteRoom(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

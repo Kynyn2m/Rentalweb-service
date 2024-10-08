@@ -13,7 +13,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card blue-card">
+    <mat-card class="stat-card blue-card" (click)="goToRoomList()">
       <mat-card-header>
         <mat-icon class="card-icon">totalRoom</mat-icon>
         <mat-card-title>totalRoom</mat-card-title>
@@ -33,8 +33,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card teal-card"
-              (click)="goToHouseList()">
+    <mat-card class="stat-card teal-card" (click)="goToHouseList()">
       <mat-card-header>
         <mat-icon class="card-icon">attach_money</mat-icon>
         <mat-card-title>totalHouse</mat-card-title>
@@ -54,3 +53,4 @@
       </mat-card-content>
     </mat-card>
   </div>
+</div>

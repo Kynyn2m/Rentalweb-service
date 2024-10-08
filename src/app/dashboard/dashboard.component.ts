@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
   totalUsers: number = 0;
@@ -14,7 +14,8 @@ export class DashboardComponent {
   totalHouse: number = 0;
   totalPost: number = 0;
 
-  constructor(private readonly dashboardService: DashboardService,
+  constructor(
+    private readonly dashboardService: DashboardService,
     private router: Router
   ) {}
 
@@ -41,5 +42,8 @@ export class DashboardComponent {
   }
   goToHouseList(): void {
     this.router.navigate(['/house-list']);
+  }
+  goToRoomList(): void {
+    this.router.navigate(['/room-list']);
   }
 }
