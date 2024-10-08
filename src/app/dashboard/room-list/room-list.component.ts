@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { RoomService } from 'src/app/Service/room.service';
 import { RoomFormComponent } from './room-form/room-form.component';
+import { ConfirmComponent } from 'src/app/components/confirm/confirm.component';
 interface Room {
   id: number;
   title: string;
@@ -78,37 +79,40 @@ export class RoomListComponent {
       }
     );
   }
-  // openDeleteDialog(room: House): void {
-  //   const dialogRef = this.dialog.open(ConfirmComponent, {
-  //     width: '400px',
-  //     data: {
-  //       title: 'Delete House',
-  //       message: `Are you sure you want to delete the room: ${room.title}?`,
-  //       confirmText: 'Yes, Delete',
-  //       cancelText: 'Cancel'
-  //     }
-  //   });
+  openDeleteDialog(room: Room): void {
+    const dialogRef = this.dialog.open(ConfirmComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Room',
+        message: `Are you sure you want to delete the room: ${room.title}?`,
+        confirmText: 'Yes, Delete',
+        cancelText: 'Cancel',
+      },
+    });
 
-  //   dialogRef.afterClosed().subscribe(result => {
-  //     if (result === true) {
-  //       this.deleteHouse(room);
-  //     }
-  //   });
-  // }
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.deleteRoom(room);
+      }
+    });
+  }
+  deleteRoom(room: Room): void {
+    this.roomService.deleteRoom(room.id).subscribe(
+      (response) => {
+        this.snackBar.open(`${room.title} has been deleted.`, 'Close', {
+          duration: 3000,
+        });
+        this.fetchRoom(); // Refresh the list after deletion
+      },
+      (error) => {
+        console.error('Error deleting room:', error);
+        this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', {
+          duration: 3000,
+        });
+      }
+    );
+  }
 
-  // Handle room deletion
-  // deleteHouse(room: House): void {
-  //   this.roomService.deleteHouse(room.id).subscribe(
-  //     (response) => {
-  //       this.snackBar.open(`${room.title} has been deleted.`, 'Close', { duration: 3000 });
-  //       this.fetchHouses(); // Refresh the list after deletion
-  //     },
-  //     (error) => {
-  //       console.error('Error deleting room:', error);
-  //       this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', { duration: 3000 });
-  //     }
-  //   );
-  // }
   openUpdateDialog(room: Room): void {
     const dialogRef = this.dialog.open(RoomFormComponent, {
       width: '600px',

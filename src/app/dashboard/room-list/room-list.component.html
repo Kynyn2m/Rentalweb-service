@@ -82,7 +82,7 @@
             <mat-icon color="primary">edit</mat-icon>
             <span>update room</span>
           </button>
-          <button mat-menu-item>
+          <button mat-menu-item (click)="openDeleteDialog(room)">
             <mat-icon style="color: red">delete</mat-icon>
             <span>delete</span>
           </button>
