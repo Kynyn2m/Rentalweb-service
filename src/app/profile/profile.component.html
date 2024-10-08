@@ -78,27 +78,50 @@
     </mat-card>
   </div>
 
-  <!-- Post History on the Right -->
   <div class="history-posts-container">
     <h2 style="text-align: center;">My Post</h2>
+
     <!-- House Block -->
     <div class="post-block">
       <h3>My Houses</h3>
       <div class="history-cards">
         <mat-card *ngFor="let house of houses"
                   class="history-card">
-          <img mat-card-image
-               [src]="house.safeImagePath"
-               alt="{{ house.title }}"
-               class="history-card-img">
+
+          <!-- Image Carousel -->
+          <div class="image-carousel-container">
+            <!-- Previous Button -->
+            <button class="prev-image-button"
+                    *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
+                    (click)="prevImage(house); $event.stopPropagation()">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+
+            <!-- Display Current Image -->
+            <img [src]="house.safeImagePaths[house.currentImageIndex]"
+                 alt="{{ house.title }}"
+                 class="history-card-img" />
+
+            <!-- Next Button -->
+            <button class="next-image-button"
+                    *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
+                    (click)="nextImage(house); $event.stopPropagation()">
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
           <mat-card-title>{{ house.title }}</mat-card-title>
           <mat-card-content>
             <p><strong>Price:</strong> ${{ house.price }}</p>
             <p><strong>Location:</strong> {{ house.location }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <span><mat-icon>thumb_up</mat-icon> {{ house.likeCount }}</span>
-            <span><mat-icon>visibility</mat-icon> {{ house.viewCount }}</span>
+            <div class="card-actions-left">
+              <span><mat-icon>thumb_up</mat-icon> {{ house.likeCount }}</span>
+            </div>
+            <div class="card-actions-right">
+              <span><mat-icon>visibility</mat-icon> {{ house.viewCount }}</span>
+            </div>
           </mat-card-actions>
         </mat-card>
       </div>
@@ -110,18 +133,26 @@
       <div class="history-cards">
         <mat-card *ngFor="let land of lands"
                   class="history-card">
-          <img mat-card-image
-               [src]="land.safeImagePath"
-               alt="{{ land.title }}"
-               class="history-card-img">
+          <!-- Carousel for multiple images -->
+          <div class="image-carousel">
+            <img *ngFor="let imagePath of land.safeImagePaths"
+                 [src]="imagePath"
+                 alt="{{ land.title }}"
+                 class="history-card-img">
+          </div>
+
           <mat-card-title>{{ land.title }}</mat-card-title>
           <mat-card-content>
             <p><strong>Price:</strong> ${{ land.price }}</p>
             <p><strong>Location:</strong> {{ land.location }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <span><mat-icon>thumb_up</mat-icon> {{ land.likeCount }}</span>
-            <span><mat-icon>visibility</mat-icon> {{ land.viewCount }}</span>
+            <div class="card-actions-left">
+              <span><mat-icon>thumb_up</mat-icon> {{ land.likeCount }}</span>
+            </div>
+            <div class="card-actions-right">
+              <span><mat-icon>visibility</mat-icon> {{ land.viewCount }}</span>
+            </div>
           </mat-card-actions>
         </mat-card>
       </div>
@@ -133,21 +164,28 @@
       <div class="history-cards">
         <mat-card *ngFor="let room of rooms"
                   class="history-card">
-          <img mat-card-image
-               [src]="room.safeImagePath"
-               alt="{{ room.title }}"
-               class="history-card-img">
+          <!-- Carousel for multiple images -->
+          <div class="image-carousel">
+            <img *ngFor="let imagePath of room.safeImagePaths"
+                 [src]="imagePath"
+                 alt="{{ room.title }}"
+                 class="history-card-img">
+          </div>
+
           <mat-card-title>{{ room.title }}</mat-card-title>
           <mat-card-content>
             <p><strong>Price:</strong> ${{ room.price }}</p>
             <p><strong>Location:</strong> {{ room.location }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <span><mat-icon>thumb_up</mat-icon> {{ room.likeCount }}</span>
-            <span><mat-icon>visibility</mat-icon> {{ room.viewCount }}</span>
+            <div class="card-actions-left">
+              <span><mat-icon>thumb_up</mat-icon> {{ room.likeCount }}</span>
+            </div>
+            <div class="card-actions-right">
+              <span><mat-icon>visibility</mat-icon> {{ room.viewCount }}</span>
+            </div>
           </mat-card-actions>
         </mat-card>
       </div>
     </div>
   </div>
-</div>

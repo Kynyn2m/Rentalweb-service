@@ -26,9 +26,10 @@ export class ProfileComponent implements OnInit {
   lands: any[] = [];   // Store the list of user's lands
   rooms: any[] = [];
 
-  constructor(private profileService: ProfileService, private sanitizer: DomSanitizer,
+  constructor(
+    private profileService: ProfileService,
+    private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +39,7 @@ export class ProfileComponent implements OnInit {
     this.fetchUserRooms();
   }
 
+  // Fetch profile details and load the user's avatar
   fetchProfile(): void {
     this.profileService.getProfile().subscribe(
       (response) => {
@@ -57,6 +59,7 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  // Handle file selection and create a preview
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -71,6 +74,7 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  // Save profile updates including file upload
   saveProfile(): void {
     const formData = new FormData();
     formData.append('fullName', this.user.fullName);
@@ -78,7 +82,7 @@ export class ProfileComponent implements OnInit {
     formData.append('email', this.user.email);
     formData.append('username', this.user.username);
     if (this.selectedFile) {
-      formData.append('image', this.selectedFile);
+      formData.append('avatar', this.selectedFile); // Ensure key matches backend expectation
     }
 
     this.profileService.updateProfile(formData).subscribe(
@@ -87,7 +91,7 @@ export class ProfileComponent implements OnInit {
         this.snackBar.open('Profile updated successfully', 'Close', {
           duration: 3000,
         });
-        this.fetchProfile();
+        this.fetchProfile(); // Refresh the profile after update
       },
       (error) => {
         console.error('Error updating profile:', error);
@@ -95,14 +99,19 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
+
+  // Fallback in case the avatar image fails to load
   onImageError(event: any): void {
-    event.target.src = '/assets/img/user.png';
+    event.target.src = '/assets/img/user.png';  // Fallback image path
   }
 
+  // Cancel the profile update and reset changes
   cancelEdit(): void {
-    console.log('Cancelling profile edit');
-    this.fetchProfile();
+    this.fetchProfile();  // Reload the original profile data
+    this.selectedFile = null;  // Clear the selected file
   }
+
+  // Fetch user's houses
   fetchUserHouses(): void {
     this.profileService.getUserHouses().subscribe(response => {
       if (response.code === 200) {
@@ -112,6 +121,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // Fetch user's lands
   fetchUserLands(): void {
     this.profileService.getUserLands().subscribe(response => {
       if (response.code === 200) {
@@ -121,6 +131,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // Fetch user's rooms
   fetchUserRooms(): void {
     this.profileService.getUserRooms().subscribe(response => {
       if (response.code === 200) {
@@ -129,17 +140,48 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-
-  // Load image and sanitize the URL
   loadImage(item: any, type: string): void {
-    this.profileService.getImage(item.imagePath).subscribe(
-      (imageBlob) => {
-        const objectURL = URL.createObjectURL(imageBlob);
-        item.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      },
-      (error) => {
-        console.error(`Error loading ${type} image:`, error);
-      }
-    );
+    item.safeImagePaths = []; // Initialize an array for the sanitized image URLs
+    item.currentImageIndex = 0; // Start by showing the first image
+
+    // Loop through the array of imagePaths and sanitize each one
+    if (item.imagePaths && item.imagePaths.length > 0) {
+      item.imagePaths.forEach((imagePath: string) => {
+        this.profileService.getImage(imagePath).subscribe(
+          (imageBlob) => {
+            const objectURL = URL.createObjectURL(imageBlob);
+            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            item.safeImagePaths.push(safeUrl);  // Push sanitized URLs to the array
+          },
+          (error) => {
+            console.error(`Error loading ${type} image for item with ID: ${item.id || 'unknown'}`, error);
+            item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a placeholder if image loading fails
+          }
+        );
+      });
+    } else {
+      item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a single placeholder if no image exists
+    }
   }
+
+  // Navigate to the previous image in the carousel
+  prevImage(item: any): void {
+    if (item.currentImageIndex > 0) {
+      item.currentImageIndex--;
+    } else {
+      item.currentImageIndex = item.safeImagePaths.length - 1; // Loop back to the last image
+    }
+  }
+
+  // Navigate to the next image in the carousel
+  nextImage(item: any): void {
+    if (item.currentImageIndex < item.safeImagePaths.length - 1) {
+      item.currentImageIndex++;
+    } else {
+      item.currentImageIndex = 0; // Loop back to the first image
+    }
+  }
+
+
+
 }
