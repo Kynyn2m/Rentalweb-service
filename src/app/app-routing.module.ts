@@ -23,7 +23,7 @@ import { NonAdminGuard } from './authentication/non-admin.guard';
 import { AddPostHouseComponent } from './add-post/add-post-house/add-post-house.component';
 import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.component';
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
-import { FooterComponent } from './footer/footer.component';
+import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -41,10 +41,13 @@ const routes: Routes = [
   { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
 
-  { path: 'role', component: RoleComponent ,canActivate: [AdminGuard]},
+  { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
-  { path: 'house-list', component: HouseListComponent,canActivate: [AdminGuard] },
-
+  {
+    path: 'house-list',
+    component: HouseListComponent,
+    canActivate: [AdminGuard],
+  },
 
   // Publicly accessible routes
   { path: 'home', component: HomeComponent, canActivate: [NonAdminGuard] },
@@ -77,7 +80,11 @@ const routes: Routes = [
     component: AddPostLandComponent,
     canActivate: [AuthGuard],
   },
-
+  {
+    path: 'add-post-room',
+    component: AddPostRoomComponent,
+    canActivate: [AuthGuard],
+  },
   // Add post route (requires user to be logged in)
   {
     path: 'add-post',
