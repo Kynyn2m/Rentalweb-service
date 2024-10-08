@@ -140,18 +140,34 @@
               class="signup-link">Sign up</span>
       </div>
       <mat-menu #menu="matMenu">
+        <!-- User Info Section -->
+        <div class="profile-info"
+             *ngIf="fullName || email">
+          <div class="profile-info-text">
+            <p class="user-fullname">{{ fullName }}</p>
+            <p style="margin-top: 5px;"
+               class="user-email">{{ email }}</p>
+          </div>
+        </div>
+
+        <!-- Divider between user info and menu items -->
+        <mat-divider></mat-divider>
+
+        <!-- Profile Menu Item -->
         <button mat-menu-item
                 [routerLink]="'/profile'">
           <mat-icon>person</mat-icon>
           <span>Profile</span>
         </button>
-        <mat-divider></mat-divider>
+
+        <!-- Logout Menu Item -->
         <button mat-menu-item
                 (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
           <span>Logout</span>
         </button>
       </mat-menu>
+
     </mat-toolbar>
 
     <div class="container-fluid bg-color">

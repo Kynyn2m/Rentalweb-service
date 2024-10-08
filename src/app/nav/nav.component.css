@@ -264,3 +264,22 @@ menu-items .active mat-icon {
   background-color: #f9640750; /* Hover background color */
   color: white;
 }
+.profile-info {
+  padding: 15px;
+}
+
+.profile-info-text {
+  text-align: left;
+}
+
+.user-fullname {
+  font-weight: bold;
+  font-size: 17px;
+  margin: 0;
+}
+
+.user-email {
+  font-size: 16px;
+  color: gray;
+  margin: 0;
+}
