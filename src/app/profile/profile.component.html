@@ -1,54 +1,153 @@
-<div class="profile-container">
-  <div class="profile-header-bar"></div>
-  <!-- <h2>User Profile</h2> -->
+<div class="profile-page-container">
+  <!-- Sticky Profile Information on the Left -->
+  <div class="profile-container sticky">
+    <div class="profile-header-bar"></div>
 
-  <div class="profile-photo">
-    <img [src]="user.photo" alt="User Photo" class="user-photo">
-    <input type="file" (change)="onFileSelected($event)" hidden #fileInput>
-    <button mat-icon-button color="primary" (click)="fileInput.click()" class="change-photo-icon">
-      <mat-icon>camera_alt</mat-icon>
-    </button>
+    <div class="profile-photo">
+      <img [src]="user.avatarUrl || '/assets/img/user.png'"
+           alt="User Photo"
+           class="user-photo"
+           (error)="onImageError($event)">
+      <input type="file"
+             (change)="onFileSelected($event)"
+             hidden
+             #fileInput>
+      <button mat-icon-button
+              color="primary"
+              (click)="fileInput.click()"
+              class="change-photo-icon">
+        <mat-icon>camera_alt</mat-icon>
+      </button>
+    </div>
+
+    <mat-card>
+      <mat-card-content>
+        <div class="user-info-grid">
+          <!-- ID (readonly) -->
+          <mat-form-field appearance="outline"
+                          class="full-width">
+            <mat-label>ID</mat-label>
+            <input matInput
+                   [value]="user.id"
+                   readonly>
+          </mat-form-field>
+
+          <!-- Full Name -->
+          <mat-form-field appearance="outline"
+                          class="full-width">
+            <mat-label>Full Name</mat-label>
+            <input matInput
+                   [(ngModel)]="user.fullName">
+          </mat-form-field>
+
+          <!-- Username -->
+          <mat-form-field appearance="outline"
+                          class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput
+                   disabled
+                   [(ngModel)]="user.username">
+          </mat-form-field>
+
+          <!-- Gender -->
+          <mat-form-field appearance="outline"
+                          class="full-width">
+            <mat-label>Gender</mat-label>
+            <mat-select [(ngModel)]="user.gender">
+              <mat-option value="male">Male</mat-option>
+              <mat-option value="female">Female</mat-option>
+              <mat-option value="other">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Email -->
+          <mat-form-field appearance="outline"
+                          class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput
+                   [(ngModel)]="user.email">
+          </mat-form-field>
+        </div>
+
+        <div class="profile-actions">
+          <button mat-raised-button
+                  color="primary"
+                  (click)="saveProfile()">Save</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
-
-
-  <mat-card>
-    <mat-card-content>
-      <div class="user-info-grid">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>User ID</mat-label>
-          <input matInput [value]="user.id" readonly>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Username</mat-label>
-          <input matInput [(ngModel)]="user.username">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Gender</mat-label>
-          <mat-select [(ngModel)]="user.gender">
-            <mat-option value="male">Male</mat-option>
-            <mat-option value="female">Female</mat-option>
-            <mat-option value="other">Other</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Current Address</mat-label>
-          <input matInput [(ngModel)]="user.address">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Phone Number</mat-label>
-          <input matInput [(ngModel)]="user.phoneNumber" type="tel">
-        </mat-form-field>
+  <!-- Post History on the Right -->
+  <div class="history-posts-container">
+    <h2 style="text-align: center;">My Post</h2>
+    <!-- House Block -->
+    <div class="post-block">
+      <h3>My Houses</h3>
+      <div class="history-cards">
+        <mat-card *ngFor="let house of houses"
+                  class="history-card">
+          <img mat-card-image
+               [src]="house.safeImagePath"
+               alt="{{ house.title }}"
+               class="history-card-img">
+          <mat-card-title>{{ house.title }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>Price:</strong> ${{ house.price }}</p>
+            <p><strong>Location:</strong> {{ house.location }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <span><mat-icon>thumb_up</mat-icon> {{ house.likeCount }}</span>
+            <span><mat-icon>visibility</mat-icon> {{ house.viewCount }}</span>
+          </mat-card-actions>
+        </mat-card>
       </div>
+    </div>
 
-      <div class="profile-actions">
-        <button mat-raised-button color="success" (click)="saveProfile()">Save</button>
-        <button mat-raised-button color="warn" (click)="cancelEdit()">Cancel</button>
+    <!-- Land Block -->
+    <div class="post-block">
+      <h3>My Lands</h3>
+      <div class="history-cards">
+        <mat-card *ngFor="let land of lands"
+                  class="history-card">
+          <img mat-card-image
+               [src]="land.safeImagePath"
+               alt="{{ land.title }}"
+               class="history-card-img">
+          <mat-card-title>{{ land.title }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>Price:</strong> ${{ land.price }}</p>
+            <p><strong>Location:</strong> {{ land.location }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <span><mat-icon>thumb_up</mat-icon> {{ land.likeCount }}</span>
+            <span><mat-icon>visibility</mat-icon> {{ land.viewCount }}</span>
+          </mat-card-actions>
+        </mat-card>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+
+    <!-- Room Block -->
+    <div class="post-block">
+      <h3>My Rooms</h3>
+      <div class="history-cards">
+        <mat-card *ngFor="let room of rooms"
+                  class="history-card">
+          <img mat-card-image
+               [src]="room.safeImagePath"
+               alt="{{ room.title }}"
+               class="history-card-img">
+          <mat-card-title>{{ room.title }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>Price:</strong> ${{ room.price }}</p>
+            <p><strong>Location:</strong> {{ room.location }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <span><mat-icon>thumb_up</mat-icon> {{ room.likeCount }}</span>
+            <span><mat-icon>visibility</mat-icon> {{ room.viewCount }}</span>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
 </div>

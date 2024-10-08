@@ -4,44 +4,44 @@
   <div class="result-header">
     <h2>Complete Your Result</h2>
   </div>
-  <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <mat-form-field class="full-waith" appearance="outline">
+  <form [formGroup]="searchForm"
+        (ngSubmit)="onSearch()">
+    <mat-form-field class="full-waith"
+                    appearance="outline">
       <mat-label>Search</mat-label>
-      <input matInput formControlName="search" placeholder="Enter location" />
+      <input matInput
+             formControlName="search"
+             placeholder="Enter location" />
     </mat-form-field>
 
     <div class="search-field price-field">
       <mat-form-field appearance="outline">
         <mat-label>From Price</mat-label>
-        <input
-          matInput
-          formControlName="fromPrice"
-          type="number"
-          placeholder="From Price"
-        />
+        <input matInput
+               formControlName="fromPrice"
+               type="number"
+               placeholder="From Price" />
       </mat-form-field>
 
       <span class="price-separator">-</span>
 
       <mat-form-field appearance="outline">
         <mat-label>To Price</mat-label>
-        <input
-          matInput
-          formControlName="toPrice"
-          type="number"
-          placeholder="To Price"
-        />
+        <input matInput
+               formControlName="toPrice"
+               type="number"
+               placeholder="To Price" />
       </mat-form-field>
     </div>
 
     <div class="search-button-container">
-      <button class="full-waith" mat-raised-button color="success">Find</button>
-      <button
-        class="full-waith"
-        mat-raised-button
-        color="warn"
-        (click)="onClear()"
-      >
+      <button class="full-waith"
+              mat-raised-button
+              color="success">Find</button>
+      <button class="full-waith"
+              mat-raised-button
+              color="warn"
+              (click)="onClear()">
         Clear
       </button>
     </div>
@@ -52,9 +52,12 @@
   <section>
     <h2>Land</h2>
     <div class="card-grid">
-      <mat-card *ngFor="let l of land" (click)="goToDetails(l.id)">
+      <mat-card *ngFor="let l of land"
+                (click)="goToDetails(l.id)">
         <div class="image-container">
-          <img mat-card-image [src]="l.safeImagePath" alt="{{ l.title }}" />
+          <img mat-card-image
+               [src]="l.safeImagePath"
+               alt="{{ l.title }}" />
         </div>
         <mat-card-content>
           <h3>{{ l.title }}</h3>
@@ -65,11 +68,9 @@
           <p>Phone: {{ l.phoneNumber }}</p>
           <p>Views: {{ l.viewCount }}</p>
           <p>Likes: {{ l.likeCount }}</p>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="likeLand(l.id); $event.stopPropagation()"
-          >
+          <button mat-raised-button
+                  color="primary"
+                  (click)="likeLand(l.id); $event.stopPropagation()">
             Like
           </button>
         </mat-card-content>
@@ -77,16 +78,12 @@
     </div>
 
     <!-- Pagination controls -->
-    <div
-      class="pagination-buttons"
-      style="text-align: center; margin-top: 50px"
-    >
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="prevPage()"
-        [disabled]="currentPage === 0"
-      >
+    <div class="pagination-buttons"
+         style="text-align: center; margin-top: 50px">
+      <button mat-raised-button
+              color="primary"
+              (click)="prevPage()"
+              [disabled]="currentPage === 0">
         Previous
       </button>
 
@@ -95,29 +92,21 @@
           <span>...</span>
         </ng-container>
         <ng-container *ngIf="page !== -1">
-          <button
-            mat-button
-            (click)="changePage(page)"
-            [disabled]="page === currentPage"
-          >
+          <button mat-button
+                  (click)="changePage(page)"
+                  [disabled]="page === currentPage">
             {{ page + 1 }}
           </button>
         </ng-container>
       </ng-container>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="nextPage()"
-        [disabled]="currentPage === totalPages - 1"
-      >
+      <button mat-raised-button
+              color="primary"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages - 1">
         Next
       </button>
     </div>
   </section>
 </div>
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 <app-footer></app-footer>

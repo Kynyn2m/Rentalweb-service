@@ -46,9 +46,6 @@ const routes: Routes = [
 
   { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
-
-  { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
-  { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
   {
     path: 'house-list',
     component: HouseListComponent,

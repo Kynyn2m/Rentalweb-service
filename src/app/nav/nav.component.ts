@@ -23,13 +23,17 @@ import { TranslocoService } from '@ngneat/transloco';
 import { map, shareReplay, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
+import { ProfileService } from '../profile/profile.service';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })
-export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
+
+export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
+  fullName: string | null = null;
+  email: string | null = null;
   menuItems = [
     {
       router: '/home',
@@ -150,6 +154,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
     private transloco: TranslocoService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
+    private profileService: ProfileService,
     private router: Router,
     private changeDetectorRef: ChangeDetectorRef
   ) {
@@ -179,6 +184,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
     });
   }
   ngOnInit(): void {
+    const loggedIn = this.isLoggedIn;
     this.authenticationService.currentUser
       .pipe(
         tap((user) => {
@@ -186,6 +192,9 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
         })
       )
       .subscribe();
+      if (this.isLoggedIn) {
+        this.loadUserProfile();
+      }
   }
 
   checkUserRole(): void {
@@ -260,5 +269,18 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
   }
   get isLoggedIn(): boolean {
     return !!this.authenticationService.currentUserValue?.token;
+  }
+  loadUserProfile(): void {
+    this.profileService.getProfile().subscribe(
+      (response) => {
+        if (response.code === 200) {
+          this.fullName = response.result.fullName;
+          this.email = response.result.email;
+        }
+      },
+      (error) => {
+        console.error('Error fetching profile data', error);
+      }
+    );
   }
 }
