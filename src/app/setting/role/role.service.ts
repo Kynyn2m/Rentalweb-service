@@ -9,7 +9,19 @@ import { ROLE_TYPE } from './role';
   providedIn: 'root',
 })
 export class RoleService {
-  constructor(private http: HttpClient) {}
+  private rolesUrl = `${environment.apiUrl}/roles`;
+  private assignRoleUrl = `${environment.apiUrl}/users`;
+  constructor(private http: HttpClient) { }
+
+  getRoles(): Observable<any> {
+    return this.http.get<any>(`${this.rolesUrl}`);
+  }
+
+  // Assign role to a user (PUT request)
+  assignRoleToUser(userId: number, roleId: number): Observable<any> {
+    const url = `${this.assignRoleUrl}/${userId}/roles`;
+    return this.http.put<any>(url, { roles: [roleId] });  // Assuming the payload needs to be { roles: [roleId] }
+  }
 
   // Get paginated roles data
   gets(page: number, size: number, search: string, filter: any): Observable<ResponseModel> {

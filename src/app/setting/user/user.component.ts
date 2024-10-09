@@ -22,6 +22,9 @@ import { MatSort } from '@angular/material/sort';
 import { USER } from './data.test';
 import { UserFormComponent } from './user-form/user-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { RoleService } from '../role/role.service';
+import { AssignRoleDialogComponent, Role } from './assign-role-dialog/assign-role-dialog.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user',
@@ -71,6 +74,7 @@ export class UserComponent {
     private navComponent: NavComponent,
     private confirmService: ConfirmService,
     private changeDetectorRef: ChangeDetectorRef,
+    private rolesService: RoleService,
     private readonly translocoService: TranslocoService,
     private authenticationService: AuthenticationService
   ) {}
@@ -133,36 +137,41 @@ export class UserComponent {
     });
   }
 
-  // assignRole(user: USER_TYPE) {
-  //   console.log('Assign role to user:', user);
-  //   const dialogConfig = new MatDialogConfig();
-  //   dialogConfig.autoFocus = true;
-  //   dialogConfig.width = '600px';
-  //   dialogConfig.data = user;
-  //   const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result && result.assignedRoles) {
-  //       const roles = result.assignedRoles.map((role: { id: number }) => ({
-  //         roleId: role.id,
-  //       }));
-  //       this.userService.getUserRoles(roles).subscribe(
-  //         (response) => {
-  //           console.log('User assigned successfully:', response);
-  //           this.getAll();
-  //           this.snackBar.open('User assigned successfully', 'Close', {
-  //             duration: 3000,
-  //           });
-  //         },
-  //         (error) => {
-  //           console.error('Error assigning User:', error);
-  //           this.snackBar.open('Error assigning user', 'Close', {
-  //             duration: 3000,
-  //           });
-  //         }
-  //       );
-  //     }
-  //   });
-  // }
+  openAssignRoleDialog(user: any): void {
+    this.rolesService.getRoles().subscribe((response) => {
+      const roles: Role[] = response.result.result; // Assuming 'result' contains the list of roles
+
+      // Open the dialog and pass the list of roles
+      const dialogRef = this.dialog.open(AssignRoleDialogComponent, {
+        width: '400px',
+        data: {
+          roles: roles, // Pass the roles to the dialog
+          assignedRoles: user.roles // Pass currently assigned roles
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Assign selected role IDs to the user
+          this.assignRolesToUser(user.id, result);
+        }
+      });
+    });
+  }
+
+  assignRolesToUser(userId: number, roleIds: number[]): void {
+    // Call the user service to assign roles
+    this.userService.assignRolesToUser(userId, roleIds).subscribe(() => {
+      console.log('Roles successfully assigned to user.');
+      // Show success alert
+      Swal.fire('Success', 'Roles have been successfully assigned.', 'success');
+    }, error => {
+      console.error('Error assigning roles:', error);
+      Swal.fire('Error', 'Failed to assign roles.', 'error');
+    });
+  }
+
+
   assignRole(user: USER_TYPE) {
     console.log('Assign role to user:', user);
 

@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Assign Roles</h2>
+
+<mat-dialog-content>
+  <div *ngFor="let role of roles"
+       class="role-item">
+    <!-- Role Selection with Checkbox -->
+    <mat-checkbox [checked]="selectedRoleIds.includes(role.id)"
+                  (change)="toggleRole(role.id)">
+      <strong>{{ role.name }}</strong>
+    </mat-checkbox>
+
+    <!-- Role Description -->
+    <p class="role-description">{{ role.description }}</p>
+
+    <!-- Associated Permissions -->
+    <div class="permissions-list"
+         *ngIf="role.permissions && role.permissions.length > 0">
+      <strong>Permissions:</strong>
+      <ul>
+        <li *ngFor="let permission of role.permissions">
+          {{ permission.name }} - {{ permission.description }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button
+          color="primary"
+          (click)="onSave()">Save</button>
+  <button mat-raised-button
+          color="warn"
+          (click)="onCancel()">Cancel</button>
+</mat-dialog-actions>

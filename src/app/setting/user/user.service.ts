@@ -27,21 +27,6 @@ export class UserService {
     if (filter.categories) url = url + `&groupId=${filter.categories}`;
     return this.http.get<ResponseModel>(url);
   }
-
-  // createUser(user: USER_TYPE): Observable<ResponseModel> {
-  //   return this.http.post<ResponseModel>(
-  //     `${environment.apiUrl}${this.uri}/register`,
-  //     user
-  //   );
-  // }
-
-  // put(user: USER_TYPE): Observable<ResponseModel> {
-  //   return this.http.put<ResponseModel>(
-  //     `${environment.apiUrl}${this.uri}/users`,
-  //     user
-  //   );
-  // }
-
   updateUser(user: USER_TYPE, id: number): Observable<ResponseModel> {
     return this.http.put<ResponseModel>(
       `${environment.apiUrl}/users/${id}`,
@@ -54,7 +39,10 @@ export class UserService {
       }
     );
   }
-
+  assignRolesToUser(userId: number, roleIds: number[]): Observable<ResponseModel> {
+    const url = `${environment.apiUrl}/users/${userId}/roles`;
+    return this.http.put<ResponseModel>(url, roleIds); // Sending the array of role IDs directly
+  }
   deleteUser(id: number) {
     return this.http.delete(`${environment.apiUrl}/users/${id}`);
   }
