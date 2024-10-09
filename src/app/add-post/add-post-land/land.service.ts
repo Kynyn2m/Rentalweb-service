@@ -48,7 +48,11 @@ export class LandService {
   }
 
   // Fetch image with headers
-
+  getLandById(id: string): Observable<any> {
+    const url = `${this.apiUrl}/${id}`; // Assuming this.apiUrl is set to your base API URL
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.get<any>(url, { headers });
+  }
   getImage(imageUrl: string): Observable<Blob> {
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.get(imageUrl, { headers, responseType: 'blob' });

@@ -1,0 +1,148 @@
+.details-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-button {
+  font-size: 16px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.details-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.image-thumbnails {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.thumbnail {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box-shadow */
+}
+
+.thumbnail:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.details-content h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.details-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: red;
+  font-weight: bold;
+}
+
+/* Adjust the button width */
+.like-button {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  width: 150px;
+}
+
+/* Full-Screen Modal Styles */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.full-screen-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .thumbnail {
+    width: 100px;
+    height: 100px;
+  }
+
+  .details-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .price {
+    font-size: 1.2rem;
+  }
+
+  .details-info p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .details-container {
+    padding: 10px;
+  }
+
+  .details-content h2 {
+    font-size: 1.6rem;
+  }
+
+  .price {
+    font-size: 1rem;
+  }
+
+  .details-info p {
+    font-size: 12px;
+  }
+}
