@@ -101,47 +101,30 @@ export class HouseComponent implements OnInit {
     page: number = 0
   ): void {
     const params: any = {
-      page, // The current page
-      size: this.itemsPerPage, // The number of items per page
+      page,
+      size: this.itemsPerPage,
     };
 
-    // Add parameters only if they are defined
-    if (fromPrice !== undefined) {
-      params.fromPrice = fromPrice;
-    }
-    if (toPrice !== undefined) {
-      params.toPrice = toPrice;
-    }
-    if (search) {
-      params.search = search;
-    }
-    if (provinceId !== undefined && provinceId !== null) {
-      params.provinceId = provinceId;
-    }
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+    if (provinceId !== undefined && provinceId !== null) params.provinceId = provinceId;
 
-    // Only include district, commune, and village if province is defined
-    if (districtId !== undefined && districtId !== null && districtId !== 0) {
-      params.districtId = districtId;
-    }
-    if (communeId !== undefined && communeId !== null && communeId !== 0) {
-      params.communeId = communeId;
-    }
-    if (villageId !== undefined && villageId !== null && villageId !== 0) {
-      params.villageId = villageId;
-    }
-
-    // Call the API
-    this.houseService.getHouses(params).subscribe(response => {
+    this.houseService.getHouses(params).subscribe((response) => {
       const responseData = response.result;
-      this.houses = responseData.result; // List of houses
-      this.totalPages = responseData.totalPage; // Total number of pages
+      this.houses = responseData.result;
+      this.totalPages = responseData.totalPage;
 
-      // Load images safely
+      // Load images safely and map province name
       this.houses.forEach(house => {
         this.loadImage(house);
+        // Find and assign the province name
+        const matchedProvince = this.provinces_c.find(p => p.id === house.province);
+        house.provinceName = matchedProvince ? matchedProvince.khmerName || matchedProvince.englishName : 'Unknown Province';
       });
     });
   }
+
 
 
   onProvinceSelected(event: any): void {

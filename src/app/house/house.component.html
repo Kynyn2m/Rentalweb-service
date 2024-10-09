@@ -150,7 +150,7 @@
 
         <mat-card-content>
           <h3>{{ house.title }}</h3>
-          <p>Location: {{ house.location }}</p>
+          <p>Location: {{ house.provinceName }}</p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px;">
             Price: ${{ house.price }}
           </p>
@@ -164,7 +164,6 @@
           </div>
 
           <div class="actions">
-            <!-- Like Button (aligned to the left) -->
             <button mat-raised-button
                     color="primary"
                     class="like-button"
@@ -173,7 +172,6 @@
               {{ house.likeCount }} Likes
             </button>
 
-            <!-- View Details Button (aligned to the right) -->
             <button mat-raised-button
                     color="success"
                     class="details-button"
@@ -182,6 +180,7 @@
             </button>
           </div>
         </mat-card-content>
+
       </mat-card>
     </div>
 
