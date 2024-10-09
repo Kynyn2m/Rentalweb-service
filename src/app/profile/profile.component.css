@@ -290,3 +290,52 @@ h2{
 .card-actions-right {
   justify-content: flex-end;
 }
+/* Ensure the card actions are spaced properly */
+.mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px 10px;
+}
+
+/* Align the left actions (like and view) properly */
+.card-actions-left {
+  display: flex;
+  gap: 15px; /* Space between the icons and text */
+  align-items: center;
+}
+
+/* Align the right actions (delete button) */
+.card-actions-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Style for the delete button */
+.delete-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 14px; /* Keep text and button size consistent */
+  border-radius: 5px;
+  height: auto; /* Auto height to match the icons */
+  min-height: 36px; /* Ensure it's not too small */
+}
+
+/* Adjust the delete icon size inside the button */
+.delete-button mat-icon {
+  font-size: 20px;
+}
+
+/* Set color for delete button */
+.delete-button:hover {
+  background-color: #ff7961;
+}
+
+/* Make sure text and icon are vertically centered */
+.delete-button mat-icon,
+.card-actions-left span {
+  display: inline-flex;
+  align-items: center;
+}

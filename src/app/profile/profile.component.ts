@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';  // Adjust path to your service
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // To handle image sanitization
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-profile',
@@ -30,6 +32,7 @@ export class ProfileComponent implements OnInit {
     private profileService: ProfileService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +75,70 @@ export class ProfileComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     }
+  }
+  deleteLand(landId: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete Land',
+        message: 'Are you sure you want to delete this land?',
+        confirmText: 'Yes',
+        cancelText: 'No'
+      }
+    });
+
+    // Check the result after the dialog closes
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // If confirmed, proceed with deletion
+        this.profileService.deleteLand(landId).subscribe(() => {
+          // After successful deletion, update the UI by removing the deleted land
+          this.lands = this.lands.filter(land => land.id !== landId);
+        });
+      }
+    });
+  }
+  deleteRoom(roomId: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete Room',
+        message: 'Are you sure you want to delete this room?',
+        confirmText: 'Yes',
+        cancelText: 'No'
+      }
+    });
+
+    // Check the result after the dialog closes
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // If confirmed, proceed with deletion
+        this.profileService.deleteRoom(roomId).subscribe(() => {
+          // After successful deletion, update the UI by removing the deleted room
+          this.rooms = this.rooms.filter(room => room.id !== roomId);
+        });
+      }
+    });
+  }
+  deleteHouse(houseId: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: {
+        title: 'Delete House',
+        message: 'Are you sure you want to delete this house?',
+        confirmText: 'Yes',
+        cancelText: 'No'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // If confirmed, proceed to delete the house
+        this.profileService.deleteHouse(houseId).subscribe(() => {
+          this.houses = this.houses.filter(house => house.id !== houseId);
+        });
+      }
+    });
   }
 
   // Save profile updates including file upload

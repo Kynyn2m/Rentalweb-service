@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <mat-label>{{ data.message }}</mat-label>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button
+          color="success"
+          (click)="confirm()">{{ data.confirmText }}</button>
+  <button mat-raised-button
+          color="warn"
+          (click)="cancel()">{{ data.cancelText }}</button>
+</mat-dialog-actions>
+<mat-progress-bar *ngIf="loading"
+                  mode="indeterminate"></mat-progress-bar>
