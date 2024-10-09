@@ -90,8 +90,7 @@ import { LandListComponent } from './dashboard/land-list/land-list.component';
 import { LandFormComponent } from './dashboard/land-list/land-form/land-form.component';
 import { DetailRoomComponent } from './pages/room/detail-room/detail-room.component';
 import { DetailLandComponent } from './pages/land/detail-land/detail-land.component';
-// import { GoogleMapsModule } from '@angular/google-maps';
-
+import { ConfirmDialogComponent } from './profile/confirm-dialog/confirm-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -140,6 +139,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     LandFormComponent,
     DetailRoomComponent,
     DetailLandComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,

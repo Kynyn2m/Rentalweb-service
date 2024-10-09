@@ -92,11 +92,15 @@
 
 .mat-card-title {
   text-align: center;
+  margin-top: 10px;
 }
 
-.mat-card-content {
+mat-card-content {
   text-align: center;
   padding: 10px;
+}
+mat-card-content p{
+  padding: 5px;
 }
 
 .mat-card-actions {
