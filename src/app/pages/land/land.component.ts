@@ -49,7 +49,7 @@ export class LandComponent {
       this.currentPage = page;
 
       // Fetch the lands based on query parameters
-      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+      this.fetchLand(fromPrice, toPrice, search, this.currentPage);
     });
 
     // Set up auto-fetch every 30 seconds (you can adjust the interval)
@@ -58,12 +58,12 @@ export class LandComponent {
       const fromPrice = this.searchForm.get('fromPrice')?.value;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
-      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+      this.fetchLand(fromPrice, toPrice, search, this.currentPage);
     }, 30000); // 30 seconds interval
   }
 
   // Fetch lands based on query params
-  fetchHouses(
+  fetchLand(
     fromPrice?: number,
     toPrice?: number,
     search?: string,
@@ -113,7 +113,7 @@ export class LandComponent {
     });
 
     // Fetch lands after search
-    this.fetchHouses(fromPrice, toPrice, search, 0);
+    this.fetchLand(fromPrice, toPrice, search, 0);
   }
 
   // Clear the search form and reload all lands
@@ -128,34 +128,34 @@ export class LandComponent {
       },
       queryParamsHandling: 'merge',
     });
-    this.fetchHouses(); // Fetch lands without filters
+    this.fetchLand(); // Fetch lands without filters
   }
 
   // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.fetchHousesFromQueryParams();
+      this.fetchLandFromQueryParams();
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.fetchHousesFromQueryParams();
+      this.fetchLandFromQueryParams();
     }
   }
 
   changePage(page: number): void {
     this.currentPage = page;
-    this.fetchHousesFromQueryParams();
+    this.fetchLandFromQueryParams();
   }
 
-  fetchHousesFromQueryParams(): void {
+  fetchLandFromQueryParams(): void {
     const search = this.searchForm.get('search')?.value || '';
     const fromPrice = this.searchForm.get('fromPrice')?.value || '';
     const toPrice = this.searchForm.get('toPrice')?.value || '';
-    this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+    this.fetchLand(fromPrice, toPrice, search, this.currentPage);
   }
 
   // Dynamically generate page numbers
@@ -186,7 +186,7 @@ export class LandComponent {
 
     return pages;
   }
-  likeHouse(landId: number): void {
+  likeLand(landId: number): void {
     this.landervice.likeLand(landId).subscribe(() => {
       const land = this.lands.find((h) => h.id === landId);
       if (land) {

@@ -1,201 +1,377 @@
+// home.component.ts
+import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { HouseService } from 'src/app/Service/house.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { RoomService } from '../Service/room.service';
+import { LandService } from '../add-post/add-post-land/land.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent {
-  gridCols = 4; // Default to 4 columns
+export class HomeComponent implements OnInit {
+  houses: any[] = [];
+  rooms: any[] = [];
+  lands: any[] = [];
+  currentPage = 0;
+  totalPages = 1;
+  itemsPerPage = 8;
+  searchForm!: FormGroup;
+  isLoadingMore = false;
+  autoFetchInterval: any;
 
   // Banner images
   banners: string[] = [
     '../../assets/ads&baner/Thesis.jpg',
     '../../assets/homepage/h1r.jpg',
   ];
-  currentBannerIndex: number = 0;
-
-  // Rooms data
-  rooms = [
-    {
-      id: 1,
-      title: 'Room 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$100',
-      images: ['../../assets/room/r1.jpg', '../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 2,
-      title: 'Room 2',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$100',
-      images: ['../../assets/room/r4.jpg', '../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 3,
-      title: 'Room 3',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$100',
-      images: ['../../assets/room/r3.jpg', '../../assets/room/r1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 4,
-      title: 'Room 4',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$100',
-      images: ['../../assets/room/r2.jpg', '../../assets/room/r2.jpg'],
-      currentImageIndex: 0,
-    },
-    // Additional rooms can be added here...
-  ];
-
-  houses = [
-    {
-      id: 1,
-      title: 'House 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h1.jpeg', '../../assets/house/h1.jpeg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 2,
-      title: 'House 2',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h4.jpg', '../../assets/house/h1.jpeg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 3,
-      title: 'House 3',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h3.jpg', '../../assets/house/h1.jpeg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 4,
-      title: 'House 4',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$500',
-      images: ['../../assets/house/h2.jpg', '../../assets/house/h1.jpeg'],
-      currentImageIndex: 0,
-    },
-    // Additional houses can be added here...
-  ];
-
-  lands = [
-    {
-      id: 1,
-      title: 'Land 1',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$300',
-      images: ['../../assets/land/L1.jpg', '../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 2,
-      title: 'Land 2',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$300',
-      images: ['../../assets/land/L4.jpg', '../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 3,
-      title: 'Land 3',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$300',
-      images: ['../../assets/land/L3.jpg', '../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-    },
-    {
-      id: 4,
-      title: 'Land 4',
-      location: 'Location 1',
-      contact: '1234567890',
-      price: '$300',
-      images: ['../../assets/land/L2.jpg', '../../assets/land/L1.jpg'],
-      currentImageIndex: 0,
-    },
-    // Additional lands can be added here...
-  ];
 
   constructor(
+    private houseService: HouseService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private landervice: LandService,
+    private fb: FormBuilder,
+    private roomService: RoomService,
+    private sanitizer: DomSanitizer,
     private breakpointObserver: BreakpointObserver,
-    private router: Router
-  ) {
-    this.initializeGridCols();
+  ) { }
+
+  ngOnInit(): void {
+    // Copy ngOnInit logic here
+    this.searchForm = this.fb.group({
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
+    });
+
+    this.route.queryParams.subscribe(params => {
+      const fromPrice = params['fromPrice'];
+      const toPrice = params['toPrice'];
+      const search = params['search'];
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+    });
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
+
+    // Initialize the search form
+    this.searchForm = this.fb.group({
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
+    });
+
+    // Fetch rooms when query parameters change
+    this.route.queryParams.subscribe((params) => {
+      const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
+      const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
+      const search = params['search'] || '';
+      const page = params['page'] ? +params['page'] : 0; // Default to page 0
+      this.currentPage = page;
+
+      // Fetch the rooms based on query parameters
+      this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
+    });
+
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)s
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
+    this.searchForm = this.fb.group({
+      search: [''],
+      fromPrice: [''],
+      toPrice: [''],
+    });
+
+    // Fetch lands when query parameters change
+    this.route.queryParams.subscribe((params) => {
+      const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
+      const toPrice = params['toPrice'] ? +params['toPrice'] : undefined;
+      const search = params['search'] || '';
+      const page = params['page'] ? +params['page'] : 0; // Default to page 0
+      this.currentPage = page;
+
+      // Fetch the lands based on query parameters
+      this.fetchLand(fromPrice, toPrice, search, this.currentPage);
+    });
+
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)
+    this.autoFetchInterval = setInterval(() => {
+      const search = this.searchForm.get('search')?.value;
+      const fromPrice = this.searchForm.get('fromPrice')?.value;
+      const toPrice = this.searchForm.get('toPrice')?.value;
+
+      this.fetchLand(fromPrice, toPrice, search, this.currentPage);
+    }, 30000); // 30 seconds interval
   }
+  fetchLand(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0
+  ): void {
+    const params: any = {
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
+    };
 
-  // Get the current banner to display
-  get currentBanner(): string {
-    return this.banners[this.currentBannerIndex];
-  }
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
+    }
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
+    }
+    if (search) {
+      params.search = search;
+    }
 
-  // Navigate to the next banner
-  nextBanner(): void {
-    this.currentBannerIndex =
-      (this.currentBannerIndex + 1) % this.banners.length;
-  }
+    this.landervice.getLand(params).subscribe((response) => {
+      this.lands = response.result.result;
+      this.totalPages = response.result.totalPage; // Update the total number of pages
 
-  // Navigate to the previous banner
-  prevBanner(): void {
-    this.currentBannerIndex =
-      (this.currentBannerIndex - 1 + this.banners.length) % this.banners.length;
-  }
-
-  // Navigate to the next image in a card
-  nextImage(item: any): void {
-    item.currentImageIndex = (item.currentImageIndex + 1) % item.images.length;
-  }
-
-  // Navigate to the previous image in a card
-  prevImage(item: any): void {
-    item.currentImageIndex =
-      (item.currentImageIndex - 1 + item.images.length) % item.images.length;
-  }
-
-  // Initialize the grid columns based on the screen size
-  private initializeGridCols(): void {
-    const breakpoints = [
-      { query: Breakpoints.HandsetPortrait, cols: 1 },
-      { query: Breakpoints.HandsetLandscape, cols: 2 },
-      { query: Breakpoints.TabletPortrait, cols: 2 },
-      { query: Breakpoints.TabletLandscape, cols: 3 },
-      { query: Breakpoints.WebPortrait, cols: 3 },
-      { query: Breakpoints.WebLandscape, cols: 4 },
-    ];
-
-    this.breakpointObserver
-      .observe(breakpoints.map((bp) => bp.query))
-      .subscribe((result) => {
-        for (let bp of breakpoints) {
-          if (result.breakpoints[bp.query]) {
-            this.gridCols = bp.cols;
-            break;
-          }
-        }
+      // Load images safely
+      this.lands.forEach((land) => {
+        this.loadImage(land);
       });
+    });
   }
-  goToDetails(type: string): void {
-    this.router.navigate(['/details'], { queryParams: { type } });
+  fetchRoom(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0
+  ): void {
+    const params: any = {
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
+    };
+
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
+    }
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
+    }
+    if (search) {
+      params.search = search;
+    }
+
+    this.roomService.getRooms(params).subscribe((response) => {
+      this.rooms = response.result.result;
+      this.totalPages = response.result.totalPage; // Update the total number of pages
+
+      // Load images safely
+      this.rooms.forEach((house) => {
+        this.loadImage(house);
+      });
+    });
+  }
+
+  fetchHouses(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    provinceId?: number,
+    districtId?: number,
+    communeId?: number,
+    villageId?: number,
+    page: number = 0
+  ): void {
+    const params: any = {
+      page, // The current page
+      size: this.itemsPerPage, // The number of items per page
+    };
+
+    // Add parameters only if they are defined
+    if (fromPrice !== undefined) {
+      params.fromPrice = fromPrice;
+    }
+    if (toPrice !== undefined) {
+      params.toPrice = toPrice;
+    }
+    if (search) {
+      params.search = search;
+    }
+    if (provinceId !== undefined && provinceId !== null) {
+      params.provinceId = provinceId;
+    }
+
+    // Only include district, commune, and village if province is defined
+    if (districtId !== undefined && districtId !== null && districtId !== 0) {
+      params.districtId = districtId;
+    }
+    if (communeId !== undefined && communeId !== null && communeId !== 0) {
+      params.communeId = communeId;
+    }
+    if (villageId !== undefined && villageId !== null && villageId !== 0) {
+      params.villageId = villageId;
+    }
+
+    // Call the API
+    this.houseService.getHouses(params).subscribe(response => {
+      const responseData = response.result;
+      this.houses = responseData.result; // List of houses
+      this.totalPages = responseData.totalPage; // Total number of pages
+
+      // Load images safely
+      this.houses.forEach(house => {
+        this.loadImage(house);
+      });
+    });
+  }
+
+  likeHouse(houseId: number): void {
+    this.houseService.likeHouse(houseId).subscribe(() => {
+      const house = this.houses.find(h => h.id === houseId);
+      if (house) {
+        house.likeCount += 1; // Increment the like count on the UI
+      }
+    });
+  }
+  goToDetails(houseId: number): void {
+    // Call the API to count the view
+    this.houseService.viewHouse(houseId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['/details', houseId]);
+    });
+  }
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.fetchHousesFromQueryParams();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.fetchHousesFromQueryParams();
+    }
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+    this.fetchHousesFromQueryParams();
+  }
+  fetchHousesFromQueryParams(): void {
+    const search = this.searchForm.get('search')?.value || '';
+    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
+    const toPrice = this.searchForm.get('toPrice')?.value || '';
+    this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+  }
+  get pagesToShow(): number[] {
+    const totalVisiblePages = 5; // Number of page numbers to show at a time
+    const half = Math.floor(totalVisiblePages / 2);
+    let start = Math.max(0, this.currentPage - half);
+    let end = Math.min(this.totalPages, this.currentPage + half + 1);
+
+    if (start === 0) {
+      end = Math.min(totalVisiblePages, this.totalPages);
+    }
+    if (end === this.totalPages) {
+      start = Math.max(0, this.totalPages - totalVisiblePages);
+    }
+
+    const pages: number[] = [];
+    for (let i = start; i < end; i++) {
+      pages.push(i);
+    }
+
+    if (start > 0) {
+      pages.unshift(-1); // Indicate "..." before the start
+    }
+    if (end < this.totalPages) {
+      pages.push(-1); // Indicate "..." after the end
+    }
+
+    return pages;
+  }
+  loadImage(house: any): void {
+    if (house.imagePaths && house.imagePaths.length > 0) {
+      house.safeImagePaths = [];
+      house.imagePaths.forEach((imageUrl: string) => {
+        this.houseService.getImage(imageUrl).subscribe(imageBlob => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          house.safeImagePaths.push(safeUrl);
+        });
+      });
+      house.currentImageIndex = 0; // Start with the first image
+    } else {
+      // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
+      house.safeImagePaths = [];
+      house.currentImageIndex = 0;
+    }
+  }
+  nextImage(house: any): void {
+    if (house.currentImageIndex < house.safeImagePaths.length - 1) {
+      house.currentImageIndex++;
+    } else {
+      house.currentImageIndex = 0; // Loop back to the first image
+    }
+  }
+
+  prevImage(house: any): void {
+    if (house.currentImageIndex > 0) {
+      house.currentImageIndex--;
+    } else {
+      house.currentImageIndex = house.safeImagePaths.length - 1; // Loop back to the last image
+    }
+  }
+  loadMoreHouses(): void {
+    // Navigate to the dedicated 'houses' route, passing any necessary parameters
+    this.router.navigate(['/house'], {
+      queryParams: {
+        page: this.currentPage,
+        size: this.itemsPerPage
+      }
+    });
+  }
+  loadMoreroom(): void {
+    // Navigate to the dedicated 'houses' route, passing any necessary parameters
+    this.router.navigate(['/room'], {
+      queryParams: {
+        page: this.currentPage,
+        size: this.itemsPerPage
+      }
+    });
+  }
+  loadMoreland(): void {
+    // Navigate to the dedicated 'houses' route, passing any necessary parameters
+    this.router.navigate(['/land'], {
+      queryParams: {
+        page: this.currentPage,
+        size: this.itemsPerPage
+      }
+    });
+  }
+  likeRoom(RoomId: number): void {
+    this.roomService.likeRoom(RoomId).subscribe(() => {
+      const room = this.rooms.find((h) => h.id === RoomId);
+      if (room) {
+        room.likeCount += 1; // Increment the like count on the UI
+      }
+    });
+  }
+  likeLand(landId: number): void {
+    this.landervice.likeLand(landId).subscribe(() => {
+      const land = this.lands.find((h) => h.id === landId);
+      if (land) {
+        land.likeCount += 1; // Increment the like count on the UI
+      }
+    });
   }
 }

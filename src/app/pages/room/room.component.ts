@@ -49,21 +49,21 @@ export class RoomComponent {
       this.currentPage = page;
 
       // Fetch the rooms based on query parameters
-      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+      this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
     });
 
-    // Set up auto-fetch every 30 seconds (you can adjust the interval)
+    // Set up auto-fetch every 30 seconds (you can adjust the interval)s
     this.autoFetchInterval = setInterval(() => {
       const search = this.searchForm.get('search')?.value;
       const fromPrice = this.searchForm.get('fromPrice')?.value;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
-      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+      this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
     }, 30000); // 30 seconds interval
   }
 
   // Fetch rooms based on query params
-  fetchHouses(
+  fetchRoom(
     fromPrice?: number,
     toPrice?: number,
     search?: string,
@@ -89,8 +89,8 @@ export class RoomComponent {
       this.totalPages = response.result.totalPage; // Update the total number of pages
 
       // Load images safely
-      this.rooms.forEach((house) => {
-        this.loadImage(house);
+      this.rooms.forEach((room) => {
+        this.loadImage(room);
       });
     });
   }
@@ -113,7 +113,7 @@ export class RoomComponent {
     });
 
     // Fetch rooms after search
-    this.fetchHouses(fromPrice, toPrice, search, 0);
+    this.fetchRoom(fromPrice, toPrice, search, 0);
   }
 
   // Clear the search form and reload all rooms
@@ -128,34 +128,34 @@ export class RoomComponent {
       },
       queryParamsHandling: 'merge',
     });
-    this.fetchHouses(); // Fetch rooms without filters
+    this.fetchRoom(); // Fetch rooms without filters
   }
 
   // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.fetchHousesFromQueryParams();
+      this.fetchRoomFromQueryParams();
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.fetchHousesFromQueryParams();
+      this.fetchRoomFromQueryParams();
     }
   }
 
   changePage(page: number): void {
     this.currentPage = page;
-    this.fetchHousesFromQueryParams();
+    this.fetchRoomFromQueryParams();
   }
 
-  fetchHousesFromQueryParams(): void {
+  fetchRoomFromQueryParams(): void {
     const search = this.searchForm.get('search')?.value || '';
     const fromPrice = this.searchForm.get('fromPrice')?.value || '';
     const toPrice = this.searchForm.get('toPrice')?.value || '';
-    this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
+    this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
   }
 
   // Dynamically generate page numbers
@@ -186,49 +186,49 @@ export class RoomComponent {
 
     return pages;
   }
-  likeHouse(houseId: number): void {
-    this.roomService.likeRoom(houseId).subscribe(() => {
-      const house = this.rooms.find((h) => h.id === houseId);
-      if (house) {
-        house.likeCount += 1; // Increment the like count on the UI
+  likeRoom(RoomId: number): void {
+    this.roomService.likeRoom(RoomId).subscribe(() => {
+      const room = this.rooms.find((h) => h.id === RoomId);
+      if (room) {
+        room.likeCount += 1; // Increment the like count on the UI
       }
     });
   }
 
-  loadImage(house: any): void {
-    if (house.imagePaths && house.imagePaths.length > 0) {
-      house.safeImagePaths = [];
-      house.imagePaths.forEach((imageUrl: string) => {
+  loadImage(room: any): void {
+    if (room.imagePaths && room.imagePaths.length > 0) {
+      room.safeImagePaths = [];
+      room.imagePaths.forEach((imageUrl: string) => {
         this.roomService.getImage(imageUrl).subscribe((imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          house.safeImagePaths.push(safeUrl);
+          room.safeImagePaths.push(safeUrl);
         });
       });
-      house.currentImageIndex = 0; // Start with the first image
+      room.currentImageIndex = 0; // Start with the first image
     } else {
       // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
-      house.safeImagePaths = [];
-      house.currentImageIndex = 0;
+      room.safeImagePaths = [];
+      room.currentImageIndex = 0;
     }
   }
 
   // Navigate to the next image
   // Navigate to the next image (loop to the first image if it's the last one)
-  nextImage(house: any): void {
-    if (house.currentImageIndex < house.safeImagePaths.length - 1) {
-      house.currentImageIndex++;
+  nextImage(room: any): void {
+    if (room.currentImageIndex < room.safeImagePaths.length - 1) {
+      room.currentImageIndex++;
     } else {
-      house.currentImageIndex = 0; // Loop back to the first image
+      room.currentImageIndex = 0; // Loop back to the first image
     }
   }
 
   // Navigate to the previous image (loop to the last image if it's the first one)
-  prevImage(house: any): void {
-    if (house.currentImageIndex > 0) {
-      house.currentImageIndex--;
+  prevImage(room: any): void {
+    if (room.currentImageIndex > 0) {
+      room.currentImageIndex--;
     } else {
-      house.currentImageIndex = house.safeImagePaths.length - 1; // Loop back to the last image
+      room.currentImageIndex = room.safeImagePaths.length - 1; // Loop back to the last image
     }
   }
 
@@ -255,11 +255,11 @@ export class RoomComponent {
       });
   }
 
-  goToDetails(houseId: number): void {
+  goToDetails(RoomId: number): void {
     // Call the API to count the view
-    this.roomService.viewRoom(houseId).subscribe(() => {
+    this.roomService.viewRoom(RoomId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['/details', houseId]);
+      this.router.navigate(['/details', RoomId]);
     });
   }
 }

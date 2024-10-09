@@ -4,44 +4,44 @@
   <div class="result-header">
     <h2>Complete Your Result</h2>
   </div>
-  <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <mat-form-field class="full-waith" appearance="outline">
+  <form [formGroup]="searchForm"
+        (ngSubmit)="onSearch()">
+    <mat-form-field class="full-waith"
+                    appearance="outline">
       <mat-label>Search</mat-label>
-      <input matInput formControlName="search" placeholder="Enter location" />
+      <input matInput
+             formControlName="search"
+             placeholder="Enter location" />
     </mat-form-field>
 
     <div class="search-field price-field">
       <mat-form-field appearance="outline">
         <mat-label>From Price</mat-label>
-        <input
-          matInput
-          formControlName="fromPrice"
-          type="number"
-          placeholder="From Price"
-        />
+        <input matInput
+               formControlName="fromPrice"
+               type="number"
+               placeholder="From Price" />
       </mat-form-field>
 
       <span class="price-separator">-</span>
 
       <mat-form-field appearance="outline">
         <mat-label>To Price</mat-label>
-        <input
-          matInput
-          formControlName="toPrice"
-          type="number"
-          placeholder="To Price"
-        />
+        <input matInput
+               formControlName="toPrice"
+               type="number"
+               placeholder="To Price" />
       </mat-form-field>
     </div>
 
     <div class="search-button-container">
-      <button class="full-waith" mat-raised-button color="success">Find</button>
-      <button
-        class="full-waith"
-        mat-raised-button
-        color="warn"
-        (click)="onClear()"
-      >
+      <button class="full-waith"
+              mat-raised-button
+              color="success">Find</button>
+      <button class="full-waith"
+              mat-raised-button
+              color="warn"
+              (click)="onClear()">
         Clear
       </button>
     </div>
@@ -55,49 +55,41 @@
       <mat-card *ngFor="let room of rooms">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
-          <img
-            mat-card-image
-            *ngIf="
+          <img mat-card-image
+               *ngIf="
               room.safeImagePaths &&
               room.safeImagePaths.length > 0 &&
               room.currentImageIndex !== undefined
             "
-            [src]="room.safeImagePaths[room.currentImageIndex]"
-            alt="{{ room.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-          />
+               [src]="room.safeImagePaths[room.currentImageIndex]"
+               alt="{{ room.title }}"
+               style="width: 100%; height: 200px; object-fit: cover" />
 
           <!-- Display text if no images are available -->
-          <div
-            *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
-            class="no-image-placeholder"
-            style="
+          <div *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
+               class="no-image-placeholder"
+               style="
               width: 100%;
               height: 200px;
               display: flex;
               justify-content: center;
               align-items: center;
               background-color: #f0f0f0;
-            "
-          >
+            ">
             No Image Available
           </div>
 
           <!-- Previous Button with Icon -->
-          <button
-            class="prev-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="prevImage(room); $event.stopPropagation()"
-          >
+          <button class="prev-image-button"
+                  *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                  (click)="prevImage(room); $event.stopPropagation()">
             <mat-icon>arrow_back</mat-icon>
           </button>
 
           <!-- Next Button with Icon -->
-          <button
-            class="next-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="nextImage(room); $event.stopPropagation()"
-          >
+          <button class="next-image-button"
+                  *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                  (click)="nextImage(room); $event.stopPropagation()">
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
@@ -119,23 +111,19 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeHouse(room.id); $event.stopPropagation()"
-            >
+            <button mat-raised-button
+                    color="primary"
+                    class="like-button"
+                    (click)="likeRoom(room.id); $event.stopPropagation()">
               <mat-icon>thumb_up</mat-icon>
               {{ room.likeCount }} Likes
             </button>
 
             <!-- View Details Button (aligned to the right) -->
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetails(room.id)"
-            >
+            <button mat-raised-button
+                    color="success"
+                    class="details-button"
+                    (click)="goToDetails(room.id)">
               View Details
             </button>
           </div>
@@ -144,16 +132,12 @@
     </div>
 
     <!-- Pagination controls -->
-    <div
-      class="pagination-buttons"
-      style="text-align: center; margin-top: 50px"
-    >
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="prevPage()"
-        [disabled]="currentPage === 0"
-      >
+    <div class="pagination-buttons"
+         style="text-align: center; margin-top: 50px">
+      <button mat-raised-button
+              color="primary"
+              (click)="prevPage()"
+              [disabled]="currentPage === 0">
         Previous
       </button>
 
@@ -162,22 +146,18 @@
           <span>...</span>
         </ng-container>
         <ng-container *ngIf="page !== -1">
-          <button
-            mat-button
-            (click)="changePage(page)"
-            [disabled]="page === currentPage"
-          >
+          <button mat-button
+                  (click)="changePage(page)"
+                  [disabled]="page === currentPage">
             {{ page + 1 }}
           </button>
         </ng-container>
       </ng-container>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="nextPage()"
-        [disabled]="currentPage === totalPages - 1"
-      >
+      <button mat-raised-button
+              color="primary"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages - 1">
         Next
       </button>
     </div>
