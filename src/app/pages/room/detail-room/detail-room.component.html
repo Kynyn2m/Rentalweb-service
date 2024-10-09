@@ -1,0 +1,64 @@
+<div class="details-container">
+  <!-- Back Button with Material Icon -->
+  <button mat-button class="back-button" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon> Back
+  </button>
+
+  <div class="details-card">
+    <!-- Display all images -->
+    <div class="image-thumbnails">
+      <img
+        *ngFor="let image of room?.safeImagePaths"
+        [src]="image"
+        class="thumbnail"
+        (click)="openImageInFullScreen(image)"
+        alt="{{ room?.title }}"
+      />
+    </div>
+
+    <div class="details-content">
+      <h2>{{ room?.title }}</h2>
+
+      <div class="details-info">
+        <p><strong>Location:</strong> {{ room?.location }}</p>
+        <p><strong>Contact:</strong> {{ room?.phoneNumber }}</p>
+        <p>
+          <strong>Price:</strong> <span class="price">${{ room?.price }}</span>
+        </p>
+        <p><strong>Description:</strong> {{ room?.description }}</p>
+        <p>
+          <strong>Dimensions:</strong> {{ room?.width }}m x {{ room?.height }}m
+        </p>
+        <p><strong>Floor:</strong> {{ room?.floor }}</p>
+        <p>
+          <strong>Map Link:</strong>
+          <a [href]="room?.linkMap" target="_blank">View on Map</a>
+        </p>
+        <p><strong>Likes:</strong> {{ room?.likeCount }}</p>
+        <p><strong>Views:</strong> {{ room?.viewCount }}</p>
+      </div>
+
+      <!-- Like Button with Material Icon (adjusted width) -->
+      <button
+        mat-raised-button
+        color="primary"
+        class="like-button"
+        (click)="likeHouse(room!.id!)"
+      >
+        <mat-icon>thumb_up</mat-icon> Like ({{ room?.likeCount }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Full-screen modal -->
+  <div class="image-modal" *ngIf="selectedImage">
+    <div class="modal-content">
+      <img [src]="selectedImage" class="full-screen-image" />
+      <button mat-icon-button class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

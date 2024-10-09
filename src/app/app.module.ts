@@ -88,6 +88,7 @@ import { RoomListComponent } from './dashboard/room-list/room-list.component';
 import { RoomFormComponent } from './dashboard/room-list/room-form/room-form.component'; // Import Dashboard Component
 import { LandListComponent } from './dashboard/land-list/land-list.component';
 import { LandFormComponent } from './dashboard/land-list/land-form/land-form.component';
+import { DetailRoomComponent } from './pages/room/detail-room/detail-room.component';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -136,6 +137,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     RoomFormComponent,
     LandListComponent,
     LandFormComponent,
+    DetailRoomComponent,
   ],
   imports: [
     BrowserModule,

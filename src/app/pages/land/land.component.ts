@@ -259,7 +259,7 @@ export class LandComponent {
     // Call the API to count the view
     this.landervice.viewLand(landId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['/details', landId]);
+      this.router.navigate(['/details-land', landId]);
     });
   }
 }
