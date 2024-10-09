@@ -25,6 +25,7 @@ import { AddPostLandComponent } from './add-post/add-post-land/add-post-land.com
 import { HouseListComponent } from './dashboard/house-list/house-list.component';
 import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component';
 import { RoomListComponent } from './dashboard/room-list/room-list.component';
+import { LandListComponent } from './dashboard/land-list/land-list.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -51,7 +52,11 @@ const routes: Routes = [
     component: HouseListComponent,
     canActivate: [AdminGuard],
   },
-
+  {
+    path: 'land-list',
+    component: LandListComponent,
+    canActivate: [AdminGuard],
+  },
   // Publicly accessible routes
   { path: 'home', component: HomeComponent, canActivate: [NonAdminGuard] },
   { path: 'house', component: HouseComponent, canActivate: [NonAdminGuard] },
@@ -94,7 +99,11 @@ const routes: Routes = [
     component: AddPostComponent,
     canActivate: [NonAdminGuard],
   },
-
+  {
+    path: 'contact',
+    component: ContactComponent,
+    canActivate: [NonAdminGuard],
+  },
   // Default route
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 

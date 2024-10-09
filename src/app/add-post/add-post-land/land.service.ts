@@ -62,4 +62,12 @@ export class LandService {
     const url = `${environment.apiUrl}/public/lands/view/${landId}`;
     return this.http.put(url, {}); // Sending an empty body since it's a view count
   }
+
+  updateLand(id: number, formData: FormData): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
+  }
+  deleteLand(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

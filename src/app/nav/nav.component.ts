@@ -30,8 +30,7 @@ import { ProfileService } from '../profile/profile.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })
-
-export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
+export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
   fullName: string | null = null;
   email: string | null = null;
   menuItems = [
@@ -121,6 +120,13 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
       tooltip: 'Room',
       adminOnly: true,
     },
+    {
+      router: '/land-list',
+      icon: 'landscape',
+      title: 'Land',
+      tooltip: 'Land',
+      adminOnly: true,
+    },
   ];
 
   selectedItem: any = null;
@@ -192,9 +198,9 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit{
         })
       )
       .subscribe();
-      if (this.isLoggedIn) {
-        this.loadUserProfile();
-      }
+    if (this.isLoggedIn) {
+      this.loadUserProfile();
+    }
   }
 
   checkUserRole(): void {
