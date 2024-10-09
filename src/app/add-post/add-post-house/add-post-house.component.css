@@ -12,7 +12,7 @@
   text-align: center;
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .mat-form-field {
@@ -39,40 +39,27 @@ input[type="file"] {
   width: 100%;
 }
 
+/* Flexbox layout for 2 fields per row */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.form-row .mat-form-field {
+  flex: 1 1 calc(50% - 16px); /* Each field takes up 50% width minus the gap */
+}
+
 @media (max-width: 768px) {
   .form-container {
     padding: 10px;
   }
-}
-.file-input-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  position: relative;
-}
 
-.file-input-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
-  position: relative;
-}
-
-.file-upload-label {
-  font-family: Roboto, sans-serif;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.6);
-  margin-bottom: 8px;
-}
-
-.file-input {
-  padding: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.23);
-  border-radius: 4px;
-  font-family: Roboto, sans-serif;
-  font-size: 16px;
-  background-color: #fafafa;
-  cursor: pointer;
+  /* Stack fields vertically on small screens */
+  .form-row .mat-form-field {
+    flex: 1 1 100%; /* Fields take full width on smaller screens */
+  }
 }
 
 .image-preview-container {
@@ -122,10 +109,12 @@ input[type="file"] {
   color: white;
 }
 
-
 .back-button-container {
   display: flex;
   justify-content: flex-start;
   width: 100%;
   margin-bottom: 20px;
+}
+.mat-form-field {
+  width: 100%;
 }

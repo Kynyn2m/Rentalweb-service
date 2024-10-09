@@ -8,9 +8,7 @@
   </button>
 </div>
 
-<div class="form-container"
-     fxLayout="column"
-     fxLayoutAlign="center center">
+<div class="form-container">
   <div class="form-header">
     <h2 class="form-title">Add House Post</h2>
   </div>
@@ -21,83 +19,134 @@
         fxLayout="column"
         fxLayoutGap="16px">
 
-    <!-- Title -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Title</mat-label>
-      <input matInput
-             formControlName="title"
-             placeholder="Enter title" />
-      <mat-error *ngIf="addPostForm.get('title')?.invalid && addPostForm.get('title')?.touched">
-        Title is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Description -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Description</mat-label>
-      <textarea matInput
-                formControlName="description"
-                placeholder="Enter description"></textarea>
-      <mat-error *ngIf="addPostForm.get('description')?.invalid && addPostForm.get('description')?.touched">
-        Description is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Location -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Location</mat-label>
-      <input matInput
-             formControlName="location"
-             placeholder="Enter location" />
-      <mat-error *ngIf="addPostForm.get('location')?.invalid && addPostForm.get('location')?.touched">
-        Location is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Price -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Price</mat-label>
-      <input matInput
-             formControlName="price"
-             type="number"
-             placeholder="Enter price" />
-      <mat-error *ngIf="addPostForm.get('price')?.invalid && addPostForm.get('price')?.touched">
-        Price is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Phone Number -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Phone Number</mat-label>
-      <input matInput
-             formControlName="phoneNumber"
-             type="text"
-             placeholder="Enter phone number" />
-      <mat-error *ngIf="addPostForm.get('phoneNumber')?.invalid && addPostForm.get('phoneNumber')?.touched">
-        Phone number is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Link Map -->
-    <mat-form-field appearance="outline"
-                    fxFlex="100%">
-      <mat-label>Link Map</mat-label>
-      <input matInput
-             formControlName="linkMap"
-             placeholder="Enter map link" />
-      <mat-error *ngIf="addPostForm.get('linkMap')?.invalid && addPostForm.get('linkMap')?.touched">
-        Map link is required
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Floor, Width, and Height -->
+    <!-- Title and Description -->
     <div fxLayout="row wrap"
          fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Title</mat-label>
+        <input matInput
+               formControlName="title"
+               placeholder="Enter title" />
+        <mat-error *ngIf="addPostForm.get('title')?.invalid && addPostForm.get('title')?.touched">Title is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Description</mat-label>
+        <input matInput
+               formControlName="description"
+               placeholder="Enter description" />
+        <mat-error *ngIf="addPostForm.get('description')?.invalid && addPostForm.get('description')?.touched">Description is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Province and District -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Province/City</mat-label>
+        <mat-select formControlName="provinceId_c"
+                    (selectionChange)="onProvinceSelected($event)"
+                    required>
+          <mat-option *ngFor="let province of provinces_c"
+                      [value]="province.id">
+            {{ province.khmerName }} / {{ province.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>District/Khan</mat-label>
+        <mat-select formControlName="districtId_c"
+                    (selectionChange)="onDistrictSelected($event)"
+                    required>
+          <mat-option *ngFor="let district of districts_c"
+                      [value]="district.id">
+            {{ district.khmerName }} / {{ district.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Commune and Village -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Commune/Sangkat</mat-label>
+        <mat-select formControlName="communeId_c"
+                    (selectionChange)="onCommuneSelected($event)"
+                    required>
+          <mat-option *ngFor="let commune of communes_c"
+                      [value]="commune.id">
+            {{ commune.khmerName }} / {{ commune.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Village</mat-label>
+        <mat-select formControlName="villageId_c"
+                    required>
+          <mat-option *ngFor="let village of villages_c"
+                      [value]="village.id">
+            {{ village.khmerName }} / {{ village.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Price and Phone Number -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Price</mat-label>
+        <input matInput
+               formControlName="price"
+               type="number"
+               placeholder="Enter price" />
+        <mat-error *ngIf="addPostForm.get('price')?.invalid && addPostForm.get('price')?.touched">Price is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Phone Number</mat-label>
+        <input matInput
+               formControlName="phoneNumber"
+               type="text"
+               placeholder="Enter phone number" />
+        <mat-error *ngIf="addPostForm.get('phoneNumber')?.invalid && addPostForm.get('phoneNumber')?.touched">Phone number is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Link Map, Floor, Width, Height -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Link Map</mat-label>
+        <input matInput
+               formControlName="linkMap"
+               placeholder="Enter map link" />
+        <mat-error *ngIf="addPostForm.get('linkMap')?.invalid && addPostForm.get('linkMap')?.touched">
+          Map link is required
+        </mat-error>
+      </mat-form-field>
+
       <mat-form-field appearance="outline"
                       fxFlex="100%"
                       fxFlex.gt-sm="48%">
@@ -110,6 +159,9 @@
           Floor is required
         </mat-error>
       </mat-form-field>
+    </div>
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
 
       <mat-form-field appearance="outline"
                       fxFlex="100%"
@@ -119,9 +171,7 @@
                formControlName="width"
                type="number"
                placeholder="Enter width" />
-        <mat-error *ngIf="addPostForm.get('width')?.invalid && addPostForm.get('width')?.touched">
-          Width is required
-        </mat-error>
+        <mat-error *ngIf="addPostForm.get('width')?.invalid && addPostForm.get('width')?.touched">Width is required</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline"
@@ -132,11 +182,10 @@
                formControlName="height"
                type="number"
                placeholder="Enter height" />
-        <mat-error *ngIf="addPostForm.get('height')?.invalid && addPostForm.get('height')?.touched">
-          Height is required
-        </mat-error>
+        <mat-error *ngIf="addPostForm.get('height')?.invalid && addPostForm.get('height')?.touched">Height is required</mat-error>
       </mat-form-field>
     </div>
+
 
     <!-- Image Upload -->
     <div class="file-input-container">
@@ -157,18 +206,14 @@
         <img [src]="image"
              alt="Preview" />
         <button class="custom-cancel-button"
-                (click)="removeImage(i)">
-          &#10005;
-        </button>
+                (click)="removeImage(i)">&#10005;</button>
       </div>
     </div>
 
     <!-- Submit Button -->
     <button mat-raised-button
             color="primary"
-            type="submit">
-      Submit
-    </button>
+            type="submit">Submit</button>
   </form>
 </div>
 
