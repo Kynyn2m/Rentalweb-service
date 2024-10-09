@@ -89,7 +89,7 @@ import { RoomFormComponent } from './dashboard/room-list/room-form/room-form.com
 import { LandListComponent } from './dashboard/land-list/land-list.component';
 import { LandFormComponent } from './dashboard/land-list/land-form/land-form.component';
 import { DetailRoomComponent } from './pages/room/detail-room/detail-room.component';
-import { ConfirmDialogComponent } from './profile/confirm-dialog/confirm-dialog.component';
+import { DetailLandComponent } from './pages/land/detail-land/detail-land.component';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -139,7 +139,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     LandListComponent,
     LandFormComponent,
     DetailRoomComponent,
-    ConfirmDialogComponent,
+    DetailLandComponent,
   ],
   imports: [
     BrowserModule,
