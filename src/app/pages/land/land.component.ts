@@ -148,8 +148,15 @@ export class LandComponent {
       this.totalPages = responseData.totalPage; // Total number of pages
 
       // Load images safely
-      this.lands.forEach((lands) => {
-        this.loadImage(lands);
+      this.lands.forEach((land) => {
+        this.loadImage(land);
+        // Find and assign the province name
+        const matchedProvince = this.provinces_c.find(
+          (p) => p.id === land.province
+        );
+        land.provinceName = matchedProvince
+          ? matchedProvince.khmerName || matchedProvince.englishName
+          : 'Unknown Province';
       });
     });
   }
