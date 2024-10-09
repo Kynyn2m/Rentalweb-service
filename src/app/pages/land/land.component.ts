@@ -13,7 +13,7 @@ import { LandService } from 'src/app/add-post/add-post-land/land.service';
 })
 export class LandComponent {
   gridCols = 2;
-  land: any[] = [];
+  lands: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 12; // 12 lands per page
@@ -23,7 +23,7 @@ export class LandComponent {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private landService: LandService,
+    private landervice: LandService,
     private router: Router,
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
@@ -49,7 +49,7 @@ export class LandComponent {
       this.currentPage = page;
 
       // Fetch the lands based on query parameters
-      this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
     });
 
     // Set up auto-fetch every 30 seconds (you can adjust the interval)
@@ -58,12 +58,12 @@ export class LandComponent {
       const fromPrice = this.searchForm.get('fromPrice')?.value;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
-      this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+      this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
     }, 30000); // 30 seconds interval
   }
 
   // Fetch lands based on query params
-  fetchLands(
+  fetchHouses(
     fromPrice?: number,
     toPrice?: number,
     search?: string,
@@ -84,12 +84,12 @@ export class LandComponent {
       params.search = search;
     }
 
-    this.landService.getLand(params).subscribe((response) => {
-      this.land = response.result.result;
+    this.landervice.getLand(params).subscribe((response) => {
+      this.lands = response.result.result;
       this.totalPages = response.result.totalPage; // Update the total number of pages
 
       // Load images safely
-      this.land.forEach((land) => {
+      this.lands.forEach((land) => {
         this.loadImage(land);
       });
     });
@@ -113,7 +113,7 @@ export class LandComponent {
     });
 
     // Fetch lands after search
-    this.fetchLands(fromPrice, toPrice, search, 0);
+    this.fetchHouses(fromPrice, toPrice, search, 0);
   }
 
   // Clear the search form and reload all lands
@@ -128,34 +128,34 @@ export class LandComponent {
       },
       queryParamsHandling: 'merge',
     });
-    this.fetchLands(); // Fetch lands without filters
+    this.fetchHouses(); // Fetch lands without filters
   }
 
   // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.fetchLandFromQueryParams();
+      this.fetchHousesFromQueryParams();
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.fetchLandFromQueryParams();
+      this.fetchHousesFromQueryParams();
     }
   }
 
   changePage(page: number): void {
     this.currentPage = page;
-    this.fetchLandFromQueryParams();
+    this.fetchHousesFromQueryParams();
   }
 
-  fetchLandFromQueryParams(): void {
+  fetchHousesFromQueryParams(): void {
     const search = this.searchForm.get('search')?.value || '';
     const fromPrice = this.searchForm.get('fromPrice')?.value || '';
     const toPrice = this.searchForm.get('toPrice')?.value || '';
-    this.fetchLands(fromPrice, toPrice, search, this.currentPage);
+    this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
   }
 
   // Dynamically generate page numbers
@@ -186,21 +186,50 @@ export class LandComponent {
 
     return pages;
   }
-  likeLand(landId: number): void {
-    this.landService.likeLand(landId).subscribe(() => {
-      const land = this.land.find((h) => h.id === landId);
+  likeHouse(landId: number): void {
+    this.landervice.likeLand(landId).subscribe(() => {
+      const land = this.lands.find((h) => h.id === landId);
       if (land) {
         land.likeCount += 1; // Increment the like count on the UI
       }
     });
   }
 
-  // Load land images safely
   loadImage(land: any): void {
-    this.landService.getImage(land.imagePath).subscribe((imageBlob) => {
-      const objectURL = URL.createObjectURL(imageBlob);
-      land.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-    });
+    if (land.imagePaths && land.imagePaths.length > 0) {
+      land.safeImagePaths = [];
+      land.imagePaths.forEach((imageUrl: string) => {
+        this.landervice.getImage(imageUrl).subscribe((imageBlob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          land.safeImagePaths.push(safeUrl);
+        });
+      });
+      land.currentImageIndex = 0; // Start with the first image
+    } else {
+      // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
+      land.safeImagePaths = [];
+      land.currentImageIndex = 0;
+    }
+  }
+
+  // Navigate to the next image
+  // Navigate to the next image (loop to the first image if it's the last one)
+  nextImage(land: any): void {
+    if (land.currentImageIndex < land.safeImagePaths.length - 1) {
+      land.currentImageIndex++;
+    } else {
+      land.currentImageIndex = 0; // Loop back to the first image
+    }
+  }
+
+  // Navigate to the previous image (loop to the last image if it's the first one)
+  prevImage(land: any): void {
+    if (land.currentImageIndex > 0) {
+      land.currentImageIndex--;
+    } else {
+      land.currentImageIndex = land.safeImagePaths.length - 1; // Loop back to the last image
+    }
   }
 
   // Dynamically adjust the number of columns based on the screen size
@@ -228,9 +257,9 @@ export class LandComponent {
 
   goToDetails(landId: number): void {
     // Call the API to count the view
-    this.landService.viewLand(landId).subscribe(() => {
+    this.landervice.viewLand(landId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['', landId]);
+      this.router.navigate(['/details', landId]);
     });
   }
 }
