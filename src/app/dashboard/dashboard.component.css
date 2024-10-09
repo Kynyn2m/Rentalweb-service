@@ -12,7 +12,7 @@
 
 .dashboard-statistics {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* Ensures 5 cards stay in one row */
+  grid-template-columns: repeat(4, 1fr); /* Ensures 5 cards stay in one row */
   grid-gap: 20px;
   margin-bottom: 40px;
 }

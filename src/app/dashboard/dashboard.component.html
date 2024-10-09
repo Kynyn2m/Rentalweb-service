@@ -3,7 +3,8 @@
 
   <!-- Statistics Section -->
   <div class="dashboard-statistics">
-    <mat-card class="stat-card orange-card" (click)="goToUser()">
+    <mat-card class="stat-card orange-card"
+              (click)="goToUser()">
       <mat-card-header>
         <mat-icon class="card-icon">group</mat-icon>
         <mat-card-title>Total Users</mat-card-title>
@@ -13,30 +14,33 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card blue-card" (click)="goToRoomList()">
+    <mat-card class="stat-card blue-card"
+              (click)="goToRoomList()">
       <mat-card-header>
         <mat-icon class="card-icon">meeting_room</mat-icon>
-        <mat-card-title>totalRoom</mat-card-title>
+        <mat-card-title>Total Room</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <p>{{ totalRoom }}</p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card red-card" (click)="goToLandList()">
+    <mat-card class="stat-card red-card"
+              (click)="goToLandList()">
       <mat-card-header>
         <mat-icon class="card-icon">landscape</mat-icon>
-        <mat-card-title>totalLand</mat-card-title>
+        <mat-card-title>Total Land</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <p>{{ totalLand }}</p>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card teal-card" (click)="goToHouseList()">
+    <mat-card class="stat-card teal-card"
+              (click)="goToHouseList()">
       <mat-card-header>
         <mat-icon class="card-icon">house</mat-icon>
-        <mat-card-title>totalHouse</mat-card-title>
+        <mat-card-title>Total House</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <p>{{ totalHouse }}</p>
