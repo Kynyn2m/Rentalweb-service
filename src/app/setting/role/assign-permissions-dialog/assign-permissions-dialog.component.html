@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>Assign Permissions</h2>
+<mat-dialog-content>
+  <mat-list>
+    <mat-list-item *ngFor="let permission of permissions">
+      <mat-checkbox [checked]="selectedPermissionIds.includes(permission.id)"
+                    (change)="togglePermission(permission.id)">
+        {{ permission.name }} - {{ permission.description }}
+      </mat-checkbox>
+    </mat-list-item>
+  </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button
+          (click)="cancel()">Cancel</button>
+  <button mat-raised-button
+          color="primary"
+          (click)="save()">Save</button>
+</mat-dialog-actions>

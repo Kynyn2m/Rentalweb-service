@@ -91,6 +91,7 @@ import { LandFormComponent } from './dashboard/land-list/land-form/land-form.com
 import { DetailRoomComponent } from './pages/room/detail-room/detail-room.component';
 import { DetailLandComponent } from './pages/land/detail-land/detail-land.component';
 import { ConfirmDialogComponent } from './profile/confirm-dialog/confirm-dialog.component';
+import { AssignPermissionsDialogComponent } from './setting/role/assign-permissions-dialog/assign-permissions-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -139,7 +140,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     LandFormComponent,
     DetailRoomComponent,
     DetailLandComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AssignPermissionsDialogComponent
   ],
   imports: [
     BrowserModule,

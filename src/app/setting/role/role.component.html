@@ -72,10 +72,12 @@
             <mat-icon>delete</mat-icon>
             <span>Delete</span>
           </button>
-          <button mat-menu-item>
+          <button mat-menu-item
+                  (click)="openAssignPermissionsDialog(element)">
             <mat-icon>vpn_key</mat-icon>
             <span>Assign Permissions</span>
           </button>
+
         </mat-menu>
       </td>
     </ng-container>

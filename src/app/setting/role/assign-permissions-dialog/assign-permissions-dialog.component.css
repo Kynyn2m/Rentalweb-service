@@ -1,0 +1,78 @@
+
+/* Dialog container styling */
+mat-dialog-content {
+  padding: 20px;
+}
+
+/* Customize the title */
+mat-dialog-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Permission list item styling */
+mat-list-item {
+  padding: 10px 0;
+}
+
+/* Style for the checkbox labels (permission names) */
+mat-list-item mat-checkbox {
+  margin-left: 10px;
+}
+
+/* Style for the checkbox itself */
+mat-checkbox {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+/* Center align the buttons */
+mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+/* Customize the Save button */
+mat-dialog-actions button[mat-raised-button] {
+  background-color: #388e3c;
+  color: white;
+}
+
+mat-dialog-actions button[mat-raised-button]:hover {
+  background-color: #2e7d32;
+}
+
+/* Customize the Cancel button */
+mat-dialog-actions button[mat-button] {
+  color: #f44336;
+}
+
+mat-dialog-actions button[mat-button]:hover {
+  color: #d32f2f;
+}
+
+/* Add spacing between the checkboxes and make sure the layout is clear */
+mat-list {
+  max-height: 400px; /* Limit height of the list */
+  overflow-y: auto;
+}
+
+/* Optional: Style scrollbar for better user experience */
+mat-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+mat-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+mat-list::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4);
+}

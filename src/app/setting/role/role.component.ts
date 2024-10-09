@@ -26,6 +26,10 @@ import { NavComponent } from 'src/app/nav/nav.component';
 import { ROLE } from './data.test';
 import { Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AssignPermissionsDialogComponent } from './assign-permissions-dialog/assign-permissions-dialog.component';
+import { PermissionsService } from './assign-permissions-dialog/permissions.service';
+
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-role',
@@ -58,6 +62,7 @@ export class RoleComponent implements AfterViewInit, OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private translocoService: TranslocoService,
     private authenticationService: AuthenticationService,
+    private permissionsService: PermissionsService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -104,6 +109,50 @@ export class RoleComponent implements AfterViewInit, OnInit {
       .open(AddRoleDesComponent, dialogConfig)
       .afterClosed()
       .subscribe(() => this.getAll());
+  }
+  openAssignPermissionsDialog(role: any): void {
+    // Fetch permissions from the API using PermissionsService
+    this.permissionsService.getPermissions().subscribe((response) => {
+      const permissions = response.result; // Assuming result contains the list of permissions
+
+      // Open the dialog with permissions data
+      const dialogRef = this.dialog.open(AssignPermissionsDialogComponent, {
+        width: '650px',
+        data: {
+          permissions: permissions, // Pass the permissions to the dialog
+          assignedPermissions: role.permissions // Pass currently assigned permissions
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Assign permission IDs to the role (result contains the selected permission IDs)
+          this.assignPermissionsToRole(role.id, result);
+        }
+      });
+    });
+  }
+
+  // Method to assign permissions to a role
+  assignPermissionsToRole(roleId: number, permissionIds: number[]): void {
+    this.permissionsService.assignPermissionsToRole(roleId, permissionIds).subscribe(() => {
+      // Show SweetAlert on success
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Permissions have been successfully assigned to the role.',
+        timer: 3000,  // Optional: Auto-close after 3 seconds
+        showConfirmButton: false
+      });
+    }, error => {
+      console.error('Error assigning permissions:', error);
+      // Show SweetAlert on error
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to assign permissions. Please try again.'
+      });
+    });
   }
   updateDialog(role: ROLE_TYPE): void {
     const dialogConfig = new MatDialogConfig();
