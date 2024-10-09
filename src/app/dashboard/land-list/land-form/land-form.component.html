@@ -1,0 +1,146 @@
+<h2 align="center" mat-dialog-title>Update Land</h2>
+
+<mat-dialog-content [formGroup]="landForm" class="example-form">
+  <div class="form-grid">
+    <!-- Land Name -->
+    <mat-form-field class="form-item">
+      <mat-label>Land Name</mat-label>
+      <input matInput formControlName="title" placeholder="Enter land name" />
+      <mat-error
+        *ngIf="landForm.get('title')?.invalid && landForm.get('title')?.touched"
+      >
+        Land name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Address -->
+    <mat-form-field class="form-item">
+      <mat-label>Address</mat-label>
+      <input matInput formControlName="location" placeholder="Enter address" />
+      <mat-error
+        *ngIf="
+          landForm.get('location')?.invalid && landForm.get('location')?.touched
+        "
+      >
+        Address is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Price -->
+    <mat-form-field class="form-item">
+      <mat-label>Price</mat-label>
+      <input
+        matInput
+        formControlName="price"
+        type="number"
+        placeholder="Enter price"
+      />
+      <mat-error
+        *ngIf="landForm.get('price')?.invalid && landForm.get('price')?.touched"
+      >
+        Price is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Description -->
+    <mat-form-field class="form-item" style="grid-column: span 2">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        placeholder="Enter description"
+      ></textarea>
+      <mat-error
+        *ngIf="
+          landForm.get('description')?.invalid &&
+          landForm.get('description')?.touched
+        "
+      >
+        Description is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Phone Number -->
+    <mat-form-field class="form-item">
+      <mat-label>Phone Number</mat-label>
+      <input
+        matInput
+        formControlName="phoneNumber"
+        type="tel"
+        placeholder="Enter phone number"
+      />
+      <mat-error
+        *ngIf="
+          landForm.get('phoneNumber')?.invalid &&
+          landForm.get('phoneNumber')?.touched
+        "
+      >
+        Phone number is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Link Map -->
+    <mat-form-field class="form-item">
+      <mat-label>Map Link</mat-label>
+      <input matInput formControlName="linkMap" placeholder="Enter map link" />
+      <mat-error
+        *ngIf="
+          landForm.get('linkMap')?.invalid && landForm.get('linkMap')?.touched
+        "
+      >
+        Map link is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Floor -->
+    <mat-form-field class="form-item">
+      <mat-label>landSize</mat-label>
+      <input
+        matInput
+        formControlName="landSize"
+        type="number"
+        placeholder="Enter number of landSize"
+      />
+      <mat-error
+        *ngIf="
+          landForm.get('landSize')?.invalid && landForm.get('landSize')?.touched
+        "
+      >
+        Floor number is required
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="file-input-wrapper">
+    <label for="file-upload" class="custom-file-upload">
+      <mat-icon>cloud_upload</mat-icon> Upload New Image
+    </label>
+    <input
+      id="file-upload"
+      type="file"
+      (change)="onFileSelected($event)"
+      accept="image/*"
+    />
+  </div>
+
+  <!-- Image Preview -->
+  <div class="image-preview" *ngIf="imagePreview">
+    <img [src]="imagePreview" alt="Image Preview" class="preview-img" />
+    <!-- Cancel Button -->
+    <button
+      mat-button
+      (click)="onCancelImage()"
+      color="warn"
+      class="cancel-image-btn"
+    >
+      <mat-icon>cancel</mat-icon> Cancel Image
+    </button>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button (click)="onCancel()" color="warn">Cancel</button>
+  <button mat-raised-button (click)="onSubmit()" color="primary">
+    Update Land
+  </button>
+</mat-dialog-actions>

@@ -23,13 +23,55 @@ export class ContactComponent {
     country: 'Cambodia',
   };
 
+  // stepsToPost = [
+  //   {
+  //     title: 'admin',
+  //     imageUrl: '../../assets/img/user.png',
+  //     telegramUsername: 'username2',
+  //   },
+  //   {
+  //     title: 'admin',
+  //     imageUrl: '../../assets/img/user.png',
+  //     telegramUsername: 'username2',
+  //   },
+  //   {
+  //     title: 'admin',
+  //     imageUrl: '../../assets/img/user.png',
+  //     telegramUsername: 'username2',
+  //   },
+  //   {
+  //     title: 'Horng',
+  //     imageUrl: '../../assets/img/Screenshot 2022-11-23 205734.png',
+  //     telegramUsername: 'username2',
+  //   },
+  //   // Add more steps as needed
+  // ];
   stepsToPost = [
-    { id: 1, title: 'Step 1' },
-    { id: 2, title: 'Step 2' },
-    { id: 3, title: 'Step 3' },
-    { id: 4, title: 'Step 4' },
-    { id: 5, title: 'Step 5' },
-    { id: 6, title: 'Step 6' },
+    {
+      title: 'Admin 1',
+      imageUrl: '../../assets/img/user.png',
+      telegramUsername: '@Kinynom', // Replace with actual username
+      phoneNumber: '06478934',
+    },
+    {
+      title: 'Admin 2',
+      imageUrl: '../../assets/img/user.png',
+      telegramUsername: '@username2', // Replace with actual username
+      phoneNumber: '047484833',
+    },
+    {
+      title: 'Admin 3',
+      imageUrl: '../../assets/img/user.png',
+      telegramUsername: '@username3', // Replace with actual username
+      phoneNumber: '0252666',
+    },
+    {
+      title: 'Horng',
+      imageUrl: '../../assets/img/Screenshot 2022-11-23 205734.png',
+      telegramUsername: '@R_Horng', // User's Telegram username
+      phoneNumber: '09393845',
+    },
+    // Add more steps as needed
   ];
 
   constructor() {}

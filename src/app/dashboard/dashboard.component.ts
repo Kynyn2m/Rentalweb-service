@@ -46,4 +46,10 @@ export class DashboardComponent {
   goToRoomList(): void {
     this.router.navigate(['/room-list']);
   }
+  goToLandList(): void {
+    this.router.navigate(['/land-list']);
+  }
+  goToUser(): void {
+    this.router.navigate(['/user']);
+  }
 }

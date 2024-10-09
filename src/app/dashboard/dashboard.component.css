@@ -17,8 +17,6 @@
   margin-bottom: 40px;
 }
 
-
-
 .stat-card {
   background-color: #f1f1f1;
   border-radius: 8px;
@@ -44,14 +42,14 @@
 }
 
 .card-icon {
-  font-size: 40px;
+  font-size: 45px;
   margin-bottom: 10px;
   padding: 14px;
 }
 
 .mat-card-title {
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 3rem;
 }
 
 .stat-card p {
@@ -60,11 +58,21 @@
   margin: 0;
 }
 
-.orange-card { background-color: #FFA726; }
-.blue-card { background-color: #42A5F5; }
-.red-card { background-color: #EF5350; }
-.teal-card { background-color: #26A69A; }
-.green-card { background-color: #66BB6A; }
+.orange-card {
+  background-color: #ffa726;
+}
+.blue-card {
+  background-color: #42a5f5;
+}
+.red-card {
+  background-color: #ef5350;
+}
+.teal-card {
+  background-color: #26a69a;
+}
+.green-card {
+  background-color: #66bb6a;
+}
 
 /* Adjust the number of columns for smaller screens */
 @media (max-width: 1024px) {
@@ -125,7 +133,7 @@
 }
 
 .properties-table th {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 

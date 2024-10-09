@@ -3,7 +3,7 @@
 
   <!-- Statistics Section -->
   <div class="dashboard-statistics">
-    <mat-card class="stat-card orange-card">
+    <mat-card class="stat-card orange-card" (click)="goToUser()">
       <mat-card-header>
         <mat-icon class="card-icon">group</mat-icon>
         <mat-card-title>Total Users</mat-card-title>
@@ -15,7 +15,7 @@
 
     <mat-card class="stat-card blue-card" (click)="goToRoomList()">
       <mat-card-header>
-        <mat-icon class="card-icon">totalRoom</mat-icon>
+        <mat-icon class="card-icon">meeting_room</mat-icon>
         <mat-card-title>totalRoom</mat-card-title>
       </mat-card-header>
       <mat-card-content>
@@ -23,9 +23,9 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card red-card">
+    <mat-card class="stat-card red-card" (click)="goToLandList()">
       <mat-card-header>
-        <mat-icon class="card-icon">message</mat-icon>
+        <mat-icon class="card-icon">landscape</mat-icon>
         <mat-card-title>totalLand</mat-card-title>
       </mat-card-header>
       <mat-card-content>
@@ -35,7 +35,7 @@
 
     <mat-card class="stat-card teal-card" (click)="goToHouseList()">
       <mat-card-header>
-        <mat-icon class="card-icon">attach_money</mat-icon>
+        <mat-icon class="card-icon">house</mat-icon>
         <mat-card-title>totalHouse</mat-card-title>
       </mat-card-header>
       <mat-card-content>
@@ -43,7 +43,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card green-card">
+    <!-- <mat-card class="stat-card green-card">
       <mat-card-header>
         <mat-icon class="card-icon">attach_money</mat-icon>
         <mat-card-title>totalPost</mat-card-title>
@@ -51,6 +51,6 @@
       <mat-card-content>
         <p>{{ totalPost }}</p>
       </mat-card-content>
-    </mat-card>
+    </mat-card> -->
   </div>
 </div>

@@ -86,6 +86,8 @@ import { HouseListComponent } from './dashboard/house-list/house-list.component'
 import { AddPostRoomComponent } from './add-post/add-post-room/add-post-room.component';
 import { RoomListComponent } from './dashboard/room-list/room-list.component';
 import { RoomFormComponent } from './dashboard/room-list/room-form/room-form.component'; // Import Dashboard Component
+import { LandListComponent } from './dashboard/land-list/land-list.component';
+import { LandFormComponent } from './dashboard/land-list/land-form/land-form.component';
 // import { GoogleMapsModule } from '@angular/google-maps';
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -131,7 +133,9 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AddPostRoomComponent,
     HouseUpdateDialogComponent,
     RoomListComponent,
-    RoomFormComponent
+    RoomFormComponent,
+    LandListComponent,
+    LandFormComponent,
   ],
   imports: [
     BrowserModule,
