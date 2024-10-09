@@ -20,7 +20,10 @@
       <h2>{{ land?.title }}</h2>
 
       <div class="details-info">
-        <p><strong>Location:</strong> {{ land?.location }}</p>
+        <p>
+          <strong>Location:</strong> {{ provinceName }}, {{ districtName }},
+          {{ communeName }}, {{ villageName }}
+        </p>
         <p><strong>Contact:</strong> {{ land?.phoneNumber }}</p>
         <p>
           <strong>Price:</strong> <span class="price">${{ land?.price }}</span>
