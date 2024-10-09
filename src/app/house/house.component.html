@@ -6,6 +6,7 @@
   </div>
   <form [formGroup]="searchForm"
         (ngSubmit)="onSearch()">
+
     <mat-form-field class="full-waith"
                     appearance="outline">
       <mat-label>Search</mat-label>
@@ -13,6 +14,68 @@
              formControlName="search"
              placeholder="Enter location" />
     </mat-form-field>
+    <!-- Province and District -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Province/City</mat-label>
+        <mat-select formControlName="provinceId_c"
+                    (selectionChange)="onProvinceSelected($event)"
+                    required>
+          <mat-option *ngFor="let province of provinces_c"
+                      [value]="province.id">
+            {{ province.khmerName }} / {{ province.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>District/Khan</mat-label>
+        <mat-select formControlName="districtId_c"
+                    (selectionChange)="onDistrictSelected($event)"
+                    required>
+          <mat-option *ngFor="let district of districts_c"
+                      [value]="district.id">
+            {{ district.khmerName }} / {{ district.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Commune and Village -->
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Commune/Sangkat</mat-label>
+        <mat-select formControlName="communeId_c"
+                    (selectionChange)="onCommuneSelected($event)"
+                    required>
+          <mat-option *ngFor="let commune of communes_c"
+                      [value]="commune.id">
+            {{ commune.khmerName }} / {{ commune.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
+        <mat-label>Village</mat-label>
+        <mat-select formControlName="villageId_c"
+                    required>
+          <mat-option *ngFor="let village of villages_c"
+                      [value]="village.id">
+            {{ village.khmerName }} / {{ village.englishName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
     <div class="search-field price-field">
       <mat-form-field appearance="outline">
