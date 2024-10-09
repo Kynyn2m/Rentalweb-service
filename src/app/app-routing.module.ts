@@ -79,7 +79,11 @@ const routes: Routes = [
     component: DetailRoomComponent,
     canActivate: [NonAdminGuard],
   },
-
+  {
+    path: 'details-land/:id',
+    component: DetailLandComponent,
+    canActivate: [NonAdminGuard],
+  },
   { path: 'theme', component: ThemeComponent, canActivate: [NonAdminGuard] },
   {
     path: 'profile',
