@@ -231,11 +231,15 @@ export class AddPostRoomComponent {
         },
         (error) => {
           console.error('Error creating post:', error);
-          Swal.fire(
-            'Error',
-            'Failed to create post, please try again later.',
-            'error'
-          );
+          Swal.fire({
+            title: 'Error',
+            html: `
+              <p>អ្នកបានអស់ការផុសហើយសូមទំនាក់ទំនងទៅកាន់ admin</p>
+              <a href="https://t.me/Kinynom" target="_blank" style="display: inline-block; padding: 10px 20px; margin-top: 10px; background-color: #3085d6; color: white; text-decoration: none; border-radius: 5px;">Contact Admin via Telegram</a>
+            `,
+            icon: 'error',
+            showConfirmButton: false
+          });
         }
       );
     } else {
