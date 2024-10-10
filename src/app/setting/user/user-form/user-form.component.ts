@@ -29,23 +29,31 @@ export class UserFormComponent {
     private _snackBar: MatSnackBar,
     private fb: FormBuilder
   ) {
-    console.log('Received data:', data); // Check the data
+    console.log('Received data:', data);
     this.user = data;
     this.userForm = this.fb.group({
       fullName: [this.user.fullName],
       email: [this.user.email],
       gender: [this.user.gender],
-      username: [this.user.username],
+      username: [this.user.username], // Display username in form
     });
   }
+
   ngOnInit(): void {}
 
   onSubmit(f: NgForm) {
     if (!f.valid) {
       return;
     }
+
+    // Map the username to usernamer before sending to the API
+    const updatedUser = {
+      ...this.user, // Get all existing fields from the user
+      usernamer: this.user.username // Map username from the form to usernamer
+    };
+
     if (this.user.id) {
-      this.userService.updateUser(this.user, this.user.id).subscribe(
+      this.userService.updateUser(updatedUser, this.user.id).subscribe(
         (data) => {
           this.snackBar.open('User updated successfully!', 'Close', {
             duration: 3000,
@@ -65,17 +73,8 @@ export class UserFormComponent {
         }
       );
     }
-    // else {
-    //   this.userService.createUser(this.user).subscribe(
-    //     (data) => {
-    //       this.dialogRef.close();
-    //     },
-    //     (error) => {
-    //       this.error = error.responseMessage;
-    //     }
-    //   );
-    // }
   }
+
 
   onCancel(): void {
     this.dialogRef.close();

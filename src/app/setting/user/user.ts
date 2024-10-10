@@ -11,6 +11,9 @@ export class USER_TYPE {
   gender!: string;
   isView?: boolean;
   profilePic?: string | undefined;
+  usernamer!: string;
+  roleIds!: number[];
+  permissionIds!: number[];
 
   status!: string;
 }

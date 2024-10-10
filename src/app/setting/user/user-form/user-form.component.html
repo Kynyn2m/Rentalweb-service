@@ -1,9 +1,12 @@
-<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+<form #f="ngForm"
+      (ngSubmit)="onSubmit(f)">
   <div align="center">
-    <h2 mat-dialog-title *ngIf="!user.id">
+    <h2 mat-dialog-title
+        *ngIf="!user.id">
       {{ "add" | transloco }} {{ "user" | transloco }}
     </h2>
-    <h2 mat-dialog-title *ngIf="user.id">
+    <h2 mat-dialog-title
+        *ngIf="user.id">
       {{ "update" | transloco }} {{ "user" | transloco }}
     </h2>
   </div>
@@ -11,75 +14,59 @@
   <mat-dialog-content class="user-add-content">
     <mat-form-field appearance="fill">
       <mat-label>{{ "fullName" | transloco }}</mat-label>
-      <input
-        type="text"
-        required
-        matInput
-        [(ngModel)]="user.fullName"
-        name="fullName"
-      />
+      <input type="text"
+             required
+             matInput
+             [(ngModel)]="user.fullName"
+             name="fullName" />
     </mat-form-field>
 
     <mat-form-field appearance="fill">
+      <mat-label>{{ "username" | transloco }}</mat-label> <!-- Correct label binding -->
+      <input type="text"
+             disabled
+             name="username"
+             required
+             matInput
+             [(ngModel)]="user.username" /> <!-- Correct two-way data binding -->
+    </mat-form-field>
+
+
+    <mat-form-field appearance="fill">
       <mat-label>{{ "email" | transloco }}</mat-label>
-      <input
-        type="email"
-        required
-        matInput
-        [(ngModel)]="user.email"
-        name="email"
-      />
+      <input type="email"
+             required
+             matInput
+             [(ngModel)]="user.email"
+             name="email" />
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>{{ "gender" | transloco }}</mat-label>
-      <mat-select
-        type="gender"
-        name="gender"
-        required
-        [(ngModel)]="user.gender"
-      >
+      <mat-select type="gender"
+                  name="gender"
+                  required
+                  [(ngModel)]="user.gender">
         <mat-option value="male">{{ "male" | transloco }}</mat-option>
         <mat-option value="other">{{ "other" | transloco }}</mat-option>
         <mat-option value="female">{{ "female" | transloco }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>{{ "phoneNumber	" | transloco }}</mat-label>
-      <input
-        type="text"
-        name="username	"
-        required
-        matInput
-        [(ngModel)]="user.username"
-      />
-      <mat-icon matSuffix>phone</mat-icon>
-      <!-- <mat-hint>Include area code</mat-hint> -->
-    </mat-form-field>
-    <!-- <mat-form-field appearance="fill">
-      <mat-label>phoneNumber</mat-label>
-      <example-tel-input
-        formControlName="tel"
-        required
-        matInput
-        [(ngModel)]="user.phoneNumber"
-      ></example-tel-input>
-      <mat-icon matSuffix>phone</mat-icon>
-      <mat-hint>Include area code</mat-hint>
-    </mat-form-field> -->
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-raised-button color="success">
+    <button mat-raised-button
+            color="success">
       {{ "save" | transloco }}
     </button>
-    <button mat-raised-button type="button" (click)="onCancel()" color="warn">
+    <button mat-raised-button
+            type="button"
+            (click)="onCancel()"
+            color="warn">
       {{ "cancel" | transloco }}
     </button>
   </mat-dialog-actions>
-  <mat-progress-bar
-    [class.is__loading]="!loading"
-    mode="indeterminate"
-  ></mat-progress-bar>
+  <mat-progress-bar [class.is__loading]="!loading"
+                    mode="indeterminate"></mat-progress-bar>
 </form>
