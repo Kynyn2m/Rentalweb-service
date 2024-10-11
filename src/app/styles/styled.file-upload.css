@@ -3,7 +3,6 @@
   display: flex;
   position: relative;
 }
-
 .mat-success {
   background-color: green !important;
   color: #fff !important;
