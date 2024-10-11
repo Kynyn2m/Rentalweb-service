@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RoomService } from '../Service/room.service';
 import { LandService } from '../add-post/add-post-land/land.service';
+import { DistrictService } from '../address/district.service';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,9 @@ export class HomeComponent implements OnInit {
   isLoadingMore = false;
   autoFetchInterval: any;
 
+  provinces_c: any[] = []; // Array to store the list of provinces
+  districtId_c: number | null = 0; // To track the selected district
+
   // Banner images
   banners: string[] = [
     '../../assets/ads&baner/Thesis.jpg',
@@ -38,6 +42,7 @@ export class HomeComponent implements OnInit {
     private fb: FormBuilder,
     private roomService: RoomService,
     private sanitizer: DomSanitizer,
+    private districtService: DistrictService,
     private breakpointObserver: BreakpointObserver,
   ) { }
 
@@ -53,6 +58,7 @@ export class HomeComponent implements OnInit {
       const fromPrice = params['fromPrice'];
       const toPrice = params['toPrice'];
       const search = params['search'];
+      const provinceName = params['provinceName'];
       this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
     });
     this.autoFetchInterval = setInterval(() => {
@@ -69,6 +75,8 @@ export class HomeComponent implements OnInit {
       fromPrice: [''],
       toPrice: [''],
     });
+
+
 
     // Fetch rooms when query parameters change
     this.route.queryParams.subscribe((params) => {
@@ -116,69 +124,100 @@ export class HomeComponent implements OnInit {
 
       this.fetchLand(fromPrice, toPrice, search, this.currentPage);
     }, 30000); // 30 seconds interval
+
+    this.districtService.getProvincesPublic().subscribe(
+      (res) => {
+        this.provinces_c = res.result.result || [];
+      },
+      (error) => {
+        console.error('Error fetching provinces:', error);
+      }
+    );
+
   }
-  fetchLand(
-    fromPrice?: number,
-    toPrice?: number,
-    search?: string,
-    page: number = 0
-  ): void {
-    const params: any = {
-      page, // The current page
-      size: this.itemsPerPage, // The number of items per page
-    };
 
-    if (fromPrice !== undefined) {
-      params.fromPrice = fromPrice;
-    }
-    if (toPrice !== undefined) {
-      params.toPrice = toPrice;
-    }
-    if (search) {
-      params.search = search;
-    }
+fetchLand(
+  fromPrice?: number,
+  toPrice?: number,
+  search?: string,
+  page: number = 0,
+  provinceName?: string
+): void {
+  const params: any = {
+    page,
+    size: this.itemsPerPage,
+  };
 
-    this.landervice.getLand(params).subscribe((response) => {
-      this.lands = response.result.result;
-      this.totalPages = response.result.totalPage; // Update the total number of pages
+  if (fromPrice !== undefined) params.fromPrice = fromPrice;
+  if (toPrice !== undefined) params.toPrice = toPrice;
+  if (search) params.search = search;
 
-      // Load images safely
-      this.lands.forEach((land) => {
-        this.loadImage(land);
-      });
+  if (provinceName) {
+    const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+    if (matchedProvince) {
+      params.provinceId = matchedProvince.id;
+    }
+  }
+
+  this.landervice.getLand(params).subscribe((response) => {
+    this.lands = response.result.result;
+    this.totalPages = response.result.totalPage;
+
+    this.lands.forEach(land => {
+      this.loadImage(land);
+      const matchedProvince = this.provinces_c.find(p => p.id === land.province);
+      if (matchedProvince) {
+        land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+      } else {
+        console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
+        land.provinceName = 'Unknown Province';
+      }
     });
-  }
+  });
+}
+
+
   fetchRoom(
     fromPrice?: number,
     toPrice?: number,
     search?: string,
-    page: number = 0
+    page: number = 0,
+    provinceName?: string
   ): void {
     const params: any = {
-      page, // The current page
-      size: this.itemsPerPage, // The number of items per page
+      page,
+      size: this.itemsPerPage,
     };
 
-    if (fromPrice !== undefined) {
-      params.fromPrice = fromPrice;
-    }
-    if (toPrice !== undefined) {
-      params.toPrice = toPrice;
-    }
-    if (search) {
-      params.search = search;
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+      if (matchedProvince) {
+        params.provinceId = matchedProvince.id;
+      }
     }
 
     this.roomService.getRooms(params).subscribe((response) => {
       this.rooms = response.result.result;
-      this.totalPages = response.result.totalPage; // Update the total number of pages
+      this.totalPages = response.result.totalPage;
 
-      // Load images safely
-      this.rooms.forEach((house) => {
-        this.loadImage(house);
+      this.rooms.forEach(room => {
+        this.loadImage(room);
+        const matchedProvince = this.provinces_c.find(p => p.id === room.province);
+        if (matchedProvince) {
+          room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        } else {
+          console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
+          room.provinceName = 'Unknown Province';
+        }
       });
     });
   }
+
+
 
   fetchHouses(
     fromPrice?: number,
@@ -188,50 +227,45 @@ export class HomeComponent implements OnInit {
     districtId?: number,
     communeId?: number,
     villageId?: number,
-    page: number = 0
+    page: number = 0,
+    provinceName?: string
   ): void {
     const params: any = {
-      page, // The current page
-      size: this.itemsPerPage, // The number of items per page
+      page,
+      size: this.itemsPerPage,
     };
 
-    // Add parameters only if they are defined
-    if (fromPrice !== undefined) {
-      params.fromPrice = fromPrice;
-    }
-    if (toPrice !== undefined) {
-      params.toPrice = toPrice;
-    }
-    if (search) {
-      params.search = search;
-    }
-    if (provinceId !== undefined && provinceId !== null) {
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+      if (matchedProvince) {
+        params.provinceId = matchedProvince.id;
+      }
+    } else if (provinceId !== undefined && provinceId !== null) {
       params.provinceId = provinceId;
     }
 
-    // Only include district, commune, and village if province is defined
-    if (districtId !== undefined && districtId !== null && districtId !== 0) {
-      params.districtId = districtId;
-    }
-    if (communeId !== undefined && communeId !== null && communeId !== 0) {
-      params.communeId = communeId;
-    }
-    if (villageId !== undefined && villageId !== null && villageId !== 0) {
-      params.villageId = villageId;
-    }
-
-    // Call the API
-    this.houseService.getHouses(params).subscribe(response => {
+    this.houseService.getHouses(params).subscribe((response) => {
       const responseData = response.result;
-      this.houses = responseData.result; // List of houses
-      this.totalPages = responseData.totalPage; // Total number of pages
+      this.houses = responseData.result;
+      this.totalPages = responseData.totalPage;
 
-      // Load images safely
       this.houses.forEach(house => {
         this.loadImage(house);
+        const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
+        if (matchedProvince) {
+          house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        } else {
+          house.provinceName = 'Unknown Province'; // Fallback if no match is found
+        }
       });
     });
   }
+
+
 
   likeHouse(houseId: number): void {
     this.houseService.likeHouse(houseId).subscribe(() => {

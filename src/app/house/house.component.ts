@@ -114,11 +114,8 @@ export class HouseComponent implements OnInit {
       const responseData = response.result;
       this.houses = responseData.result;
       this.totalPages = responseData.totalPage;
-
-      // Load images safely and map province name
       this.houses.forEach(house => {
         this.loadImage(house);
-        // Find and assign the province name
         const matchedProvince = this.provinces_c.find(p => p.id === house.province);
         house.provinceName = matchedProvince ? matchedProvince.khmerName || matchedProvince.englishName : 'Unknown Province';
       });
@@ -146,9 +143,6 @@ export class HouseComponent implements OnInit {
       );
     }
   }
-
-
-
 
 onDistrictSelected(event: any): void {
   this.districtId_c = event.value;
