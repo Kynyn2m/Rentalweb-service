@@ -138,15 +138,7 @@ export class HouseComponent implements OnInit {
           this.districts_c = res.result || [];
           this.communes_c = [];
           this.villages_c = [];
-          this.cdr.detectChanges();  // Trigger change detection
-
-          // Call fetchHouses with all necessary parameters, including the provinceId
-          this.fetchHouses(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c || undefined
-          );
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching districts:', error);
@@ -154,6 +146,7 @@ export class HouseComponent implements OnInit {
       );
     }
   }
+
 
 
 
@@ -167,15 +160,6 @@ onDistrictSelected(event: any): void {
         this.communes_c = res.result || [];
         this.villages_c = [];
         this.cdr.detectChanges();
-
-        // Fetch houses with updated districtId
-        this.fetchHouses(
-          this.searchForm.get('fromPrice')?.value,
-          this.searchForm.get('toPrice')?.value,
-          this.searchForm.get('search')?.value,
-          this.provinceId_c !== null ? this.provinceId_c : undefined,
-          this.districtId_c !== null ? this.districtId_c : undefined
-        );
       },
       (error) => {
         console.error('Error fetching communes:', error);
@@ -192,16 +176,6 @@ onCommuneSelected(event: any): void {
       (res) => {
         this.villages_c = res.result || [];
         this.cdr.detectChanges();
-
-        // Fetch houses with updated communeId
-        this.fetchHouses(
-          this.searchForm.get('fromPrice')?.value,
-          this.searchForm.get('toPrice')?.value,
-          this.searchForm.get('search')?.value,
-          this.provinceId_c !== null ? this.provinceId_c : undefined,
-          this.districtId_c !== null ? this.districtId_c : undefined,
-          this.communeId_c !== null ? this.communeId_c : undefined
-        );
       },
       (error) => {
         console.error('Error fetching villages:', error);
@@ -213,8 +187,6 @@ onCommuneSelected(event: any): void {
 onVillageSelected(event: any): void {
   this.villageId_c = event.value;
   console.log('Village Selected:', this.villageId_c);
-
-  this.fetchHouses(undefined, undefined, undefined, this.provinceId_c !== null ? this.provinceId_c : undefined, this.districtId_c !== null ? this.districtId_c : undefined, this.communeId_c !== null ? this.communeId_c : undefined, this.villageId_c !== null ? this.villageId_c : undefined);
 }
 
 
@@ -230,6 +202,17 @@ onSearch(): void {
   // Include provinceId in the search query
   if (this.provinceId_c && this.provinceId_c !== 0) {
     queryParams.provinceId = this.provinceId_c;
+  }
+
+  // Include districtId, communeId, villageId in the search query
+  if (this.districtId_c && this.districtId_c !== 0) {
+    queryParams.districtId = this.districtId_c;
+  }
+  if (this.communeId_c && this.communeId_c !== 0) {
+    queryParams.communeId = this.communeId_c;
+  }
+  if (this.villageId_c && this.villageId_c !== 0) {
+    queryParams.villageId = this.villageId_c;
   }
 
   // Include other parameters if they exist
@@ -263,50 +246,45 @@ onSearch(): void {
 }
 
 
-
-
-
-
 onClear(): void {
-  // Reset the search form fields
   this.searchForm.reset();
 
-  // Reset the address form fields for province, district, commune, and village
-  this.addressForm.patchValue({
-    provinceId: null,  // Reset Province/City selection
-    districtId: null,  // Reset District/Khan selection
-    communeId: null,   // Reset Commune/Sangkat selection
-    villageId: null    // Reset Village selection
-  });
+  this.provinceId_c = null;
+  this.districtId_c = null;
+  this.communeId_c = null;
+  this.villageId_c = null;
 
-  // Clear the options for dependent selects
+  this.provinces_c = [];
   this.districts_c = [];
   this.communes_c = [];
   this.villages_c = [];
 
-  // Reset query parameters including provinceId, districtId, communeId, and villageId
+  this.districtService.getProvincesPublic().subscribe(
+    (res) => {
+      this.provinces_c = res.result.result || [];
+    },
+    (error) => {
+      console.error('Error fetching provinces:', error);
+    }
+  );
+
   this.router.navigate([], {
     queryParams: {
       search: null,
-      fromPrice: null,
-      toPrice: null,
       provinceId: null,
       districtId: null,
       communeId: null,
       villageId: null,
-      page: 0,  // Reset to page 0
+      fromPrice: null,
+      toPrice: null,
+      page: 0
     },
     queryParamsHandling: 'merge',
   });
 
-  // Fetch houses without filters
   this.fetchHouses();
 }
 
-
-
-
-  // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
@@ -353,10 +331,10 @@ onClear(): void {
     }
 
     if (start > 0) {
-      pages.unshift(-1); // Indicate "..." before the start
+      pages.unshift(-1);
     }
     if (end < this.totalPages) {
-      pages.push(-1); // Indicate "..." after the end
+      pages.push(-1);
     }
 
     return pages;
@@ -365,7 +343,7 @@ onClear(): void {
     this.houseService.likeHouse(houseId).subscribe(() => {
       const house = this.houses.find(h => h.id === houseId);
       if (house) {
-        house.likeCount += 1; // Increment the like count on the UI
+        house.likeCount += 1;
       }
     });
   }
@@ -380,22 +358,19 @@ onClear(): void {
           house.safeImagePaths.push(safeUrl);
         });
       });
-      house.currentImageIndex = 0; // Start with the first image
+      house.currentImageIndex = 0;
     } else {
-      // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
+
       house.safeImagePaths = [];
       house.currentImageIndex = 0;
     }
   }
 
-
-  // Navigate to the next image
-// Navigate to the next image (loop to the first image if it's the last one)
 nextImage(house: any): void {
   if (house.currentImageIndex < house.safeImagePaths.length - 1) {
     house.currentImageIndex++;
   } else {
-    house.currentImageIndex = 0; // Loop back to the first image
+    house.currentImageIndex = 0;
   }
 }
 
