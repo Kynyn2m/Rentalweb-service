@@ -47,7 +47,6 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Copy ngOnInit logic here
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],

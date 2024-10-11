@@ -150,6 +150,12 @@ export class RoomComponent {
       // Load images safely
       this.rooms.forEach((rooms) => {
         this.loadImage(rooms);
+        const matchedProvince = this.provinces_c.find(
+          (p) => p.id === rooms.province
+        );
+        rooms.provinceName = matchedProvince
+          ? matchedProvince.khmerName || matchedProvince.englishName
+          : 'Unknown Province';
       });
     });
   }
