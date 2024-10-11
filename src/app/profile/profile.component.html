@@ -80,29 +80,20 @@
 
   <div class="history-posts-container">
     <h2 style="text-align: center;">My Post</h2>
-
-    <!-- House Block -->
     <div class="post-block">
       <h3>My Houses</h3>
       <div class="history-cards">
         <mat-card *ngFor="let house of houses"
                   class="history-card">
-
-          <!-- Image Carousel -->
           <div class="image-carousel-container">
-            <!-- Previous Button -->
             <button class="prev-image-button"
                     *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
                     (click)="prevImage(house); $event.stopPropagation()">
               <mat-icon>arrow_back</mat-icon>
             </button>
-
-            <!-- Display Current Image -->
             <img [src]="house.safeImagePaths[house.currentImageIndex]"
                  alt="{{ house.title }}"
                  class="history-card-img" />
-
-            <!-- Next Button -->
             <button class="next-image-button"
                     *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
                     (click)="nextImage(house); $event.stopPropagation()">
@@ -124,6 +115,15 @@
             </div>
 
             <div class="card-actions-right">
+              <!-- Update Button -->
+              <button mat-raised-button
+                      color="primary"
+                      (click)="openUpdateDialog(house)"
+                      class="update-button">
+                <mat-icon>edit</mat-icon> Update
+              </button>
+
+              <!-- Delete Button -->
               <button mat-raised-button
                       color="warn"
                       (click)="deleteHouse(house.id)"
@@ -132,6 +132,7 @@
               </button>
             </div>
           </mat-card-actions>
+
 
         </mat-card>
       </div>
@@ -167,20 +168,29 @@
             </button>
           </div>
 
-          <mat-card-title>{{ land.title }}</mat-card-title>
+
           <mat-card-content>
+            <p><strong>Title:</strong>{{ land.title }}</p>
             <p><strong>Price:</strong> ${{ land.price }}</p>
             <p><strong>Location:</strong> {{ land.location }}</p>
           </mat-card-content>
 
-          <!-- Card Actions with Delete Button -->
+
           <mat-card-actions>
             <div class="card-actions-left">
               <span><mat-icon>thumb_up</mat-icon> {{ land.likeCount }}</span>
-            </div>
-            <div class="card-actions-right">
               <span><mat-icon>visibility</mat-icon> {{ land.viewCount }}</span>
-              <!-- Add Delete Button for Land -->
+            </div>
+
+            <div class="card-actions-right">
+              <!-- Update Button -->
+              <button mat-raised-button
+                      color="primary"
+                      class="update-button">
+                <mat-icon>edit</mat-icon> Update
+              </button>
+
+              <!-- Delete Button -->
               <button mat-raised-button
                       color="warn"
                       (click)="deleteLand(land.id)"
@@ -189,6 +199,7 @@
               </button>
             </div>
           </mat-card-actions>
+
 
         </mat-card>
       </div>
@@ -224,20 +235,28 @@
             </button>
           </div>
 
-          <mat-card-title>{{ room.title }}</mat-card-title>
           <mat-card-content>
+            <p><strong>Title:</strong> {{ room.title }}</p>
             <p><strong>Price:</strong> ${{ room.price }}</p>
             <p><strong>Location:</strong> {{ room.location }}</p>
           </mat-card-content>
 
-          <!-- Card Actions with Delete Button -->
+          <!-- Card Actions -->
           <mat-card-actions>
             <div class="card-actions-left">
               <span><mat-icon>thumb_up</mat-icon> {{ room.likeCount }}</span>
-            </div>
-            <div class="card-actions-right">
               <span><mat-icon>visibility</mat-icon> {{ room.viewCount }}</span>
-              <!-- Add Delete Button for Room -->
+            </div>
+
+            <div class="card-actions-right">
+              <!-- Update Button -->
+              <button mat-raised-button
+                      color="primary"
+                      class="update-button">
+                <mat-icon>edit</mat-icon> Update
+              </button>
+
+              <!-- Delete Button -->
               <button mat-raised-button
                       color="warn"
                       (click)="deleteRoom(room.id)"
@@ -246,6 +265,7 @@
               </button>
             </div>
           </mat-card-actions>
+
 
         </mat-card>
       </div>

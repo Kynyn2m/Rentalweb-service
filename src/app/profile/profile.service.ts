@@ -65,4 +65,8 @@ export class ProfileService {
     const url = `${environment.apiUrl}/public/rooms/${roomId}`;
     return this.http.delete<any>(url);
   }
+  updateHouse(houseId: number, houseData: FormData): Observable<any> {
+    const url = `${environment.apiUrl}/public/houses/${houseId}`;
+    return this.http.put<any>(url, houseData);
+  }
 }

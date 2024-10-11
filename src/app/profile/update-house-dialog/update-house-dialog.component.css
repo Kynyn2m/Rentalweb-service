@@ -1,0 +1,12 @@
+.file-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.54); /* Use material style if needed */
+}
+
+input[type="file"] {
+  display: block;
+  margin-bottom: 16px;
+  padding: 4px;
+}

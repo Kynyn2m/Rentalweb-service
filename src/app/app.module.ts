@@ -93,6 +93,7 @@ import { DetailLandComponent } from './pages/land/detail-land/detail-land.compon
 import { ConfirmDialogComponent } from './profile/confirm-dialog/confirm-dialog.component';
 import { AssignPermissionsDialogComponent } from './setting/role/assign-permissions-dialog/assign-permissions-dialog.component';
 import { AssignRoleDialogComponent } from './setting/user/assign-role-dialog/assign-role-dialog.component';
+import { UpdateHouseDialogComponent } from './profile/update-house-dialog/update-house-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -143,7 +144,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     DetailLandComponent,
     ConfirmDialogComponent,
     AssignPermissionsDialogComponent,
-    AssignRoleDialogComponent
+    AssignRoleDialogComponent,
+    UpdateHouseDialogComponent
   ],
   imports: [
     BrowserModule,
