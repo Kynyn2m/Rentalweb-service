@@ -25,6 +25,10 @@ export class HomeComponent implements OnInit {
   isLoadingMore = false;
   autoFetchInterval: any;
 
+  isLoadingRooms = false;
+isLoadingLands = false;
+isLoadingHouses = false;
+
   provinces_c: any[] = []; // Array to store the list of provinces
   districtId_c: number | null = 0; // To track the selected district
 
@@ -135,13 +139,59 @@ export class HomeComponent implements OnInit {
 
   }
 
-fetchLand(
+  fetchLand(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0,
+    provinceName?: string
+  ): void {
+    this.isLoadingLands = true; // Start loading
+    const params: any = {
+      page,
+      size: this.itemsPerPage,
+    };
+
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+      if (matchedProvince) {
+        params.provinceId = matchedProvince.id;
+      }
+    }
+
+    this.landervice.getLand(params).subscribe((response) => {
+      this.lands = response.result.result;
+      this.totalPages = response.result.totalPage;
+
+      this.lands.forEach(land => {
+        this.loadImage(land);
+        const matchedProvince = this.provinces_c.find(p => p.id === land.province);
+        if (matchedProvince) {
+          land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        } else {
+          console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
+          land.provinceName = 'Unknown Province';
+        }
+      });
+      this.isLoadingLands = false; // End loading
+    }, () => {
+      this.isLoadingLands = false; // End loading on error
+    });
+  }
+
+
+fetchRoom(
   fromPrice?: number,
   toPrice?: number,
   search?: string,
   page: number = 0,
   provinceName?: string
 ): void {
+  this.isLoadingRooms = true; // Start loading
   const params: any = {
     page,
     size: this.itemsPerPage,
@@ -158,111 +208,77 @@ fetchLand(
     }
   }
 
-  this.landervice.getLand(params).subscribe((response) => {
-    this.lands = response.result.result;
+  this.roomService.getRooms(params).subscribe((response) => {
+    this.rooms = response.result.result;
     this.totalPages = response.result.totalPage;
 
-    this.lands.forEach(land => {
-      this.loadImage(land);
-      const matchedProvince = this.provinces_c.find(p => p.id === land.province);
+    this.rooms.forEach(room => {
+      this.loadImage(room);
+      const matchedProvince = this.provinces_c.find(p => p.id === room.province);
       if (matchedProvince) {
-        land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
       } else {
-        console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
-        land.provinceName = 'Unknown Province';
+        console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
+        room.provinceName = 'Unknown Province';
       }
     });
+    this.isLoadingRooms = false; // End loading
+  }, () => {
+    this.isLoadingRooms = false; // End loading on error
   });
 }
 
 
-  fetchRoom(
-    fromPrice?: number,
-    toPrice?: number,
-    search?: string,
-    page: number = 0,
-    provinceName?: string
-  ): void {
-    const params: any = {
-      page,
-      size: this.itemsPerPage,
-    };
 
-    if (fromPrice !== undefined) params.fromPrice = fromPrice;
-    if (toPrice !== undefined) params.toPrice = toPrice;
-    if (search) params.search = search;
+fetchHouses(
+  fromPrice?: number,
+  toPrice?: number,
+  search?: string,
+  provinceId?: number,
+  districtId?: number,
+  communeId?: number,
+  villageId?: number,
+  page: number = 0,
+  provinceName?: string
+): void {
+  this.isLoadingHouses = true; // Start loading
+  const params: any = {
+    page,
+    size: this.itemsPerPage,
+  };
 
-    if (provinceName) {
-      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
-      if (matchedProvince) {
-        params.provinceId = matchedProvince.id;
-      }
+  if (fromPrice !== undefined) params.fromPrice = fromPrice;
+  if (toPrice !== undefined) params.toPrice = toPrice;
+  if (search) params.search = search;
+
+  if (provinceName) {
+    const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+    if (matchedProvince) {
+      params.provinceId = matchedProvince.id;
     }
-
-    this.roomService.getRooms(params).subscribe((response) => {
-      this.rooms = response.result.result;
-      this.totalPages = response.result.totalPage;
-
-      this.rooms.forEach(room => {
-        this.loadImage(room);
-        const matchedProvince = this.provinces_c.find(p => p.id === room.province);
-        if (matchedProvince) {
-          room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-        } else {
-          console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
-          room.provinceName = 'Unknown Province';
-        }
-      });
-    });
+  } else if (provinceId !== undefined && provinceId !== null) {
+    params.provinceId = provinceId;
   }
 
+  this.houseService.getHouses(params).subscribe((response) => {
+    const responseData = response.result;
+    this.houses = responseData.result;
+    this.totalPages = responseData.totalPage;
 
-
-  fetchHouses(
-    fromPrice?: number,
-    toPrice?: number,
-    search?: string,
-    provinceId?: number,
-    districtId?: number,
-    communeId?: number,
-    villageId?: number,
-    page: number = 0,
-    provinceName?: string
-  ): void {
-    const params: any = {
-      page,
-      size: this.itemsPerPage,
-    };
-
-    if (fromPrice !== undefined) params.fromPrice = fromPrice;
-    if (toPrice !== undefined) params.toPrice = toPrice;
-    if (search) params.search = search;
-
-    if (provinceName) {
-      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+    this.houses.forEach(house => {
+      this.loadImage(house);
+      const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
       if (matchedProvince) {
-        params.provinceId = matchedProvince.id;
+        house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+      } else {
+        house.provinceName = 'Unknown Province'; // Fallback if no match is found
       }
-    } else if (provinceId !== undefined && provinceId !== null) {
-      params.provinceId = provinceId;
-    }
-
-    this.houseService.getHouses(params).subscribe((response) => {
-      const responseData = response.result;
-      this.houses = responseData.result;
-      this.totalPages = responseData.totalPage;
-
-      this.houses.forEach(house => {
-        this.loadImage(house);
-        const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
-        if (matchedProvince) {
-          house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-        } else {
-          house.provinceName = 'Unknown Province'; // Fallback if no match is found
-        }
-      });
     });
-  }
+    this.isLoadingHouses = false; // End loading
+  }, () => {
+    this.isLoadingHouses = false; // End loading on error
+  });
+}
 
 
 

@@ -11,9 +11,14 @@
 <div class="content-container">
   <section>
     <h2>Houses</h2>
+    <div *ngIf="isLoadingHouses"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
     <div class="card-grid">
       <mat-card *ngFor="let house of houses">
-        <div class="image-container">
+        <div *ngIf="!isLoadingHouses"
+             class="image-container">
           <!-- Display the current image with navigation if images are available -->
           <img mat-card-image
                *ngIf="house.safeImagePaths && house.safeImagePaths.length > 0 && house.currentImageIndex !== undefined"
@@ -91,7 +96,12 @@
   </div>
   <section>
     <h2>Room</h2>
-    <div class="card-grid">
+    <div *ngIf="isLoadingRooms"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div *ngIf="!isLoadingRooms"
+         class="card-grid">
       <mat-card *ngFor="let room of rooms">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
@@ -183,7 +193,12 @@
   </div>
   <section>
     <h2>Land</h2>
-    <div class="card-grid">
+    <div *ngIf="isLoadingLands"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div *ngIf="!isLoadingLands"
+         class="card-grid">
       <mat-card *ngFor="let land of lands">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
