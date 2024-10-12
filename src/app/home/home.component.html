@@ -16,7 +16,8 @@
       <mat-spinner></mat-spinner>
     </div>
     <div class="card-grid">
-      <mat-card *ngFor="let house of houses">
+      <mat-card *ngFor="let house of houses"
+                (click)="goToDetails(house.id)">
         <div *ngIf="!isLoadingHouses"
              class="image-container">
           <!-- Display the current image with navigation if images are available -->
@@ -46,18 +47,19 @@
                   (click)="nextImage(house); $event.stopPropagation()">
             <mat-icon>arrow_forward</mat-icon>
           </button>
-
         </div>
 
         <mat-card-content>
-          <h3>{{ house.title }}</h3>
-          <p>Location: {{ house.provinceName }}</p>
-          <p style="color: red; font-weight: bold; margin-bottom: 10px;">
+          <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3> <!-- Stop click propagation here -->
+          <p (click)="$event.stopPropagation()">Location: {{ house.provinceName }}</p> <!-- Stop click propagation here -->
+          <p style="color: red; font-weight: bold; margin-bottom: 10px;"
+             (click)="$event.stopPropagation()">
             Price: ${{ house.price }}
           </p>
-          <p>Phone: {{ house.phoneNumber }}</p>
+          <p (click)="$event.stopPropagation()">Phone: {{ house.phoneNumber }}</p>
 
-          <div class="views-likes">
+          <div class="views-likes"
+               (click)="$event.stopPropagation()">
             <div class="views">
               <mat-icon>visibility</mat-icon>
               <span>{{ house.viewCount }} Views</span>
@@ -76,7 +78,7 @@
             <button mat-raised-button
                     color="success"
                     class="details-button"
-                    (click)="goToDetails(house.id)">
+                    (click)="goToDetails(house.id); $event.stopPropagation()">
               View Details
             </button>
           </div>
@@ -84,6 +86,8 @@
       </mat-card>
     </div>
   </section>
+
+
 
   <div class="pagination-buttons"
        style="margin-top: 50px; text-align: left;">

@@ -24,6 +24,10 @@ export class HomeComponent implements OnInit {
   searchForm!: FormGroup;
   isLoadingMore = false;
   autoFetchInterval: any;
+  holdDuration: number = 500000000;
+
+  isMouseDown: boolean = false;
+  mouseDownTimer: any;
 
   isLoadingRooms = false;
 isLoadingLands = false;
@@ -379,6 +383,29 @@ fetchHouses(
     } else {
       house.currentImageIndex = house.safeImagePaths.length - 1; // Loop back to the last image
     }
+  }
+  onMouseDown(event: MouseEvent, houseId: number): void {
+    this.isMouseDown = true;
+    this.mouseDownTimer = setTimeout(() => {
+      this.isMouseDown = false; // Consider as a long press
+    }, this.holdDuration);
+  }
+
+  // Called when the user releases the mouse button
+  onMouseUp(event: MouseEvent, houseId: number): void {
+    // If mouseDownTimer is still active, consider it a click
+    clearTimeout(this.mouseDownTimer);
+
+    if (this.isMouseDown) {
+      this.isMouseDown = false;
+      this.goToDetails(houseId); // Trigger navigation only if it's a short click
+    }
+  }
+
+  // Called when the mouse leaves the card (cancel the click)
+  onMouseLeave(event: MouseEvent): void {
+    clearTimeout(this.mouseDownTimer);
+    this.isMouseDown = false; // Cancel the action when leaving the card
   }
   loadMoreHouses(): void {
     // Navigate to the dedicated 'houses' route, passing any necessary parameters
