@@ -70,7 +70,7 @@ isLoadingHouses = false;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
 
     // Initialize the search form
     this.searchForm = this.fb.group({
@@ -100,7 +100,7 @@ isLoadingHouses = false;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
@@ -126,7 +126,7 @@ isLoadingHouses = false;
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchLand(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
 
     this.districtService.getProvincesPublic().subscribe(
       (res) => {
