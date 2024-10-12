@@ -134,12 +134,16 @@
            (change)="onFileSelected($event)" />
   </div>
 
-  <!-- Display selected image preview -->
-  <div *ngIf="imagePreview">
-    <img [src]="imagePreview"
-         alt="Image Preview"
-         style="max-width: 100%;">
+  <!-- Display loaded images -->
+  <div *ngIf="houseData.safeImagePaths && houseData.safeImagePaths.length > 0">
+    <img *ngFor="let imgPath of houseData.safeImagePaths"
+         [src]="imgPath"
+         alt="House Image">
+    <button mat-button
+            (click)="cancelImage()">Cancel Image</button>
   </div>
+
+
 
 </mat-dialog-content>
 

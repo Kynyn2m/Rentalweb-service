@@ -294,14 +294,17 @@ villages: any[] = [];
   openUpdateDialog(house: any): void {
     const dialogRef = this.dialog.open(UpdateHouseDialogComponent, {
       width: '800px',
-      data: { houseData: house }  // Pass the house object to the dialog
+      data: { houseData: house }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && result.success) {
+
+        this.fetchUserHouses();
       }
     });
   }
+
 
 
 }

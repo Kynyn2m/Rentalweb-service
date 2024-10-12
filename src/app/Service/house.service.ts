@@ -22,6 +22,7 @@ export class HouseService {
   }
 
 
+
   getHouses(params?: any): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
     let httpParams = new HttpParams();

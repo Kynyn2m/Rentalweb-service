@@ -111,3 +111,10 @@ button[mat-raised-button]:hover {
 }
 
 /* Other existing styles... */
+.image-preview {
+  max-width: 100%; /* Adjust as needed */
+  height: auto;    /* Maintain aspect ratio */
+  border: 1px solid #ccc; /* Optional border */
+  margin-top: 10px; /* Spacing from the button */
+  margin-bottom: 10px; /* Spacing from the button */
+}
