@@ -9,6 +9,45 @@
            required>
   </mat-form-field>
 
+  <!-- Two-column layout for Price and Width -->
+  <div class="two-column">
+    <!-- Price Input -->
+    <mat-form-field>
+      <mat-label>Price</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.price"
+             required>
+    </mat-form-field>
+
+    <!-- Width Input -->
+    <mat-form-field>
+      <mat-label>Width</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.width">
+    </mat-form-field>
+  </div>
+
+  <!-- Two-column layout for Height and Floor -->
+  <div class="two-column">
+    <!-- Height Input -->
+    <mat-form-field>
+      <mat-label>Height</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.height">
+    </mat-form-field>
+
+    <!-- Floor Input -->
+    <mat-form-field>
+      <mat-label>Floor</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.floor">
+    </mat-form-field>
+  </div>
+
   <!-- Description Input -->
   <mat-form-field class="full-width">
     <mat-label>Description</mat-label>
@@ -17,22 +56,58 @@
               rows="3"></textarea>
   </mat-form-field>
 
-  <!-- Price Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Price</mat-label>
-    <input matInput
-           type="number"
-           [(ngModel)]="houseData.price"
-           required>
-  </mat-form-field>
+  <!-- Two-column layout for Province, District -->
+  <div class="two-column">
+    <!-- Province Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Province</mat-label>
+      <mat-select [(ngModel)]="houseData.provinceId"
+                  (selectionChange)="onProvinceSelected($event.value)">
+        <mat-option *ngFor="let province of provinces"
+                    [value]="province.id">
+          {{ province.khmerName }} / {{ province.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <!-- Land Size Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Land Size</mat-label>
-    <input matInput
-           type="number"
-           [(ngModel)]="houseData.landSize">
-  </mat-form-field>
+    <!-- District Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>District</mat-label>
+      <mat-select [(ngModel)]="houseData.districtId"
+                  (selectionChange)="onDistrictSelected($event.value)">
+        <mat-option *ngFor="let district of districts"
+                    [value]="district.id">
+          {{ district.khmerName }} / {{ district.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Two-column layout for Commune, Village -->
+  <div class="two-column">
+    <!-- Commune Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Commune</mat-label>
+      <mat-select [(ngModel)]="houseData.communeId"
+                  (selectionChange)="onCommuneSelected($event.value)">
+        <mat-option *ngFor="let commune of communes"
+                    [value]="commune.id">
+          {{ commune.khmerName }} / {{ commune.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Village Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Village</mat-label>
+      <mat-select [(ngModel)]="houseData.villageId">
+        <mat-option *ngFor="let village of villages"
+                    [value]="village.id">
+          {{ village.khmerName }} / {{ village.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
   <!-- Phone Number Input -->
   <mat-form-field class="full-width">
@@ -49,78 +124,6 @@
     <input matInput
            [(ngModel)]="houseData.linkMap">
   </mat-form-field>
-
-  <!-- Floor Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Floor</mat-label>
-    <input matInput
-           type="number"
-           [(ngModel)]="houseData.floor">
-  </mat-form-field>
-
-  <!-- Width Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Width</mat-label>
-    <input matInput
-           type="number"
-           [(ngModel)]="houseData.width">
-  </mat-form-field>
-
-  <!-- Height Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Height</mat-label>
-    <input matInput
-           type="number"
-           [(ngModel)]="houseData.height">
-  </mat-form-field>
-
-  <!-- Province Selector -->
-  <mat-form-field class="full-width">
-    <mat-label>Province</mat-label>
-    <mat-select [(ngModel)]="houseData.provinceId"
-                (selectionChange)="onProvinceSelected($event.value)">
-      <mat-option *ngFor="let province of provinces"
-                  [value]="province.id">
-        {{ province.khmerName }} / {{ province.englishName }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <!-- District Selector -->
-  <mat-form-field class="full-width">
-    <mat-label>District</mat-label>
-    <mat-select [(ngModel)]="houseData.districtId"
-                (selectionChange)="onDistrictSelected($event.value)">
-      <mat-option *ngFor="let district of districts"
-                  [value]="district.id">
-        {{ district.khmerName }} / {{ district.englishName }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <!-- Commune Selector -->
-  <mat-form-field class="full-width">
-    <mat-label>Commune</mat-label>
-    <mat-select [(ngModel)]="houseData.communeId"
-                (selectionChange)="onCommuneSelected($event.value)">
-      <mat-option *ngFor="let commune of communes"
-                  [value]="commune.id">
-        {{ commune.khmerName }} / {{ commune.englishName }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <!-- Village Selector -->
-  <mat-form-field class="full-width">
-    <mat-label>Village</mat-label>
-    <mat-select [(ngModel)]="houseData.villageId">
-      <mat-option *ngFor="let village of villages"
-                  [value]="village.id">
-        {{ village.khmerName }} / {{ village.englishName }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
 
   <!-- Image Upload -->
   <div class="full-width">
