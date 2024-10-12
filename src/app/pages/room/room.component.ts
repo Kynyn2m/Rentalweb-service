@@ -16,7 +16,7 @@ import { RoomService } from 'src/app/Service/room.service';
 })
 export class RoomComponent {
   gridCols = 2;
-  rooms: any[] = [];
+  room: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 12; // 12 room per page
@@ -112,48 +112,26 @@ export class RoomComponent {
     page: number = 0
   ): void {
     const params: any = {
-      page, // The current page
-      size: this.itemsPerPage, // The number of items per page
+      page,
+      size: this.itemsPerPage,
     };
 
-    // Add parameters only if they are defined
-    if (fromPrice !== undefined) {
-      params.fromPrice = fromPrice;
-    }
-    if (toPrice !== undefined) {
-      params.toPrice = toPrice;
-    }
-    if (search) {
-      params.search = search;
-    }
-    if (provinceId !== undefined && provinceId !== null) {
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+    if (provinceId !== undefined && provinceId !== null)
       params.provinceId = provinceId;
-    }
 
-    // Only include district, commune, and village if province is defined
-    if (districtId !== undefined && districtId !== null && districtId !== 0) {
-      params.districtId = districtId;
-    }
-    if (communeId !== undefined && communeId !== null && communeId !== 0) {
-      params.communeId = communeId;
-    }
-    if (villageId !== undefined && villageId !== null && villageId !== 0) {
-      params.villageId = villageId;
-    }
-
-    // Call the API
     this.roomService.getRooms(params).subscribe((response) => {
       const responseData = response.result;
-      this.rooms = responseData.result; // List of room
-      this.totalPages = responseData.totalPage; // Total number of pages
-
-      // Load images safely
-      this.rooms.forEach((rooms) => {
-        this.loadImage(rooms);
+      this.room = responseData.result;
+      this.totalPages = responseData.totalPage;
+      this.room.forEach((room) => {
+        this.loadImage(room);
         const matchedProvince = this.provinces_c.find(
-          (p) => p.id === rooms.province
+          (p) => p.id === room.province
         );
-        rooms.provinceName = matchedProvince
+        room.provinceName = matchedProvince
           ? matchedProvince.khmerName || matchedProvince.englishName
           : 'Unknown Province';
       });
@@ -171,15 +149,7 @@ export class RoomComponent {
           this.districts_c = res.result || [];
           this.communes_c = [];
           this.villages_c = [];
-          this.cdr.detectChanges(); // Trigger change detection
-
-          // Call fetchRoom with all necessary parameters, including the provinceId
-          this.fetchRoom(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c || undefined
-          );
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching districts:', error);
@@ -198,15 +168,6 @@ export class RoomComponent {
           this.communes_c = res.result || [];
           this.villages_c = [];
           this.cdr.detectChanges();
-
-          // Fetch room with updated districtId
-          this.fetchRoom(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c !== null ? this.provinceId_c : undefined,
-            this.districtId_c !== null ? this.districtId_c : undefined
-          );
         },
         (error) => {
           console.error('Error fetching communes:', error);
@@ -223,16 +184,6 @@ export class RoomComponent {
         (res) => {
           this.villages_c = res.result || [];
           this.cdr.detectChanges();
-
-          // Fetch room with updated communeId
-          this.fetchRoom(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c !== null ? this.provinceId_c : undefined,
-            this.districtId_c !== null ? this.districtId_c : undefined,
-            this.communeId_c !== null ? this.communeId_c : undefined
-          );
         },
         (error) => {
           console.error('Error fetching villages:', error);
@@ -244,16 +195,6 @@ export class RoomComponent {
   onVillageSelected(event: any): void {
     this.villageId_c = event.value;
     console.log('Village Selected:', this.villageId_c);
-
-    this.fetchRoom(
-      undefined,
-      undefined,
-      undefined,
-      this.provinceId_c !== null ? this.provinceId_c : undefined,
-      this.districtId_c !== null ? this.districtId_c : undefined,
-      this.communeId_c !== null ? this.communeId_c : undefined,
-      this.villageId_c !== null ? this.villageId_c : undefined
-    );
   }
 
   onSearch(): void {
@@ -268,6 +209,17 @@ export class RoomComponent {
     // Include provinceId in the search query
     if (this.provinceId_c && this.provinceId_c !== 0) {
       queryParams.provinceId = this.provinceId_c;
+    }
+
+    // Include districtId, communeId, villageId in the search query
+    if (this.districtId_c && this.districtId_c !== 0) {
+      queryParams.districtId = this.districtId_c;
+    }
+    if (this.communeId_c && this.communeId_c !== 0) {
+      queryParams.communeId = this.communeId_c;
+    }
+    if (this.villageId_c && this.villageId_c !== 0) {
+      queryParams.villageId = this.villageId_c;
     }
 
     // Include other parameters if they exist
@@ -301,42 +253,44 @@ export class RoomComponent {
   }
 
   onClear(): void {
-    // Reset the search form fields
     this.searchForm.reset();
 
-    // Reset the address form fields for province, district, commune, and village
-    this.addressForm.patchValue({
-      provinceId: null, // Reset Province/City selection
-      districtId: null, // Reset District/Khan selection
-      communeId: null, // Reset Commune/Sangkat selection
-      villageId: null, // Reset Village selection
-    });
+    this.provinceId_c = null;
+    this.districtId_c = null;
+    this.communeId_c = null;
+    this.villageId_c = null;
 
-    // Clear the options for dependent selects
+    this.provinces_c = [];
     this.districts_c = [];
     this.communes_c = [];
     this.villages_c = [];
 
-    // Reset query parameters including provinceId, districtId, communeId, and villageId
+    this.districtService.getProvincesPublic().subscribe(
+      (res) => {
+        this.provinces_c = res.result.result || [];
+      },
+      (error) => {
+        console.error('Error fetching provinces:', error);
+      }
+    );
+
     this.router.navigate([], {
       queryParams: {
         search: null,
-        fromPrice: null,
-        toPrice: null,
         provinceId: null,
         districtId: null,
         communeId: null,
         villageId: null,
-        page: 0, // Reset to page 0
+        fromPrice: null,
+        toPrice: null,
+        page: 0,
       },
       queryParamsHandling: 'merge',
     });
 
-    // Fetch room without filters
     this.fetchRoom();
   }
 
-  // Pagination methods
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
@@ -383,19 +337,19 @@ export class RoomComponent {
     }
 
     if (start > 0) {
-      pages.unshift(-1); // Indicate "..." before the start
+      pages.unshift(-1);
     }
     if (end < this.totalPages) {
-      pages.push(-1); // Indicate "..." after the end
+      pages.push(-1);
     }
 
     return pages;
   }
   likeRoom(roomId: number): void {
     this.roomService.likeRoom(roomId).subscribe(() => {
-      const room = this.rooms.find((h) => h.id === roomId);
+      const room = this.room.find((h) => h.id === roomId);
       if (room) {
-        room.likeCount += 1; // Increment the like count on the UI
+        room.likeCount += 1;
       }
     });
   }
@@ -410,21 +364,18 @@ export class RoomComponent {
           room.safeImagePaths.push(safeUrl);
         });
       });
-      room.currentImageIndex = 0; // Start with the first image
+      room.currentImageIndex = 0;
     } else {
-      // Ensure safeImagePaths and currentImageIndex are always defined, even if no images exist
       room.safeImagePaths = [];
       room.currentImageIndex = 0;
     }
   }
 
-  // Navigate to the next image
-  // Navigate to the next image (loop to the first image if it's the last one)
   nextImage(room: any): void {
     if (room.currentImageIndex < room.safeImagePaths.length - 1) {
       room.currentImageIndex++;
     } else {
-      room.currentImageIndex = 0; // Loop back to the first image
+      room.currentImageIndex = 0;
     }
   }
 
@@ -441,9 +392,13 @@ export class RoomComponent {
   private initializeGridCols(): void {
     const breakpoints = [
       { query: Breakpoints.HandsetPortrait, cols: 1 },
+      { query: Breakpoints.HandsetLandscape, cols: 2 },
       { query: Breakpoints.TabletPortrait, cols: 2 },
+      { query: Breakpoints.TabletLandscape, cols: 3 },
       { query: Breakpoints.WebPortrait, cols: 4 },
+      { query: Breakpoints.WebLandscape, cols: 5 },
     ];
+
     this.breakpointObserver
       .observe(breakpoints.map((bp) => bp.query))
       .subscribe((result) => {
@@ -460,7 +415,7 @@ export class RoomComponent {
     // Call the API to count the view
     this.roomService.viewRoom(roomId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['/details-room', roomId]);
+      this.router.navigate(['/details', roomId]);
     });
   }
 }

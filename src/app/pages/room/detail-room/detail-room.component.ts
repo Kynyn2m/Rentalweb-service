@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { CommuneService } from 'src/app/address/commune.service';
+import { DistrictService } from 'src/app/address/district.service';
+import { VillageService } from 'src/app/address/village.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 import { RoomService } from 'src/app/Service/room.service';
 interface Room {
@@ -20,6 +23,10 @@ interface Room {
   linkMap: string;
   viewCount: number;
   createdAt: string;
+  province: number;
+  district: number;
+  commune: number;
+  village: number;
 }
 @Component({
   selector: 'app-detail-room',
@@ -29,27 +36,40 @@ interface Room {
 export class DetailRoomComponent {
   room: Room | null = null;
   selectedImage: SafeUrl | null = null;
-
+  provinceName: string = '';
+  districtName: string = '';
+  communeName: string = '';
+  villageName: string = '';
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private roomService: RoomService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private districtService: DistrictService,
+    private communeService: CommuneService,
+    private villageService: VillageService,
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     const roomId = this.route.snapshot.paramMap.get('id');
     if (roomId) {
-      this.getHouseDetails(roomId);
+      this.getRoomDetails(roomId);
     }
   }
 
-  getHouseDetails(id: string): void {
+  getRoomDetails(id: string): void {
     this.roomService.getRoomById(id).subscribe(
       (response) => {
         this.room = response.result as Room;
         if (this.room) {
           this.loadImages(this.room);
+          this.fetchLocationDetails(
+            this.room.province,
+            this.room.district,
+            this.room.commune,
+            this.room.village
+          );
         }
       },
       (error) => {
@@ -76,7 +96,57 @@ export class DetailRoomComponent {
     }
   }
 
-  // Open the image in the full-screen dialog
+  fetchLocationDetails(
+    provinceId: number,
+    districtId: number,
+    communeId: number,
+    villageId: number
+  ): void {
+    // Fetch province name
+    this.districtService.getProvincesPublic().subscribe((res) => {
+      const province = res.result.find((p: any) => p.id === provinceId);
+      this.provinceName = province
+        ? province.khmerName || province.englishName
+        : 'Unknown Province';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch district name
+    this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
+      const district = res.result.find((d: any) => d.id === districtId);
+      this.districtName = district
+        ? district.khmerName || district.englishName
+        : 'Unknown District';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch commune name
+    this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
+      const commune = res.result.find((c: any) => c.id === communeId);
+      this.communeName = commune
+        ? commune.khmerName || commune.englishName
+        : 'Unknown Commune';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch village name
+    this.villageService.getByCommunePublic(communeId).subscribe((res) => {
+      const village = res.result.find((v: any) => v.id === villageId);
+      this.villageName = village
+        ? village.khmerName || village.englishName
+        : 'Unknown Village';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+  }
+
   openImageInFullScreen(image: SafeUrl): void {
     this.dialog.open(ImageDialogComponent, {
       data: { image },
@@ -84,7 +154,7 @@ export class DetailRoomComponent {
     });
   }
 
-  likeHouse(roomId: number): void {
+  likeRoom(roomId: number): void {
     if (!this.room) return;
 
     this.roomService.likeRoom(roomId).subscribe(() => {
