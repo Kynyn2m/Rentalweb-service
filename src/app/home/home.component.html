@@ -11,9 +11,15 @@
 <div class="content-container">
   <section>
     <h2>Houses</h2>
+    <div *ngIf="isLoadingHouses"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
     <div class="card-grid">
-      <mat-card *ngFor="let house of houses">
-        <div class="image-container">
+      <mat-card *ngFor="let house of houses"
+                (click)="goToDetails(house.id)">
+        <div *ngIf="!isLoadingHouses"
+             class="image-container">
           <!-- Display the current image with navigation if images are available -->
           <img mat-card-image
                *ngIf="house.safeImagePaths && house.safeImagePaths.length > 0 && house.currentImageIndex !== undefined"
@@ -41,18 +47,19 @@
                   (click)="nextImage(house); $event.stopPropagation()">
             <mat-icon>arrow_forward</mat-icon>
           </button>
-
         </div>
 
         <mat-card-content>
-          <h3>{{ house.title }}</h3>
-          <p>Location: {{ house.provinceName }}</p>
-          <p style="color: red; font-weight: bold; margin-bottom: 10px;">
+          <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3> <!-- Stop click propagation here -->
+          <p (click)="$event.stopPropagation()">Location: {{ house.provinceName }}</p> <!-- Stop click propagation here -->
+          <p style="color: red; font-weight: bold; margin-bottom: 10px;"
+             (click)="$event.stopPropagation()">
             Price: ${{ house.price }}
           </p>
-          <p>Phone: {{ house.phoneNumber }}</p>
+          <p (click)="$event.stopPropagation()">Phone: {{ house.phoneNumber }}</p>
 
-          <div class="views-likes">
+          <div class="views-likes"
+               (click)="$event.stopPropagation()">
             <div class="views">
               <mat-icon>visibility</mat-icon>
               <span>{{ house.viewCount }} Views</span>
@@ -71,7 +78,7 @@
             <button mat-raised-button
                     color="success"
                     class="details-button"
-                    (click)="goToDetails(house.id)">
+                    (click)="goToDetails(house.id); $event.stopPropagation()">
               View Details
             </button>
           </div>
@@ -79,6 +86,8 @@
       </mat-card>
     </div>
   </section>
+
+
 
   <div class="pagination-buttons"
        style="margin-top: 50px; text-align: left;">
@@ -91,7 +100,12 @@
   </div>
   <section>
     <h2>Room</h2>
-    <div class="card-grid">
+    <div *ngIf="isLoadingRooms"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div *ngIf="!isLoadingRooms"
+         class="card-grid">
       <mat-card *ngFor="let room of rooms">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
@@ -136,7 +150,7 @@
 
         <mat-card-content>
           <h3>{{ room.title }}</h3>
-          <p>Location: {{ room.location }}</p>
+          <p>Location: {{ room.provinceName }}</p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px">
             Price: ${{ room.price }}
           </p>
@@ -183,7 +197,12 @@
   </div>
   <section>
     <h2>Land</h2>
-    <div class="card-grid">
+    <div *ngIf="isLoadingLands"
+         class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+    <div *ngIf="!isLoadingLands"
+         class="card-grid">
       <mat-card *ngFor="let land of lands">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
@@ -228,7 +247,7 @@
 
         <mat-card-content>
           <h3>{{ land.title }}</h3>
-          <p>Location: {{ land.location }}</p>
+          <p>Location: {{ land.provinceName }}</p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px">
             Price: ${{ land.price }}
           </p>

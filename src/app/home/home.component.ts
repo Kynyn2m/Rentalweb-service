@@ -24,6 +24,14 @@ export class HomeComponent implements OnInit {
   searchForm!: FormGroup;
   isLoadingMore = false;
   autoFetchInterval: any;
+  holdDuration: number = 500000000;
+
+  isMouseDown: boolean = false;
+  mouseDownTimer: any;
+
+  isLoadingRooms = false;
+isLoadingLands = false;
+isLoadingHouses = false;
 
   provinces_c: any[] = []; // Array to store the list of provinces
   districtId_c: number | null = 0; // To track the selected district
@@ -47,7 +55,6 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Copy ngOnInit logic here
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
@@ -67,7 +74,7 @@ export class HomeComponent implements OnInit {
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchHouses(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
 
     // Initialize the search form
     this.searchForm = this.fb.group({
@@ -97,7 +104,7 @@ export class HomeComponent implements OnInit {
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
@@ -123,7 +130,7 @@ export class HomeComponent implements OnInit {
       const toPrice = this.searchForm.get('toPrice')?.value;
 
       this.fetchLand(fromPrice, toPrice, search, this.currentPage);
-    }, 30000); // 30 seconds interval
+    }, 300000); // 30 seconds interval
 
     this.districtService.getProvincesPublic().subscribe(
       (res) => {
@@ -136,13 +143,59 @@ export class HomeComponent implements OnInit {
 
   }
 
-fetchLand(
+  fetchLand(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0,
+    provinceName?: string
+  ): void {
+    this.isLoadingLands = true; // Start loading
+    const params: any = {
+      page,
+      size: this.itemsPerPage,
+    };
+
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+      if (matchedProvince) {
+        params.provinceId = matchedProvince.id;
+      }
+    }
+
+    this.landervice.getLand(params).subscribe((response) => {
+      this.lands = response.result.result;
+      this.totalPages = response.result.totalPage;
+
+      this.lands.forEach(land => {
+        this.loadImage(land);
+        const matchedProvince = this.provinces_c.find(p => p.id === land.province);
+        if (matchedProvince) {
+          land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        } else {
+          console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
+          land.provinceName = 'Unknown Province';
+        }
+      });
+      this.isLoadingLands = false; // End loading
+    }, () => {
+      this.isLoadingLands = false; // End loading on error
+    });
+  }
+
+
+fetchRoom(
   fromPrice?: number,
   toPrice?: number,
   search?: string,
   page: number = 0,
   provinceName?: string
 ): void {
+  this.isLoadingRooms = true; // Start loading
   const params: any = {
     page,
     size: this.itemsPerPage,
@@ -159,111 +212,77 @@ fetchLand(
     }
   }
 
-  this.landervice.getLand(params).subscribe((response) => {
-    this.lands = response.result.result;
+  this.roomService.getRooms(params).subscribe((response) => {
+    this.rooms = response.result.result;
     this.totalPages = response.result.totalPage;
 
-    this.lands.forEach(land => {
-      this.loadImage(land);
-      const matchedProvince = this.provinces_c.find(p => p.id === land.province);
+    this.rooms.forEach(room => {
+      this.loadImage(room);
+      const matchedProvince = this.provinces_c.find(p => p.id === room.province);
       if (matchedProvince) {
-        land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+        room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
       } else {
-        console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
-        land.provinceName = 'Unknown Province';
+        console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
+        room.provinceName = 'Unknown Province';
       }
     });
+    this.isLoadingRooms = false; // End loading
+  }, () => {
+    this.isLoadingRooms = false; // End loading on error
   });
 }
 
 
-  fetchRoom(
-    fromPrice?: number,
-    toPrice?: number,
-    search?: string,
-    page: number = 0,
-    provinceName?: string
-  ): void {
-    const params: any = {
-      page,
-      size: this.itemsPerPage,
-    };
 
-    if (fromPrice !== undefined) params.fromPrice = fromPrice;
-    if (toPrice !== undefined) params.toPrice = toPrice;
-    if (search) params.search = search;
+fetchHouses(
+  fromPrice?: number,
+  toPrice?: number,
+  search?: string,
+  provinceId?: number,
+  districtId?: number,
+  communeId?: number,
+  villageId?: number,
+  page: number = 0,
+  provinceName?: string
+): void {
+  this.isLoadingHouses = true; // Start loading
+  const params: any = {
+    page,
+    size: this.itemsPerPage,
+  };
 
-    if (provinceName) {
-      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
-      if (matchedProvince) {
-        params.provinceId = matchedProvince.id;
-      }
+  if (fromPrice !== undefined) params.fromPrice = fromPrice;
+  if (toPrice !== undefined) params.toPrice = toPrice;
+  if (search) params.search = search;
+
+  if (provinceName) {
+    const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+    if (matchedProvince) {
+      params.provinceId = matchedProvince.id;
     }
-
-    this.roomService.getRooms(params).subscribe((response) => {
-      this.rooms = response.result.result;
-      this.totalPages = response.result.totalPage;
-
-      this.rooms.forEach(room => {
-        this.loadImage(room);
-        const matchedProvince = this.provinces_c.find(p => p.id === room.province);
-        if (matchedProvince) {
-          room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-        } else {
-          console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
-          room.provinceName = 'Unknown Province';
-        }
-      });
-    });
+  } else if (provinceId !== undefined && provinceId !== null) {
+    params.provinceId = provinceId;
   }
 
+  this.houseService.getHouses(params).subscribe((response) => {
+    const responseData = response.result;
+    this.houses = responseData.result;
+    this.totalPages = responseData.totalPage;
 
-
-  fetchHouses(
-    fromPrice?: number,
-    toPrice?: number,
-    search?: string,
-    provinceId?: number,
-    districtId?: number,
-    communeId?: number,
-    villageId?: number,
-    page: number = 0,
-    provinceName?: string
-  ): void {
-    const params: any = {
-      page,
-      size: this.itemsPerPage,
-    };
-
-    if (fromPrice !== undefined) params.fromPrice = fromPrice;
-    if (toPrice !== undefined) params.toPrice = toPrice;
-    if (search) params.search = search;
-
-    if (provinceName) {
-      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+    this.houses.forEach(house => {
+      this.loadImage(house);
+      const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
       if (matchedProvince) {
-        params.provinceId = matchedProvince.id;
+        house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
+      } else {
+        house.provinceName = 'Unknown Province'; // Fallback if no match is found
       }
-    } else if (provinceId !== undefined && provinceId !== null) {
-      params.provinceId = provinceId;
-    }
-
-    this.houseService.getHouses(params).subscribe((response) => {
-      const responseData = response.result;
-      this.houses = responseData.result;
-      this.totalPages = responseData.totalPage;
-
-      this.houses.forEach(house => {
-        this.loadImage(house);
-        const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
-        if (matchedProvince) {
-          house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-        } else {
-          house.provinceName = 'Unknown Province'; // Fallback if no match is found
-        }
-      });
     });
-  }
+    this.isLoadingHouses = false; // End loading
+  }, () => {
+    this.isLoadingHouses = false; // End loading on error
+  });
+}
 
 
 
@@ -364,6 +383,29 @@ fetchLand(
     } else {
       house.currentImageIndex = house.safeImagePaths.length - 1; // Loop back to the last image
     }
+  }
+  onMouseDown(event: MouseEvent, houseId: number): void {
+    this.isMouseDown = true;
+    this.mouseDownTimer = setTimeout(() => {
+      this.isMouseDown = false; // Consider as a long press
+    }, this.holdDuration);
+  }
+
+  // Called when the user releases the mouse button
+  onMouseUp(event: MouseEvent, houseId: number): void {
+    // If mouseDownTimer is still active, consider it a click
+    clearTimeout(this.mouseDownTimer);
+
+    if (this.isMouseDown) {
+      this.isMouseDown = false;
+      this.goToDetails(houseId); // Trigger navigation only if it's a short click
+    }
+  }
+
+  // Called when the mouse leaves the card (cancel the click)
+  onMouseLeave(event: MouseEvent): void {
+    clearTimeout(this.mouseDownTimer);
+    this.isMouseDown = false; // Cancel the action when leaving the card
   }
   loadMoreHouses(): void {
     // Navigate to the dedicated 'houses' route, passing any necessary parameters

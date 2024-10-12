@@ -219,7 +219,7 @@ td {
 
 .mat-mdc-progress-spinner {
   text-align: center;
-  --mdc-circular-progress-active-indicator-color: green;
+  --mdc-circular-progress-active-indicator-color: #f96507 !important;
 }
 
 .view__content {

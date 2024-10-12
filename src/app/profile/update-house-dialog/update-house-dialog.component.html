@@ -1,0 +1,156 @@
+<h2 mat-dialog-title>Update House</h2>
+<mat-dialog-content class="update-house-dialog-content">
+
+  <!-- Title Input -->
+  <mat-form-field class="full-width">
+    <mat-label>Title</mat-label>
+    <input matInput
+           [(ngModel)]="houseData.title"
+           required>
+  </mat-form-field>
+
+  <!-- Two-column layout for Price and Width -->
+  <div class="two-column">
+    <!-- Price Input -->
+    <mat-form-field>
+      <mat-label>Price</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.price"
+             required>
+    </mat-form-field>
+
+    <!-- Width Input -->
+    <mat-form-field>
+      <mat-label>Width</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.width">
+    </mat-form-field>
+  </div>
+
+  <!-- Two-column layout for Height and Floor -->
+  <div class="two-column">
+    <!-- Height Input -->
+    <mat-form-field>
+      <mat-label>Height</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.height">
+    </mat-form-field>
+
+    <!-- Floor Input -->
+    <mat-form-field>
+      <mat-label>Floor</mat-label>
+      <input matInput
+             type="number"
+             [(ngModel)]="houseData.floor">
+    </mat-form-field>
+  </div>
+
+  <!-- Description Input -->
+  <mat-form-field class="full-width">
+    <mat-label>Description</mat-label>
+    <textarea matInput
+              [(ngModel)]="houseData.description"
+              rows="3"></textarea>
+  </mat-form-field>
+
+  <!-- Two-column layout for Province, District -->
+  <div class="two-column">
+    <!-- Province Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Province</mat-label>
+      <mat-select [(ngModel)]="houseData.provinceId"
+                  (selectionChange)="onProvinceSelected($event.value)">
+        <mat-option *ngFor="let province of provinces"
+                    [value]="province.id">
+          {{ province.khmerName }} / {{ province.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- District Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>District</mat-label>
+      <mat-select [(ngModel)]="houseData.districtId"
+                  (selectionChange)="onDistrictSelected($event.value)">
+        <mat-option *ngFor="let district of districts"
+                    [value]="district.id">
+          {{ district.khmerName }} / {{ district.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Two-column layout for Commune, Village -->
+  <div class="two-column">
+    <!-- Commune Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Commune</mat-label>
+      <mat-select [(ngModel)]="houseData.communeId"
+                  (selectionChange)="onCommuneSelected($event.value)">
+        <mat-option *ngFor="let commune of communes"
+                    [value]="commune.id">
+          {{ commune.khmerName }} / {{ commune.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Village Selector -->
+    <mat-form-field class="full-width">
+      <mat-label>Village</mat-label>
+      <mat-select [(ngModel)]="houseData.villageId">
+        <mat-option *ngFor="let village of villages"
+                    [value]="village.id">
+          {{ village.khmerName }} / {{ village.englishName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Phone Number Input -->
+  <mat-form-field class="full-width">
+    <mat-label>Phone Number</mat-label>
+    <input matInput
+           type="tel"
+           [(ngModel)]="houseData.phoneNumber"
+           required>
+  </mat-form-field>
+
+  <!-- Map Link Input -->
+  <mat-form-field class="full-width">
+    <mat-label>Map Link</mat-label>
+    <input matInput
+           [(ngModel)]="houseData.linkMap">
+  </mat-form-field>
+
+  <!-- Image Upload -->
+  <div class="full-width">
+    <label for="fileInput"
+           class="file-label">Upload Image</label>
+    <input id="fileInput"
+           type="file"
+           (change)="onFileSelected($event)" />
+  </div>
+
+  <!-- Display loaded images -->
+  <div *ngIf="houseData.safeImagePaths && houseData.safeImagePaths.length > 0">
+    <img *ngFor="let imgPath of houseData.safeImagePaths"
+         [src]="imgPath"
+         alt="House Image">
+    <button mat-button
+            (click)="cancelImage()">Cancel Image</button>
+  </div>
+
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button
+          (click)="cancel()">Cancel</button>
+  <button mat-raised-button
+          color="primary"
+          (click)="save()">Save</button>
+</mat-dialog-actions>

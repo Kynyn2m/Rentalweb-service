@@ -17,6 +17,10 @@ export class HouseService {
   createPost(formData: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, formData);
   }
+  updateHousepf(houseId: number, houseData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${houseId}`, houseData);
+  }
+
 
 
   getHouses(params?: any): Observable<any> {

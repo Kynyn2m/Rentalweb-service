@@ -4,6 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // To handle 
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { UpdateHouseDialogComponent } from './update-house-dialog/update-house-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -28,18 +29,24 @@ export class ProfileComponent implements OnInit {
   lands: any[] = [];   // Store the list of user's lands
   rooms: any[] = [];
 
+  provinces: any[] = [];
+districts: any[] = [];
+communes: any[] = [];
+villages: any[] = [];
+
   constructor(
     private profileService: ProfileService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchProfile();
     this.fetchUserHouses();
     this.fetchUserLands();
     this.fetchUserRooms();
+
   }
 
   // Fetch profile details and load the user's avatar
@@ -247,6 +254,55 @@ export class ProfileComponent implements OnInit {
     } else {
       item.currentImageIndex = 0; // Loop back to the first image
     }
+  }
+  updateHouse(houseId: number, houseData: any, selectedFile: File | null): void {
+    const formData = new FormData();
+    formData.append('title', houseData.title);
+    formData.append('description', houseData.description);
+    formData.append('price', houseData.price);
+    formData.append('landSize', houseData.landSize);
+    formData.append('phoneNumber', houseData.phoneNumber);
+    formData.append('linkMap', houseData.linkMap);
+    formData.append('floor', houseData.floor);
+    formData.append('width', houseData.width);
+    formData.append('height', houseData.height);
+    formData.append('provinceId', houseData.provinceId);
+    formData.append('districtId', houseData.districtId);
+    formData.append('communeId', houseData.communeId);
+    formData.append('villageId', houseData.villageId);
+
+    // Append the image file if a new image is selected
+    if (selectedFile) {
+      formData.append('image', selectedFile);
+    }
+
+    // Use ProfileService to send the update request
+    this.profileService.updateHouse(houseId, formData).subscribe(
+      (response) => {
+        console.log('House updated successfully:', response);
+        this.snackBar.open('House updated successfully', 'Close', { duration: 3000 });
+        this.fetchUserHouses(); // Refresh the house list after update
+      },
+      (error) => {
+        console.error('Error updating house:', error);
+        this.snackBar.open('Error updating house', 'Close', { duration: 3000 });
+      }
+    );
+  }
+
+
+  openUpdateDialog(house: any): void {
+    const dialogRef = this.dialog.open(UpdateHouseDialogComponent, {
+      width: '800px',
+      data: { houseData: house }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+
+        this.fetchUserHouses();
+      }
+    });
   }
 
 
