@@ -10,6 +10,15 @@ import { VillageService } from '../address/village.service';
 
 interface House {
   id: number;
+  likeCount: number;
+  liked: boolean;
+  // Add the pending flag
+  pending?: boolean;
+}
+
+
+interface House {
+  id: number;
   title: string;
   description: string;
   location: string;
@@ -140,12 +149,28 @@ export class DetailsComponent implements OnInit {
   }
 
   likeHouse(houseId: number): void {
-    if (!this.house) return;
+    if (!this.house || this.house.pending) return; // Ensure no pending request or null house
 
-    this.houseService.likeHouse(houseId).subscribe(() => {
-      this.house!.likeCount += 1;
-    });
+    this.house.pending = true; // Set the pending state to prevent multiple clicks
+
+    if (this.house.liked) {
+      // Simulate "unlike" (no API call here)
+      this.house.likeCount -= 1;
+      this.house.liked = false;
+      this.house.pending = false; // Reset pending state after local unlike
+    } else {
+      // Call the like API
+      this.houseService.likeHouse(houseId).subscribe(() => {
+        this.house!.likeCount += 1;  // Increment the like count
+        this.house!.liked = true;    // Set liked state to true
+        this.house!.pending = false; // Reset pending state after API call
+      }, () => {
+        // Handle error case
+        this.house!.pending = false; // Reset pending state even on error
+      });
+    }
   }
+
 
   goBack(): void {
     window.history.back();

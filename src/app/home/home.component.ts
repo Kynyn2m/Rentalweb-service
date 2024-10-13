@@ -325,15 +325,32 @@ fetchHouses(
 }
 
 
+likeHouse(houseId: number): void {
+  const house = this.houses.find(h => h.id === houseId);
 
-  likeHouse(houseId: number): void {
-    this.houseService.likeHouse(houseId).subscribe(() => {
-      const house = this.houses.find(h => h.id === houseId);
-      if (house) {
-        house.likeCount += 1; // Increment the like count on the UI
-      }
-    });
+  if (house && !house.pending) { // Ensure there's no pending request
+    house.pending = true; // Set the pending state to prevent multiple clicks
+
+    if (house.liked) {
+      // Simulate "unlike" (no API call here for unlike)
+      house.likeCount -= 1;
+      house.liked = false;
+      house.pending = false; // Reset the pending state after local unlike
+    } else {
+      // Call the like API
+      this.houseService.likeHouse(houseId).subscribe(() => {
+        house.likeCount += 1;  // Increment the like count on the UI
+        house.liked = true;    // Set the liked state to true
+        house.pending = false; // Reset the pending state after the API call completes
+      }, () => {
+        // Handle error case
+        house.pending = false; // Reset pending state even on error
+      });
+    }
   }
+}
+
+
   goToDetails(houseId: number): void {
     // Call the API to count the view
     this.houseService.viewHouse(houseId).subscribe(() => {
@@ -475,21 +492,57 @@ fetchHouses(
     });
   }
   likeRoom(RoomId: number): void {
-    this.roomService.likeRoom(RoomId).subscribe(() => {
-      const room = this.rooms.find((h) => h.id === RoomId);
-      if (room) {
-        room.likeCount += 1; // Increment the like count on the UI
+    const room = this.rooms.find((r) => r.id === RoomId);
+
+    if (room && !room.pending) { // Ensure there's no pending request
+      room.pending = true; // Set the pending state to prevent multiple clicks
+
+      if (room.liked) {
+        // Simulate "unlike" (no API call here for unlike)
+        room.likeCount -= 1;
+        room.liked = false;
+        room.pending = false; // Reset the pending state after local unlike
+      } else {
+        // Call the like API
+        this.roomService.likeRoom(RoomId).subscribe(() => {
+          room.likeCount += 1;  // Increment the like count on the UI
+          room.liked = true;    // Set the liked state to true
+          room.pending = false; // Reset the pending state after the API call completes
+        }, () => {
+          // Handle error case
+          room.pending = false; // Reset pending state even on error
+        });
       }
-    });
+    }
   }
+
+
   likeLand(landId: number): void {
-    this.landervice.likeLand(landId).subscribe(() => {
-      const land = this.lands.find((h) => h.id === landId);
-      if (land) {
-        land.likeCount += 1; // Increment the like count on the UI
+    const land = this.lands.find((l) => l.id === landId);
+
+    if (land && !land.pending) { // Ensure there's no pending request
+      land.pending = true; // Set the pending state to true to prevent multiple clicks
+
+      if (land.liked) {
+        // Simulate "unlike" (no API call here)
+        land.likeCount -= 1;
+        land.liked = false;
+        land.pending = false; // Reset pending state after local unlike
+      } else {
+        // Call the like API
+        this.landervice.likeLand(landId).subscribe(() => {
+          land.likeCount += 1;  // Increment the like count on the UI
+          land.liked = true;    // Set the liked state to true
+          land.pending = false; // Reset pending state after the API call completes
+        }, () => {
+          // Handle error case
+          land.pending = false; // Reset pending state even on error
+        });
       }
-    });
+    }
   }
+
+
   onBannerClick(): void {
     const currentImage = this.images[this.currentImageIndex];
     if (currentImage.route) {
