@@ -963,6 +963,8 @@ mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-pr
     position: relative;
     max-width: 900px; /* Adjust as per your layout */
     margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add box shadow for the slider container */
+    border-radius: 8px;
   }
 
   .ad-banner {
@@ -971,24 +973,40 @@ mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-pr
     background-color: #f0f0f0; /* Default background color */
     width: 100%;
     height: 300px; /* Set a default height */
+    display: flex; /* Allows for the image sliding effect */
   }
 
   .image-container1 {
-    display: none;
     position: absolute;
     width: 100%;
-    height: 100%; /* Fill the banner height */
-    background-color: #dcdcdc; /* Background when no image is present */
+    height: 100%;
+    background-color: #dcdcdc; /* Default background */
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateX(100%); /* Start offscreen to the right */
   }
 
   .image-container1.active {
-    display: block;
+    opacity: 1;
+    transform: translateX(0); /* Center the active image */
   }
+
+  .image-container1.previous {
+    opacity: 1;
+    transform: translateX(-100%); /* Slide previous image to the left */
+  }
+
+  .image-container1.next {
+    opacity: 1;
+    transform: translateX(100%); /* Slide next image in from the right */
+  }
+
 
   .ad-banner img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the container */
+    object-fit: cover;
+
   }
 
   button.prev, button.next {

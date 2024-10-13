@@ -17,8 +17,8 @@ import { DistrictService } from '../address/district.service';
 export class HomeComponent implements OnInit, OnDestroy {
   images = [
     { url: '/assets/img/Banner house.png', alt: 'house',route: '/house'  },
-    { url: '/assets/ads&baner/ADS2.jpg', alt: 'Ad 2' },
-    { url: '/assets/ads&baner/ADS3.jpg', alt: 'Ad 3' }
+    { url: '/assets/img/Banner room.png', alt: 'room',route: '/room' },
+    { url: '/assets/img/baner land.png', alt: 'land',route: '/land' },
   ];
   houses: any[] = [];
   rooms: any[] = [];
@@ -160,7 +160,7 @@ isLoadingHouses = false;
   startAutoSlide(): void {
     this.autoSlideInterval = setInterval(() => {
       this.nextImage1();
-    }, 3000); // Change image every 3 seconds
+    }, 4000); // Change image every 3 seconds
   }
 
   stopAutoSlide(): void {
@@ -176,11 +176,12 @@ isLoadingHouses = false;
   prevImage1(): void {
     this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
   }
-
   setImage(index: number): void {
     this.currentImageIndex = index;
-    this.stopAutoSlide(); // Stop auto sliding if user clicks a dot
+    this.stopAutoSlide();  // Stop the current auto-slide interval
+    this.startAutoSlide(); // Restart the auto-slide after manually changing the image
   }
+
 
   fetchLand(
     fromPrice?: number,
@@ -495,4 +496,27 @@ fetchHouses(
       this.router.navigate([currentImage.route]);
     }
   }
+  getSlideClass(index: number): string {
+    // Case 1: Active slide
+    if (index === this.currentImageIndex) {
+      return 'active';
+    }
+
+    // Case 2: Previous slide
+    // This handles wrapping from 1st image to the last when navigating backwards
+    if (index === (this.currentImageIndex - 1 + this.images.length) % this.images.length) {
+      return 'previous';
+    }
+
+    // Case 3: Next slide
+    // This handles wrapping from last image back to the first when navigating forwards
+    if (index === (this.currentImageIndex + 1) % this.images.length) {
+      return 'next';
+    }
+
+    // Case 4: Hidden slides
+    return ''; // No class for other slides
+  }
+
+
 }

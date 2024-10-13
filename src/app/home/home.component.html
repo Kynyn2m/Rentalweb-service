@@ -3,7 +3,8 @@
     <!-- Image container -->
     <div class="image-container1"
          *ngFor="let image of images; let i = index"
-         [class.active]="i === currentImageIndex">
+         [class.active]="i === currentImageIndex"
+         [ngClass]="getSlideClass(i)">
       <img *ngIf="image.url"
            [src]="image.url"
            (click)="onBannerClick()"
@@ -313,4 +314,3 @@
     </button>
     <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
   </div>
-  <app-footer></app-footer>
