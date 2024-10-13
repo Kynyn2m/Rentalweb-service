@@ -114,12 +114,11 @@
 <div class="content-container">
   <section>
     <h2>Houses</h2>
-    <div *ngIf="!loading"
+    <div *ngIf="loading"
          class="loading-container">
-      <mat-spinner></mat-spinner> <!-- Angular Material Spinner -->
+      <mat-spinner></mat-spinner>
     </div>
 
-    <!-- Check if there are houses, if none show a "no data" message -->
     <div *ngIf="loading && houses.length === 0"
          class="no-data"
          class="no-data">
@@ -130,7 +129,7 @@
          class="card-grid">
       <mat-card *ngFor="let house of houses">
         <div class="image-container">
-          <!-- Display the current image with navigation if images are available -->
+
           <img mat-card-image
                *ngIf="
               house.safeImagePaths &&
