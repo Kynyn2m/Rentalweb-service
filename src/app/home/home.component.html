@@ -1,12 +1,36 @@
-<div class="banner-container">
-  <div class="banner-column">
-    <div class="banner-image-container">
-      <img [src]="banners[0]"
-           alt="Banner 1"
-           class="banner-img">
+<div class="ad-container">
+  <div class="ad-banner">
+    <!-- Image container -->
+    <div class="image-container1"
+         *ngFor="let image of images; let i = index"
+         [class.active]="i === currentImageIndex">
+      <img *ngIf="image.url"
+           [src]="image.url"
+           (click)="onBannerClick()"
+           [alt]="image.alt">
+      <!-- Fallback background when there's no image -->
+      <div *ngIf="!image.url"
+           class="fallback-background">
+        <p>No image available</p>
+      </div>
     </div>
+
+    <!-- Next and Previous buttons -->
+    <button class="prev"
+            (click)="prevImage1()">&#10094;</button>
+    <button class="next"
+            (click)="nextImage1()">&#10095;</button>
+  </div>
+
+  <!-- Small dots for image navigation -->
+  <div class="dots-container">
+    <span *ngFor="let image of images; let i = index"
+          class="dot"
+          [class.active]="i === currentImageIndex"
+          (click)="setImage(i)"></span>
   </div>
 </div>
+
 
 <div class="content-container">
   <section>

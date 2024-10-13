@@ -1,5 +1,5 @@
 // home.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HouseService } from 'src/app/Service/house.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,7 +14,12 @@ import { DistrictService } from '../address/district.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  images = [
+    { url: '/assets/img/Banner house.png', alt: 'house',route: '/house'  },
+    { url: '/assets/ads&baner/ADS2.jpg', alt: 'Ad 2' },
+    { url: '/assets/ads&baner/ADS3.jpg', alt: 'Ad 3' }
+  ];
   houses: any[] = [];
   rooms: any[] = [];
   lands: any[] = [];
@@ -25,6 +30,9 @@ export class HomeComponent implements OnInit {
   isLoadingMore = false;
   autoFetchInterval: any;
   holdDuration: number = 500000000;
+  currentImageIndex = 0;
+  autoSlideInterval: any;
+
 
   isMouseDown: boolean = false;
   mouseDownTimer: any;
@@ -55,6 +63,7 @@ isLoadingHouses = false;
   ) { }
 
   ngOnInit(): void {
+    this.startAutoSlide();
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
@@ -82,6 +91,7 @@ isLoadingHouses = false;
       fromPrice: [''],
       toPrice: [''],
     });
+
 
 
 
@@ -141,6 +151,35 @@ isLoadingHouses = false;
       }
     );
 
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoSlide();
+  }
+
+  startAutoSlide(): void {
+    this.autoSlideInterval = setInterval(() => {
+      this.nextImage1();
+    }, 3000); // Change image every 3 seconds
+  }
+
+  stopAutoSlide(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+  }
+
+  nextImage1(): void {
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+  }
+
+  prevImage1(): void {
+    this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+  }
+
+  setImage(index: number): void {
+    this.currentImageIndex = index;
+    this.stopAutoSlide(); // Stop auto sliding if user clicks a dot
   }
 
   fetchLand(
@@ -449,5 +488,11 @@ fetchHouses(
         land.likeCount += 1; // Increment the like count on the UI
       }
     });
+  }
+  onBannerClick(): void {
+    const currentImage = this.images[this.currentImageIndex];
+    if (currentImage.route) {
+      this.router.navigate([currentImage.route]);
+    }
   }
 }
