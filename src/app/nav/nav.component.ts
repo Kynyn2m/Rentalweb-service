@@ -24,6 +24,7 @@ import { map, shareReplay, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ProfileService } from '../profile/profile.service';
+import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
 
 @Component({
   selector: 'app-nav',
@@ -288,5 +289,16 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
         console.error('Error fetching profile data', error);
       }
     );
+  }
+  openChangePasswordDialog(): void {
+    const dialogRef = this.dialog.open(ChangePasswordDialogComponent, {
+      width: '450px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Password was successfully changed.');
+      }
+    });
   }
 }

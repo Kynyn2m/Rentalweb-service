@@ -149,18 +149,18 @@
                class="user-email">{{ email }}</p>
           </div>
         </div>
-
-        <!-- Divider between user info and menu items -->
         <mat-divider></mat-divider>
-
-        <!-- Profile Menu Item -->
         <button mat-menu-item
                 [routerLink]="'/profile'">
           <mat-icon>person</mat-icon>
           <span>Profile</span>
         </button>
+        <button mat-menu-item
+                (click)="openChangePasswordDialog()">
+          <mat-icon>lock</mat-icon>
+          <span>Change Password</span>
+        </button>
 
-        <!-- Logout Menu Item -->
         <button mat-menu-item
                 (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
