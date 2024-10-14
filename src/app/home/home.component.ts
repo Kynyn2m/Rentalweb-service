@@ -16,9 +16,9 @@ import { DistrictService } from '../address/district.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   images = [
-    { url: '/assets/img/Banner house.png', alt: 'house',route: '/house'  },
-    { url: '/assets/img/Banner room.png', alt: 'room',route: '/room' },
-    { url: '/assets/img/baner land.png', alt: 'land',route: '/land' },
+    { url: '/assets/img/Banner house.png', alt: 'house', route: '/house' },
+    { url: '/assets/img/Banner room.png', alt: 'room', route: '/room' },
+    { url: '/assets/img/baner land.png', alt: 'land', route: '/land' },
   ];
   houses: any[] = [];
   rooms: any[] = [];
@@ -33,13 +33,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentImageIndex = 0;
   autoSlideInterval: any;
 
-
   isMouseDown: boolean = false;
   mouseDownTimer: any;
 
   isLoadingRooms = false;
-isLoadingLands = false;
-isLoadingHouses = false;
+  isLoadingLands = false;
+  isLoadingHouses = false;
 
   provinces_c: any[] = []; // Array to store the list of provinces
   districtId_c: number | null = 0; // To track the selected district
@@ -59,8 +58,8 @@ isLoadingHouses = false;
     private roomService: RoomService,
     private sanitizer: DomSanitizer,
     private districtService: DistrictService,
-    private breakpointObserver: BreakpointObserver,
-  ) { }
+    private breakpointObserver: BreakpointObserver
+  ) {}
 
   ngOnInit(): void {
     this.startAutoSlide();
@@ -70,7 +69,7 @@ isLoadingHouses = false;
       toPrice: [''],
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const fromPrice = params['fromPrice'];
       const toPrice = params['toPrice'];
       const search = params['search'];
@@ -91,9 +90,6 @@ isLoadingHouses = false;
       fromPrice: [''],
       toPrice: [''],
     });
-
-
-
 
     // Fetch rooms when query parameters change
     this.route.queryParams.subscribe((params) => {
@@ -150,7 +146,6 @@ isLoadingHouses = false;
         console.error('Error fetching provinces:', error);
       }
     );
-
   }
 
   ngOnDestroy(): void {
@@ -174,14 +169,14 @@ isLoadingHouses = false;
   }
 
   prevImage1(): void {
-    this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + this.images.length) % this.images.length;
   }
   setImage(index: number): void {
     this.currentImageIndex = index;
-    this.stopAutoSlide();  // Stop the current auto-slide interval
+    this.stopAutoSlide(); // Stop the current auto-slide interval
     this.startAutoSlide(); // Restart the auto-slide after manually changing the image
   }
-
 
   fetchLand(
     fromPrice?: number,
@@ -201,161 +196,204 @@ isLoadingHouses = false;
     if (search) params.search = search;
 
     if (provinceName) {
-      const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
+      const matchedProvince = this.provinces_c.find(
+        (p) => p.khmerName === provinceName || p.englishName === provinceName
+      );
       if (matchedProvince) {
         params.provinceId = matchedProvince.id;
       }
     }
 
-    this.landervice.getLand(params).subscribe((response) => {
-      this.lands = response.result.result;
-      this.totalPages = response.result.totalPage;
+    this.landervice.getLand(params).subscribe(
+      (response) => {
+        this.lands = response.result.result;
+        this.totalPages = response.result.totalPage;
 
-      this.lands.forEach(land => {
-        this.loadImage(land);
-        const matchedProvince = this.provinces_c.find(p => p.id === land.province);
-        if (matchedProvince) {
-          land.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-        } else {
-          console.log(`Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`);
-          land.provinceName = 'Unknown Province';
-        }
-      });
-      this.isLoadingLands = false; // End loading
-    }, () => {
-      this.isLoadingLands = false; // End loading on error
-    });
-  }
-
-
-fetchRoom(
-  fromPrice?: number,
-  toPrice?: number,
-  search?: string,
-  page: number = 0,
-  provinceName?: string
-): void {
-  this.isLoadingRooms = true; // Start loading
-  const params: any = {
-    page,
-    size: this.itemsPerPage,
-  };
-
-  if (fromPrice !== undefined) params.fromPrice = fromPrice;
-  if (toPrice !== undefined) params.toPrice = toPrice;
-  if (search) params.search = search;
-
-  if (provinceName) {
-    const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
-    if (matchedProvince) {
-      params.provinceId = matchedProvince.id;
-    }
-  }
-
-  this.roomService.getRooms(params).subscribe((response) => {
-    this.rooms = response.result.result;
-    this.totalPages = response.result.totalPage;
-
-    this.rooms.forEach(room => {
-      this.loadImage(room);
-      const matchedProvince = this.provinces_c.find(p => p.id === room.province);
-      if (matchedProvince) {
-        room.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-      } else {
-        console.log(`Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`);
-        room.provinceName = 'Unknown Province';
+        this.lands.forEach((land) => {
+          this.loadImage(land);
+          const matchedProvince = this.provinces_c.find(
+            (p) => p.id === land.province
+          );
+          if (matchedProvince) {
+            land.provinceName =
+              matchedProvince.khmerName || matchedProvince.englishName;
+          } else {
+            console.log(
+              `Unknown Province for land ID: ${land.id}, Province ID: ${land.province}`
+            );
+            land.provinceName = 'Unknown Province';
+          }
+        });
+        this.isLoadingLands = false; // End loading
+      },
+      () => {
+        this.isLoadingLands = false; // End loading on error
       }
-    });
-    this.isLoadingRooms = false; // End loading
-  }, () => {
-    this.isLoadingRooms = false; // End loading on error
-  });
-}
-
-
-
-fetchHouses(
-  fromPrice?: number,
-  toPrice?: number,
-  search?: string,
-  provinceId?: number,
-  districtId?: number,
-  communeId?: number,
-  villageId?: number,
-  page: number = 0,
-  provinceName?: string
-): void {
-  this.isLoadingHouses = true; // Start loading
-  const params: any = {
-    page,
-    size: this.itemsPerPage,
-  };
-
-  if (fromPrice !== undefined) params.fromPrice = fromPrice;
-  if (toPrice !== undefined) params.toPrice = toPrice;
-  if (search) params.search = search;
-
-  if (provinceName) {
-    const matchedProvince = this.provinces_c.find(p => p.khmerName === provinceName || p.englishName === provinceName);
-    if (matchedProvince) {
-      params.provinceId = matchedProvince.id;
-    }
-  } else if (provinceId !== undefined && provinceId !== null) {
-    params.provinceId = provinceId;
+    );
   }
 
-  this.houseService.getHouses(params).subscribe((response) => {
-    const responseData = response.result;
-    this.houses = responseData.result;
-    this.totalPages = responseData.totalPage;
+  fetchRoom(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    page: number = 0,
+    provinceName?: string
+  ): void {
+    this.isLoadingRooms = true; // Start loading
+    const params: any = {
+      page,
+      size: this.itemsPerPage,
+    };
 
-    this.houses.forEach(house => {
-      this.loadImage(house);
-      const matchedProvince = this.provinces_c.find(p => p.id == house.province); // Use loose equality to handle type mismatch
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(
+        (p) => p.khmerName === provinceName || p.englishName === provinceName
+      );
       if (matchedProvince) {
-        house.provinceName = matchedProvince.khmerName || matchedProvince.englishName;
-      } else {
-        house.provinceName = 'Unknown Province'; // Fallback if no match is found
+        params.provinceId = matchedProvince.id;
       }
-    });
-    this.isLoadingHouses = false; // End loading
-  }, () => {
-    this.isLoadingHouses = false; // End loading on error
-  });
-}
+    }
 
+    this.roomService.getRooms(params).subscribe(
+      (response) => {
+        this.rooms = response.result.result;
+        this.totalPages = response.result.totalPage;
 
-likeHouse(houseId: number): void {
-  const house = this.houses.find(h => h.id === houseId);
+        this.rooms.forEach((room) => {
+          this.loadImage(room);
+          const matchedProvince = this.provinces_c.find(
+            (p) => p.id === room.province
+          );
+          if (matchedProvince) {
+            room.provinceName =
+              matchedProvince.khmerName || matchedProvince.englishName;
+          } else {
+            console.log(
+              `Unknown Province for room ID: ${room.id}, Province ID: ${room.province}`
+            );
+            room.provinceName = 'Unknown Province';
+          }
+        });
+        this.isLoadingRooms = false; // End loading
+      },
+      () => {
+        this.isLoadingRooms = false; // End loading on error
+      }
+    );
+  }
 
-  if (house && !house.pending) { // Ensure there's no pending request
-    house.pending = true; // Set the pending state to prevent multiple clicks
+  fetchHouses(
+    fromPrice?: number,
+    toPrice?: number,
+    search?: string,
+    provinceId?: number,
+    districtId?: number,
+    communeId?: number,
+    villageId?: number,
+    page: number = 0,
+    provinceName?: string
+  ): void {
+    this.isLoadingHouses = true; // Start loading
+    const params: any = {
+      page,
+      size: this.itemsPerPage,
+    };
 
-    if (house.liked) {
-      // Simulate "unlike" (no API call here for unlike)
-      house.likeCount -= 1;
-      house.liked = false;
-      house.pending = false; // Reset the pending state after local unlike
-    } else {
-      // Call the like API
-      this.houseService.likeHouse(houseId).subscribe(() => {
-        house.likeCount += 1;  // Increment the like count on the UI
-        house.liked = true;    // Set the liked state to true
-        house.pending = false; // Reset the pending state after the API call completes
-      }, () => {
-        // Handle error case
-        house.pending = false; // Reset pending state even on error
-      });
+    if (fromPrice !== undefined) params.fromPrice = fromPrice;
+    if (toPrice !== undefined) params.toPrice = toPrice;
+    if (search) params.search = search;
+
+    if (provinceName) {
+      const matchedProvince = this.provinces_c.find(
+        (p) => p.khmerName === provinceName || p.englishName === provinceName
+      );
+      if (matchedProvince) {
+        params.provinceId = matchedProvince.id;
+      }
+    } else if (provinceId !== undefined && provinceId !== null) {
+      params.provinceId = provinceId;
+    }
+
+    this.houseService.getHouses(params).subscribe(
+      (response) => {
+        const responseData = response.result;
+        this.houses = responseData.result;
+        this.totalPages = responseData.totalPage;
+
+        this.houses.forEach((house) => {
+          this.loadImage(house);
+          const matchedProvince = this.provinces_c.find(
+            (p) => p.id == house.province
+          ); // Use loose equality to handle type mismatch
+          if (matchedProvince) {
+            house.provinceName =
+              matchedProvince.khmerName || matchedProvince.englishName;
+          } else {
+            house.provinceName = 'Unknown Province'; // Fallback if no match is found
+          }
+        });
+        this.isLoadingHouses = false; // End loading
+      },
+      () => {
+        this.isLoadingHouses = false; // End loading on error
+      }
+    );
+  }
+
+  likeHouse(houseId: number): void {
+    const house = this.houses.find((h) => h.id === houseId);
+
+    if (house && !house.pending) {
+      // Ensure there's no pending request
+      house.pending = true; // Set the pending state to prevent multiple clicks
+
+      if (house.liked) {
+        // Simulate "unlike" (no API call here for unlike)
+        house.likeCount -= 1;
+        house.liked = false;
+        house.pending = false; // Reset the pending state after local unlike
+      } else {
+        // Call the like API
+        this.houseService.likeHouse(houseId).subscribe(
+          () => {
+            house.likeCount += 1; // Increment the like count on the UI
+            house.liked = true; // Set the liked state to true
+            house.pending = false; // Reset the pending state after the API call completes
+          },
+          () => {
+            // Handle error case
+            house.pending = false; // Reset pending state even on error
+          }
+        );
+      }
     }
   }
-}
-
 
   goToDetails(houseId: number): void {
     // Call the API to count the view
     this.houseService.viewHouse(houseId).subscribe(() => {
       // Once the view is counted, navigate to the details page
       this.router.navigate(['/details', houseId]);
+    });
+  }
+  // detailLand
+  goToDetailLand(landId: number): void {
+    // Call the API to count the view
+    this.landervice.viewLand(landId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['/details-land', landId]);
+    });
+  }
+  // detailroom
+  goToDetailRoom(roomId: number): void {
+    // Call the API to count the view
+    this.roomService.viewRoom(roomId).subscribe(() => {
+      // Once the view is counted, navigate to the details page
+      this.router.navigate(['/details-room', roomId]);
     });
   }
   prevPage(): void {
@@ -413,7 +451,7 @@ likeHouse(houseId: number): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
       house.safeImagePaths = [];
       house.imagePaths.forEach((imageUrl: string) => {
-        this.houseService.getImage(imageUrl).subscribe(imageBlob => {
+        this.houseService.getImage(imageUrl).subscribe((imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           house.safeImagePaths.push(safeUrl);
@@ -469,8 +507,8 @@ likeHouse(houseId: number): void {
     this.router.navigate(['/house'], {
       queryParams: {
         page: this.currentPage,
-        size: this.itemsPerPage
-      }
+        size: this.itemsPerPage,
+      },
     });
   }
   loadMoreroom(): void {
@@ -478,8 +516,8 @@ likeHouse(houseId: number): void {
     this.router.navigate(['/room'], {
       queryParams: {
         page: this.currentPage,
-        size: this.itemsPerPage
-      }
+        size: this.itemsPerPage,
+      },
     });
   }
   loadMoreland(): void {
@@ -487,14 +525,15 @@ likeHouse(houseId: number): void {
     this.router.navigate(['/land'], {
       queryParams: {
         page: this.currentPage,
-        size: this.itemsPerPage
-      }
+        size: this.itemsPerPage,
+      },
     });
   }
   likeRoom(RoomId: number): void {
     const room = this.rooms.find((r) => r.id === RoomId);
 
-    if (room && !room.pending) { // Ensure there's no pending request
+    if (room && !room.pending) {
+      // Ensure there's no pending request
       room.pending = true; // Set the pending state to prevent multiple clicks
 
       if (room.liked) {
@@ -504,23 +543,26 @@ likeHouse(houseId: number): void {
         room.pending = false; // Reset the pending state after local unlike
       } else {
         // Call the like API
-        this.roomService.likeRoom(RoomId).subscribe(() => {
-          room.likeCount += 1;  // Increment the like count on the UI
-          room.liked = true;    // Set the liked state to true
-          room.pending = false; // Reset the pending state after the API call completes
-        }, () => {
-          // Handle error case
-          room.pending = false; // Reset pending state even on error
-        });
+        this.roomService.likeRoom(RoomId).subscribe(
+          () => {
+            room.likeCount += 1; // Increment the like count on the UI
+            room.liked = true; // Set the liked state to true
+            room.pending = false; // Reset the pending state after the API call completes
+          },
+          () => {
+            // Handle error case
+            room.pending = false; // Reset pending state even on error
+          }
+        );
       }
     }
   }
 
-
   likeLand(landId: number): void {
     const land = this.lands.find((l) => l.id === landId);
 
-    if (land && !land.pending) { // Ensure there's no pending request
+    if (land && !land.pending) {
+      // Ensure there's no pending request
       land.pending = true; // Set the pending state to true to prevent multiple clicks
 
       if (land.liked) {
@@ -530,18 +572,20 @@ likeHouse(houseId: number): void {
         land.pending = false; // Reset pending state after local unlike
       } else {
         // Call the like API
-        this.landervice.likeLand(landId).subscribe(() => {
-          land.likeCount += 1;  // Increment the like count on the UI
-          land.liked = true;    // Set the liked state to true
-          land.pending = false; // Reset pending state after the API call completes
-        }, () => {
-          // Handle error case
-          land.pending = false; // Reset pending state even on error
-        });
+        this.landervice.likeLand(landId).subscribe(
+          () => {
+            land.likeCount += 1; // Increment the like count on the UI
+            land.liked = true; // Set the liked state to true
+            land.pending = false; // Reset pending state after the API call completes
+          },
+          () => {
+            // Handle error case
+            land.pending = false; // Reset pending state even on error
+          }
+        );
       }
     }
   }
-
 
   onBannerClick(): void {
     const currentImage = this.images[this.currentImageIndex];
@@ -557,7 +601,10 @@ likeHouse(houseId: number): void {
 
     // Case 2: Previous slide
     // This handles wrapping from 1st image to the last when navigating backwards
-    if (index === (this.currentImageIndex - 1 + this.images.length) % this.images.length) {
+    if (
+      index ===
+      (this.currentImageIndex - 1 + this.images.length) % this.images.length
+    ) {
       return 'previous';
     }
 
@@ -570,6 +617,4 @@ likeHouse(houseId: number): void {
     // Case 4: Hidden slides
     return ''; // No class for other slides
   }
-
-
 }

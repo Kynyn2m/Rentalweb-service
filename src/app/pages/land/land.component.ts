@@ -21,6 +21,9 @@ export class LandComponent {
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 12; // 12 land per page
   autoFetchInterval: any;
+  search: string = '';
+  fromPrice: number | null = null;
+  toPrice: number | null = null;
 
   provinceId_c: number | null = 0; // To track the selected province
   provinces_c: any[] = []; // Array to store the list of provinces
@@ -163,24 +166,14 @@ export class LandComponent {
 
   onProvinceSelected(event: any): void {
     this.provinceId_c = event.value;
-    console.log('Province Selected:', this.provinceId_c);
 
     if (this.provinceId_c !== null) {
-      // Fetch districts when a province is selected
       this.districtService.getByProvincePublic(this.provinceId_c).subscribe(
         (res) => {
           this.districts_c = res.result || [];
           this.communes_c = [];
           this.villages_c = [];
-          this.cdr.detectChanges(); // Trigger change detection
-
-          // Call fetchLand with all necessary parameters, including the provinceId
-          this.fetchLand(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c || undefined
-          );
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching districts:', error);
@@ -193,21 +186,11 @@ export class LandComponent {
     this.districtId_c = event.value;
 
     if (this.districtId_c !== null) {
-      // Fetch communes when a district is selected
       this.communeService.getByDistrictPublic(this.districtId_c).subscribe(
         (res) => {
           this.communes_c = res.result || [];
           this.villages_c = [];
           this.cdr.detectChanges();
-
-          // Fetch land with updated districtId
-          this.fetchLand(
-            this.searchForm.get('fromPrice')?.value,
-            this.searchForm.get('toPrice')?.value,
-            this.searchForm.get('search')?.value,
-            this.provinceId_c !== null ? this.provinceId_c : undefined,
-            this.districtId_c !== null ? this.districtId_c : undefined
-          );
         },
         (error) => {
           console.error('Error fetching communes:', error);
@@ -258,29 +241,20 @@ export class LandComponent {
   }
 
   onSearch(): void {
-    const search = this.searchForm.get('search')?.value;
-    const fromPrice = this.searchForm.get('fromPrice')?.value;
-    const toPrice = this.searchForm.get('toPrice')?.value;
+    const queryParams: any = { page: 0 }; // Reset to page 0 on search
 
-    const queryParams: any = {
-      page: 0, // Reset to page 0 on search
-    };
-
-    // Include provinceId in the search query
-    if (this.provinceId_c && this.provinceId_c !== 0) {
+    if (this.provinceId_c && this.provinceId_c !== 0)
       queryParams.provinceId = this.provinceId_c;
-    }
+    if (this.districtId_c && this.districtId_c !== 0)
+      queryParams.districtId = this.districtId_c;
+    if (this.communeId_c && this.communeId_c !== 0)
+      queryParams.communeId = this.communeId_c;
+    if (this.villageId_c && this.villageId_c !== 0)
+      queryParams.villageId = this.villageId_c;
 
-    // Include other parameters if they exist
-    if (search) {
-      queryParams.search = search;
-    }
-    if (fromPrice) {
-      queryParams.fromPrice = fromPrice;
-    }
-    if (toPrice) {
-      queryParams.toPrice = toPrice;
-    }
+    if (this.search) queryParams.search = this.search;
+    if (this.fromPrice !== null) queryParams.fromPrice = this.fromPrice;
+    if (this.toPrice !== null) queryParams.toPrice = this.toPrice;
 
     // Update the query params in the URL and perform the search
     this.router.navigate([], {
@@ -288,52 +262,42 @@ export class LandComponent {
       queryParamsHandling: 'merge',
     });
 
-    // Perform the land search with the query parameters
+    // Convert null to undefined before passing to fetchHouses
     this.fetchLand(
-      fromPrice,
-      toPrice,
-      search,
-      this.provinceId_c || undefined, // Handle undefined/null properly
-      this.districtId_c !== 0 ? this.districtId_c || undefined : undefined,
-      this.communeId_c !== 0 ? this.communeId_c || undefined : undefined,
-      this.villageId_c !== 0 ? this.villageId_c || undefined : undefined,
+      this.fromPrice ?? undefined,
+      this.toPrice ?? undefined,
+      this.search,
+      this.provinceId_c ?? undefined,
+      this.districtId_c ?? undefined,
+      this.communeId_c ?? undefined,
+      this.villageId_c ?? undefined,
       0
     );
   }
 
   onClear(): void {
-    // Reset the search form fields
-    this.searchForm.reset();
+    this.search = '';
+    this.fromPrice = null;
+    this.toPrice = null;
+    this.provinceId_c = null;
+    this.districtId_c = null;
+    this.communeId_c = null;
+    this.villageId_c = null;
 
-    // Reset the address form fields for province, district, commune, and village
-    this.addressForm.patchValue({
-      provinceId: null, // Reset Province/City selection
-      districtId: null, // Reset District/Khan selection
-      communeId: null, // Reset Commune/Sangkat selection
-      villageId: null, // Reset Village selection
-    });
-
-    // Clear the options for dependent selects
-    this.districts_c = [];
-    this.communes_c = [];
-    this.villages_c = [];
-
-    // Reset query parameters including provinceId, districtId, communeId, and villageId
     this.router.navigate([], {
       queryParams: {
         search: null,
-        fromPrice: null,
-        toPrice: null,
         provinceId: null,
         districtId: null,
         communeId: null,
         villageId: null,
-        page: 0, // Reset to page 0
+        fromPrice: null,
+        toPrice: null,
+        page: 0,
       },
       queryParamsHandling: 'merge',
     });
 
-    // Fetch land without filters
     this.fetchLand();
   }
 

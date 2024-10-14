@@ -21,6 +21,9 @@ export class RoomComponent {
   totalPages = 1; // Total pages for pagination
   itemsPerPage = 12; // 12 room per page
   autoFetchInterval: any;
+  search: string = '';
+  fromPrice: number | null = null;
+  toPrice: number | null = null;
 
   provinceId_c: number | null = 0; // To track the selected province
   provinces_c: any[] = []; // Array to store the list of provinces
@@ -140,10 +143,8 @@ export class RoomComponent {
 
   onProvinceSelected(event: any): void {
     this.provinceId_c = event.value;
-    console.log('Province Selected:', this.provinceId_c);
 
     if (this.provinceId_c !== null) {
-      // Fetch districts when a province is selected
       this.districtService.getByProvincePublic(this.provinceId_c).subscribe(
         (res) => {
           this.districts_c = res.result || [];
@@ -184,6 +185,16 @@ export class RoomComponent {
         (res) => {
           this.villages_c = res.result || [];
           this.cdr.detectChanges();
+
+          // Fetch land with updated communeId
+          this.fetchRoom(
+            this.searchForm.get('fromPrice')?.value,
+            this.searchForm.get('toPrice')?.value,
+            this.searchForm.get('search')?.value,
+            this.provinceId_c !== null ? this.provinceId_c : undefined,
+            this.districtId_c !== null ? this.districtId_c : undefined,
+            this.communeId_c !== null ? this.communeId_c : undefined
+          );
         },
         (error) => {
           console.error('Error fetching villages:', error);
@@ -198,40 +209,20 @@ export class RoomComponent {
   }
 
   onSearch(): void {
-    const search = this.searchForm.get('search')?.value;
-    const fromPrice = this.searchForm.get('fromPrice')?.value;
-    const toPrice = this.searchForm.get('toPrice')?.value;
+    const queryParams: any = { page: 0 }; // Reset to page 0 on search
 
-    const queryParams: any = {
-      page: 0, // Reset to page 0 on search
-    };
-
-    // Include provinceId in the search query
-    if (this.provinceId_c && this.provinceId_c !== 0) {
+    if (this.provinceId_c && this.provinceId_c !== 0)
       queryParams.provinceId = this.provinceId_c;
-    }
-
-    // Include districtId, communeId, villageId in the search query
-    if (this.districtId_c && this.districtId_c !== 0) {
+    if (this.districtId_c && this.districtId_c !== 0)
       queryParams.districtId = this.districtId_c;
-    }
-    if (this.communeId_c && this.communeId_c !== 0) {
+    if (this.communeId_c && this.communeId_c !== 0)
       queryParams.communeId = this.communeId_c;
-    }
-    if (this.villageId_c && this.villageId_c !== 0) {
+    if (this.villageId_c && this.villageId_c !== 0)
       queryParams.villageId = this.villageId_c;
-    }
 
-    // Include other parameters if they exist
-    if (search) {
-      queryParams.search = search;
-    }
-    if (fromPrice) {
-      queryParams.fromPrice = fromPrice;
-    }
-    if (toPrice) {
-      queryParams.toPrice = toPrice;
-    }
+    if (this.search) queryParams.search = this.search;
+    if (this.fromPrice !== null) queryParams.fromPrice = this.fromPrice;
+    if (this.toPrice !== null) queryParams.toPrice = this.toPrice;
 
     // Update the query params in the URL and perform the search
     this.router.navigate([], {
@@ -239,40 +230,27 @@ export class RoomComponent {
       queryParamsHandling: 'merge',
     });
 
-    // Perform the room search with the query parameters
+    // Convert null to undefined before passing to fetchHouses
     this.fetchRoom(
-      fromPrice,
-      toPrice,
-      search,
-      this.provinceId_c || undefined, // Handle undefined/null properly
-      this.districtId_c !== 0 ? this.districtId_c || undefined : undefined,
-      this.communeId_c !== 0 ? this.communeId_c || undefined : undefined,
-      this.villageId_c !== 0 ? this.villageId_c || undefined : undefined,
+      this.fromPrice ?? undefined,
+      this.toPrice ?? undefined,
+      this.search,
+      this.provinceId_c ?? undefined,
+      this.districtId_c ?? undefined,
+      this.communeId_c ?? undefined,
+      this.villageId_c ?? undefined,
       0
     );
   }
 
   onClear(): void {
-    this.searchForm.reset();
-
+    this.search = '';
+    this.fromPrice = null;
+    this.toPrice = null;
     this.provinceId_c = null;
     this.districtId_c = null;
     this.communeId_c = null;
     this.villageId_c = null;
-
-    this.provinces_c = [];
-    this.districts_c = [];
-    this.communes_c = [];
-    this.villages_c = [];
-
-    this.districtService.getProvincesPublic().subscribe(
-      (res) => {
-        this.provinces_c = res.result.result || [];
-      },
-      (error) => {
-        console.error('Error fetching provinces:', error);
-      }
-    );
 
     this.router.navigate([], {
       queryParams: {
@@ -415,7 +393,7 @@ export class RoomComponent {
     // Call the API to count the view
     this.roomService.viewRoom(roomId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['/details', roomId]);
+      this.router.navigate(['/details-room', roomId]);
     });
   }
 }
