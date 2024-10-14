@@ -152,7 +152,7 @@
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
     <div *ngIf="!isLoadingRooms" class="card-grid">
-      <mat-card *ngFor="let room of rooms">
+      <mat-card *ngFor="let room of rooms" (click)="goToDetailRoom(room.id)">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
           <img
@@ -255,7 +255,7 @@
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
     <div *ngIf="!isLoadingLands" class="card-grid">
-      <mat-card *ngFor="let land of lands">
+      <mat-card *ngFor="let land of lands" (click)="goToDetailLand(land.id)">
         <div class="image-container">
           <!-- Display the current image with navigation if images are available -->
           <img
