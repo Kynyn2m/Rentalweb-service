@@ -19,9 +19,8 @@ export class LandService {
   // Method to fetch land with optional filters (fromPrice, toPrice, search, page, size)
   getLand(params?: any): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
-
-    // Build query parameters if they exist
     let httpParams = new HttpParams();
+
     if (params) {
       if (params.fromPrice) {
         httpParams = httpParams.set('fromPrice', params.fromPrice.toString());
@@ -36,7 +35,21 @@ export class LandService {
         httpParams = httpParams.set('page', params.page.toString());
       }
       if (params.size !== undefined) {
-        httpParams = httpParams.set('size', params.size.toString()); // Use 'size' instead of 'itemsPerPage'
+        httpParams = httpParams.set('size', params.size.toString());
+      }
+
+      // New query params for address fields
+      if (params.provinceId) {
+        httpParams = httpParams.set('provinceId', params.provinceId.toString());
+      }
+      if (params.districtId) {
+        httpParams = httpParams.set('districtId', params.districtId.toString());
+      }
+      if (params.communeId) {
+        httpParams = httpParams.set('communeId', params.communeId.toString());
+      }
+      if (params.villageId) {
+        httpParams = httpParams.set('villageId', params.villageId.toString());
       }
     }
 
