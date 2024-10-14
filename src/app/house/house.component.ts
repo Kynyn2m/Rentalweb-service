@@ -87,8 +87,7 @@ export class HouseComponent implements OnInit {
     villageId?: number,
     page: number = 0
   ): void {
-    this.loading = true; // Start loading
-
+    this.loading = true;
     const params: any = {
       page,
       size: this.itemsPerPage,
@@ -99,27 +98,21 @@ export class HouseComponent implements OnInit {
     if (search) params.search = search;
     if (provinceId !== undefined && provinceId !== null) params.provinceId = provinceId;
 
-    this.houseService.getHouses(params).subscribe(
-      (response) => {
-        const responseData = response.result;
-        this.houses = responseData.result;
-        this.totalPages = responseData.totalPage;
+    this.houseService.getHouses(params).subscribe((response) => {
+      const responseData = response.result;
+      this.houses = responseData.result;
+      this.totalPages = responseData.totalPage;
 
-        this.houses.forEach(house => {
-          this.loadImage(house);
-          const matchedProvince = this.provinces_c.find(p => p.id === house.province);
-          house.provinceName = matchedProvince ? matchedProvince.khmerName || matchedProvince.englishName : 'Unknown Province';
-        });
-
-        this.loading = false; // Stop loading once data is fetched
-      },
-      (error) => {
-        this.loading = false; // Stop loading in case of an error
-        console.error('Error fetching houses:', error);
-      }
-    );
+      this.houses.forEach(house => {
+        this.loadImage(house);
+        const matchedProvince = this.provinces_c.find(p => p.id === house.province);
+        house.provinceName = matchedProvince ? matchedProvince.khmerName || matchedProvince.englishName : 'Unknown Province';
+      });
+    }, error => {
+      this.loading = false;
+      console.error('Error fetching houses:', error);
+    });
   }
-
 
   onProvinceSelected(event: any): void {
     this.provinceId_c = event.value;
