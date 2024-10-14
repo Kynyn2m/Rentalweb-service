@@ -119,7 +119,7 @@
     <h2>Room</h2>
     <div class="card-grid">
       <mat-card *ngFor="let room of room">
-        <div class="image-container">
+        <div class="image-container" (click)="goToDetails(room.id)">
           <!-- Display the current image with navigation if images are available -->
           <img
             mat-card-image
@@ -249,3 +249,4 @@
     </div>
   </section>
 </div>
+<app-footer></app-footer>

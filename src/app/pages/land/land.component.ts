@@ -357,12 +357,26 @@ export class LandComponent {
     return pages;
   }
   likeLand(landId: number): void {
-    this.landService.likeLand(landId).subscribe(() => {
-      const land = this.lands.find((h) => h.id === landId);
-      if (land) {
-        land.likeCount += 1; // Increment the like count on the UI
+    const land = this.lands.find((h) => h.id === landId);
+    if (land && !land.pending) {
+      land.pending = true;
+      if (land.liked) {
+        land.likeCount -= 1;
+        land.liked = false;
+        land.pending = false;
+      } else {
+        this.landService.likeLand(landId).subscribe(
+          () => {
+            land.likeCount += 1;
+            land.liked = true;
+            land.pending = false;
+          },
+          () => {
+            land.pending = false;
+          }
+        );
       }
-    });
+    }
   }
 
   loadImage(land: any): void {

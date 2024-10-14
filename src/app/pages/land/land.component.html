@@ -120,7 +120,7 @@
     <h2>Land</h2>
     <div class="card-grid">
       <mat-card *ngFor="let land of lands">
-        <div class="image-container">
+        <div class="image-container" (click)="goToDetails(land.id)">
           <!-- Display the current image with navigation if images are available -->
           <img
             mat-card-image
