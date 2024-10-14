@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
   private apiUrl = `${environment.apiUrl}/profile`;
@@ -12,7 +12,7 @@ export class ProfileService {
   private userlandUrl = `${environment.apiUrl}/public/lands/me`;
   private userroomUrl = `${environment.apiUrl}/public/rooms/me`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Get profile information
   getProfile(): Observable<any> {
@@ -22,7 +22,7 @@ export class ProfileService {
   // Update profile
   updateProfile(profileData: FormData): Observable<any> {
     const headers = new HttpHeaders({
-      'enctype': 'multipart/form-data'
+      enctype: 'multipart/form-data',
     });
 
     return this.http.put<any>(this.apiUrl, profileData, { headers });
@@ -68,5 +68,13 @@ export class ProfileService {
   updateHouse(houseId: number, houseData: FormData): Observable<any> {
     const url = `${environment.apiUrl}/public/houses/${houseId}`;
     return this.http.put<any>(url, houseData);
+  }
+  updateLand(landId: number, landData: FormData): Observable<any> {
+    const url = `${environment.apiUrl}/public/lands/${landId}`;
+    return this.http.put<any>(url, landData);
+  }
+  updateRoom(roomId: number, roomData: FormData): Observable<any> {
+    const url = `${environment.apiUrl}/public/rooms/${roomId}`;
+    return this.http.put<any>(url, roomData);
   }
 }
