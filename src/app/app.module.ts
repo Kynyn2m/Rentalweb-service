@@ -96,6 +96,7 @@ import { AssignRoleDialogComponent } from './setting/user/assign-role-dialog/ass
 import { UpdateHouseDialogComponent } from './profile/update-house-dialog/update-house-dialog.component';
 import { UpdateLandDialogComponent } from './profile/update-land-dialog/update-land-dialog.component';
 import { UpdateRoomDialogComponent } from './profile/update-room-dialog/update-room-dialog.component';
+import { ChangePasswordDialogComponent } from './nav/change-password-dialog/change-password-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -150,6 +151,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     UpdateHouseDialogComponent,
     UpdateLandDialogComponent,
     UpdateRoomDialogComponent
+    ChangePasswordDialogComponent
   ],
   imports: [
     BrowserModule,

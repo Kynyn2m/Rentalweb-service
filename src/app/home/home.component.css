@@ -113,7 +113,7 @@ h2 {
 .card-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   margin: 20px 0;
 }
@@ -266,7 +266,7 @@ h2 {
 .card-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   margin: 20px 0;
 }
@@ -958,4 +958,102 @@ h3 {
 }
 mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{
   stroke: #f96507 !important;
+  }
+  .ad-container {
+    position: relative;
+    max-width: 900px; /* Adjust as per your layout */
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add box shadow for the slider container */
+    border-radius: 8px;
+  }
+
+  .ad-banner {
+    position: relative;
+    overflow: hidden;
+    background-color: #f0f0f0; /* Default background color */
+    width: 100%;
+    height: 300px; /* Set a default height */
+    display: flex; /* Allows for the image sliding effect */
+  }
+
+  .image-container1 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #dcdcdc; /* Default background */
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateX(100%); /* Start offscreen to the right */
+  }
+
+  .image-container1.active {
+    opacity: 1;
+    transform: translateX(0); /* Center the active image */
+  }
+
+  .image-container1.previous {
+    opacity: 1;
+    transform: translateX(-100%); /* Slide previous image to the left */
+  }
+
+  .image-container1.next {
+    opacity: 1;
+    transform: translateX(100%); /* Slide next image in from the right */
+  }
+
+
+  .ad-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+  }
+
+  button.prev, button.next {
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 10px;
+    margin-top: -22px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 1;
+  }
+
+  button.prev {
+    left: 10px;
+  }
+
+  button.next {
+    right: 10px;
+  }
+
+  button.prev:hover, button.next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  /* Dots below the slider */
+  .dots-container {
+    text-align: center;
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+  }
+
+  .dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 5px;
+    background-color: rgba(98, 98, 98, 0.7);
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+  }
+
+  .dot.active, .dot:hover {
+    background-color: rgb(218, 119, 20);
   }

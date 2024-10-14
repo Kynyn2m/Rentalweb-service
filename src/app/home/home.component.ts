@@ -1,5 +1,5 @@
 // home.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HouseService } from 'src/app/Service/house.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,7 +14,12 @@ import { DistrictService } from '../address/district.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  images = [
+    { url: '/assets/img/Banner house.png', alt: 'house',route: '/house'  },
+    { url: '/assets/img/Banner room.png', alt: 'room',route: '/room' },
+    { url: '/assets/img/baner land.png', alt: 'land',route: '/land' },
+  ];
   houses: any[] = [];
   rooms: any[] = [];
   lands: any[] = [];
@@ -25,6 +30,9 @@ export class HomeComponent implements OnInit {
   isLoadingMore = false;
   autoFetchInterval: any;
   holdDuration: number = 500000000;
+  currentImageIndex = 0;
+  autoSlideInterval: any;
+
 
   isMouseDown: boolean = false;
   mouseDownTimer: any;
@@ -56,6 +64,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.startAutoSlide();
     this.searchForm = this.fb.group({
       search: [''],
       fromPrice: [''],
@@ -83,7 +92,6 @@ export class HomeComponent implements OnInit {
       fromPrice: [''],
       toPrice: [''],
     });
-
     // Fetch rooms when query parameters change
     this.route.queryParams.subscribe((params) => {
       const fromPrice = params['fromPrice'] ? +params['fromPrice'] : undefined;
@@ -140,6 +148,36 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
+  ngOnDestroy(): void {
+    this.stopAutoSlide();
+  }
+
+  startAutoSlide(): void {
+    this.autoSlideInterval = setInterval(() => {
+      this.nextImage1();
+    }, 4000); // Change image every 3 seconds
+  }
+
+  stopAutoSlide(): void {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+    }
+  }
+
+  nextImage1(): void {
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+  }
+
+  prevImage1(): void {
+    this.currentImageIndex = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+  }
+  setImage(index: number): void {
+    this.currentImageIndex = index;
+    this.stopAutoSlide();  // Stop the current auto-slide interval
+    this.startAutoSlide(); // Restart the auto-slide after manually changing the image
+  }
+
 
   fetchLand(
     fromPrice?: number,
@@ -281,40 +319,33 @@ export class HomeComponent implements OnInit {
       params.provinceId = provinceId;
     }
 
-    this.houseService.getHouses(params).subscribe(
-      (response) => {
-        const responseData = response.result;
-        this.houses = responseData.result;
-        this.totalPages = responseData.totalPage;
 
-        this.houses.forEach((house) => {
-          this.loadImage(house);
-          const matchedProvince = this.provinces_c.find(
-            (p) => p.id == house.province
-          ); // Use loose equality to handle type mismatch
-          if (matchedProvince) {
-            house.provinceName =
-              matchedProvince.khmerName || matchedProvince.englishName;
-          } else {
-            house.provinceName = 'Unknown Province'; // Fallback if no match is found
-          }
-        });
-        this.isLoadingHouses = false; // End loading
-      },
-      () => {
-        this.isLoadingHouses = false; // End loading on error
-      }
-    );
-  }
+likeHouse(houseId: number): void {
+  const house = this.houses.find(h => h.id === houseId);
 
-  likeHouse(houseId: number): void {
-    this.houseService.likeHouse(houseId).subscribe(() => {
-      const house = this.houses.find((h) => h.id === houseId);
-      if (house) {
-        house.likeCount += 1; // Increment the like count on the UI
-      }
-    });
+  if (house && !house.pending) { // Ensure there's no pending request
+    house.pending = true; // Set the pending state to prevent multiple clicks
+
+    if (house.liked) {
+      // Simulate "unlike" (no API call here for unlike)
+      house.likeCount -= 1;
+      house.liked = false;
+      house.pending = false; // Reset the pending state after local unlike
+    } else {
+      // Call the like API
+      this.houseService.likeHouse(houseId).subscribe(() => {
+        house.likeCount += 1;  // Increment the like count on the UI
+        house.liked = true;    // Set the liked state to true
+        house.pending = false; // Reset the pending state after the API call completes
+      }, () => {
+        // Handle error case
+        house.pending = false; // Reset pending state even on error
+      });
+    }
   }
+}
+
+
   goToDetails(houseId: number): void {
     // Call the API to count the view
     this.houseService.viewHouse(houseId).subscribe(() => {
@@ -470,19 +501,84 @@ export class HomeComponent implements OnInit {
     });
   }
   likeRoom(RoomId: number): void {
-    this.roomService.likeRoom(RoomId).subscribe(() => {
-      const room = this.rooms.find((h) => h.id === RoomId);
-      if (room) {
-        room.likeCount += 1; // Increment the like count on the UI
+    const room = this.rooms.find((r) => r.id === RoomId);
+
+    if (room && !room.pending) { // Ensure there's no pending request
+      room.pending = true; // Set the pending state to prevent multiple clicks
+
+      if (room.liked) {
+        // Simulate "unlike" (no API call here for unlike)
+        room.likeCount -= 1;
+        room.liked = false;
+        room.pending = false; // Reset the pending state after local unlike
+      } else {
+        // Call the like API
+        this.roomService.likeRoom(RoomId).subscribe(() => {
+          room.likeCount += 1;  // Increment the like count on the UI
+          room.liked = true;    // Set the liked state to true
+          room.pending = false; // Reset the pending state after the API call completes
+        }, () => {
+          // Handle error case
+          room.pending = false; // Reset pending state even on error
+        });
       }
-    });
+    }
   }
+
+
   likeLand(landId: number): void {
-    this.landervice.likeLand(landId).subscribe(() => {
-      const land = this.lands.find((h) => h.id === landId);
-      if (land) {
-        land.likeCount += 1; // Increment the like count on the UI
+    const land = this.lands.find((l) => l.id === landId);
+
+    if (land && !land.pending) { // Ensure there's no pending request
+      land.pending = true; // Set the pending state to true to prevent multiple clicks
+
+      if (land.liked) {
+        // Simulate "unlike" (no API call here)
+        land.likeCount -= 1;
+        land.liked = false;
+        land.pending = false; // Reset pending state after local unlike
+      } else {
+        // Call the like API
+        this.landervice.likeLand(landId).subscribe(() => {
+          land.likeCount += 1;  // Increment the like count on the UI
+          land.liked = true;    // Set the liked state to true
+          land.pending = false; // Reset pending state after the API call completes
+        }, () => {
+          // Handle error case
+          land.pending = false; // Reset pending state even on error
+        });
       }
-    });
+    }
   }
+
+
+  onBannerClick(): void {
+    const currentImage = this.images[this.currentImageIndex];
+    if (currentImage.route) {
+      this.router.navigate([currentImage.route]);
+    }
+  }
+  getSlideClass(index: number): string {
+    // Case 1: Active slide
+    if (index === this.currentImageIndex) {
+      return 'active';
+    }
+
+    // Case 2: Previous slide
+    // This handles wrapping from 1st image to the last when navigating backwards
+    if (index === (this.currentImageIndex - 1 + this.images.length) % this.images.length) {
+      return 'previous';
+    }
+
+    // Case 3: Next slide
+    // This handles wrapping from last image back to the first when navigating forwards
+    if (index === (this.currentImageIndex + 1) % this.images.length) {
+      return 'next';
+    }
+
+    // Case 4: Hidden slides
+    return ''; // No class for other slides
+  }
+
+
 }
