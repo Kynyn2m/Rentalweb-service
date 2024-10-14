@@ -1,362 +1,340 @@
 <div class="banner-container">
   <div class="banner-column">
     <div class="banner-image-container">
-      <img [src]="banners[0]" alt="Banner 1" class="banner-img" />
-<div class="ad-container">
-  <div class="ad-banner">
-    <!-- Image container -->
-    <div class="image-container1"
-         *ngFor="let image of images; let i = index"
-         [class.active]="i === currentImageIndex"
-         [ngClass]="getSlideClass(i)">
-      <img *ngIf="image.url"
-           [src]="image.url"
-           (click)="onBannerClick()"
-           [alt]="image.alt">
-      <!-- Fallback background when there's no image -->
-      <div *ngIf="!image.url"
-           class="fallback-background">
-        <p>No image available</p>
+      <img [src]="banners[0]"
+           alt="Banner 1"
+           class="banner-img" />
+      <div class="ad-container">
+        <div class="ad-banner">
+          <!-- Image container -->
+          <div class="image-container1"
+               *ngFor="let image of images; let i = index"
+               [class.active]="i === currentImageIndex"
+               [ngClass]="getSlideClass(i)">
+            <img *ngIf="image.url"
+                 [src]="image.url"
+                 (click)="onBannerClick()"
+                 [alt]="image.alt">
+            <!-- Fallback background when there's no image -->
+            <div *ngIf="!image.url"
+                 class="fallback-background">
+              <p>No image available</p>
+            </div>
+          </div>
+
+          <!-- Next and Previous buttons -->
+          <button class="prev"
+                  (click)="prevImage1()">&#10094;</button>
+          <button class="next"
+                  (click)="nextImage1()">&#10095;</button>
+        </div>
+
+        <!-- Small dots for image navigation -->
+        <div class="dots-container">
+          <span *ngFor="let image of images; let i = index"
+                class="dot"
+                [class.active]="i === currentImageIndex"
+                (click)="setImage(i)"></span>
+        </div>
       </div>
-    </div>
-
-    <!-- Next and Previous buttons -->
-    <button class="prev"
-            (click)="prevImage1()">&#10094;</button>
-    <button class="next"
-            (click)="nextImage1()">&#10095;</button>
-  </div>
-
-  <!-- Small dots for image navigation -->
-  <div class="dots-container">
-    <span *ngFor="let image of images; let i = index"
-          class="dot"
-          [class.active]="i === currentImageIndex"
-          (click)="setImage(i)"></span>
-  </div>
-</div>
 
 
-<div class="content-container">
-  <section>
-    <h2>Houses</h2>
+      <div class="content-container">
+        <section>
+          <h2>Houses</h2>
 
-    <div *ngIf="isLoadingHouses"
-         class="loading-spinner">
-      <mat-spinner [diameter]="60"></mat-spinner>
-    </div>
-    <div class="card-grid">
-      <mat-card *ngFor="let house of houses" (click)="goToDetails(house.id)">
-        <div *ngIf="!isLoadingHouses" class="image-container">
-          <!-- Display the current image with navigation if images are available -->
-          <img
-            mat-card-image
-            *ngIf="
+          <div *ngIf="isLoadingHouses"
+               class="loading-spinner">
+            <mat-spinner [diameter]="60"></mat-spinner>
+          </div>
+          <div class="card-grid">
+            <mat-card *ngFor="let house of houses"
+                      (click)="goToDetails(house.id)">
+              <div *ngIf="!isLoadingHouses"
+                   class="image-container">
+                <!-- Display the current image with navigation if images are available -->
+                <img mat-card-image
+                     *ngIf="
               house.safeImagePaths &&
               house.safeImagePaths.length > 0 &&
               house.currentImageIndex !== undefined
             "
-            [src]="house.safeImagePaths[house.currentImageIndex]"
-            alt="{{ house.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-          />
+                     [src]="house.safeImagePaths[house.currentImageIndex]"
+                     alt="{{ house.title }}"
+                     style="width: 100%; height: 200px; object-fit: cover" />
 
-          <!-- Display text if no images are available -->
-          <div
-            *ngIf="!house.safeImagePaths || house.safeImagePaths.length === 0"
-            class="no-image-placeholder"
-            style="
+                <!-- Display text if no images are available -->
+                <div *ngIf="!house.safeImagePaths || house.safeImagePaths.length === 0"
+                     class="no-image-placeholder"
+                     style="
               width: 100%;
               height: 200px;
               display: flex;
               justify-content: center;
               align-items: center;
               background-color: #f0f0f0;
-            "
-          >
-            No Image Available
+            ">
+                  No Image Available
+                </div>
+
+                <!-- Previous Button with Icon -->
+                <button class="prev-image-button"
+                        *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
+                        (click)="prevImage(house); $event.stopPropagation()">
+                  <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <!-- Next Button with Icon -->
+                <button class="next-image-button"
+                        *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
+                        (click)="nextImage(house); $event.stopPropagation()">
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+
+              <mat-card-content>
+                <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3>
+                <!-- Stop click propagation here -->
+                <p (click)="$event.stopPropagation()">
+                  Location: {{ house.provinceName }}
+                </p>
+                <!-- Stop click propagation here -->
+                <p style="color: red; font-weight: bold; margin-bottom: 10px"
+                   (click)="$event.stopPropagation()">
+                  Price: ${{ house.price }}
+                </p>
+                <p (click)="$event.stopPropagation()">
+                  Phone: {{ house.phoneNumber }}
+                </p>
+
+                <div class="views-likes"
+                     (click)="$event.stopPropagation()">
+                  <div class="views">
+                    <mat-icon>visibility</mat-icon>
+                    <span>{{ house.viewCount }} Views</span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <!-- Like Button (aligned to the left) -->
+                  <button mat-raised-button
+                          color="primary"
+                          class="like-button"
+                          (click)="likeHouse(house.id); $event.stopPropagation()">
+                    <mat-icon>thumb_up</mat-icon>
+                    {{ house.likeCount }} Likes
+                  </button>
+                  <button mat-raised-button
+                          color="success"
+                          class="details-button"
+                          (click)="goToDetails(house.id); $event.stopPropagation()">
+                    View Details
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
           </div>
+        </section>
 
-          <!-- Previous Button with Icon -->
-          <button
-            class="prev-image-button"
-            *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
-            (click)="prevImage(house); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_back</mat-icon>
+        <div class="pagination-buttons"
+             style="margin-top: 50px; text-align: left">
+          <button mat-raised-button
+                  color="success"
+                  (click)="loadMoreHouses()">
+            View More
           </button>
-
-          <!-- Next Button with Icon -->
-          <button
-            class="next-image-button"
-            *ngIf="house.safeImagePaths && house.safeImagePaths.length > 1"
-            (click)="nextImage(house); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
+          <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
         </div>
-
-        <mat-card-content>
-          <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3>
-          <!-- Stop click propagation here -->
-          <p (click)="$event.stopPropagation()">
-            Location: {{ house.provinceName }}
-          </p>
-          <!-- Stop click propagation here -->
-          <p
-            style="color: red; font-weight: bold; margin-bottom: 10px"
-            (click)="$event.stopPropagation()"
-          >
-            Price: ${{ house.price }}
-          </p>
-          <p (click)="$event.stopPropagation()">
-            Phone: {{ house.phoneNumber }}
-          </p>
-
-          <div class="views-likes" (click)="$event.stopPropagation()">
-            <div class="views">
-              <mat-icon>visibility</mat-icon>
-              <span>{{ house.viewCount }} Views</span>
-            </div>
+        <section>
+          <h2>Room</h2>
+          <div *ngIf="isLoadingRooms"
+               class="loading-spinner">
+            <mat-spinner [diameter]="60"></mat-spinner>
           </div>
-
-          <div class="actions">
-            <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeHouse(house.id); $event.stopPropagation()"
-            >
-              <mat-icon>thumb_up</mat-icon>
-              {{ house.likeCount }} Likes
-            </button>
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetails(house.id); $event.stopPropagation()"
-            >
-              View Details
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
-
-  <div class="pagination-buttons" style="margin-top: 50px; text-align: left">
-    <button mat-raised-button color="success" (click)="loadMoreHouses()">
-      View More
-    </button>
-    <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
-  </div>
-  <section>
-    <h2>Room</h2>
-    <div *ngIf="isLoadingRooms"
-         class="loading-spinner">
-      <mat-spinner [diameter]="60"></mat-spinner>
-    </div>
-    <div *ngIf="!isLoadingRooms" class="card-grid">
-      <mat-card *ngFor="let room of rooms">
-        <div class="image-container">
-          <!-- Display the current image with navigation if images are available -->
-          <img
-            mat-card-image
-            *ngIf="
+          <div *ngIf="!isLoadingRooms"
+               class="card-grid">
+            <mat-card *ngFor="let room of rooms">
+              <div class="image-container">
+                <!-- Display the current image with navigation if images are available -->
+                <img mat-card-image
+                     *ngIf="
               room.safeImagePaths &&
               room.safeImagePaths.length > 0 &&
               room.currentImageIndex !== undefined
             "
-            [src]="room.safeImagePaths[room.currentImageIndex]"
-            alt="{{ room.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-          />
+                     [src]="room.safeImagePaths[room.currentImageIndex]"
+                     alt="{{ room.title }}"
+                     style="width: 100%; height: 200px; object-fit: cover" />
 
-          <!-- Display text if no images are available -->
-          <div
-            *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
-            class="no-image-placeholder"
-            style="
+                <!-- Display text if no images are available -->
+                <div *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
+                     class="no-image-placeholder"
+                     style="
               width: 100%;
               height: 200px;
               display: flex;
               justify-content: center;
               align-items: center;
               background-color: #f0f0f0;
-            "
-          >
-            No Image Available
+            ">
+                  No Image Available
+                </div>
+
+                <!-- Previous Button with Icon -->
+                <button class="prev-image-button"
+                        *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                        (click)="prevImage(room); $event.stopPropagation()">
+                  <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <!-- Next Button with Icon -->
+                <button class="next-image-button"
+                        *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                        (click)="nextImage(room); $event.stopPropagation()">
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+
+              <mat-card-content>
+                <h3>{{ room.title }}</h3>
+                <p>Location: {{ room.provinceName }}</p>
+                <p style="color: red; font-weight: bold; margin-bottom: 10px">
+                  Price: ${{ room.price }}
+                </p>
+                <p>Phone: {{ room.phoneNumber }}</p>
+
+                <div class="views-likes">
+                  <div class="views">
+                    <mat-icon>visibility</mat-icon>
+                    <span>{{ room.viewCount }} Views</span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <!-- Like Button (aligned to the left) -->
+                  <button mat-raised-button
+                          color="primary"
+                          class="like-button"
+                          (click)="likeRoom(room.id); $event.stopPropagation()">
+                    <mat-icon>thumb_up</mat-icon>
+                    {{ room.likeCount }} Likes
+                  </button>
+
+                  <!-- View Details Button (aligned to the right) -->
+                  <button mat-raised-button
+                          color="success"
+                          class="details-button">
+                    <!-- (click)="goToDetailRoom(room.id)" -->
+                    View Details
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
           </div>
-
-          <!-- Previous Button with Icon -->
-          <button
-            class="prev-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="prevImage(room); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_back</mat-icon>
+        </section>
+        <div class="pagination-buttons"
+             style="margin-top: 50px; text-align: left">
+          <button mat-raised-button
+                  color="success"
+                  (click)="loadMoreroom()">
+            View More
           </button>
-
-          <!-- Next Button with Icon -->
-          <button
-            class="next-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="nextImage(room); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
+          <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
         </div>
-
-        <mat-card-content>
-          <h3>{{ room.title }}</h3>
-          <p>Location: {{ room.provinceName }}</p>
-          <p style="color: red; font-weight: bold; margin-bottom: 10px">
-            Price: ${{ room.price }}
-          </p>
-          <p>Phone: {{ room.phoneNumber }}</p>
-
-          <div class="views-likes">
-            <div class="views">
-              <mat-icon>visibility</mat-icon>
-              <span>{{ room.viewCount }} Views</span>
-            </div>
+        <section>
+          <h2>Land</h2>
+          <div *ngIf="isLoadingLands"
+               class="loading-spinner">
+            <mat-spinner [diameter]="60"></mat-spinner>
           </div>
-
-          <div class="actions">
-            <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeRoom(room.id); $event.stopPropagation()"
-            >
-              <mat-icon>thumb_up</mat-icon>
-              {{ room.likeCount }} Likes
-            </button>
-
-            <!-- View Details Button (aligned to the right) -->
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetailRoom(room.id)"
-            >
-              View Details
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
-  <div class="pagination-buttons" style="margin-top: 50px; text-align: left">
-    <button mat-raised-button color="success" (click)="loadMoreroom()">
-      View More
-    </button>
-    <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
-  </div>
-  <section>
-    <h2>Land</h2>
-    <div *ngIf="isLoadingLands"
-         class="loading-spinner">
-      <mat-spinner [diameter]="60"></mat-spinner>
-    </div>
-    <div *ngIf="!isLoadingLands" class="card-grid">
-      <mat-card *ngFor="let land of lands">
-        <div class="image-container">
-          <!-- Display the current image with navigation if images are available -->
-          <img
-            mat-card-image
-            *ngIf="
+          <div *ngIf="!isLoadingLands"
+               class="card-grid">
+            <mat-card *ngFor="let land of lands">
+              <div class="image-container">
+                <!-- Display the current image with navigation if images are available -->
+                <img mat-card-image
+                     *ngIf="
               land.safeImagePaths &&
               land.safeImagePaths.length > 0 &&
               land.currentImageIndex !== undefined
             "
-            [src]="land.safeImagePaths[land.currentImageIndex]"
-            alt="{{ land.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-          />
+                     [src]="land.safeImagePaths[land.currentImageIndex]"
+                     alt="{{ land.title }}"
+                     style="width: 100%; height: 200px; object-fit: cover" />
 
-          <!-- Display text if no images are available -->
-          <div
-            *ngIf="!land.safeImagePaths || land.safeImagePaths.length === 0"
-            class="no-image-placeholder"
-            style="
+                <!-- Display text if no images are available -->
+                <div *ngIf="!land.safeImagePaths || land.safeImagePaths.length === 0"
+                     class="no-image-placeholder"
+                     style="
               width: 100%;
               height: 200px;
               display: flex;
               justify-content: center;
               align-items: center;
               background-color: #f0f0f0;
-            "
-          >
-            No Image Available
+            ">
+                  No Image Available
+                </div>
+
+                <!-- Previous Button with Icon -->
+                <button class="prev-image-button"
+                        *ngIf="land.safeImagePaths && land.safeImagePaths.length > 1"
+                        (click)="prevImage(land); $event.stopPropagation()">
+                  <mat-icon>arrow_back</mat-icon>
+                </button>
+
+                <!-- Next Button with Icon -->
+                <button class="next-image-button"
+                        *ngIf="land.safeImagePaths && land.safeImagePaths.length > 1"
+                        (click)="nextImage(land); $event.stopPropagation()">
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+
+              <mat-card-content>
+                <h3>{{ land.title }}</h3>
+                <p>Location: {{ land.provinceName }}</p>
+                <p style="color: red; font-weight: bold; margin-bottom: 10px">
+                  Price: ${{ land.price }}
+                </p>
+                <p>Phone: {{ land.phoneNumber }}</p>
+
+                <div class="views-likes">
+                  <div class="views">
+                    <mat-icon>visibility</mat-icon>
+                    <span>{{ land.viewCount }} Views</span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <!-- Like Button (aligned to the left) -->
+                  <button mat-raised-button
+                          color="primary"
+                          class="like-button"
+                          (click)="likeLand(land.id); $event.stopPropagation()">
+                    <mat-icon>thumb_up</mat-icon>
+                    {{ land.likeCount }} Likes
+                  </button>
+                  <!-- View Details Button (aligned to the right) -->
+                  <button mat-raised-button
+                          color="success"
+                          class="details-button">
+                    <!-- (click)="goToDetailLand(land.id)" -->
+                    View Details
+                  </button>
+                </div>
+              </mat-card-content>
+            </mat-card>
           </div>
-
-          <!-- Previous Button with Icon -->
-          <button
-            class="prev-image-button"
-            *ngIf="land.safeImagePaths && land.safeImagePaths.length > 1"
-            (click)="prevImage(land); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_back</mat-icon>
+        </section>
+        <div class="pagination-buttons"
+             style="margin-top: 50px; text-align: left">
+          <button mat-raised-button
+                  color="success"
+                  (click)="loadMoreland()">
+            View More
           </button>
-
-          <!-- Next Button with Icon -->
-          <button
-            class="next-image-button"
-            *ngIf="land.safeImagePaths && land.safeImagePaths.length > 1"
-            (click)="nextImage(land); $event.stopPropagation()"
-          >
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
+          <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
         </div>
-
-        <mat-card-content>
-          <h3>{{ land.title }}</h3>
-          <p>Location: {{ land.provinceName }}</p>
-          <p style="color: red; font-weight: bold; margin-bottom: 10px">
-            Price: ${{ land.price }}
-          </p>
-          <p>Phone: {{ land.phoneNumber }}</p>
-
-          <div class="views-likes">
-            <div class="views">
-              <mat-icon>visibility</mat-icon>
-              <span>{{ land.viewCount }} Views</span>
-            </div>
-          </div>
-
-          <div class="actions">
-            <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeLand(land.id); $event.stopPropagation()"
-            >
-              <mat-icon>thumb_up</mat-icon>
-              {{ land.likeCount }} Likes
-            </button>
-            <!-- View Details Button (aligned to the right) -->
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetailLand(land.id)"
-            >
-              View Details
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
-  <div class="pagination-buttons" style="margin-top: 50px; text-align: left">
-    <button mat-raised-button color="success" (click)="loadMoreland()">
-      View More
-    </button>
-    <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
-  </div>
-  <app-footer></app-footer>
-</div>
+        <app-footer></app-footer>
+      </div>

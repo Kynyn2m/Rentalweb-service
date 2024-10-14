@@ -150,8 +150,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     AssignRoleDialogComponent,
     UpdateHouseDialogComponent,
     UpdateLandDialogComponent,
-    UpdateRoomDialogComponent
-    ChangePasswordDialogComponent
+    UpdateRoomDialogComponent,
+    ChangePasswordDialogComponent,
   ],
   imports: [
     BrowserModule,

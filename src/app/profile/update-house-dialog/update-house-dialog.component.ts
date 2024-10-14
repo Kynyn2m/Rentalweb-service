@@ -26,15 +26,15 @@ export class UpdateHouseDialogComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private districtService: DistrictService,
-    private profileService: ProfileService,
-    private communeService: CommuneService,
-    private villageService: VillageService,
-    private provinceService: ProvinceService,
-    private houseService: HouseService,
-    private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<UpdateHouseDialogComponent>,
-    private sanitizer: DomSanitizer // Inject DomSanitizer
+    private readonly districtService: DistrictService,
+    private readonly profileService: ProfileService,
+    private readonly communeService: CommuneService,
+    private readonly villageService: VillageService,
+    private readonly provinceService: ProvinceService,
+    private readonly houseService: HouseService,
+    private readonly snackBar: MatSnackBar,
+    private readonly dialogRef: MatDialogRef<UpdateHouseDialogComponent>,
+    private readonly sanitizer: DomSanitizer // Inject DomSanitizer
   ) {
     this.houseData = data.houseData || {};
   }
