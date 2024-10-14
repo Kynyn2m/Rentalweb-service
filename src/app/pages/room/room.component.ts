@@ -415,7 +415,7 @@ export class RoomComponent {
     // Call the API to count the view
     this.roomService.viewRoom(roomId).subscribe(() => {
       // Once the view is counted, navigate to the details page
-      this.router.navigate(['/details', roomId]);
+      this.router.navigate(['/details-room', roomId]);
     });
   }
 }

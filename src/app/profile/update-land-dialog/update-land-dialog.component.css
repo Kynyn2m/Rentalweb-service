@@ -1,0 +1,122 @@
+/* General styles for dialog */
+.update-house-dialog-content {
+  padding: 20px;
+  max-width: 800px; /* Updated width */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Full-width input fields */
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Two-column layout */
+.two-column {
+  display: flex;
+  justify-content: space-between;
+}
+
+.two-column mat-form-field {
+  width: 48%;
+}
+
+/* Styles for mat-form-field components */
+mat-form-field {
+  display: block;
+}
+
+mat-label {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Style for input elements */
+input[matInput],
+textarea[matInput],
+mat-select {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+textarea[matInput] {
+  resize: none;
+}
+
+/* Styles for image upload label */
+.file-label {
+  display: inline-block;
+  background-color: #2196f3;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Image preview styling */
+img {
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* Button styles */
+mat-dialog-actions {
+  margin-top: 20px;
+}
+
+mat-dialog-actions button {
+  min-width: 80px;
+}
+
+button[mat-button] {
+  color: #757575;
+}
+
+button[mat-raised-button] {
+  color: white;
+  background-color: #007bff;
+}
+
+/* Hover effect for save button */
+button[mat-raised-button]:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .update-house-dialog-content {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .two-column {
+    flex-direction: column;
+  }
+
+  .two-column mat-form-field {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+}
+/* Two-column layout */
+.two-column {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px; /* Space between rows */
+}
+
+.two-column mat-form-field {
+  width: 48%; /* Adjusted width for two columns */
+}
+
+/* Other existing styles... */
+.image-preview {
+  max-width: 100%; /* Adjust as needed */
+  height: auto; /* Maintain aspect ratio */
+  border: 1px solid #ccc; /* Optional border */
+  margin-top: 10px; /* Spacing from the button */
+  margin-bottom: 10px; /* Spacing from the button */
+}

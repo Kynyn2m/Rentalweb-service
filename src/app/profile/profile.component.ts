@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ProfileService } from './profile.service';  // Adjust path to your service
+import { ProfileService } from './profile.service'; // Adjust path to your service
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // To handle image sanitization
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateHouseDialogComponent } from './update-house-dialog/update-house-dialog.component';
+import { UpdateLandDialogComponent } from './update-land-dialog/update-land-dialog.component';
+import { UpdateRoomDialogComponent } from './update-room-dialog/update-room-dialog.component';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
   user: any = {
@@ -19,34 +21,33 @@ export class ProfileComponent implements OnInit {
     email: '',
     username: '',
     avatarUrl: '',
-    address: ''
+    address: '',
   };
   selectedFile: File | null = null;
   loading: boolean = true;
   error: string | null = null;
   imagePreview: SafeUrl | null = null;
-  houses: any[] = [];  // Store the list of user's houses
-  lands: any[] = [];   // Store the list of user's lands
+  houses: any[] = []; // Store the list of user's houses
+  lands: any[] = []; // Store the list of user's lands
   rooms: any[] = [];
 
   provinces: any[] = [];
-districts: any[] = [];
-communes: any[] = [];
-villages: any[] = [];
+  districts: any[] = [];
+  communes: any[] = [];
+  villages: any[] = [];
 
   constructor(
     private profileService: ProfileService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     public dialog: MatDialog
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.fetchProfile();
     this.fetchUserHouses();
     this.fetchUserLands();
     this.fetchUserRooms();
-
   }
 
   // Fetch profile details and load the user's avatar
@@ -55,7 +56,9 @@ villages: any[] = [];
       (response) => {
         if (response.code === 200) {
           this.user = response.result;
-          this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(this.user.avatarUrl); // Set the avatar
+          this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(
+            this.user.avatarUrl
+          ); // Set the avatar
         } else {
           this.error = 'Failed to fetch profile data';
         }
@@ -78,7 +81,9 @@ villages: any[] = [];
       // Create a preview URL using FileReader for the newly selected image
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(reader.result as string);
+        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(
+          reader.result as string
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -90,17 +95,17 @@ villages: any[] = [];
         title: 'Delete Land',
         message: 'Are you sure you want to delete this land?',
         confirmText: 'Yes',
-        cancelText: 'No'
-      }
+        cancelText: 'No',
+      },
     });
 
     // Check the result after the dialog closes
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         // If confirmed, proceed with deletion
         this.profileService.deleteLand(landId).subscribe(() => {
           // After successful deletion, update the UI by removing the deleted land
-          this.lands = this.lands.filter(land => land.id !== landId);
+          this.lands = this.lands.filter((land) => land.id !== landId);
         });
       }
     });
@@ -112,17 +117,17 @@ villages: any[] = [];
         title: 'Delete Room',
         message: 'Are you sure you want to delete this room?',
         confirmText: 'Yes',
-        cancelText: 'No'
-      }
+        cancelText: 'No',
+      },
     });
 
     // Check the result after the dialog closes
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         // If confirmed, proceed with deletion
         this.profileService.deleteRoom(roomId).subscribe(() => {
           // After successful deletion, update the UI by removing the deleted room
-          this.rooms = this.rooms.filter(room => room.id !== roomId);
+          this.rooms = this.rooms.filter((room) => room.id !== roomId);
         });
       }
     });
@@ -134,15 +139,15 @@ villages: any[] = [];
         title: 'Delete House',
         message: 'Are you sure you want to delete this house?',
         confirmText: 'Yes',
-        cancelText: 'No'
-      }
+        cancelText: 'No',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         // If confirmed, proceed to delete the house
         this.profileService.deleteHouse(houseId).subscribe(() => {
-          this.houses = this.houses.filter(house => house.id !== houseId);
+          this.houses = this.houses.filter((house) => house.id !== houseId);
         });
       }
     });
@@ -176,41 +181,49 @@ villages: any[] = [];
 
   // Fallback in case the avatar image fails to load
   onImageError(event: any): void {
-    event.target.src = '/assets/img/user.png';  // Fallback image path
+    event.target.src = '/assets/img/user.png'; // Fallback image path
   }
 
   // Cancel the profile update and reset changes
   cancelEdit(): void {
-    this.fetchProfile();  // Reload the original profile data
-    this.selectedFile = null;  // Clear the selected file
+    this.fetchProfile(); // Reload the original profile data
+    this.selectedFile = null; // Clear the selected file
   }
 
   // Fetch user's houses
   fetchUserHouses(): void {
-    this.profileService.getUserHouses().subscribe(response => {
+    this.profileService.getUserHouses().subscribe((response) => {
       if (response.code === 200) {
         this.houses = response.result.result;
-        this.houses.forEach(house => this.loadImage(house, 'house'));
+        this.houses.forEach((house) => this.loadImage(house, 'house'));
       }
     });
   }
-
-  // Fetch user's lands
-  fetchUserLands(): void {
-    this.profileService.getUserLands().subscribe(response => {
+  //Lands
+  fetchUserLand(): void {
+    this.profileService.getUserLands().subscribe((response) => {
       if (response.code === 200) {
         this.lands = response.result.result;
-        this.lands.forEach(land => this.loadImage(land, 'land'));
+        this.lands.forEach((land) => this.loadImage(land, 'land'));
+      }
+    });
+  }
+  // Fetch user's lands
+  fetchUserLands(): void {
+    this.profileService.getUserLands().subscribe((response) => {
+      if (response.code === 200) {
+        this.lands = response.result.result;
+        this.lands.forEach((land) => this.loadImage(land, 'land'));
       }
     });
   }
 
   // Fetch user's rooms
   fetchUserRooms(): void {
-    this.profileService.getUserRooms().subscribe(response => {
+    this.profileService.getUserRooms().subscribe((response) => {
       if (response.code === 200) {
         this.rooms = response.result.result;
-        this.rooms.forEach(room => this.loadImage(room, 'room'));
+        this.rooms.forEach((room) => this.loadImage(room, 'room'));
       }
     });
   }
@@ -225,16 +238,21 @@ villages: any[] = [];
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            item.safeImagePaths.push(safeUrl);  // Push sanitized URLs to the array
+            item.safeImagePaths.push(safeUrl); // Push sanitized URLs to the array
           },
           (error) => {
-            console.error(`Error loading ${type} image for item with ID: ${item.id || 'unknown'}`, error);
-            item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a placeholder if image loading fails
+            console.error(
+              `Error loading ${type} image for item with ID: ${
+                item.id || 'unknown'
+              }`,
+              error
+            );
+            item.safeImagePaths.push('/assets/img/default-placeholder.png'); // Add a placeholder if image loading fails
           }
         );
       });
     } else {
-      item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a single placeholder if no image exists
+      item.safeImagePaths.push('/assets/img/default-placeholder.png'); // Add a single placeholder if no image exists
     }
   }
 
@@ -255,21 +273,22 @@ villages: any[] = [];
       item.currentImageIndex = 0; // Loop back to the first image
     }
   }
-  updateHouse(houseId: number, houseData: any, selectedFile: File | null): void {
+
+  updateLand(landId: number, landData: any, selectedFile: File | null): void {
     const formData = new FormData();
-    formData.append('title', houseData.title);
-    formData.append('description', houseData.description);
-    formData.append('price', houseData.price);
-    formData.append('landSize', houseData.landSize);
-    formData.append('phoneNumber', houseData.phoneNumber);
-    formData.append('linkMap', houseData.linkMap);
-    formData.append('floor', houseData.floor);
-    formData.append('width', houseData.width);
-    formData.append('height', houseData.height);
-    formData.append('provinceId', houseData.provinceId);
-    formData.append('districtId', houseData.districtId);
-    formData.append('communeId', houseData.communeId);
-    formData.append('villageId', houseData.villageId);
+    formData.append('title', landData.title);
+    formData.append('description', landData.description);
+    formData.append('price', landData.price);
+    formData.append('landSize', landData.landSize);
+    formData.append('phoneNumber', landData.phoneNumber);
+    formData.append('linkMap', landData.linkMap);
+    formData.append('floor', landData.floor);
+    formData.append('width', landData.width);
+    formData.append('height', landData.height);
+    formData.append('provinceId', landData.provinceId);
+    formData.append('districtId', landData.districtId);
+    formData.append('communeId', landData.communeId);
+    formData.append('villageId', landData.villageId);
 
     // Append the image file if a new image is selected
     if (selectedFile) {
@@ -277,34 +296,56 @@ villages: any[] = [];
     }
 
     // Use ProfileService to send the update request
-    this.profileService.updateHouse(houseId, formData).subscribe(
+    this.profileService.updateLand(landId, formData).subscribe(
       (response) => {
-        console.log('House updated successfully:', response);
-        this.snackBar.open('House updated successfully', 'Close', { duration: 3000 });
-        this.fetchUserHouses(); // Refresh the house list after update
+        console.log('land updated successfully:', response);
+        this.snackBar.open('land updated successfully', 'Close', {
+          duration: 3000,
+        });
+        this.fetchUserLands(); // Refresh the house list after update
       },
       (error) => {
-        console.error('Error updating house:', error);
-        this.snackBar.open('Error updating house', 'Close', { duration: 3000 });
+        console.error('Error updating land:', error);
+        this.snackBar.open('Error updating land', 'Close', { duration: 3000 });
       }
     );
   }
 
-
   openUpdateDialog(house: any): void {
     const dialogRef = this.dialog.open(UpdateHouseDialogComponent, {
       width: '800px',
-      data: { houseData: house }
+      data: { houseData: house },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result && result.success) {
-
         this.fetchUserHouses();
       }
     });
   }
 
+  openUpdateLand(land: any): void {
+    const dialogRef = this.dialog.open(UpdateLandDialogComponent, {
+      width: '800px',
+      data: { landData: land },
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.success) {
+        this.fetchUserLands();
+      }
+    });
+  }
+  openUpdateRoom(room: any): void {
+    const dialogRef = this.dialog.open(UpdateRoomDialogComponent, {
+      width: '800px',
+      data: { roomData: room },
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.success) {
+        this.fetchUserLands();
+      }
+    });
+  }
 }
