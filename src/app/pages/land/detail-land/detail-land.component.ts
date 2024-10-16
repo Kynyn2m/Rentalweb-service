@@ -40,6 +40,9 @@ export class DetailLandComponent {
   districtName: string = '';
   communeName: string = '';
   villageName: string = '';
+  currentImage: SafeUrl | null = null;
+
+
   constructor(
     private sanitizer: DomSanitizer,
     private landService: LandService,
@@ -129,6 +132,7 @@ export class DetailLandComponent {
     });
   }
 
+
   loadImages(land: Land): void {
     if (land.imagePaths && land.imagePaths.length > 0) {
       land.safeImagePaths = [];
@@ -138,6 +142,9 @@ export class DetailLandComponent {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             land.safeImagePaths!.push(safeUrl);
+            if (!this.currentImage) {
+              this.currentImage = safeUrl; // Set the first image as the current image
+            }
           },
           (error) => {
             console.error('Error loading image:', error);
@@ -162,6 +169,27 @@ export class DetailLandComponent {
       this.land!.likeCount += 1;
     });
   }
+  previousImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.land.safeImagePaths[index - 1];
+      }
+    }
+  }
+
+  nextImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.land.safeImagePaths.length - 1) {
+        this.currentImage = this.land.safeImagePaths[index + 1];
+      }
+    }
+  }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
+  }
+
 
   goBack(): void {
     window.history.back();

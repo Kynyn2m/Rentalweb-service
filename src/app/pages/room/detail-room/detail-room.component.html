@@ -1,19 +1,34 @@
 <div class="details-container">
   <!-- Back Button with Material Icon -->
-  <button mat-button class="back-button" (click)="goBack()">
+  <button mat-button
+          class="back-button"
+          (click)="goBack()">
     <mat-icon>arrow_back</mat-icon> Back
   </button>
 
   <div class="details-card">
     <!-- Display all images -->
-    <div class="image-thumbnails">
-      <img
-        *ngFor="let image of room?.safeImagePaths"
-        [src]="image"
-        class="thumbnail"
-        (click)="openImageInFullScreen(image)"
-        alt="{{ room?.title }}"
-      />
+    <div class="gallery">
+      <!-- Main image -->
+      <div class="main-image">
+        <img [src]="currentImage"
+             alt="room Image" />
+        <!-- Navigation arrows -->
+        <button class="nav-left"
+                (click)="previousImage()">&#10094;</button>
+        <button class="nav-right"
+                (click)="nextImage()">&#10095;</button>
+      </div>
+
+      <!-- Thumbnail images -->
+      <div class="image-thumbnails">
+        <img *ngFor="let image of room?.safeImagePaths; let i = index"
+             [src]="image"
+             [class.selected]="currentImage === image"
+             (click)="selectImage(image)"
+             alt="{{ room?.title }}"
+             class="thumbnail" />
+      </div>
     </div>
 
     <div class="details-content">
@@ -32,29 +47,31 @@
         <p><strong>Floor:</strong> {{ room?.floor }}</p>
         <p>
           <strong>Map Link:</strong>
-          <a [href]="room?.linkMap" target="_blank">View on Map</a>
+          <a [href]="room?.linkMap"
+             target="_blank">View on Map</a>
         </p>
         <p><strong>Likes:</strong> {{ room?.likeCount }}</p>
         <p><strong>Views:</strong> {{ room?.viewCount }}</p>
       </div>
 
       <!-- Like Button with Material Icon (adjusted width) -->
-      <button
-        mat-raised-button
-        color="primary"
-        class="like-button"
-        (click)="likeRoom(room!.id!)"
-      >
+      <button mat-raised-button
+              color="primary"
+              class="like-button"
+              (click)="likeRoom(room!.id!)">
         <mat-icon>thumb_up</mat-icon> Like ({{ room?.likeCount }})
       </button>
     </div>
   </div>
 
   <!-- Full-screen modal -->
-  <div class="image-modal" *ngIf="selectedImage">
+  <div class="image-modal"
+       *ngIf="selectedImage">
     <div class="modal-content">
-      <img [src]="selectedImage" class="full-screen-image" />
-      <button mat-icon-button class="close-button">
+      <img [src]="selectedImage"
+           class="full-screen-image" />
+      <button mat-icon-button
+              class="close-button">
         <mat-icon>close</mat-icon>
       </button>
     </div>

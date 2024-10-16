@@ -40,6 +40,7 @@ export class DetailRoomComponent {
   districtName: string = '';
   communeName: string = '';
   villageName: string = '';
+  currentImage: SafeUrl | null = null;
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
@@ -78,6 +79,7 @@ export class DetailRoomComponent {
     );
   }
 
+
   loadImages(room: Room): void {
     if (room.imagePaths && room.imagePaths.length > 0) {
       room.safeImagePaths = [];
@@ -87,6 +89,9 @@ export class DetailRoomComponent {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             room.safeImagePaths!.push(safeUrl);
+            if (!this.currentImage) {
+              this.currentImage = safeUrl; // Set the first image as the current image
+            }
           },
           (error) => {
             console.error('Error loading image:', error);
@@ -160,6 +165,26 @@ export class DetailRoomComponent {
     this.roomService.likeRoom(roomId).subscribe(() => {
       this.room!.likeCount += 1;
     });
+  }
+  previousImage(): void {
+    if (this.room && this.room.safeImagePaths) {
+      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.room.safeImagePaths[index - 1];
+      }
+    }
+  }
+
+  nextImage(): void {
+    if (this.room && this.room.safeImagePaths) {
+      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.room.safeImagePaths.length - 1) {
+        this.currentImage = this.room.safeImagePaths[index + 1];
+      }
+    }
+  }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
   }
 
   goBack(): void {
