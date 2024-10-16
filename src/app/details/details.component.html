@@ -8,13 +8,29 @@
 
   <div class="details-card">
     <!-- Display all images -->
-    <div class="image-thumbnails">
-      <img *ngFor="let image of house?.safeImagePaths"
-           [src]="image"
-           class="thumbnail"
-           (click)="openImageInFullScreen(image)"
-           alt="{{ house?.title }}" />
+    <div class="gallery">
+      <!-- Main image -->
+      <div class="main-image">
+        <img [src]="currentImage"
+             alt="House Image" />
+        <!-- Navigation arrows -->
+        <button class="nav-left"
+                (click)="previousImage()">&#10094;</button>
+        <button class="nav-right"
+                (click)="nextImage()">&#10095;</button>
+      </div>
+
+      <!-- Thumbnail images -->
+      <div class="image-thumbnails">
+        <img *ngFor="let image of house?.safeImagePaths; let i = index"
+             [src]="image"
+             [class.selected]="currentImage === image"
+             (click)="selectImage(image)"
+             alt="{{ house?.title }}"
+             class="thumbnail" />
+      </div>
     </div>
+
 
     <div class="details-content">
       <h2>{{ house?.title }}</h2>
