@@ -5,6 +5,9 @@ import { HouseUpdateDialogComponent } from '../house-update-dialog/house-update-
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmComponent } from 'src/app/components/confirm/confirm.component';
+import { PaggingModel } from 'src/app/_helpers/response-model';
+import { environment } from 'src/environments/environment';
+import { PageEvent } from '@angular/material/paginator';
 
 interface House {
   id: number;
@@ -16,8 +19,8 @@ interface House {
   height: number;
   floor: number;
   phoneNumber: string;
-  imagePath: string;
-  safeImagePath?: SafeUrl; // Safe image URL after sanitization
+  imagePaths: string[];
+  safeImagePath?: SafeUrl;
   likeCount: number;
   linkMap: string;
   viewCount: number;
@@ -32,6 +35,12 @@ interface House {
 export class HouseListComponent implements OnInit {
   displayedColumns: string[] = ['image', 'title', 'location', 'price', 'width', 'height', 'floor', 'likeCount', 'viewCount', 'createdAt','actions'];
   houses: House[] = [];
+  loading: boolean = true;
+  pagingModel?: PaggingModel;
+  size = environment.pageSize;
+  pageSizeOptions: number[] = environment.pageSizeOptions;
+  currentPage = 0;
+  page = environment.currentPage;
 
   constructor(
     private houseService: HouseService,
@@ -45,27 +54,48 @@ export class HouseListComponent implements OnInit {
   }
 
   fetchHouses(): void {
-    this.houseService.getHouses().subscribe(response => {
-      if (response.code === 200) {
-        this.houses = response.result.result as House[];
-        this.houses.forEach(house => this.loadImage(house)); // Load and sanitize images
+    this.loading = true; // Start loading
+    this.houseService.getHouses().subscribe(
+      response => {
+        if (response.code === 200) {
+          this.houses = response.result.result as House[];
+          this.houses.forEach(house => this.loadImage(house));
+        }
+        this.loading = false; // Stop loading after fetch
+      },
+      error => {
+        console.error('Error fetching house data', error);
+        this.loading = false; // Stop loading on error
       }
-    }, error => {
-      console.error('Error fetching house data', error);
-    });
+    );
   }
-
+  pageChanged(event: PageEvent): void {
+    this.size = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.fetchHouses();
+  }
   loadImage(house: House): void {
-    this.houseService.getImage(house.imagePath).subscribe(
+    if (!house.imagePaths || house.imagePaths.length === 0) {
+      console.error('No image paths available for house:', house);
+      return;
+    }
+
+    const firstImagePath = house.imagePaths[0]; // Use the first image for display
+
+    this.houseService.getImage(firstImagePath).subscribe(
       (imageBlob) => {
         const objectURL = URL.createObjectURL(imageBlob);
         house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        console.log('Image loaded:', house.safeImagePath);
       },
       (error) => {
         console.error('Error loading image:', error);
       }
     );
   }
+
+
+
   openDeleteDialog(house: House): void {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '400px',
@@ -102,7 +132,7 @@ export class HouseListComponent implements OnInit {
       width: '600px',
       data: {
         ...house,
-        imagePath: house.imagePath // Ensure the correct imagePath is passed
+        imagePath: house.imagePaths // Ensure the correct imagePath is passed
       }
     });
 
