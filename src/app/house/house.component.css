@@ -756,6 +756,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  justify-content: center;
 }
 
 .search-button-container {

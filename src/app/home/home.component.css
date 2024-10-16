@@ -101,7 +101,7 @@
 }
 
 .content-container {
-  width: 90%;
+  width: 60%;
   margin: 0 auto;
 }
 
@@ -110,13 +110,7 @@ h2 {
   padding: 1.5rem;
 }
 
-.card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 20px;
-  margin: 20px 0;
-}
+
 
 mat-card {
   border-radius: 10px;
@@ -254,7 +248,7 @@ img {
 }
 
 .content-container {
-  width: 80%;
+  width: 60%;
   margin: 0 auto;
 }
 
@@ -264,12 +258,14 @@ h2 {
 }
 
 .card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  row-gap: 1rem;
   gap: 20px;
   margin: 20px 0;
 }
+
 
 mat-card {
   border-radius: 10px;
@@ -877,6 +873,7 @@ button[disabled] {
 }
 
 mat-card {
+  width: 100%;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -951,10 +948,14 @@ h3 {
   background-color: rgba(0, 0, 0, 0.8);
 }
 .loading-spinner{
-  width: 100px;
-  padding: 9rem;
+    right: 0;
+    left: 0;
+    height: 200px;
+    padding-top: 30vh;
+    text-align: center;
+}
+mat-spinner{
   margin: auto;
-  color: #f96507 !important;
 }
 mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic{
   stroke: #f96507 !important;
