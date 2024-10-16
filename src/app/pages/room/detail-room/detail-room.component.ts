@@ -81,6 +81,7 @@ export class DetailRoomComponent {
     );
   }
 
+
   loadImages(room: Room): void {
     if (room.imagePaths && room.imagePaths.length > 0) {
       room.safeImagePaths = [];
@@ -169,6 +170,26 @@ export class DetailRoomComponent {
         this.room!.pending = false; // Reset pending state even on error
       });
     }
+  }
+  previousImage(): void {
+    if (this.room && this.room.safeImagePaths) {
+      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.room.safeImagePaths[index - 1];
+      }
+    }
+  }
+
+  nextImage(): void {
+    if (this.room && this.room.safeImagePaths) {
+      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.room.safeImagePaths.length - 1) {
+        this.currentImage = this.room.safeImagePaths[index + 1];
+      }
+    }
+  }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
   }
   previousImage(): void {
     if (this.room && this.room.safeImagePaths) {

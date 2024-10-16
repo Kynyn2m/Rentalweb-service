@@ -48,7 +48,6 @@ export class DetailLandComponent {
   communeName: string = '';
   villageName: string = '';
   currentImage: SafeUrl | null = null;
-
   constructor(
     private sanitizer: DomSanitizer,
     private landService: LandService,
@@ -191,6 +190,27 @@ export class DetailLandComponent {
   selectImage(image: SafeUrl): void {
     this.currentImage = image;
   }
+  previousImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.land.safeImagePaths[index - 1];
+      }
+    }
+  }
+
+  nextImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.land.safeImagePaths.length - 1) {
+        this.currentImage = this.land.safeImagePaths[index + 1];
+      }
+    }
+  }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
+  }
+
 
   goBack(): void {
     window.history.back();
