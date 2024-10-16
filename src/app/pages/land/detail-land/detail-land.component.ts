@@ -170,26 +170,9 @@ export class DetailLandComponent {
       });
     }
   }
-  previousImage(): void {
-    if (this.land && this.land.safeImagePaths) {
-      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
-      if (index > 0) {
-        this.currentImage = this.land.safeImagePaths[index - 1];
-      }
-    }
-  }
 
-  nextImage(): void {
-    if (this.land && this.land.safeImagePaths) {
-      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
-      if (index < this.land.safeImagePaths.length - 1) {
-        this.currentImage = this.land.safeImagePaths[index + 1];
-      }
-    }
-  }
-  selectImage(image: SafeUrl): void {
-    this.currentImage = image;
-  }
+
+
   previousImage(): void {
     if (this.land && this.land.safeImagePaths) {
       const index = this.land.safeImagePaths.indexOf(this.currentImage!);
