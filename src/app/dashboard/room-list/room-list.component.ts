@@ -5,6 +5,9 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { RoomService } from 'src/app/Service/room.service';
 import { RoomFormComponent } from './room-form/room-form.component';
 import { ConfirmComponent } from 'src/app/components/confirm/confirm.component';
+import { PaggingModel } from 'src/app/_helpers/response-model';
+import { environment } from 'src/environments/environment';
+import { PageEvent } from '@angular/material/paginator';
 interface Room {
   id: number;
   title: string;
@@ -15,8 +18,8 @@ interface Room {
   height: number;
   floor: number;
   phoneNumber: string;
-  imagePath: string;
-  safeImagePath?: SafeUrl; // Safe image URL after sanitization
+  imagePaths: string[];
+  safeImagePath?: SafeUrl;
   likeCount: number;
   linkMap: string;
   viewCount: number;
@@ -42,7 +45,12 @@ export class RoomListComponent {
     'actions',
   ];
   room: Room[] = [];
-
+  loading: boolean = true;
+  pagingModel?: PaggingModel;
+  size = environment.pageSize;
+  pageSizeOptions: number[] = environment.pageSizeOptions;
+  currentPage = 0;
+  page = environment.currentPage;
   constructor(
     private roomService: RoomService,
     private sanitizer: DomSanitizer,
@@ -55,74 +63,89 @@ export class RoomListComponent {
   }
 
   fetchRoom(): void {
+    this.loading = true; // Start loading
     this.roomService.getRooms().subscribe(
-      (response) => {
+      response => {
         if (response.code === 200) {
           this.room = response.result.result as Room[];
-          this.room.forEach((room) => this.loadImage(room)); // Load and sanitize images
+          this.room.forEach(room => this.loadImage(room));
         }
+        this.loading = false; // Stop loading after fetch
       },
-      (error) => {
+      error => {
         console.error('Error fetching room data', error);
+        this.loading = false; // Stop loading on error
       }
     );
   }
-
+  pageChanged(event: PageEvent): void {
+    this.size = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.fetchRoom();
+  }
   loadImage(room: Room): void {
-    this.roomService.getImage(room.imagePath).subscribe(
+    if (!room.imagePaths || room.imagePaths.length === 0) {
+      console.error('No image paths available for room:', room);
+      return;
+    }
+
+    const firstImagePath = room.imagePaths[0]; // Use the first image for display
+
+    this.roomService.getImage(firstImagePath).subscribe(
       (imageBlob) => {
         const objectURL = URL.createObjectURL(imageBlob);
         room.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        console.log('Image loaded:', room.safeImagePath);
       },
       (error) => {
         console.error('Error loading image:', error);
       }
     );
   }
+
+
+
   openDeleteDialog(room: Room): void {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '400px',
       data: {
-        title: 'Delete Room',
+        title: 'Delete House',
         message: `Are you sure you want to delete the room: ${room.title}?`,
         confirmText: 'Yes, Delete',
-        cancelText: 'Cancel',
-      },
+        cancelText: 'Cancel'
+      }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        this.deleteRoom(room);
+        this.deleteHouse(room);
       }
     });
   }
-  deleteRoom(room: Room): void {
+
+  // Handle room deletion
+  deleteHouse(room: Room): void {
     this.roomService.deleteRoom(room.id).subscribe(
       (response) => {
-        this.snackBar.open(`${room.title} has been deleted.`, 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open(`${room.title} has been deleted.`, 'Close', { duration: 3000 });
         this.fetchRoom(); // Refresh the list after deletion
       },
       (error) => {
         console.error('Error deleting room:', error);
-        this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', { duration: 3000 });
       }
     );
   }
-
   openUpdateDialog(room: Room): void {
     const dialogRef = this.dialog.open(RoomFormComponent, {
       width: '600px',
       data: {
         ...room,
-        imagePath: room.imagePath, // Ensure the correct imagePath is passed
-      },
+        imagePath: room.imagePaths // Ensure the correct imagePath is passed
+      }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.fetchRoom();
       }
