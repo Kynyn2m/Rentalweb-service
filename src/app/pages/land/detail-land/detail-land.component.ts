@@ -9,6 +9,13 @@ import { VillageService } from 'src/app/address/village.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 interface Land {
   id: number;
+  likeCount: number;
+  liked: boolean;
+  // Add the pending flag
+  pending?: boolean;
+}
+interface Land {
+  id: number;
   title: string;
   description: string;
   location: string;
@@ -41,8 +48,6 @@ export class DetailLandComponent {
   communeName: string = '';
   villageName: string = '';
   currentImage: SafeUrl | null = null;
-
-
   constructor(
     private sanitizer: DomSanitizer,
     private landService: LandService,
@@ -67,12 +72,7 @@ export class DetailLandComponent {
         this.land = response.result as Land;
         if (this.land) {
           this.loadImages(this.land);
-          this.fetchLocationDetails(
-            this.land.province,
-            this.land.district,
-            this.land.commune,
-            this.land.village
-          );
+          this.fetchLocationDetails(this.land.province, this.land.district, this.land.commune, this.land.village);
         }
       },
       (error) => {
@@ -80,58 +80,6 @@ export class DetailLandComponent {
       }
     );
   }
-
-  fetchLocationDetails(
-    provinceId: number,
-    districtId: number,
-    communeId: number,
-    villageId: number
-  ): void {
-    // Fetch province name
-    this.districtService.getProvincesPublic().subscribe((res) => {
-      const province = res.result.find((p: any) => p.id === provinceId);
-      this.provinceName = province
-        ? province.khmerName || province.englishName
-        : 'Unknown Province';
-
-      // Manually trigger change detection after setting the value
-      this.cdr.detectChanges();
-    });
-
-    // Fetch district name
-    this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
-      const district = res.result.find((d: any) => d.id === districtId);
-      this.districtName = district
-        ? district.khmerName || district.englishName
-        : 'Unknown District';
-
-      // Manually trigger change detection after setting the value
-      this.cdr.detectChanges();
-    });
-
-    // Fetch commune name
-    this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
-      const commune = res.result.find((c: any) => c.id === communeId);
-      this.communeName = commune
-        ? commune.khmerName || commune.englishName
-        : 'Unknown Commune';
-
-      // Manually trigger change detection after setting the value
-      this.cdr.detectChanges();
-    });
-
-    // Fetch village name
-    this.villageService.getByCommunePublic(communeId).subscribe((res) => {
-      const village = res.result.find((v: any) => v.id === villageId);
-      this.villageName = village
-        ? village.khmerName || village.englishName
-        : 'Unknown Village';
-
-      // Manually trigger change detection after setting the value
-      this.cdr.detectChanges();
-    });
-  }
-
 
   loadImages(land: Land): void {
     if (land.imagePaths && land.imagePaths.length > 0) {
@@ -154,7 +102,45 @@ export class DetailLandComponent {
     }
   }
 
-  // Open the image in the full-screen dialog
+
+  fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
+    // Fetch province name
+    this.districtService.getProvincesPublic().subscribe((res) => {
+      const province = res.result.find((p: any) => p.id === provinceId);
+      this.provinceName = province ? province.khmerName || province.englishName : 'Unknown Province';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch district name
+    this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
+      const district = res.result.find((d: any) => d.id === districtId);
+      this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch commune name
+    this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
+      const commune = res.result.find((c: any) => c.id === communeId);
+      this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch village name
+    this.villageService.getByCommunePublic(communeId).subscribe((res) => {
+      const village = res.result.find((v: any) => v.id === villageId);
+      this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+  }
+
   openImageInFullScreen(image: SafeUrl): void {
     this.dialog.open(ImageDialogComponent, {
       data: { image },
@@ -163,11 +149,46 @@ export class DetailLandComponent {
   }
 
   likeLand(landId: number): void {
-    if (!this.land) return;
+    if (!this.land || this.land.pending) return; // Ensure no pending request or null land
 
-    this.landService.likeLand(landId).subscribe(() => {
-      this.land!.likeCount += 1;
-    });
+    this.land.pending = true; // Set the pending state to prevent multiple clicks
+
+    if (this.land.liked) {
+      // Simulate "unlike" (no API call here)
+      this.land.likeCount -= 1;
+      this.land.liked = false;
+      this.land.pending = false; // Reset pending state after local unlike
+    } else {
+      // Call the like API
+      this.landService.likeLand(landId).subscribe(() => {
+        this.land!.likeCount += 1;  // Increment the like count
+        this.land!.liked = true;    // Set liked state to true
+        this.land!.pending = false; // Reset pending state after API call
+      }, () => {
+        // Handle error case
+        this.land!.pending = false; // Reset pending state even on error
+      });
+    }
+  }
+  previousImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.land.safeImagePaths[index - 1];
+      }
+    }
+  }
+
+  nextImage(): void {
+    if (this.land && this.land.safeImagePaths) {
+      const index = this.land.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.land.safeImagePaths.length - 1) {
+        this.currentImage = this.land.safeImagePaths[index + 1];
+      }
+    }
+  }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
   }
   previousImage(): void {
     if (this.land && this.land.safeImagePaths) {
