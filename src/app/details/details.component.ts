@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HouseService } from '../Service/house.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -7,6 +7,15 @@ import { ImageDialogComponent } from './image-dialog.component';
 import { DistrictService } from '../address/district.service';
 import { CommuneService } from '../address/commune.service';
 import { VillageService } from '../address/village.service';
+
+interface House {
+  id: number;
+  likeCount: number;
+  liked: boolean;
+  // Add the pending flag
+  pending?: boolean;
+}
+
 
 interface House {
   id: number;
@@ -28,8 +37,6 @@ interface House {
   district: number;
   commune: number;
   village: number;
-  liked: boolean;
-  pending?: boolean;
 }
 
 @Component({
@@ -54,7 +61,7 @@ export class DetailsComponent implements OnInit {
     private districtService: DistrictService,
     private communeService: CommuneService,
     private villageService: VillageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -70,12 +77,7 @@ export class DetailsComponent implements OnInit {
         this.house = response.result as House;
         if (this.house) {
           this.loadImages(this.house);
-          this.fetchLocationDetails(
-            this.house.province,
-            this.house.district,
-            this.house.commune,
-            this.house.village
-          );
+          this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
         }
       },
       (error) => {
@@ -105,10 +107,74 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  selectImage(image: SafeUrl): void {
-    this.currentImage = image;
+
+  fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
+    // Fetch province name
+    this.districtService.getProvincesPublic().subscribe((res) => {
+      const province = res.result.find((p: any) => p.id === provinceId);
+      this.provinceName = province ? province.khmerName || province.englishName : 'Unknown Province';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch district name
+    this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
+      const district = res.result.find((d: any) => d.id === districtId);
+      this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch commune name
+    this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
+      const commune = res.result.find((c: any) => c.id === communeId);
+      this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
+
+    // Fetch village name
+    this.villageService.getByCommunePublic(communeId).subscribe((res) => {
+      const village = res.result.find((v: any) => v.id === villageId);
+      this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
+
+      // Manually trigger change detection after setting the value
+      this.cdr.detectChanges();
+    });
   }
 
+  openImageInFullScreen(image: SafeUrl): void {
+    this.dialog.open(ImageDialogComponent, {
+      data: { image },
+      panelClass: 'full-screen-modal',
+    });
+  }
+
+  likeHouse(houseId: number): void {
+    if (!this.house || this.house.pending) return; // Ensure no pending request or null house
+
+    this.house.pending = true; // Set the pending state to prevent multiple clicks
+
+    if (this.house.liked) {
+      // Simulate "unlike" (no API call here)
+      this.house.likeCount -= 1;
+      this.house.liked = false;
+      this.house.pending = false; // Reset pending state after local unlike
+    } else {
+      // Call the like API
+      this.houseService.likeHouse(houseId).subscribe(() => {
+        this.house!.likeCount += 1;  // Increment the like count
+        this.house!.liked = true;    // Set liked state to true
+        this.house!.pending = false; // Reset pending state after API call
+      }, () => {
+        // Handle error case
+        this.house!.pending = false; // Reset pending state even on error
+      });
+    }
+  }
   previousImage(): void {
     if (this.house && this.house.safeImagePaths) {
       const index = this.house.safeImagePaths.indexOf(this.currentImage!);
@@ -126,45 +192,8 @@ export class DetailsComponent implements OnInit {
       }
     }
   }
-
-  openImageInFullScreen(image: SafeUrl): void {
-    this.dialog.open(ImageDialogComponent, {
-      data: { image },
-      panelClass: 'full-screen-modal',
-    });
-  }
-
-  fetchLocationDetails(
-    provinceId: number,
-    districtId: number,
-    communeId: number,
-    villageId: number
-  ): void {
-    // Fetch location details logic
-    // ...
-  }
-
-  likeHouse(houseId: number): void {
-    if (!this.house || this.house.pending) return;
-
-    this.house.pending = true;
-
-    if (this.house.liked) {
-      this.house.likeCount -= 1;
-      this.house.liked = false;
-      this.house.pending = false;
-    } else {
-      this.houseService.likeHouse(houseId).subscribe(
-        () => {
-          this.house!.likeCount += 1;
-          this.house!.liked = true;
-          this.house!.pending = false;
-        },
-        () => {
-          this.house!.pending = false;
-        }
-      );
-    }
+  selectImage(image: SafeUrl): void {
+    this.currentImage = image;
   }
 
   goBack(): void {
