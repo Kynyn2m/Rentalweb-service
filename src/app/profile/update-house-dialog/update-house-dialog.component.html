@@ -125,15 +125,21 @@
            [(ngModel)]="houseData.linkMap">
   </mat-form-field>
 
-  <!-- Image Upload -->
-  <div class="full-width">
-    <label for="fileInput"
-           class="file-label">Upload Images</label>
-    <input id="fileInput"
-           type="file"
-           (change)="onFilesSelected($event)"
-           multiple />
-  </div>
+  <mat-card class="file-upload-card">
+    <mat-card-content>
+      <div class="file-upload-container">
+        <label for="fileInput"
+               class="file-upload-label">
+          <mat-icon>cloud_upload</mat-icon>
+          Upload Images
+        </label>
+        <input id="fileInput"
+               type="file"
+               (change)="onFilesSelected($event)"
+               multiple />
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <!-- Display loaded images with cancel option -->
   <div class="image-preview-wrapper"

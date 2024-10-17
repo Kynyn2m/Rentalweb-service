@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // Import SafeUrl
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
@@ -65,7 +64,7 @@ export class UpdateHouseDialogComponent implements OnInit {
 
     // If there's an image, sanitize and display the first one as a preview
     if (this.houseData.imagePaths && this.houseData.imagePaths.length > 0) {
-      this.loadImage(this.houseData, 'house'); // Use 'house' as the type
+      this.loadImages(this.houseData.imagePaths); // Load and sanitize image paths
     }
   }
 
@@ -145,48 +144,43 @@ export class UpdateHouseDialogComponent implements OnInit {
     }
   }
 
-  loadImage(item: any, type: string): void {
-    item.safeImagePaths = []; // Initialize an array for sanitized image URLs
-    item.currentImageIndex = 0; // Start showing the first image
+  loadImages(imagePaths: string[]): void {
+    this.imagePreviews = []; // Clear existing previews
+    imagePaths.forEach((imagePath) => {
+      this.houseService.getImage(imagePath).subscribe(
+        (imageBlob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.imagePreviews.push(safeUrl);  // Push sanitized URLs to the array
+        },
+        (error) => {
+          console.error('Error loading image:', error);
+          this.imagePreviews.push(this.sanitizer.bypassSecurityTrustUrl('/assets/img/default-placeholder.png'));  // Add a placeholder if image loading fails
+        }
+      );
+    });
+  }
 
-    // Loop through the array of imagePaths and sanitize each one
-    if (item.imagePaths && item.imagePaths.length > 0) {
-      item.imagePaths.forEach((imagePath: string) => {
-        this.houseService.getImage(imagePath).subscribe(
-          (imageBlob) => {
-            const objectURL = URL.createObjectURL(imageBlob);
-            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            item.safeImagePaths.push(safeUrl);  // Push sanitized URLs to the array
-          },
-          (error) => {
-            console.error(`Error loading ${type} image for item with ID: ${item.id || 'unknown'}`, error);
-            item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a placeholder if image loading fails
-          }
-        );
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        this.selectedFiles.push(file as File); // Add each file to the selectedFiles array
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target.result);
+          this.imagePreviews.push(previewUrl); // Add preview to the imagePreviews array
+        };
+        reader.readAsDataURL(file as File);
       });
-    } else {
-      item.safeImagePaths.push('/assets/img/default-placeholder.png');  // Add a placeholder if no image exists
     }
   }
 
-
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file; // Store the selected file
-      console.log('Selected file:', this.selectedFile); // Log the selected file
-
-      // Handle file preview logic
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagePreview = e.target.result;
-        console.log('Image preview:', this.imagePreview); // Log the image preview
-      };
-      reader.readAsDataURL(file);
-    }
+  // Cancel (remove) image preview and selected file
+  cancelImage(index: number): void {
+    this.selectedFiles.splice(index, 1);  // Remove the file from the array
+    this.imagePreviews.splice(index, 1);  // Remove the preview from the array
   }
-
-
 
   save(): void {
     // Prepare the house data to be sent to the API
@@ -218,7 +212,6 @@ export class UpdateHouseDialogComponent implements OnInit {
       formData.append('images', file);  // Append each selected file
     }
 
-
     // Call the updateHouse method from the house service
     this.houseService.updateHouse(this.houseData.id, formData).subscribe(
       (response) => {
@@ -235,26 +228,6 @@ export class UpdateHouseDialogComponent implements OnInit {
         });
       }
     );
-  }
-  onFilesSelected(event: any): void {
-    const files: FileList = event.target.files;
-    if (files) {
-      Array.from(files).forEach((file) => {
-        this.selectedFiles.push(file as File); // Add each file to the selectedFiles array
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target.result);
-          this.imagePreviews.push(previewUrl); // Add preview to the imagePreviews array
-        };
-        reader.readAsDataURL(file as File);
-      });
-    }
-  }
-
-  // Cancel (remove) image preview and selected file
-  cancelImage(index: number): void {
-    this.selectedFiles.splice(index, 1);  // Remove the file from the array
-    this.imagePreviews.splice(index, 1);  // Remove the preview from the array
   }
 
   cancel(): void {
