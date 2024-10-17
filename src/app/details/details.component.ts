@@ -15,6 +15,30 @@ interface House {
   // Add the pending flag
   pending?: boolean;
 }
+interface Location {
+  id: number;
+  englishName: string;
+  khmerName: string;
+}
+
+interface ApiResponse<T> {
+  code: number;
+  message: string;
+  result: {
+    totalPage: number;
+    totalElements: number;
+    currentPage: number;
+    result: T[];
+  };
+}
+interface PaggingModel<T> {
+  totalPage: number;
+  totalElements: number;
+  currentPage: number;
+  result: T[];
+}
+
+
 
 
 interface House {
@@ -54,14 +78,14 @@ export class DetailsComponent implements OnInit {
   currentImage: SafeUrl | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private houseService: HouseService,
-    private dialog: MatDialog,
-    private districtService: DistrictService,
-    private communeService: CommuneService,
-    private villageService: VillageService,
-    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+    private readonly route: ActivatedRoute,
+    private readonly sanitizer: DomSanitizer,
+    private readonly houseService: HouseService,
+    private readonly dialog: MatDialog,
+    private readonly districtService: DistrictService,
+    private readonly communeService: CommuneService,
+    private readonly villageService: VillageService,
+    private readonly cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +120,7 @@ export class DetailsComponent implements OnInit {
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             house.safeImagePaths!.push(safeUrl);
             if (!this.currentImage) {
-              this.currentImage = safeUrl; // Set the first image as the current image
+              this.currentImage = safeUrl;
             }
           },
           (error) => {
@@ -107,44 +131,57 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-
   fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
-    // Fetch province name
     this.districtService.getProvincesPublic().subscribe((res) => {
-      const province = res.result.find((p: any) => p.id === provinceId);
-      this.provinceName = province ? province.khmerName || province.englishName : 'Unknown Province';
+      const paginatedResponse = res as PaggingModel<Location>;
+      const provinceIdNumber = Number(provinceId); // Convert provinceId to a number
 
-      // Manually trigger change detection after setting the value
+      const province = Array.isArray(paginatedResponse.result) ?
+        paginatedResponse.result.find((p) => p.id === provinceIdNumber) : null; // Compare as numbers
+      // console.log("res", res);
+
+
+
+      // console.log('Province ID:', provinceIdNumber); // Log the ID
+      // console.log('Provinces array:', paginatedResponse.result); // Log the provinces array
+      // console.log('Found province:', province); // Log the found province
+      // console.log('Province Khmer Name:', province ? province.khmerName : 'Not Found'); // Log the Khmer name
+
+      console.log('province response:', province);
+
+
+      this.provinceName = province ? (province.khmerName || province.englishName) : 'Unknown Province';
       this.cdr.detectChanges();
     });
 
-    // Fetch district name
     this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
-      const district = res.result.find((d: any) => d.id === districtId);
+      console.log('Districts response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const district = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((d) => d.id === districtId) : null;
       this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
-
-      // Manually trigger change detection after setting the value
       this.cdr.detectChanges();
     });
 
-    // Fetch commune name
     this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
-      const commune = res.result.find((c: any) => c.id === communeId);
+      console.log('Communes response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const commune = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((c) => c.id === communeId) : null;
       this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
-
-      // Manually trigger change detection after setting the value
       this.cdr.detectChanges();
     });
 
-    // Fetch village name
     this.villageService.getByCommunePublic(communeId).subscribe((res) => {
-      const village = res.result.find((v: any) => v.id === villageId);
+      console.log('Villages response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const village = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((v) => v.id === villageId) : null;
       this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
-
-      // Manually trigger change detection after setting the value
       this.cdr.detectChanges();
     });
   }
+
+
+
+
 
   openImageInFullScreen(image: SafeUrl): void {
     this.dialog.open(ImageDialogComponent, {
@@ -154,24 +191,24 @@ export class DetailsComponent implements OnInit {
   }
 
   likeHouse(houseId: number): void {
-    if (!this.house || this.house.pending) return; // Ensure no pending request or null house
+    if (!this.house || this.house.pending) return;
 
-    this.house.pending = true; // Set the pending state to prevent multiple clicks
+    this.house.pending = true;
 
     if (this.house.liked) {
-      // Simulate "unlike" (no API call here)
+
       this.house.likeCount -= 1;
       this.house.liked = false;
-      this.house.pending = false; // Reset pending state after local unlike
+      this.house.pending = false;
     } else {
-      // Call the like API
+
       this.houseService.likeHouse(houseId).subscribe(() => {
-        this.house!.likeCount += 1;  // Increment the like count
-        this.house!.liked = true;    // Set liked state to true
-        this.house!.pending = false; // Reset pending state after API call
+        this.house!.likeCount += 1;
+        this.house!.liked = true;
+        this.house!.pending = false;
       }, () => {
-        // Handle error case
-        this.house!.pending = false; // Reset pending state even on error
+
+        this.house!.pending = false;
       });
     }
   }

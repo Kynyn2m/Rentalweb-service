@@ -2,6 +2,9 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommuneService } from 'src/app/address/commune.service';
+import { DistrictService } from 'src/app/address/district.service';
+import { VillageService } from 'src/app/address/village.service';
 import { HouseService } from 'src/app/Service/house.service';
 
 @Component({
@@ -15,42 +18,144 @@ export class HouseUpdateDialogComponent implements OnInit {
   imagePreview: string | null = null;
   existingImage: string | null = null;
 
+
+  provinces: any[] = [];
+  districts: any[] = [];
+  communes: any[] = [];
+  villages: any[] = [];
+
+  provinceId_c: number | null = null;
+  districtId_c: number | null = null;
+  communeId_c: number | null = null;
+  villageId_c: number | null = null;
+
+
   constructor(
     private fb: FormBuilder,
     private houseService: HouseService,
     private cd: ChangeDetectorRef,
     private snackBar: MatSnackBar,
     public dialogRef: MatDialogRef<HouseUpdateDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private districtService: DistrictService,
+    private communeService: CommuneService,
+    private villageService: VillageService,
+    private cdr: ChangeDetectorRef
   ) {
     // Initialize the form with the passed-in house data
     this.houseForm = this.fb.group({
       title: [data.title || '', Validators.required],
       description: [data.description || '', Validators.required],
-      location: [data.location || '', Validators.required],
       price: [data.price || '', Validators.required],
       landSize: [data.landSize || '', Validators.required],
       phoneNumber: [data.phoneNumber || '', Validators.required],
       linkMap: [data.linkMap || '', Validators.required],
       floor: [data.floor || '', Validators.required],
       width: [data.width || '', Validators.required],
-      height: [data.height || '', Validators.required]
+      height: [data.height || '', Validators.required],
+      provinceId: [data.provinceId || '', Validators.required],
+      districtId: [data.districtId || '', Validators.required],
+      communeId: [data.communeId || '', Validators.required],
+      villageId: [data.villageId || '', Validators.required]
     });
+    this.loadProvinces();
   }
 
   ngOnInit(): void {
+    // Initialize form with house data
     this.houseForm = this.fb.group({
       title: [this.data.title || '', Validators.required],
       description: [this.data.description || '', Validators.required],
-      location: [this.data.location || '', Validators.required],
       price: [this.data.price || '', Validators.required],
-      landSize: [this.data.landSize || ''],  // Remove Validators.required
+      landSize: [this.data.landSize || ''],
       phoneNumber: [this.data.phoneNumber || '', Validators.required],
       linkMap: [this.data.linkMap || '', Validators.required],
       floor: [this.data.floor || '', Validators.required],
       width: [this.data.width || '', Validators.required],
       height: [this.data.height || '', Validators.required],
+      provinceId: [this.data.province || null, Validators.required],
+      districtId: [this.data.district || null, Validators.required],
+      communeId: [this.data.commune || null, Validators.required],
+      villageId: [this.data.village || null, Validators.required]
     });
+
+
+    // Fetch provinces
+    this.loadProvinces();
+  }
+  loadProvinces() {
+    this.districtService.getProvincesPublic().subscribe(
+      (res) => {
+        this.provinces = res.result.result || [];
+        this.cdr.detectChanges();
+
+        // If province is already selected, load districts
+        if (this.houseForm.get('provinceId')?.value) {
+          this.onProvinceSelected(this.houseForm.get('provinceId')?.value);
+        }
+      },
+      (error) => {
+        console.error('Error fetching provinces:', error);
+      }
+    );
+  }
+
+  // Load districts based on selected province
+  onProvinceSelected(provinceId: number) {
+    this.provinceId_c = provinceId;
+    this.districtService.getByProvincePublic(provinceId).subscribe(
+      (res) => {
+        this.districts = res.result || [];
+        this.communes = [];
+        this.villages = [];
+        this.houseForm.patchValue({ districtId: null, communeId: null, villageId: null });
+        this.cdr.detectChanges();
+
+        // If district is already selected, load communes
+        if (this.houseForm.get('districtId')?.value) {
+          this.onDistrictSelected(this.houseForm.get('districtId')?.value);
+        }
+      },
+      (error) => {
+        console.error('Error fetching districts:', error);
+      }
+    );
+  }
+
+  // Load communes based on selected district
+  onDistrictSelected(districtId: number) {
+    this.districtId_c = districtId;
+    this.communeService.getByDistrictPublic(districtId).subscribe(
+      (res) => {
+        this.communes = res.result || [];
+        this.villages = [];
+        this.houseForm.patchValue({ communeId: null, villageId: null });
+        this.cdr.detectChanges();
+
+        // If commune is already selected, load villages
+        if (this.houseForm.get('communeId')?.value) {
+          this.onCommuneSelected(this.houseForm.get('communeId')?.value);
+        }
+      },
+      (error) => {
+        console.error('Error fetching communes:', error);
+      }
+    );
+  }
+
+  // Load villages based on selected commune
+  onCommuneSelected(communeId: number) {
+    this.communeId_c = communeId;
+    this.villageService.getByCommunePublic(communeId).subscribe(
+      (res) => {
+        this.villages = res.result || [];
+        this.houseForm.patchValue({ villageId: null });
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching villages:', error);
+      }
+    );
   }
 
 
@@ -69,6 +174,7 @@ export class HouseUpdateDialogComponent implements OnInit {
       reader.readAsDataURL(file); // Read the file as data URL for preview
     }
   }
+
 
   // Cancel image selection and revert to the existing image
   onCancelImage(): void {
