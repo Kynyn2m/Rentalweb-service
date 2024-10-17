@@ -28,13 +28,13 @@ export class AddPostHouseComponent implements OnInit {
   villages_c: any[] = [];
 
   constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private houseService: HouseService,
-    private districtService: DistrictService,
-    private cdr: ChangeDetectorRef,
-    private communeService: CommuneService,
-    private villageService: VillageService,
+    private readonly fb: FormBuilder,
+    private readonly router: Router,
+    private readonly houseService: HouseService,
+    private readonly districtService: DistrictService,
+    private readonly cdr: ChangeDetectorRef,
+    private readonly communeService: CommuneService,
+    private readonly villageService: VillageService,
 
   ) {}
 
@@ -50,16 +50,16 @@ export class AddPostHouseComponent implements OnInit {
       width: ['', Validators.required],
       height: ['', Validators.required],
       image: [null, Validators.required],
-      provinceId_c: [null, Validators.required],  // Province selection
-      districtId_c: [null, Validators.required],  // District selection
-      communeId_c: [null, Validators.required],   // Commune selection
-      villageId_c: [null, Validators.required],   // Village selection
+      provinceId_c: [null, Validators.required],
+      districtId_c: [null, Validators.required],
+      communeId_c: [null, Validators.required],
+      villageId_c: [null, Validators.required],
     });
 
     this.districtService.getProvincesPublic().subscribe(
       (res) => {
         this.provinces_c = res.result.result || [];
-        this.cdr.detectChanges(); // Ensure change detection is triggered
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error fetching provinces:', error);
@@ -68,7 +68,6 @@ export class AddPostHouseComponent implements OnInit {
   }
 
   onAddressSelectionComplete(): void {
-    // Construct location string based on selected values
     const selectedLocation = `${this.villageId_c}, ${this.communeId_c}, ${this.districtId_c}, ${this.provinceId_c}`;
     this.addPostForm.patchValue({
       location: selectedLocation,
@@ -77,20 +76,19 @@ export class AddPostHouseComponent implements OnInit {
 
   onProvinceSelected(event: any): void {
     this.provinceId_c = event.value;
-    console.log('Province Selected:', this.provinceId_c);  // Log the selected province ID
+    console.log('Province Selected:', this.provinceId_c);
 
     if (this.provinceId_c) {
-      // Fetch districts when a province is selected
       this.districtService.getByProvincePublic(this.provinceId_c).subscribe(
         (res) => {
-          console.log('Districts Response:', res);  // Log the districts response
+          console.log('Districts Response:', res);
           if (res && res.result) {
             this.districts_c = res.result;
           } else {
             this.districts_c = [];
             console.error('No districts found for this province.');
           }
-          this.cdr.detectChanges();  // Trigger change detection
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching districts:', error);
@@ -100,20 +98,20 @@ export class AddPostHouseComponent implements OnInit {
   }
   onDistrictSelected(event: any): void {
     this.districtId_c = event.value;
-    console.log('Selected District ID:', this.districtId_c);  // Log the selected district ID
+    console.log('Selected District ID:', this.districtId_c);
 
     if (this.districtId_c) {
-      // Fetch communes when a district is selected
+
       this.communeService.getByDistrictPublic(this.districtId_c).subscribe(
         (res) => {
-          console.log('Communes Response:', res);  // Log the API response for communes
+          console.log('Communes Response:', res);
           if (res && res.result) {
             this.communes_c = res.result;
           } else {
             this.communes_c = [];
             console.error('No communes found for this district.');
           }
-          this.cdr.detectChanges();  // Trigger change detection
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching communes:', error);
@@ -122,23 +120,21 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
-  // Method to handle commune selection
+
   onCommuneSelected(event: any): void {
     this.communeId_c = event.value;
-    console.log('Selected Commune ID:', this.communeId_c);  // Log the selected commune ID
-
+    console.log('Selected Commune ID:', this.communeId_c);
     if (this.communeId_c) {
-      // Fetch villages when a commune is selected
       this.villageService.getByCommunePublic(this.communeId_c).subscribe(
         (res) => {
-          console.log('Villages Response:', res);  // Log the API response for villages
+          console.log('Villages Response:', res);
           if (res && res.result) {
             this.villages_c = res.result;
           } else {
             this.villages_c = [];
             console.error('No villages found for this commune.');
           }
-          this.cdr.detectChanges();  // Trigger change detection
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('Error fetching villages:', error);
@@ -147,20 +143,25 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
-  // File selection and preview generation
+  onVillageSelected(event: any): void {
+    this.villageId_c = event.value;
+    console.log('Selected Village ID:', this.villageId_c);
+  }
+
+
+
   onFileSelected(event: any): void {
     const files: File[] = Array.from(event.target.files);
 
-    // Clear previous selections
     this.selectedFiles = [];
     this.imagePreviews = [];
 
     files.forEach((file) => {
       if (file && file.type.startsWith('image/')) {
-        this.selectedFiles.push(file);  // Store valid image files
+        this.selectedFiles.push(file);
         const reader = new FileReader();
         reader.onload = () => {
-          this.imagePreviews.push(reader.result as string);  // Store image preview
+          this.imagePreviews.push(reader.result as string);
         };
         reader.readAsDataURL(file);
       } else {
@@ -178,7 +179,6 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
-  // Remove image preview
   removeImage(index: number): void {
     this.imagePreviews.splice(index, 1);
     this.selectedFiles.splice(index, 1);
@@ -188,7 +188,6 @@ export class AddPostHouseComponent implements OnInit {
   }
 
   onSubmit(): void {
-    // Populate the location field based on selected address
     this.onAddressSelectionComplete();
 
     if (this.addPostForm.valid) {

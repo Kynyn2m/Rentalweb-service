@@ -97,6 +97,7 @@
                       fxFlex.gt-sm="48%">
         <mat-label>Village</mat-label>
         <mat-select formControlName="villageId_c"
+                    (selectionChange)="onVillageSelected($event)"
                     required>
           <mat-option *ngFor="let village of villages_c"
                       [value]="village.id">
@@ -104,6 +105,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+
     </div>
 
     <!-- Price and Phone Number -->
