@@ -25,6 +25,8 @@ export class LandComponent {
   fromPrice: number | null = null;
   toPrice: number | null = null;
 
+  isLoading: boolean = true;
+
   provinceId_c: number | null = 0; // To track the selected province
   provinces_c: any[] = []; // Array to store the list of provinces
   districtId_c: number | null = 0; // To track the selected district

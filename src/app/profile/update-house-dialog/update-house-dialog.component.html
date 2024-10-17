@@ -128,20 +128,27 @@
   <!-- Image Upload -->
   <div class="full-width">
     <label for="fileInput"
-           class="file-label">Upload Image</label>
+           class="file-label">Upload Images</label>
     <input id="fileInput"
            type="file"
-           (change)="onFileSelected($event)" />
+           (change)="onFilesSelected($event)"
+           multiple />
   </div>
 
-  <!-- Display loaded images -->
-  <div *ngIf="houseData.safeImagePaths && houseData.safeImagePaths.length > 0">
-    <img *ngFor="let imgPath of houseData.safeImagePaths"
-         [src]="imgPath"
-         alt="House Image">
-    <button mat-button
-            (click)="cancelImage()">Cancel Image</button>
+  <!-- Display loaded images with cancel option -->
+  <div class="image-preview-wrapper"
+       *ngIf="imagePreviews && imagePreviews.length > 0">
+    <div *ngFor="let img of imagePreviews; let i = index"
+         class="image-preview-container">
+      <img [src]="img"
+           alt="House Image"
+           class="image-preview" />
+      <button mat-button
+              class="cancel-image-button"
+              (click)="cancelImage(i)">Cancel</button>
+    </div>
   </div>
+
 
 
 

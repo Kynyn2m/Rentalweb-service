@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   roleAdmin: 'ADMIN',
-  apiUrl: 'https://rantel-backed.onrender.com',
+  apiUrl: 'http://localhost:8080',
   pageSize: 10,
   sizeZero: 0,
   currentPage: 0,

@@ -23,6 +23,8 @@ export class UpdateHouseDialogComponent implements OnInit {
   villages: any[] = [];
   imagePreview: SafeUrl | null = null; // Change type to SafeUrl
   selectedFile: File | null = null;
+  selectedFiles: File[] = [];  // Array to hold multiple selected files
+  imagePreviews: SafeUrl[] = []; // Array for image previews
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -183,10 +185,7 @@ export class UpdateHouseDialogComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
-  cancelImage(): void {
-    this.selectedFile = null; // Reset the selected file
-    this.imagePreview = null; // Clear the image preview
-  }
+
 
 
   save(): void {
@@ -214,11 +213,11 @@ export class UpdateHouseDialogComponent implements OnInit {
       }
     }
 
-    // If a file is selected, append it to the form data
-    if (this.selectedFile) {
-      formData.append('images', this.selectedFile);
-      console.log('Appended image to FormData:', this.selectedFile); // Log the appended file
+    // If files are selected, append them to the form data
+    for (const file of this.selectedFiles) {
+      formData.append('images', file);  // Append each selected file
     }
+
 
     // Call the updateHouse method from the house service
     this.houseService.updateHouse(this.houseData.id, formData).subscribe(
@@ -236,6 +235,26 @@ export class UpdateHouseDialogComponent implements OnInit {
         });
       }
     );
+  }
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        this.selectedFiles.push(file as File); // Add each file to the selectedFiles array
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target.result);
+          this.imagePreviews.push(previewUrl); // Add preview to the imagePreviews array
+        };
+        reader.readAsDataURL(file as File);
+      });
+    }
+  }
+
+  // Cancel (remove) image preview and selected file
+  cancelImage(index: number): void {
+    this.selectedFiles.splice(index, 1);  // Remove the file from the array
+    this.imagePreviews.splice(index, 1);  // Remove the preview from the array
   }
 
   cancel(): void {

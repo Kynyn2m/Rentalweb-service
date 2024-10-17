@@ -56,9 +56,10 @@ h2 {
 }
 
 .card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  row-gap: 1rem;
   gap: 20px;
   margin: 20px 0;
 }
@@ -82,7 +83,7 @@ mat-card {
   justify-content: space-between;
   height: 100%;
   width: calc(25% - 20px); /* Keeping 4 columns with 20px gap */
-  max-width: 300px;
+  width: 100%;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   overflow: hidden;
 }
