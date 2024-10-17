@@ -4,6 +4,7 @@
 <mat-dialog-content [formGroup]="houseForm"
                     class="example-form">
   <div class="form-grid">
+
     <!-- House Name -->
     <mat-form-field class="form-item">
       <mat-label>House Name</mat-label>
@@ -15,16 +16,6 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Address -->
-    <mat-form-field class="form-item">
-      <mat-label>Address</mat-label>
-      <input matInput
-             formControlName="location"
-             placeholder="Enter address">
-      <mat-error *ngIf="houseForm.get('location')?.invalid && houseForm.get('location')?.touched">
-        Address is required
-      </mat-error>
-    </mat-form-field>
 
     <!-- Price -->
     <mat-form-field class="form-item">
@@ -62,7 +53,7 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Link Map -->
+    <!-- Map Link -->
     <mat-form-field class="form-item">
       <mat-label>Map Link</mat-label>
       <input matInput
@@ -108,43 +99,100 @@
         Height is required
       </mat-error>
     </mat-form-field>
-  </div>
 
-  <div class="file-input-wrapper">
-    <label for="file-upload"
-           class="custom-file-upload">
-      <mat-icon>cloud_upload</mat-icon> Upload New Image
-    </label>
-    <input id="file-upload"
-           type="file"
-           (change)="onFileSelected($event)"
-           accept="image/*">
-  </div>
+    <!-- Province -->
+    <mat-form-field class="form-item">
+      <mat-label>Province</mat-label>
+      <mat-select formControlName="provinceId"
+                  (selectionChange)="onProvinceSelected($event.value)">
+        <mat-option *ngFor="let province of provinces"
+                    [value]="province.id">
+          {{ province.khmerName || province.englishName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="houseForm.get('provinceId')?.invalid && houseForm.get('provinceId')?.touched">
+        Province is required
+      </mat-error>
+    </mat-form-field>
 
-  <!-- Image Preview -->
-  <div class="image-preview"
-       *ngIf="imagePreview">
-    <img [src]="imagePreview"
-         alt="Image Preview"
-         class="preview-img" />
-    <!-- Cancel Button -->
-    <button mat-button
-            (click)="onCancelImage()"
-            color="warn"
-            class="cancel-image-btn">
-      <mat-icon>cancel</mat-icon> Cancel Image
-    </button>
-  </div>
+    <!-- District -->
+    <mat-form-field class="form-item">
+      <mat-label>District</mat-label>
+      <mat-select formControlName="districtId"
+                  (selectionChange)="onDistrictSelected($event.value)">
+        <mat-option *ngFor="let district of districts"
+                    [value]="district.id">
+          {{ district.khmerName || district.englishName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="houseForm.get('districtId')?.invalid && houseForm.get('districtId')?.touched">
+        District is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Commune -->
+    <mat-form-field class="form-item">
+      <mat-label>Commune</mat-label>
+      <mat-select formControlName="communeId"
+                  (selectionChange)="onCommuneSelected($event.value)">
+        <mat-option *ngFor="let commune of communes"
+                    [value]="commune.id">
+          {{ commune.khmerName || commune.englishName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="houseForm.get('communeId')?.invalid && houseForm.get('communeId')?.touched">
+        Commune is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Village -->
+    <mat-form-field class="form-item">
+      <mat-label>Village</mat-label>
+      <mat-select formControlName="villageId">
+        <mat-option *ngFor="let village of villages"
+                    [value]="village.id">
+          {{ village.khmerName || village.englishName }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="houseForm.get('villageId')?.invalid && houseForm.get('villageId')?.touched">
+        Village is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Image Upload -->
+    <div class="file-input-wrapper">
+      <label for="file-upload"
+             class="custom-file-upload">
+        <mat-icon>cloud_upload</mat-icon> Upload New Image
+      </label>
+      <input id="file-upload"
+             type="file"
+             (change)="onFileSelected($event)"
+             accept="image/*"
+             multiple>
+    </div>
+
+    <!-- Image Preview -->
+    <div class="image-preview"
+         *ngIf="imagePreview">
+      <img [src]="imagePreview"
+           alt="Image Preview"
+           class="preview-img" />
+      <button mat-button
+              (click)="onCancelImage()"
+              color="warn"
+              class="cancel-image-btn">
+        <mat-icon>cancel</mat-icon> Cancel Image
+      </button>
+    </div>
 
 
 
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-raised-button
-          (click)="onCancel()"
-          color="warn">Cancel</button>
-  <button mat-raised-button
-          (click)="onSubmit()"
-          color="primary">Update House</button>
-</mat-dialog-actions>
+    <mat-dialog-actions align="end">
+      <button mat-raised-button
+              (click)="onCancel()"
+              color="warn">Cancel</button>
+      <button mat-raised-button
+              (click)="onSubmit()"
+              color="primary">Update House</button>
+    </mat-dialog-actions>
