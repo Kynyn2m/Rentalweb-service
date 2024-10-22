@@ -62,7 +62,7 @@ h2 {
   gap: 20px;
   margin: 20px 0;
   position: relative;
-  z-index: 99;
+  /* z-index: 99; */
 }
 
 mat-card {
