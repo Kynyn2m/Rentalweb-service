@@ -1017,7 +1017,7 @@ mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-pr
     border: none;
     cursor: pointer;
     font-size: 18px;
-    z-index: 1;
+    /* z-index: 1; */
   }
 
   button.prev {
