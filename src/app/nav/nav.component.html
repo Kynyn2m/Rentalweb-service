@@ -2,7 +2,7 @@
   <!-- Sidenav for Small Screens -->
   <mat-sidenav #sidenav
                mode="over"
-               class="left-sidebar"
+               class="left-sidebar sticky-navbar"
                (backdropClick)="sidenav.close()">
     <div class="close-btn">
       <button mat-icon-button
@@ -69,7 +69,7 @@
 
   <!-- Main Content -->
   <mat-sidenav-content class="sidenav-content">
-    <mat-toolbar>
+    <mat-toolbar class="sticky-navbar">
       <button mat-icon-button
               (click)="sidenav.toggle()"
               *ngIf="isMediumScreen$ | async">
@@ -169,15 +169,5 @@
       </mat-menu>
 
     </mat-toolbar>
-
-    <div class="container-fluid bg-color">
-      <!-- <mat-progress-bar color="success"
-                        [class.is__loading]="!_loading"
-                        mode="indeterminate"></mat-progress-bar> -->
-      <div [ngClass]="animationClass"
-           class="content__flex">
-        <router-outlet #outlet="outlet"></router-outlet>
-      </div>
-    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

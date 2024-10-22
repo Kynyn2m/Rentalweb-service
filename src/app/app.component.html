@@ -1,2 +1,5 @@
 <app-nav></app-nav>
-<router-outlet></router-outlet>
+<div class="main-content">
+  <router-outlet (activate)="Onscroll()"></router-outlet>
+</div>
+<app-footer></app-footer>

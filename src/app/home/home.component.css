@@ -142,7 +142,7 @@ mat-card {
   border: none;
   padding: 5px;
   cursor: pointer;
-  z-index: 10;
+  /* z-index: 10; */
 }
 
 .prev-image-button {
@@ -927,7 +927,7 @@ h3 {
   height: 30px;
   padding: 3px;
   cursor: pointer;
-  z-index: 10;
+  /* z-index: 10; */
   border-radius: 50%;
 }
 

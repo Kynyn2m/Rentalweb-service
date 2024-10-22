@@ -77,13 +77,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       tooltip: 'Contact',
       adminOnly: false,
     },
-    {
-      router: '/about-us',
-      icon: 'info',
-      title: 'About Us',
-      tooltip: 'About Us',
-      adminOnly: false,
-    },
 
     // Admin-only menu items
     {

@@ -12,15 +12,15 @@
 
 html,
 body {
-  height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   font-family: Roboto, "Roboto";
   font-size: large;
   background-color: #d9d9d9;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
+  /* width: 90vw; */
 }
-
 h1,
 h2,
 h3,
@@ -279,4 +279,10 @@ td {
   .mat-mdc-form-field {
     flex-grow: 1;
   }
+}
+.main-content{
+  padding: 1rem;
+}
+.mat-mdc-button .mdc-button__label, .mat-mdc-unelevated-button .mdc-button__label, .mat-mdc-raised-button .mdc-button__label, .mat-mdc-outlined-button .mdc-button__label {
+  z-index: 0 !important;
 }

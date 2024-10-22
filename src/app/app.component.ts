@@ -38,6 +38,9 @@ export class AppComponent implements OnInit  {
       this.isAdmin = currentUser.id === 0;
     }
   }
+  Onscroll(): void{
+    window.scrollTo(0, 0 ,);
+  }
 
   // This will receive updates from the login component or other components
   receiveMessage($event: boolean) {

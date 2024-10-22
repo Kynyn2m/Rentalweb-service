@@ -1,48 +1,45 @@
+<app-ads></app-ads>
 <div class="top-bar"></div>
 <div class="search-container">
   <div class="result-header">
     <h2>Complete Your Result</h2>
   </div>
   <form (ngSubmit)="onSearch()">
-    <mat-form-field class="full-waith" appearance="outline">
+    <mat-form-field class="full-waith"
+                    appearance="outline">
       <mat-label>Search</mat-label>
-      <input
-        matInput
-        [(ngModel)]="search"
-        name="search"
-        placeholder="Enter location"
-      />
+      <input matInput
+             [(ngModel)]="search"
+             name="search"
+             placeholder="Enter location" />
     </mat-form-field>
 
     <!-- Province and District -->
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
         <mat-label>Province/City</mat-label>
-        <mat-select
-          [(ngModel)]="provinceId_c"
-          name="provinceId_c"
-          (selectionChange)="onProvinceSelected($event)"
-        >
-          <mat-option
-            *ngFor="let province of provinces_c"
-            [value]="province.id"
-          >
+        <mat-select [(ngModel)]="provinceId_c"
+                    name="provinceId_c"
+                    (selectionChange)="onProvinceSelected($event)">
+          <mat-option *ngFor="let province of provinces_c"
+                      [value]="province.id">
             {{ province.khmerName }} / {{ province.englishName }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
         <mat-label>District/Khan</mat-label>
-        <mat-select
-          [(ngModel)]="districtId_c"
-          name="districtId_c"
-          (selectionChange)="onDistrictSelected($event)"
-        >
-          <mat-option
-            *ngFor="let district of districts_c"
-            [value]="district.id"
-          >
+        <mat-select [(ngModel)]="districtId_c"
+                    name="districtId_c"
+                    (selectionChange)="onDistrictSelected($event)">
+          <mat-option *ngFor="let district of districts_c"
+                      [value]="district.id">
             {{ district.khmerName }} / {{ district.englishName }}
           </mat-option>
         </mat-select>
@@ -50,24 +47,30 @@
     </div>
 
     <!-- Commune and Village -->
-    <div fxLayout="row wrap" fxLayoutGap="16px">
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+    <div fxLayout="row wrap"
+         fxLayoutGap="16px">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
         <mat-label>Commune/Sangkat</mat-label>
-        <mat-select
-          [(ngModel)]="communeId_c"
-          name="communeId_c"
-          (selectionChange)="onCommuneSelected($event)"
-        >
-          <mat-option *ngFor="let commune of communes_c" [value]="commune.id">
+        <mat-select [(ngModel)]="communeId_c"
+                    name="communeId_c"
+                    (selectionChange)="onCommuneSelected($event)">
+          <mat-option *ngFor="let commune of communes_c"
+                      [value]="commune.id">
             {{ commune.khmerName }} / {{ commune.englishName }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" fxFlex="100%" fxFlex.gt-sm="48%">
+      <mat-form-field appearance="outline"
+                      fxFlex="100%"
+                      fxFlex.gt-sm="48%">
         <mat-label>Village</mat-label>
-        <mat-select [(ngModel)]="villageId_c" name="villageId_c">
-          <mat-option *ngFor="let village of villages_c" [value]="village.id">
+        <mat-select [(ngModel)]="villageId_c"
+                    name="villageId_c">
+          <mat-option *ngFor="let village of villages_c"
+                      [value]="village.id">
             {{ village.khmerName }} / {{ village.englishName }}
           </mat-option>
         </mat-select>
@@ -77,37 +80,33 @@
     <div class="search-field price-field">
       <mat-form-field appearance="outline">
         <mat-label>From Price</mat-label>
-        <input
-          matInput
-          [(ngModel)]="fromPrice"
-          name="fromPrice"
-          type="number"
-          placeholder="From Price"
-        />
+        <input matInput
+               [(ngModel)]="fromPrice"
+               name="fromPrice"
+               type="number"
+               placeholder="From Price" />
       </mat-form-field>
 
       <span class="price-separator">-</span>
 
       <mat-form-field appearance="outline">
         <mat-label>To Price</mat-label>
-        <input
-          matInput
-          [(ngModel)]="toPrice"
-          name="toPrice"
-          type="number"
-          placeholder="To Price"
-        />
+        <input matInput
+               [(ngModel)]="toPrice"
+               name="toPrice"
+               type="number"
+               placeholder="To Price" />
       </mat-form-field>
     </div>
 
     <div class="search-button-container">
-      <button class="full-waith" mat-raised-button color="success">Find</button>
-      <button
-        class="full-waith"
-        mat-raised-button
-        color="warn"
-        (click)="onClear()"
-      >
+      <button class="full-waith"
+              mat-raised-button
+              color="success">Find</button>
+      <button class="full-waith"
+              mat-raised-button
+              color="warn"
+              (click)="onClear()">
         Clear
       </button>
     </div>
@@ -119,51 +118,44 @@
     <h2>Room</h2>
     <div class="card-grid">
       <mat-card *ngFor="let room of room">
-        <div class="image-container" (click)="goToDetails(room.id)">
+        <div class="image-container"
+             (click)="goToDetails(room.id)">
           <!-- Display the current image with navigation if images are available -->
-          <img
-            mat-card-image
-            *ngIf="
+          <img mat-card-image
+               *ngIf="
               room.safeImagePaths &&
               room.safeImagePaths.length > 0 &&
               room.currentImageIndex !== undefined
             "
-            [src]="room.safeImagePaths[room.currentImageIndex]"
-            alt="{{ room.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-          />
+               [src]="room.safeImagePaths[room.currentImageIndex]"
+               alt="{{ room.title }}"
+               style="width: 100%; height: 200px; object-fit: cover" />
 
           <!-- Display text if no images are available -->
-          <div
-            *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
-            class="no-image-placeholder"
-            style="
+          <div *ngIf="!room.safeImagePaths || room.safeImagePaths.length === 0"
+               class="no-image-placeholder"
+               style="
               width: 100%;
               height: 200px;
               display: flex;
               justify-content: center;
               align-items: center;
               background-color: #f0f0f0;
-            "
-          >
+            ">
             No Image Available
           </div>
 
           <!-- Previous Button with Icon -->
-          <button
-            class="prev-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="prevImage(room); $event.stopPropagation()"
-          >
+          <button class="prev-image-button"
+                  *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                  (click)="prevImage(room); $event.stopPropagation()">
             <mat-icon>arrow_back</mat-icon>
           </button>
 
           <!-- Next Button with Icon -->
-          <button
-            class="next-image-button"
-            *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
-            (click)="nextImage(room); $event.stopPropagation()"
-          >
+          <button class="next-image-button"
+                  *ngIf="room.safeImagePaths && room.safeImagePaths.length > 1"
+                  (click)="nextImage(room); $event.stopPropagation()">
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
@@ -185,23 +177,19 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeRoom(room.id); $event.stopPropagation()"
-            >
+            <button mat-raised-button
+                    color="primary"
+                    class="like-button"
+                    (click)="likeRoom(room.id); $event.stopPropagation()">
               <mat-icon>thumb_up</mat-icon>
               {{ room.likeCount }} Likes
             </button>
 
             <!-- View Details Button (aligned to the right) -->
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetails(room.id)"
-            >
+            <button mat-raised-button
+                    color="success"
+                    class="details-button"
+                    (click)="goToDetails(room.id)">
               View Details
             </button>
           </div>
@@ -210,16 +198,12 @@
     </div>
 
     <!-- Pagination controls -->
-    <div
-      class="pagination-buttons"
-      style="text-align: center; margin-top: 50px"
-    >
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="prevPage()"
-        [disabled]="currentPage === 0"
-      >
+    <div class="pagination-buttons"
+         style="text-align: center; margin-top: 50px">
+      <button mat-raised-button
+              color="primary"
+              (click)="prevPage()"
+              [disabled]="currentPage === 0">
         Previous
       </button>
 
@@ -228,25 +212,20 @@
           <span>...</span>
         </ng-container>
         <ng-container *ngIf="page !== -1">
-          <button
-            mat-button
-            (click)="changePage(page)"
-            [disabled]="page === currentPage"
-          >
+          <button mat-button
+                  (click)="changePage(page)"
+                  [disabled]="page === currentPage">
             {{ page + 1 }}
           </button>
         </ng-container>
       </ng-container>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="nextPage()"
-        [disabled]="currentPage === totalPages - 1"
-      >
+      <button mat-raised-button
+              color="primary"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages - 1">
         Next
       </button>
     </div>
   </section>
 </div>
-<app-footer></app-footer>

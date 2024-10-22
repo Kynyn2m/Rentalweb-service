@@ -1,5 +1,8 @@
 .footer {
   display: flex;
+  position: relative;
+  bottom: 0;
+  text-align: center;
   justify-content: space-between;
   padding: 20px;
   margin-top: 60px;
@@ -13,6 +16,8 @@
   background-color: rgba(0, 0, 0, 0.578);
   background-blend-mode: overlay;
 }
+
+
 
 .footer img{
   width: 100%;
