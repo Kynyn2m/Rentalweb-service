@@ -97,7 +97,16 @@ import { UpdateHouseDialogComponent } from './profile/update-house-dialog/update
 import { ChangePasswordDialogComponent } from './nav/change-password-dialog/change-password-dialog.component';
 import { UpdateLandDialogComponent } from './profile/update-land-dialog/update-land-dialog.component';
 import { UpdateRoomDialogComponent } from './profile/update-room-dialog/update-room-dialog.component';
-import { ScrollTopModule } from 'primeng/scrolltop'; // Import ScrollTopModule
+import { ScrollTopModule } from 'primeng/scrolltop';
+import { GalleriaModule } from 'primeng/galleria';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+
+import { DropdownModule } from 'primeng/dropdown';
+
+import { InputNumberModule } from 'primeng/inputnumber';
+
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
@@ -199,8 +208,13 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     QRCodeModule,
     CdkDrag,
     FlexLayoutModule,
-    ScrollTopModule
-    // GoogleMapsModule,
+    ScrollTopModule,
+    GalleriaModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    DropdownModule,
+    InputNumberModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

@@ -202,3 +202,24 @@
 .thumbnail.selected {
   border-color: #007bff;
 }
+/* Customize the main image container */
+.p-galleria-item-wrapper {
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+/* Customize thumbnails */
+.p-galleria-thumbnail-item img {
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust the size of arrows */
+.p-galleria-item-nav-left, .p-galleria-item-nav-right {
+  font-size: 1.5rem;
+}
+
+/* Thumbnail styling */
+.p-galleria-thumbnail-item {
+  margin: 5px;
+}

@@ -15,31 +15,24 @@
     alt=""
     style="width: 20px; height: 20px"
   /> -->
-  <span>contact to assistant: </span
-  ><mat-icon class="icon">arrow_drop_down</mat-icon>
+  <span>contact to assistant: </span><mat-icon class="icon">arrow_drop_down</mat-icon>
 
   <div class="photos-grid">
     <mat-card *ngFor="let step of stepsToPost">
       <mat-card-content>
-        <img
-          [src]="step.imageUrl"
-          alt="{{ step.title }}"
-          class="profile-image"
-        />
-        <div
-          style="
+        <img [src]="step.imageUrl"
+             alt="{{ step.title }}"
+             class="profile-image" />
+        <div style="
             font-size: 20px;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold',
               sans-serif;
-          "
-        >
+          ">
           {{ step.title }}
         </div>
-        <a
-          [href]="'https://t.me/' + step.telegramUsername.slice(1)"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a [href]="'https://t.me/' + step.telegramUsername.slice(1)"
+           target="_blank"
+           rel="noopener noreferrer">
           Contact on Telegram
         </a>
         <div style="color: red">{{ step.phoneNumber }}</div>
@@ -48,16 +41,13 @@
   </div>
 
   <div class="map-container">
-    <iframe
-      width="100%"
-      height="300"
-      frameborder="0"
-      style="border: 0"
-      src="https://maps.google.com/maps?q=Phnom%20Penh%20Cambodia&t=&z=13&ie=UTF8&iwloc=&output=embed"
-      allowfullscreen
-    >
+    <iframe width="100%"
+            height="300"
+            frameborder="0"
+            style="border: 0"
+            src="https://maps.google.com/maps?q=Phnom%20Penh%20Cambodia&t=&z=13&ie=UTF8&iwloc=&output=embed"
+            allowfullscreen>
     </iframe>
   </div>
 
-  <app-footer></app-footer>
 </div>
