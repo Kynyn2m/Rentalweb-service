@@ -106,6 +106,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
@@ -214,12 +216,15 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     DialogModule,
     InputTextModule,
     DropdownModule,
-    InputNumberModule
+    InputNumberModule,
+    ToastModule,
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrInterceptor, multi: true },
     { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
+    MessageService
   ],
   bootstrap: [AppComponent],
 })

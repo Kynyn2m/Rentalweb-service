@@ -51,11 +51,11 @@ export class ErrInterceptor implements HttpInterceptor {
         } else if (err.status === 200) {
         } else if (err.status === 204) {
 
-        } else if (err.status === 404) {
-          this._snackBar.open(this.transloco.translate("not-found"), this.transloco.translate("close"), {
-            duration: this.durationInSeconds * 1000
-          });
-        } else if (err.status == 409) {
+        // } else if (err.status === 404) {
+        //   this._snackBar.open(this.transloco.translate("not-found"), this.transloco.translate("close"), {
+        //     duration: this.durationInSeconds * 1000
+        //   });
+        // } else if (err.status == 409) {
           this._snackBar.open(this.transloco.translate("exist"), this.transloco.translate("close"), {
             duration: this.durationInSeconds * 1000
           });
@@ -66,17 +66,17 @@ export class ErrInterceptor implements HttpInterceptor {
           });
         }
 
-        else {
-          if (err.status) {
-            this._snackBar.open(this.transloco.translate("unexprected-error"), this.transloco.translate("close"), {
-              duration: this.durationInSeconds * 1000
-            });
-          } else {
-            this._snackBar.open(this.transloco.translate("connection-lost"), this.transloco.translate("close"), {
-              duration: this.durationInSeconds * 1000
-            });
-          }
-        }
+        // else {
+        //   if (err.status) {
+        //     this._snackBar.open(this.transloco.translate("unexprected-error"), this.transloco.translate("close"), {
+        //       duration: this.durationInSeconds * 1000
+        //     });
+        //   } else {
+        //     this._snackBar.open(this.transloco.translate("connection-lost"), this.transloco.translate("close"), {
+        //       duration: this.durationInSeconds * 1000
+        //     });
+        //   }
+        // }
         const error = err.statusText;
         return throwError(error);
       }), finalize(() => {
