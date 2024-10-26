@@ -1,6 +1,4 @@
 {
-  "title": "ARDB Merchant",
-  "welcome": "Welcome to Merchant",
   "welcome-null": "Welcome to",
   "English": "English",
   "Khmer": "ភាសាខ្មែរ",
@@ -12,6 +10,9 @@
   "login": "Login",
   "theme": "Theme",
   "home": "Home",
+  "room": "Room",
+  "house": "House",
+  "land": "Land",
   "setting": "Settings",
   "email": "Email",
   "signature": "Signature",
