@@ -4,7 +4,7 @@ import { TranslocoService } from '@ngneat/transloco';
 @Component({
   selector: 'app-language-selector',
   templateUrl: './language-selector.component.html',
-  styleUrls: ['./language-selector.component.css']
+  styleUrls: ['./language-selector.component.css'],
 })
 export class LanguageSelectorComponent implements OnInit {
   selectedLanguage: any;
@@ -12,30 +12,37 @@ export class LanguageSelectorComponent implements OnInit {
   lan: any;
   onlyFlagSmallVisible = false;
 
-  constructor(private transloco: TranslocoService, private elementRef: ElementRef) { }
+  constructor(
+    private transloco: TranslocoService,
+    private elementRef: ElementRef
+  ) {}
 
-  languagesList: Array<Record<'imgUrl' | 'code' | 'name' | 'shorthand', string>> = [
+  languagesList: Array<
+    Record<'imgUrl' | 'code' | 'name' | 'shorthand', string>
+  > = [
     {
-      imgUrl: '/assets/img/English.png',
+      imgUrl: '../../../assets/img/English-rounded.png',
       code: 'en',
       name: 'English',
       shorthand: 'ENG',
     },
     {
-      imgUrl: '/assets/img/Cambodia.png',
+      imgUrl: '../../../assets/img/cambodia-rounded V2.png',
       code: 'kh',
       name: 'Khmer',
       shorthand: 'KHM',
-    }
+    },
   ];
 
   ngOnInit(): void {
-    const storedLanguage = localStorage.getItem("language");
+    const storedLanguage = localStorage.getItem('language');
     const defaultLanguageCode = 'en';
     const languageCode = storedLanguage || defaultLanguageCode;
     this.lan = languageCode;
     this.transloco.setActiveLang(languageCode);
-    this.selectedLanguage = this.languagesList.find(lang => lang.code === languageCode);
+    this.selectedLanguage = this.languagesList.find(
+      (lang) => lang.code === languageCode
+    );
 
     this.setDocumentDirection(languageCode);
 
@@ -50,12 +57,13 @@ export class LanguageSelectorComponent implements OnInit {
   changeLanguage(languageCode: string): void {
     this.lan = languageCode;
     this.transloco.setActiveLang(languageCode);
-    localStorage.setItem("language", languageCode);
-    this.selectedLanguage = this.languagesList.find(lang => lang.code === languageCode);
+    localStorage.setItem('language', languageCode);
+    this.selectedLanguage = this.languagesList.find(
+      (lang) => lang.code === languageCode
+    );
     this.isDropdownOpen = false;
     this.setDocumentDirection(languageCode);
   }
-
 
   switchLanguage(): void {
     const newLanguageCode = this.selectedLanguage.code === 'en' ? 'kh' : 'en';
@@ -88,5 +96,4 @@ export class LanguageSelectorComponent implements OnInit {
   onEnterPress(event: KeyboardEvent): void {
     event.preventDefault();
   }
-
 }
