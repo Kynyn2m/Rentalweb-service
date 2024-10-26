@@ -38,42 +38,42 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
     {
       router: '/home',
       icon: 'home',
-      title: 'Home',
+      title: 'home',
       tooltip: 'Home',
       adminOnly: false,
     },
     {
       router: '/room',
       icon: 'meeting_room',
-      title: 'Room',
+      title: 'room',
       tooltip: 'Room',
       adminOnly: false,
     },
     {
       router: '/house',
       icon: 'house',
-      title: 'House',
+      title: 'house',
       tooltip: 'House',
       adminOnly: false,
     },
     {
       router: '/land',
       icon: 'terrain',
-      title: 'Land',
+      title: 'land',
       tooltip: 'Land',
       adminOnly: false,
     },
     {
       router: '/add-post',
       icon: 'add',
-      title: 'Add Post',
+      title: 'add Post',
       tooltip: 'Add Post',
       adminOnly: false,
     },
     {
       router: '/contact',
       icon: 'contact_mail',
-      title: 'Contact',
+      title: 'contact',
       tooltip: 'Contact',
       adminOnly: false,
     },
@@ -110,14 +110,14 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
     {
       router: '/room-list',
       icon: 'meeting_room',
-      title: 'Room',
+      title: 'room',
       tooltip: 'Room',
       adminOnly: true,
     },
     {
       router: '/land-list',
       icon: 'landscape',
-      title: 'Land',
+      title: 'land',
       tooltip: 'Land',
       adminOnly: true,
     },
@@ -285,10 +285,10 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
   }
   openChangePasswordDialog(): void {
     const dialogRef = this.dialog.open(ChangePasswordDialogComponent, {
-      width: '450px'
+      width: '450px',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Password was successfully changed.');
       }
