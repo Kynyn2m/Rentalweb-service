@@ -762,3 +762,13 @@ h3 {
 
     right: 47%;
 }
+.favorited mat-icon {
+  color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 50%;
+}.favorited {
+  color: red; /* Background color when favorited */
+}
+.not-favorited {
+  color: grey; /* Outline or different color when not favorited */
+}

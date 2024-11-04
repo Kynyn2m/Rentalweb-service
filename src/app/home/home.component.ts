@@ -344,34 +344,34 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  likeHouse(houseId: number): void {
-    const house = this.houses.find((h) => h.id === houseId);
+  // likeHouse(houseId: number): void {
+  //   const house = this.houses.find((h) => h.id === houseId);
 
-    if (house && !house.pending) {
-      // Ensure there's no pending request
-      house.pending = true; // Set the pending state to prevent multiple clicks
+  //   if (house && !house.pending) {
+  //     // Ensure there's no pending request
+  //     house.pending = true; // Set the pending state to prevent multiple clicks
 
-      if (house.liked) {
-        // Simulate "unlike" (no API call here for unlike)
-        house.likeCount -= 1;
-        house.liked = false;
-        house.pending = false; // Reset the pending state after local unlike
-      } else {
-        // Call the like API
-        this.houseService.likeHouse(houseId).subscribe(
-          () => {
-            house.likeCount += 1; // Increment the like count on the UI
-            house.liked = true; // Set the liked state to true
-            house.pending = false; // Reset the pending state after the API call completes
-          },
-          () => {
-            // Handle error case
-            house.pending = false; // Reset pending state even on error
-          }
-        );
-      }
-    }
-  }
+  //     if (house.liked) {
+  //       // Simulate "unlike" (no API call here for unlike)
+  //       house.likeCount -= 1;
+  //       house.liked = false;
+  //       house.pending = false; // Reset the pending state after local unlike
+  //     } else {
+  //       // Call the like API
+  //       this.houseService.likeHouse(houseId).subscribe(
+  //         () => {
+  //           house.likeCount += 1; // Increment the like count on the UI
+  //           house.liked = true; // Set the liked state to true
+  //           house.pending = false; // Reset the pending state after the API call completes
+  //         },
+  //         () => {
+  //           // Handle error case
+  //           house.pending = false; // Reset pending state even on error
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
 
   goToDetails(houseId: number): void {
     // Call the API to count the view
