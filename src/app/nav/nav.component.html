@@ -29,7 +29,10 @@
           routerLinkActive="active"
           *ngIf="item.adminOnly === false || item.adminOnly === undefined"
         >
-          <a [routerLink]="item.router" matTooltip="{{ item.tooltip }}">
+          <a
+            [routerLink]="item.router"
+            matTooltip="{{ item.tooltip | transloco }}"
+          >
             <mat-icon>{{ item.icon }}</mat-icon>
             <span>{{ item.title | transloco }}</span>
           </a>
@@ -43,7 +46,10 @@
           routerLinkActive="active"
           *ngIf="item.adminOnly === true"
         >
-          <a [routerLink]="item.router" matTooltip="{{ item.tooltip }}">
+          <a
+            [routerLink]="item.router"
+            matTooltip="{{ item.tooltip | transloco }}"
+          >
             <mat-icon>{{ item.icon }}</mat-icon>
             <span>{{ item.title | transloco }}</span>
           </a>
@@ -104,7 +110,7 @@
                 mat-button
                 [routerLink]="item.router"
                 routerLinkActive="active-menu-item"
-                [matTooltip]="item.tooltip"
+                [matTooltip]="item.tooltip | transloco"
               >
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title | transloco }}</span>
@@ -121,7 +127,7 @@
                 mat-button
                 [routerLink]="item.router"
                 routerLinkActive="active-menu-item"
-                [matTooltip]="item.tooltip"
+                [matTooltip]="item.tooltip | transloco"
               >
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title | transloco }}</span>
