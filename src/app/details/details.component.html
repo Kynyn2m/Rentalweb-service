@@ -1,8 +1,6 @@
 <div class="details-container">
   <!-- Back Button with Material Icon -->
-  <button mat-button
-          class="back-button"
-          (click)="goBack()">
+  <button mat-button class="back-button" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon> Back
   </button>
 
@@ -11,60 +9,81 @@
     <div class="gallery">
       <!-- Main image -->
       <div class="main-image">
-        <img [src]="currentImage"
-             alt="House Image" />
+        <img [src]="currentImage" alt="House Image" />
         <!-- Navigation arrows -->
-        <button class="nav-left"
-                (click)="previousImage()">&#10094;</button>
-        <button class="nav-right"
-                (click)="nextImage()">&#10095;</button>
+        <button class="nav-left" (click)="previousImage()">&#10094;</button>
+        <button class="nav-right" (click)="nextImage()">&#10095;</button>
       </div>
 
       <!-- Thumbnail images -->
       <div class="image-thumbnails">
-        <img *ngFor="let image of house?.safeImagePaths; let i = index"
-             [src]="image"
-             [class.selected]="currentImage === image"
-             (click)="selectImage(image)"
-             alt="{{ house?.title }}"
-             class="thumbnail" />
+        <img
+          *ngFor="let image of house?.safeImagePaths; let i = index"
+          [src]="image"
+          [class.selected]="currentImage === image"
+          (click)="selectImage(image)"
+          alt="{{ house?.title }}"
+          class="thumbnail"
+        />
       </div>
     </div>
-
 
     <div class="details-content">
       <h2>{{ house?.title }}</h2>
 
       <div class="details-info">
-        <p><strong>Location:</strong> {{ districtName }}, {{ communeName }}, {{ villageName }}</p>
-        <p><strong>Contact:</strong> {{ house?.phoneNumber }}</p>
-        <p><strong>Price:</strong> <span class="price">${{ house?.price }}</span></p>
-        <p><strong>Description:</strong> {{ house?.description }}</p>
-        <p><strong>Dimensions:</strong> {{ house?.width }}m x {{ house?.height }}m</p>
-        <p><strong>Floor:</strong> {{ house?.floor }}</p>
-        <p><strong>Map Link:</strong> <a [href]="house?.linkMap"
-             target="_blank">View on Map</a></p>
-        <p><strong>Likes:</strong> {{ house?.likeCount }}</p>
-        <p><strong>Views:</strong> {{ house?.viewCount }}</p>
+        <p>
+          <strong>{{ "location" | transloco }}:</strong> {{ districtName }},
+          {{ communeName }}, {{ villageName }}
+        </p>
+        <p>
+          <strong>{{ "contact" | transloco }}:</strong> {{ house?.phoneNumber }}
+        </p>
+        <p>
+          <strong>{{ "price" | transloco }}:</strong>
+          <span class="price">${{ house?.price }}</span>
+        </p>
+        <p>
+          <strong>{{ "description" | transloco }}:</strong>
+          {{ house?.description }}
+        </p>
+        <p>
+          <strong>{{ "dimensions" | transloco }}:</strong> {{ house?.width }}m x
+          {{ house?.height }}m
+        </p>
+        <p>
+          <strong>{{ "floor" | transloco }}:</strong> {{ house?.floor }}
+        </p>
+        <p>
+          <strong>{{ "mapLink" | transloco }}:</strong>
+          <a [href]="house?.linkMap" target="_blank">mapLink</a>
+        </p>
+        <p>
+          <strong>{{ "likes" | transloco }}:</strong> {{ house?.likeCount }}
+        </p>
+        <p>
+          <strong>{{ "views" | transloco }}:</strong> {{ house?.viewCount }}
+        </p>
       </div>
 
-      <button mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeHouse(house!.id!)">
-        <mat-icon>thumb_up</mat-icon> Like ({{ house?.likeCount }})
+      <button
+        mat-raised-button
+        color="primary"
+        class="like-button"
+        (click)="likeHouse(house!.id!)"
+      >
+        <mat-icon>thumb_up</mat-icon> {{ "likes" | transloco }} ({{
+          house?.likeCount
+        }})
       </button>
     </div>
   </div>
 
   <!-- Full-screen modal -->
-  <div class="image-modal"
-       *ngIf="selectedImage">
+  <div class="image-modal" *ngIf="selectedImage">
     <div class="modal-content">
-      <img [src]="selectedImage"
-           class="full-screen-image" />
-      <button mat-icon-button
-              class="close-button">
+      <img [src]="selectedImage" class="full-screen-image" />
+      <button mat-icon-button class="close-button">
         <mat-icon>close</mat-icon>
       </button>
     </div>
