@@ -8,6 +8,10 @@ import { DistrictService } from '../address/district.service';
 import { VillageService } from '../address/village.service';
 import { CommuneService } from '../address/commune.service';
 
+import Swal from 'sweetalert2';
+import { AuthenticationService } from '../authentication/authentication.service';
+
+
 @Component({
   selector: 'app-house',
   templateUrl: './house.component.html',
@@ -43,6 +47,7 @@ export class HouseComponent implements OnInit {
     private fb: FormBuilder,
     private districtService: DistrictService,
     private cdr: ChangeDetectorRef,
+    private authenticationService: AuthenticationService,
     private communeService: CommuneService,
     private villageService: VillageService,
   ) {
@@ -354,21 +359,107 @@ export class HouseComponent implements OnInit {
 
   likeHouse(houseId: number): void {
     const house = this.houses.find(h => h.id === houseId);
-    if (house && !house.pending) {
-      house.pending = true;
-      if (house.liked) {
-        house.likeCount -= 1;
-        house.liked = false;
-        house.pending = false;
-      } else {
-        this.houseService.likeHouse(houseId).subscribe(() => {
-          house.likeCount += 1;
-          house.liked = true;
-          house.pending = false;
-        }, () => {
-          house.pending = false;
+    if (!house || house.pending) return;
+
+    house.pending = true; // Prevent multiple clicks until response is received
+    house.liked = !house.liked; // Optimistically toggle the like status
+    house.likeCount += house.liked ? 1 : -1;
+
+    console.log(`Attempting to toggle like for house ID ${houseId}. Current status: ${house.liked}`);
+
+    this.houseService.likeHouse(houseId, 'house').subscribe({
+        next: (response) => {
+            console.log(`API response for like toggle on house ID ${houseId}:`, response);
+            if (response && response.success) {
+                // Assuming the API response has a `success` field
+                this.fetchHouseData(houseId); // Fetch latest data to sync
+            } else {
+                // Handle unexpected response structure
+                throw new Error('Unexpected API response structure');
+            }
+        },
+        error: (error) => {
+            // Revert the like status if there's an error
+            house.liked = !house.liked;
+            house.likeCount += house.liked ? 1 : -1;
+            house.pending = false;
+            console.error(`Error toggling like for house ID ${houseId}:`, error);
+        },
+        complete: () => {
+            house.pending = false;
+            console.log(`Completed toggle like operation for house ID ${houseId}`);
+        }
+    });
+}
+
+
+
+  toggleFavorite(houseId: number): void {
+    const house = this.houses.find(h => h.id === houseId);
+
+    if (!this.authenticationService.isLoggedIn()) {
+        Swal.fire({
+            title: 'Login Required',
+            text: 'Please log in to add favorites.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
         });
-      }
+        return;
     }
+
+    if (!house) return;
+
+    house.pending = true; // Prevent multiple clicks
+    house.favorited = !house.favorited; // Optimistically toggle the favorite status
+
+    console.log(`Attempting to toggle favorite for house ID ${houseId}. Current status: ${house.favorited}`);
+
+    this.houseService.favoriteHouse(houseId, 'house').subscribe({
+        next: (response) => {
+            console.log(`Successfully toggled favorite for house ID ${houseId}. API response:`, response);
+            this.fetchHouseData(houseId); // Fetch latest data to sync
+            Swal.fire({
+                title: house.favorited ? 'Added to Favorites!' : 'Removed from Favorites',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+        },
+        error: (error) => {
+            house.favorited = !house.favorited; // Revert if there's an error
+            house.pending = false;
+            console.error(`Error toggling favorite for house ID ${houseId}:`, error);
+        },
+        complete: () => {
+            house.pending = false;
+            console.log(`Completed toggle favorite operation for house ID ${houseId}`);
+        }
+    });
+}
+
+
+  private fetchHouseData(houseId: number): void {
+    console.log(`Fetching updated data for house ID ${houseId}...`);
+    this.houseService.getHouseById(houseId.toString()).subscribe({
+      next: updatedHouse => {
+        const houseIndex = this.houses.findIndex(h => h.id === houseId);
+        if (houseIndex > -1) {
+          console.log(`Updated data for house ID ${houseId}:`, updatedHouse);
+          this.houses[houseIndex] = { ...this.houses[houseIndex], ...updatedHouse };
+          this.houses[houseIndex].pending = false;
+        }
+      },
+      error: () => {
+        console.error(`Error fetching latest data for house ID ${houseId}`);
+        const house = this.houses.find(h => h.id === houseId);
+        if (house) {
+          house.pending = false;
+        }
+      }
+    });
   }
+
+
+
+
 }

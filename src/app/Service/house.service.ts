@@ -10,6 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class HouseService {
 
   private apiUrl = `${environment.apiUrl}/public/houses`;
+  private apilike = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient,private sanitizer: DomSanitizer) { }
 
@@ -61,11 +62,22 @@ export class HouseService {
 
     return this.http.get<any>(this.apiUrl, { headers, params: httpParams });
   }
-
-  likeHouse(houseId: number): Observable<any> {
+  likeHouse(postId: number, postType: string, options: any = {}): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
-    return this.http.put<any>(`${this.apiUrl}/like/${houseId}`, {}, { headers });
-  }
+    const url = `${this.apilike}/public/like?postId=${postId}&postType=${postType}`;
+    return this.http.post<any>(url, {}, { headers, ...options });
+}
+
+
+ favoriteHouse(postId: number, postType: string): Observable<any> {
+  const headers = new HttpHeaders().set('api-version', '1');
+  const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+  return this.http.post<any>(url, {}, { headers });
+}
+
+
+
+
 
   // Fetch image with headers
   getImage(imageUrl: string): Observable<any> {
@@ -79,7 +91,7 @@ export class HouseService {
     return this.sanitizer.bypassSecurityTrustUrl(objectURL); // Safe URL for Angular templates
   }
   getHouseById(id: string): Observable<any> {
-    const url = `${this.apiUrl}/${id}`; // Assuming this.apiUrl is set to your base API URL
+    const url = `${this.apiUrl}/${id}`;
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.get<any>(url, { headers });
   }
