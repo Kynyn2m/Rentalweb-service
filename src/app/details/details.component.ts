@@ -190,28 +190,28 @@ export class DetailsComponent implements OnInit {
     });
   }
 
-  likeHouse(houseId: number): void {
-    if (!this.house || this.house.pending) return;
+  // likeHouse(houseId: number): void {
+  //   if (!this.house || this.house.pending) return;
 
-    this.house.pending = true;
+  //   this.house.pending = true;
 
-    if (this.house.liked) {
+  //   if (this.house.liked) {
 
-      this.house.likeCount -= 1;
-      this.house.liked = false;
-      this.house.pending = false;
-    } else {
+  //     this.house.likeCount -= 1;
+  //     this.house.liked = false;
+  //     this.house.pending = false;
+  //   } else {
 
-      this.houseService.likeHouse(houseId).subscribe(() => {
-        this.house!.likeCount += 1;
-        this.house!.liked = true;
-        this.house!.pending = false;
-      }, () => {
+  //     this.houseService.likeHouse(houseId).subscribe(() => {
+  //       this.house!.likeCount += 1;
+  //       this.house!.liked = true;
+  //       this.house!.pending = false;
+  //     }, () => {
 
-        this.house!.pending = false;
-      });
-    }
-  }
+  //       this.house!.pending = false;
+  //     });
+  //   }
+  // }
   previousImage(): void {
     if (this.house && this.house.safeImagePaths) {
       const index = this.house.safeImagePaths.indexOf(this.currentImage!);
