@@ -1,46 +1,15 @@
  import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HouseService } from '../Service/house.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from './image-dialog.component';
 import { DistrictService } from '../address/district.service';
 import { CommuneService } from '../address/commune.service';
 import { VillageService } from '../address/village.service';
 
-interface House {
-  id: number;
-  likeCount: number;
-  liked: boolean;
-  // Add the pending flag
-  pending?: boolean;
-}
-interface Location {
-  id: number;
-  englishName: string;
-  khmerName: string;
-}
 
-interface ApiResponse<T> {
-  code: number;
-  message: string;
-  result: {
-    totalPage: number;
-    totalElements: number;
-    currentPage: number;
-    result: T[];
-  };
-}
-interface PaggingModel<T> {
-  totalPage: number;
-  totalElements: number;
-  currentPage: number;
-  result: T[];
-}
-
-
-
-
+/** Interfaces */
 interface House {
   id: number;
   title: string;
@@ -61,7 +30,45 @@ interface House {
   district: number;
   commune: number;
   village: number;
+  liked: boolean;
+  pending?: boolean;
 }
+
+interface UserComment {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
+  replies: UserReply[];
+  totalReply: number;
+}
+
+interface UserReply {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
+  replies: UserReply[];
+  totalReply: number;
+}
+
+
+
+interface Location {
+  id: number;
+  englishName: string;
+  khmerName: string;
+}
+
+interface PaggingModel<T> {
+  totalPage: number;
+  totalElements: number;
+  currentPage: number;
+  result: T[];
+}
+
 
 @Component({
   selector: 'app-details',
@@ -76,6 +83,17 @@ export class DetailsComponent implements OnInit {
   communeName: string = '';
   villageName: string = '';
   currentImage: SafeUrl | null = null;
+  urlSafe!: SafeResourceUrl;
+  linkMap: string | null = null;
+  comments: UserComment[] = [];
+  replyText: { [key: number]: string } = {};
+
+
+
+
+
+
+
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -86,22 +104,77 @@ export class DetailsComponent implements OnInit {
     private readonly communeService: CommuneService,
     private readonly villageService: VillageService,
     private readonly cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.setDefaultMapUrl();
+
+  }
 
   ngOnInit(): void {
-    const houseId = this.route.snapshot.paramMap.get('id');
+    const houseIdParam = this.route.snapshot.paramMap.get('id');
+    const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
+
     if (houseId) {
       this.getHouseDetails(houseId);
+      this.loadComments(houseId);
+    } else {
+      console.error('Invalid house ID');
     }
   }
 
-  getHouseDetails(id: string): void {
-    this.houseService.getHouseById(id).subscribe(
+
+  loadComments(houseId: number): void {
+    this.houseService.getComments(houseId).subscribe(response => {
+      if (response.code === 200) {
+        this.comments = response.result.result as UserComment[];
+      }
+    });
+  }
+
+  sendReply(commentId: number): void {
+    const description = this.replyText[commentId];
+    if (!description) {
+      alert('Please enter a reply.');
+      return;
+    }
+
+    this.houseService.replyToComment(commentId, description).subscribe(
+      (response) => {
+        // Update the comments list dynamically if needed
+        const comment = this.comments.find(c => c.id === commentId);
+        if (comment) {
+          comment.replies.push({
+            id: response.id,
+            userId: response.userId,
+            name: response.name,
+            description: description,
+            imagePath: response.imagePath,
+            replies: [],
+            totalReply: 0
+          });
+          comment.totalReply += 1;
+          this.replyText[commentId] = ''; // Clear the reply text
+        }
+      },
+      (error) => {
+        console.error('Error posting reply:', error);
+      }
+    );
+  }
+
+  getHouseDetails(id: number): void { // Change id type to number
+    this.houseService.getHouseById(id.toString()).subscribe(
       (response) => {
         this.house = response.result as House;
         if (this.house) {
           this.loadImages(this.house);
           this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
+
+          if (this.house.linkMap) {
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `https://maps.google.com/maps?q=${encodeURIComponent(this.house.linkMap)}&output=embed`
+            );
+            this.linkMap = this.house.linkMap;
+          }
         }
       },
       (error) => {
@@ -110,6 +183,19 @@ export class DetailsComponent implements OnInit {
     );
   }
 
+
+
+  setDefaultMapUrl(): void {
+    // Set the default map to Phnom Penh coordinates if no specific link is available
+    const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
+    this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  setMapUrl(): void {
+    // Set the URL to display Phnom Penh, Cambodia, on the map
+    const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
+    this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
   loadImages(house: House): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
       house.safeImagePaths = [];
@@ -189,29 +275,6 @@ export class DetailsComponent implements OnInit {
       panelClass: 'full-screen-modal',
     });
   }
-
-  // likeHouse(houseId: number): void {
-  //   if (!this.house || this.house.pending) return;
-
-  //   this.house.pending = true;
-
-  //   if (this.house.liked) {
-
-  //     this.house.likeCount -= 1;
-  //     this.house.liked = false;
-  //     this.house.pending = false;
-  //   } else {
-
-  //     this.houseService.likeHouse(houseId).subscribe(() => {
-  //       this.house!.likeCount += 1;
-  //       this.house!.liked = true;
-  //       this.house!.pending = false;
-  //     }, () => {
-
-  //       this.house!.pending = false;
-  //     });
-  //   }
-  // }
   previousImage(): void {
     if (this.house && this.house.safeImagePaths) {
       const index = this.house.safeImagePaths.indexOf(this.currentImage!);

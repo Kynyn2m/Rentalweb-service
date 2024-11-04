@@ -4,6 +4,16 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment'; // Ensure you have the environment file properly set up
 import { DomSanitizer } from '@angular/platform-browser';
 
+interface UserComment {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
+
+  totalReply: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +31,16 @@ export class HouseService {
   updateHousepf(houseId: number, houseData: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${houseId}`, houseData);
   }
-
+  getComments(houseId: number): Observable<{ code: number; message: string; result: { result: UserComment[] } }> {
+    const url = `${this.apiUrl}/${houseId}/comments`;
+    return this.http.get<{ code: number; message: string; result: { result: UserComment[] } }>(url);
+  }
+  replyToComment(commentId: number, description: string): Observable<any> {
+    const url = `${environment.apiUrl}/comments/${commentId}`; // Directly use environment.baseUrl
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { description };
+    return this.http.post(url, body, { headers });
+  }
 
 
   getHouses(params?: any): Observable<any> {
