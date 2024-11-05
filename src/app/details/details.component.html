@@ -132,6 +132,16 @@
                                  class="profile-image" />
                             <h4>{{ nestedReply.name }}</h4>
                           </div>
+
+                          <!-- Dropdown Menu for Nested Reply Options -->
+                          <div class="comment-menu">
+                            <button (click)="toggleMenu(nestedReply.id)"
+                                    class="menu-button">⋮</button>
+                            <div *ngIf="activeMenu === nestedReply.id"
+                                 class="menu-options">
+                              <button (click)="deleteComment(nestedReply.id)">Delete</button>
+                            </div>
+                          </div>
                         </div>
                         <p>{{ nestedReply.description }}</p>
                       </div>
@@ -170,6 +180,7 @@
             </div>
           </div>
         </div>
+
 
 
 

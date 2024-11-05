@@ -1,5 +1,5 @@
  import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HouseService } from '../Service/house.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +7,10 @@ import { ImageDialogComponent } from './image-dialog.component';
 import { DistrictService } from '../address/district.service';
 import { CommuneService } from '../address/commune.service';
 import { VillageService } from '../address/village.service';
+
+import Swal from 'sweetalert2';
+import { AuthenticationService } from '../authentication/authentication.service';
+
 
 
 /** Interfaces */
@@ -107,7 +111,10 @@ export class DetailsComponent implements OnInit {
     private readonly districtService: DistrictService,
     private readonly communeService: CommuneService,
     private readonly villageService: VillageService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly authenticationService: AuthenticationService,
+    private readonly router: Router,
+
   ) {
     this.setDefaultMapUrl();
 
@@ -142,6 +149,22 @@ export class DetailsComponent implements OnInit {
   }
 
   postComment(): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to post a comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     if (!this.newCommentText.trim()) return;
 
     const houseId = this.house?.id ?? 34;
@@ -152,8 +175,17 @@ export class DetailsComponent implements OnInit {
     this.houseService.postComment(houseId, description, type).subscribe(
       (response) => {
         if (response) {
-          this.loadComments(houseId); // Reload comments to fetch latest data
-          this.newCommentText = ''; // Clear input field
+          const newComment: UserComment = {
+            id: response.id,
+            userId: response.userId,
+            name: response.name,
+            description: response.description,
+            imagePath: response.imagePath,
+            replies: [],
+            totalReply: 0,
+          };
+          this.comments.unshift(newComment);
+          this.newCommentText = '';
         }
         this.isLoading = false;
       },
@@ -165,6 +197,22 @@ export class DetailsComponent implements OnInit {
   }
 
   sendReply(commentId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to reply to this comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     const description = this.replyText[commentId];
     if (!description) return;
 
@@ -172,9 +220,20 @@ export class DetailsComponent implements OnInit {
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          const houseId = this.house?.id ?? 34;
-          this.loadComments(houseId); // Reload comments to fetch latest data
-          this.replyText[commentId] = ''; // Clear reply input
+          const parentComment = this.comments.find((c) => c.id === commentId);
+          if (parentComment) {
+            parentComment.replies.push({
+              id: response.id,
+              userId: response.userId,
+              name: response.name,
+              description: response.description,
+              imagePath: response.imagePath,
+              replies: [],
+              totalReply: 0,
+            });
+            parentComment.totalReply += 1;
+            this.replyText[commentId] = '';
+          }
         }
         this.isLoading = false;
       },
@@ -190,6 +249,23 @@ export class DetailsComponent implements OnInit {
   }
 
   deleteComment(commentId: number): void {
+    // Check if the user is logged in
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to delete a comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return; // Exit if the user is not logged in
+    }
+
     this.isLoading = true;
     this.houseService.deleteComment(commentId).subscribe(
       () => {
@@ -204,6 +280,7 @@ export class DetailsComponent implements OnInit {
       }
     );
   }
+
 
 
 

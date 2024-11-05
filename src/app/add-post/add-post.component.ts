@@ -47,7 +47,7 @@ export class AddPostComponent implements OnInit {
       Swal.fire({
         icon: 'warning',
         title: 'Login Required',
-        text: ' ្នកត្រូវតែចូលដើម្បីបន្ថែមការផុស។ You need to login to add a post',
+        text: ' អ្នកត្រូវតែចូលដើម្បីបន្ថែមការផុស។ You need to login to add a post',
         confirmButtonText: 'Go to Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
