@@ -90,6 +90,8 @@ export class DetailsComponent implements OnInit {
   newCommentText: string = '';
   activeMenu: number | null = null;
 
+   isLoading: boolean = false;
+
 
 
 
@@ -123,93 +125,86 @@ export class DetailsComponent implements OnInit {
     }
   }
 
-  postComment(): void {
-    if (!this.newCommentText.trim()) return;
-
-    const houseId = this.house?.id ?? 34; // Adjust as needed
-    const type = 'house';
-    const description = this.newCommentText;
-
-    this.houseService.postComment(houseId, description, type).subscribe(
+  loadComments(houseId: number): void {
+    this.isLoading = true;
+    this.houseService.getComments(houseId).subscribe(
       (response) => {
-        if (response) {
-          // Add the new comment from the response to the top of the comments list
-          const newComment: UserComment = {
-            id: response.id,
-            userId: response.userId,
-            name: response.name, // Ensure this field is set correctly
-            description: response.description,
-            imagePath: response.imagePath, // Ensure this field is set correctly
-            replies: [],
-            totalReply: 0
-          };
-          this.comments.unshift(newComment); // Update UI with the new comment
-          this.newCommentText = ''; // Clear the input field
+        if (response.code === 200) {
+          this.comments = response.result.result as UserComment[];
         }
+        this.isLoading = false;
       },
       (error) => {
-        console.error('Error posting comment:', error);
+        console.error('Error loading comments:', error);
+        this.isLoading = false;
       }
     );
   }
 
+  postComment(): void {
+    if (!this.newCommentText.trim()) return;
 
-  loadComments(houseId: number): void {
-    this.houseService.getComments(houseId).subscribe(response => {
-      if (response.code === 200) {
-        this.comments = response.result.result as UserComment[];
+    const houseId = this.house?.id ?? 34;
+    const type = 'house';
+    const description = this.newCommentText;
+
+    this.isLoading = true;
+    this.houseService.postComment(houseId, description, type).subscribe(
+      (response) => {
+        if (response) {
+          this.loadComments(houseId); // Reload comments to fetch latest data
+          this.newCommentText = ''; // Clear input field
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error posting comment:', error);
+        this.isLoading = false;
       }
-    });
+    );
   }
 
   sendReply(commentId: number): void {
     const description = this.replyText[commentId];
     if (!description) return;
 
+    this.isLoading = true;
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          // Find the parent comment and add the new reply from the response
-          const parentComment = this.comments.find(c => c.id === commentId);
-          if (parentComment) {
-            parentComment.replies.push({
-              id: response.id,
-              userId: response.userId,
-              name: response.name, // Ensure this field is set correctly
-              description: response.description,
-              imagePath: response.imagePath, // Ensure this field is set correctly
-              replies: [],
-              totalReply: 0
-            });
-            parentComment.totalReply += 1; // Update reply count if needed
-            this.replyText[commentId] = ''; // Clear the reply input
-          }
+          const houseId = this.house?.id ?? 34;
+          this.loadComments(houseId); // Reload comments to fetch latest data
+          this.replyText[commentId] = ''; // Clear reply input
         }
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error posting reply:', error);
+        this.isLoading = false;
       }
     );
   }
 
   toggleMenu(commentId: number): void {
-    this.activeMenu = this.activeMenu === commentId ? null : commentId; // Toggle the menu
+    this.activeMenu = this.activeMenu === commentId ? null : commentId;
   }
 
   deleteComment(commentId: number): void {
-    if (!confirm('Are you sure you want to delete this comment?')) return;
-
+    this.isLoading = true;
     this.houseService.deleteComment(commentId).subscribe(
       () => {
-        // Remove the comment from the UI after successful deletion
-        this.comments = this.comments.filter(comment => comment.id !== commentId);
-        this.activeMenu = null; // Close the menu after deletion
+        const houseId = this.house?.id ?? 34;
+        this.loadComments(houseId); // Reload comments to update the list
+        this.activeMenu = null;
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error deleting comment:', error);
+        this.isLoading = false;
       }
     );
   }
+
 
 
   getHouseDetails(id: number): void { // Change id type to number

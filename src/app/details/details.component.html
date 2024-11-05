@@ -49,6 +49,17 @@
         <div class="comments-section">
           <h3>Comments ({{ comments.length }})</h3>
 
+          <!-- Loading Overlay -->
+          <div *ngIf="isLoading"
+               class="loading-overlay">
+            <div class="loading-content">
+              <mat-progress-spinner mode="indeterminate"
+                                    diameter="50"
+                                    color="primary"></mat-progress-spinner>
+            </div>
+          </div>
+
+
           <!-- New Comment Form -->
           <div class="new-comment-form">
             <input type="text"
