@@ -471,7 +471,7 @@
   border: 1px solid #ccc;
   border-radius: 20px;
   outline: none;
-  font-size: 14px;
+  font-size: 14px !important;
 }
 
 .new-comment-input:focus {
