@@ -49,29 +49,100 @@
         <div class="comments-section">
           <h3>Comments ({{ comments.length }})</h3>
 
-          <!-- Display Each Comment -->
+          <!-- New Comment Form -->
+          <div class="new-comment-form">
+            <input type="text"
+                   [(ngModel)]="newCommentText"
+                   placeholder="Write a new comment..."
+                   class="new-comment-input" />
+            <button (click)="postComment()"
+                    [disabled]="!newCommentText"
+                    class="post-comment-button">
+              Post Comment
+            </button>
+          </div>
+
+          <!-- Display Comments and Replies Recursively -->
           <div *ngFor="let comment of comments"
                class="comment">
             <div class="comment-header">
-              <img [src]="comment.imagePath"
-                   alt="{{ comment.name }}'s profile"
-                   class="profile-image" />
-              <h4>{{ comment.name }}</h4>
+              <!-- Group profile image and name -->
+              <div class="header-content">
+                <img [src]="comment.imagePath"
+                     alt="{{ comment.name }}'s profile"
+                     class="profile-image" />
+                <h4>{{ comment.name }}</h4>
+              </div>
+
+              <!-- Dropdown Menu for Comment Options -->
+              <div class="comment-menu">
+                <button (click)="toggleMenu(comment.id)"
+                        class="menu-button">⋮</button>
+                <div *ngIf="activeMenu === comment.id"
+                     class="menu-options">
+                  <button (click)="deleteComment(comment.id)">Delete</button>
+                </div>
+              </div>
             </div>
             <p>{{ comment.description }}</p>
 
-            <!-- Display Replies if Available -->
-            <div *ngIf="comment.replies && comment.replies.length > 0"
-                 class="replies">
-              <h5>Replies ({{ comment.totalReply }})</h5>
-              <div *ngFor="let reply of comment.replies"
-                   class="reply">
-                <img [src]="reply.imagePath"
-                     alt="{{ reply.name }}'s profile"
-                     class="profile-image" />
-                <h4>{{ reply.name }}</h4>
-                <p>{{ reply.description }}</p>
-              </div>
+            <!-- Recursive Replies Section -->
+            <div class="replies"
+                 *ngIf="comment.replies && comment.replies.length > 0">
+              <ng-container *ngFor="let reply of comment.replies">
+                <div class="reply">
+                  <div class="reply-header">
+                    <div class="header-content">
+                      <img [src]="reply.imagePath"
+                           alt="{{ reply.name }}'s profile"
+                           class="profile-image" />
+                      <h4>{{ reply.name }}</h4>
+                    </div>
+
+                    <!-- Dropdown Menu for Reply Options -->
+                    <div class="comment-menu">
+                      <button (click)="toggleMenu(reply.id)"
+                              class="menu-button">⋮</button>
+                      <div *ngIf="activeMenu === reply.id"
+                           class="menu-options">
+                        <button (click)="deleteComment(reply.id)">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                  <p>{{ reply.description }}</p>
+
+                  <!-- Further Nested Replies -->
+                  <div class="nested-replies"
+                       *ngIf="reply.replies && reply.replies.length > 0">
+                    <ng-container *ngFor="let nestedReply of reply.replies">
+                      <div class="reply">
+                        <div class="reply-header">
+                          <div class="header-content">
+                            <img [src]="nestedReply.imagePath"
+                                 alt="{{ nestedReply.name }}'s profile"
+                                 class="profile-image" />
+                            <h4>{{ nestedReply.name }}</h4>
+                          </div>
+                        </div>
+                        <p>{{ nestedReply.description }}</p>
+                      </div>
+                    </ng-container>
+                  </div>
+
+                  <!-- Reply Form for Each Reply -->
+                  <div class="reply-form">
+                    <input type="text"
+                           [(ngModel)]="replyText[reply.id]"
+                           placeholder="Write a reply..."
+                           class="reply-input" />
+                    <button (click)="sendReply(reply.id)"
+                            [disabled]="!replyText[reply.id]"
+                            class="reply-button">
+                      Reply
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
             </div>
 
             <!-- Reply Form for Each Comment -->
@@ -88,6 +159,10 @@
             </div>
           </div>
         </div>
+
+
+
+
 
       </div>
     </div>

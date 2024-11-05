@@ -42,6 +42,24 @@ export class HouseService {
     return this.http.post(url, body, { headers });
   }
 
+  postComment(houseId: number, description: string, type: string): Observable<any> {
+    const url = `${this.apilike}/comments`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = {
+      houseId: houseId.toString(),
+      type: type,
+      description: description
+    };
+    return this.http.post(url, body, { headers });
+  }
+
+  deleteComment(commentId: number): Observable<any> {
+    const url = `${this.apilike}/comments/${commentId}`;
+    return this.http.delete(url);
+  }
+
+
+
 
   getHouses(params?: any): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');

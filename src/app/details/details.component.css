@@ -356,19 +356,35 @@
   font-weight: bold;
 }
 
+
+/* commnet */
+
 .comments-section {
   margin-top: 20px;
 }
 
-.comment {
+.comment,
+.reply {
   padding: 15px;
   border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
-.comment-header {
+.comment-header,
+.reply-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* New container for profile image and name */
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .profile-image {
@@ -378,33 +394,27 @@
   object-fit: cover;
 }
 
-.comment h4 {
+.comment h4,
+.reply h4 {
   margin: 0;
   font-weight: bold;
   font-size: 14px;
+  color: #333;
 }
 
-.replies {
+.comment p,
+.reply p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.replies,
+.nested-replies {
   margin-top: 10px;
   padding-left: 20px;
   border-left: 2px solid #ddd;
-}
-
-.reply {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.reply h4 {
-  margin: 0;
-  font-size: 13px;
-}
-
-.reply p {
-  margin: 0;
-  font-size: 13px;
 }
 
 .reply-form {
@@ -412,6 +422,7 @@
   align-items: center;
   gap: 8px;
   margin-top: 10px;
+  margin-left: 50px;
 }
 
 .reply-input {
@@ -441,4 +452,80 @@
 .reply-button:disabled {
   background-color: #b0c4de;
   cursor: not-allowed;
+}
+
+.new-comment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.new-comment-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 14px;
+}
+
+.new-comment-input:focus {
+  border-color: #1877f2;
+}
+
+.post-comment-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.post-comment-button:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+/* Dropdown Menu Styling */
+.comment-menu {
+  position: relative;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.menu-options {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.menu-options button {
+  display: block;
+  padding: 8px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #444;
+}
+
+.menu-options button:hover {
+  background-color: #f2f2f2;
 }

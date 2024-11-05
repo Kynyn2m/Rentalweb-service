@@ -87,6 +87,8 @@ export class DetailsComponent implements OnInit {
   linkMap: string | null = null;
   comments: UserComment[] = [];
   replyText: { [key: number]: string } = {};
+  newCommentText: string = '';
+  activeMenu: number | null = null;
 
 
 
@@ -121,6 +123,36 @@ export class DetailsComponent implements OnInit {
     }
   }
 
+  postComment(): void {
+    if (!this.newCommentText.trim()) return;
+
+    const houseId = this.house?.id ?? 34; // Adjust as needed
+    const type = 'house';
+    const description = this.newCommentText;
+
+    this.houseService.postComment(houseId, description, type).subscribe(
+      (response) => {
+        if (response) {
+          // Add the new comment from the response to the top of the comments list
+          const newComment: UserComment = {
+            id: response.id,
+            userId: response.userId,
+            name: response.name, // Ensure this field is set correctly
+            description: response.description,
+            imagePath: response.imagePath, // Ensure this field is set correctly
+            replies: [],
+            totalReply: 0
+          };
+          this.comments.unshift(newComment); // Update UI with the new comment
+          this.newCommentText = ''; // Clear the input field
+        }
+      },
+      (error) => {
+        console.error('Error posting comment:', error);
+      }
+    );
+  }
+
 
   loadComments(houseId: number): void {
     this.houseService.getComments(houseId).subscribe(response => {
@@ -132,27 +164,26 @@ export class DetailsComponent implements OnInit {
 
   sendReply(commentId: number): void {
     const description = this.replyText[commentId];
-    if (!description) {
-      alert('Please enter a reply.');
-      return;
-    }
+    if (!description) return;
 
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
-        // Update the comments list dynamically if needed
-        const comment = this.comments.find(c => c.id === commentId);
-        if (comment) {
-          comment.replies.push({
-            id: response.id,
-            userId: response.userId,
-            name: response.name,
-            description: description,
-            imagePath: response.imagePath,
-            replies: [],
-            totalReply: 0
-          });
-          comment.totalReply += 1;
-          this.replyText[commentId] = ''; // Clear the reply text
+        if (response) {
+          // Find the parent comment and add the new reply from the response
+          const parentComment = this.comments.find(c => c.id === commentId);
+          if (parentComment) {
+            parentComment.replies.push({
+              id: response.id,
+              userId: response.userId,
+              name: response.name, // Ensure this field is set correctly
+              description: response.description,
+              imagePath: response.imagePath, // Ensure this field is set correctly
+              replies: [],
+              totalReply: 0
+            });
+            parentComment.totalReply += 1; // Update reply count if needed
+            this.replyText[commentId] = ''; // Clear the reply input
+          }
         }
       },
       (error) => {
@@ -160,6 +191,26 @@ export class DetailsComponent implements OnInit {
       }
     );
   }
+
+  toggleMenu(commentId: number): void {
+    this.activeMenu = this.activeMenu === commentId ? null : commentId; // Toggle the menu
+  }
+
+  deleteComment(commentId: number): void {
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+    this.houseService.deleteComment(commentId).subscribe(
+      () => {
+        // Remove the comment from the UI after successful deletion
+        this.comments = this.comments.filter(comment => comment.id !== commentId);
+        this.activeMenu = null; // Close the menu after deletion
+      },
+      (error) => {
+        console.error('Error deleting comment:', error);
+      }
+    );
+  }
+
 
   getHouseDetails(id: number): void { // Change id type to number
     this.houseService.getHouseById(id.toString()).subscribe(
