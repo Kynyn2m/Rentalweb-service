@@ -164,7 +164,6 @@ export class DetailsComponent implements OnInit {
       });
       return;
     }
-
     if (!this.newCommentText.trim()) return;
 
     const houseId = this.house?.id ?? 34;
@@ -175,17 +174,8 @@ export class DetailsComponent implements OnInit {
     this.houseService.postComment(houseId, description, type).subscribe(
       (response) => {
         if (response) {
-          const newComment: UserComment = {
-            id: response.id,
-            userId: response.userId,
-            name: response.name,
-            description: response.description,
-            imagePath: response.imagePath,
-            replies: [],
-            totalReply: 0,
-          };
-          this.comments.unshift(newComment);
-          this.newCommentText = '';
+          this.loadComments(houseId); // Reload comments to fetch latest data
+          this.newCommentText = ''; // Clear input field
         }
         this.isLoading = false;
       },
@@ -220,20 +210,9 @@ export class DetailsComponent implements OnInit {
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          const parentComment = this.comments.find((c) => c.id === commentId);
-          if (parentComment) {
-            parentComment.replies.push({
-              id: response.id,
-              userId: response.userId,
-              name: response.name,
-              description: response.description,
-              imagePath: response.imagePath,
-              replies: [],
-              totalReply: 0,
-            });
-            parentComment.totalReply += 1;
-            this.replyText[commentId] = '';
-          }
+          const houseId = this.house?.id ?? 34;
+          this.loadComments(houseId); // Reload comments to fetch latest data
+          this.replyText[commentId] = ''; // Clear reply input
         }
         this.isLoading = false;
       },
@@ -243,13 +222,11 @@ export class DetailsComponent implements OnInit {
       }
     );
   }
-
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
   }
 
   deleteComment(commentId: number): void {
-    // Check if the user is logged in
     if (!this.authenticationService.isLoggedIn()) {
       Swal.fire({
         icon: 'warning',
@@ -265,7 +242,6 @@ export class DetailsComponent implements OnInit {
       });
       return; // Exit if the user is not logged in
     }
-
     this.isLoading = true;
     this.houseService.deleteComment(commentId).subscribe(
       () => {
