@@ -359,6 +359,22 @@ export class HouseComponent implements OnInit {
 
 
   likeHouse(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     const house = this.houses.find(h => h.id === houseId);
     if (!house || house.pending) return;
 
@@ -366,7 +382,7 @@ export class HouseComponent implements OnInit {
     console.log(`Toggling like for house ID ${houseId}`);
 
     this.houseService.likeHouse(houseId, 'house').subscribe({
-      next: () => this.fetchHouseData(houseId), // Fetch the latest data after toggling
+      next: () => this.fetchHouseData(houseId),
       error: (error) => {
         console.error(`Error toggling like for house ID ${houseId}:`, error);
         this.fetchHouseData(houseId);
@@ -378,20 +394,35 @@ export class HouseComponent implements OnInit {
     });
   }
 
+
   toggleFavorite(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
     const house = this.houses.find(h => h.id === houseId);
     if (!house || house.pending) return;
 
-    house.pending = true; // Prevent multiple clicks until response is received
+    house.pending = true;
     console.log(`Toggling favorite for house ID ${houseId}`);
 
     this.houseService.toggleFavorite(houseId, 'house').subscribe({
-      next: () => {
-        this.fetchHouseData(houseId); // Fetch latest data to sync
-      },
+      next: () => this.fetchHouseData(houseId),
       error: (error) => {
         console.error(`Error toggling favorite for house ID ${houseId}:`, error);
-        this.fetchHouseData(houseId); // Ensure UI consistency even on error
+        this.fetchHouseData(houseId);
       },
       complete: () => {
         house.pending = false;

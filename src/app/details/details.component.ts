@@ -133,17 +133,17 @@ export class DetailsComponent implements OnInit {
   }
 
   loadComments(houseId: number): void {
-    this.isLoading = true;
+
     this.houseService.getComments(houseId).subscribe(
       (response) => {
         if (response.code === 200) {
           this.comments = response.result.result as UserComment[];
         }
-        this.isLoading = false;
+
       },
       (error) => {
         console.error('Error loading comments:', error);
-        this.isLoading = false;
+
       }
     );
   }
@@ -170,18 +170,18 @@ export class DetailsComponent implements OnInit {
     const type = 'house';
     const description = this.newCommentText;
 
-    this.isLoading = true;
+
     this.houseService.postComment(houseId, description, type).subscribe(
       (response) => {
         if (response) {
           this.loadComments(houseId); // Reload comments to fetch latest data
           this.newCommentText = ''; // Clear input field
         }
-        this.isLoading = false;
+
       },
       (error) => {
         console.error('Error posting comment:', error);
-        this.isLoading = false;
+
       }
     );
   }
@@ -206,7 +206,7 @@ export class DetailsComponent implements OnInit {
     const description = this.replyText[commentId];
     if (!description) return;
 
-    this.isLoading = true;
+
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
@@ -214,11 +214,11 @@ export class DetailsComponent implements OnInit {
           this.loadComments(houseId); // Reload comments to fetch latest data
           this.replyText[commentId] = ''; // Clear reply input
         }
-        this.isLoading = false;
+
       },
       (error) => {
         console.error('Error posting reply:', error);
-        this.isLoading = false;
+
       }
     );
   }
@@ -242,17 +242,17 @@ export class DetailsComponent implements OnInit {
       });
       return; // Exit if the user is not logged in
     }
-    this.isLoading = true;
+
     this.houseService.deleteComment(commentId).subscribe(
       () => {
         const houseId = this.house?.id ?? 34;
         this.loadComments(houseId); // Reload comments to update the list
         this.activeMenu = null;
-        this.isLoading = false;
+
       },
       (error) => {
         console.error('Error deleting comment:', error);
-        this.isLoading = false;
+
       }
     );
   }
