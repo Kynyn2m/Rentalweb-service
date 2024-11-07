@@ -22,6 +22,8 @@ export class UpdateRoomDialogComponent {
   imagePreview: SafeUrl | null = null; // Change type to SafeUrl
   selectedFile: File | null = null;
 
+  selectedFiles: File[] = []; // Array to hold multiple selected files
+  imagePreviews: SafeUrl[] = []; // Array for image previews
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private districtService: DistrictService,
@@ -60,7 +62,7 @@ export class UpdateRoomDialogComponent {
 
     // If there's an image, sanitize and display the first one as a preview
     if (this.roomData.imagePaths && this.roomData.imagePaths.length > 0) {
-      this.loadImage(this.roomData, 'room'); // Use 'room' as the type
+      this.loadImages(this.roomData.imagePaths); // Load and sanitize image paths
     }
   }
 
@@ -143,53 +145,48 @@ export class UpdateRoomDialogComponent {
     }
   }
 
-  loadImage(item: any, type: string): void {
-    item.safeImagePaths = []; // Initialize an array for sanitized image URLs
-    item.currentImageIndex = 0; // Start showing the first image
+  loadImages(imagePaths: string[]): void {
+    this.imagePreviews = []; // Clear existing previews
+    imagePaths.forEach((imagePath) => {
+      this.roomService.getImage(imagePath).subscribe(
+        (imageBlob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.imagePreviews.push(safeUrl); // Push sanitized URLs to the array
+        },
+        (error) => {
+          console.error('Error loading image:', error);
+          this.imagePreviews.push(
+            this.sanitizer.bypassSecurityTrustUrl(
+              '/assets/img/default-placeholder.png'
+            )
+          ); // Add a placeholder if image loading fails
+        }
+      );
+    });
+  }
 
-    // Loop through the array of imagePaths and sanitize each one
-    if (item.imagePaths && item.imagePaths.length > 0) {
-      item.imagePaths.forEach((imagePath: string) => {
-        this.roomService.getImage(imagePath).subscribe(
-          (imageBlob) => {
-            const objectURL = URL.createObjectURL(imageBlob);
-            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            item.safeImagePaths.push(safeUrl); // Push sanitized URLs to the array
-          },
-          (error) => {
-            console.error(
-              `Error loading ${type} image for item with ID: ${
-                item.id || 'unknown'
-              }`,
-              error
-            );
-            item.safeImagePaths.push('/assets/img/default-placeholder.png'); // Add a placeholder if image loading fails
-          }
-        );
+  onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        this.selectedFiles.push(file as File); // Add each file to the selectedFiles array
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(
+            e.target.result
+          );
+          this.imagePreviews.push(previewUrl); // Add preview to the imagePreviews array
+        };
+        reader.readAsDataURL(file as File);
       });
-    } else {
-      item.safeImagePaths.push('/assets/img/default-placeholder.png'); // Add a placeholder if no image exists
     }
   }
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file; // Store the selected file
-      console.log('Selected file:', this.selectedFile); // Log the selected file
-
-      // Handle file preview logic
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.imagePreview = e.target.result;
-        console.log('Image preview:', this.imagePreview); // Log the image preview
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-  cancelImage(): void {
-    this.selectedFile = null; // Reset the selected file
-    this.imagePreview = null; // Clear the image preview
+  // Cancel (remove) image preview and selected file
+  cancelImage(index: number): void {
+    this.selectedFiles.splice(index, 1); // Remove the file from the array
+    this.imagePreviews.splice(index, 1); // Remove the preview from the array
   }
 
   save(): void {
@@ -217,10 +214,9 @@ export class UpdateRoomDialogComponent {
       }
     }
 
-    // If a file is selected, append it to the form data
-    if (this.selectedFile) {
-      formData.append('images', this.selectedFile);
-      console.log('Appended image to FormData:', this.selectedFile); // Log the appended file
+    // If files are selected, append them to the form data
+    for (const file of this.selectedFiles) {
+      formData.append('images', file); // Append each selected file
     }
 
     // Call the updateRoom method from the room service

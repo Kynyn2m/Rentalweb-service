@@ -109,20 +109,37 @@
     <input matInput [(ngModel)]="roomData.linkMap" />
   </mat-form-field>
 
-  <!-- Image Upload -->
-  <div class="full-width">
-    <label for="fileInput" class="file-label">Upload Image</label>
-    <input id="fileInput" type="file" (change)="onFileSelected($event)" />
-  </div>
+  <mat-card class="file-upload-card">
+    <mat-card-content>
+      <div class="file-upload-container">
+        <label for="fileInput" class="file-upload-label">
+          <mat-icon>cloud_upload</mat-icon>
+          Upload Images
+        </label>
+        <input
+          id="fileInput"
+          type="file"
+          (change)="onFilesSelected($event)"
+          multiple
+        />
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-  <!-- Display loaded images -->
-  <div *ngIf="roomData.safeImagePaths && roomData.safeImagePaths.length > 0">
-    <img
-      *ngFor="let imgPath of roomData.safeImagePaths"
-      [src]="imgPath"
-      alt="Room Image"
-    />
-    <button mat-button (click)="cancelImage()">Cancel Image</button>
+  <!-- Display loaded images with cancel option -->
+  <div
+    class="image-preview-wrapper"
+    *ngIf="imagePreviews && imagePreviews.length > 0"
+  >
+    <div
+      *ngFor="let img of imagePreviews; let i = index"
+      class="image-preview-container"
+    >
+      <img [src]="img" alt="Room Image" class="image-preview" />
+      <button mat-button class="cancel-image-button" (click)="cancelImage(i)">
+        Cancel
+      </button>
+    </div>
   </div>
 </mat-dialog-content>
 

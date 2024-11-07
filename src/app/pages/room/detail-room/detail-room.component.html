@@ -1,93 +1,273 @@
-<div class="details-container">
-  <!-- Back Button with Material Icon -->
-  <button mat-button class="back-button" (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon> Back
-  </button>
-
-  <div class="details-card">
-    <!-- Display all images -->
-    <div class="gallery">
-      <!-- Main image -->
-      <div class="main-image">
-        <img [src]="currentImage" alt="Room Image" />
-        <!-- Navigation arrows -->
-        <button class="nav-left" (click)="previousImage()">&#10094;</button>
-        <button class="nav-right" (click)="nextImage()">&#10095;</button>
+<app-ads></app-ads>
+<div class="page-container">
+  <div class="details-container">
+    <!-- Existing content of details-container -->
+    <button mat-button class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon> Back
+    </button>
+    <div class="details-card">
+      <!-- Gallery and main details content -->
+      <div class="gallery">
+        <div class="main-image">
+          <img [src]="currentImage" alt="Room Image" />
+          <button class="nav-left" (click)="previousImage()">&#10094;</button>
+          <button class="nav-right" (click)="nextImage()">&#10095;</button>
+        </div>
+        <div class="image-thumbnails">
+          <img
+            *ngFor="let image of room?.safeImagePaths; let i = index"
+            [src]="image"
+            [class.selected]="currentImage === image"
+            (click)="selectImage(image)"
+            alt="{{ room?.title }}"
+            class="thumbnail"
+          />
+        </div>
       </div>
 
-      <!-- Thumbnail images -->
-      <div class="image-thumbnails">
-        <img
-          *ngFor="let image of room?.safeImagePaths; let i = index"
-          [src]="image"
-          [class.selected]="currentImage === image"
-          (click)="selectImage(image)"
-          alt="{{ room?.title }}"
-          class="thumbnail"
-        />
+      <div class="details-content">
+        <h2>{{ room?.title }}</h2>
+        <div class="details-info">
+          <p>
+            <strong>Location:</strong> {{ districtName }}, {{ communeName }},
+            {{ villageName }}
+          </p>
+          <p><strong>Contact:</strong> {{ room?.phoneNumber }}</p>
+          <p>
+            <strong>Price:</strong>
+            <span class="price">${{ room?.price }}</span>
+          </p>
+          <p><strong>Description:</strong> {{ room?.description }}</p>
+          <p>
+            <strong>Dimensions:</strong> {{ room?.width }}m x
+            {{ room?.height }}m
+          </p>
+          <p><strong>Floor:</strong> {{ room?.floor }}</p>
+          <p>
+            <strong>Map Link:</strong>
+            <a [href]="linkMap" target="_blank">View on Map</a>
+          </p>
+          <p><strong>Likes:</strong> {{ room?.likeCount }}</p>
+          <p><strong>Views:</strong> {{ room?.viewCount }}</p>
+        </div>
+
+        <div class="comments-section">
+          <h3>Comments ({{ comments.length }})</h3>
+
+          <!-- Loading Overlay -->
+          <div *ngIf="isLoading" class="loading-overlay">
+            <div class="loading-content">
+              <mat-progress-spinner
+                mode="indeterminate"
+                diameter="50"
+                color="primary"
+              ></mat-progress-spinner>
+            </div>
+          </div>
+
+          <!-- New Comment Form -->
+          <div class="new-comment-form">
+            <input
+              type="text"
+              [(ngModel)]="newCommentText"
+              placeholder="Write a new comment..."
+              class="new-comment-input"
+              (keyup.enter)="postComment()"
+            />
+            <button
+              (click)="postComment()"
+              [disabled]="!newCommentText"
+              class="post-comment-button"
+            >
+              Post Comment
+            </button>
+          </div>
+
+          <!-- Display Comments and Replies Recursively -->
+          <div *ngFor="let comment of comments" class="comment">
+            <div class="comment-header">
+              <div class="header-content">
+                <img
+                  [src]="comment.imagePath"
+                  alt="{{ comment.name }}'s profile"
+                  class="profile-image"
+                />
+                <h4>{{ comment.name }}</h4>
+              </div>
+
+              <!-- Dropdown Menu for Comment Options -->
+              <div class="comment-menu">
+                <button (click)="toggleMenu(comment.id)" class="menu-button">
+                  ⋮
+                </button>
+                <div *ngIf="activeMenu === comment.id" class="menu-options">
+                  <button (click)="deleteComment(comment.id)">Delete</button>
+                </div>
+              </div>
+            </div>
+            <p>{{ comment.description }}</p>
+
+            <!-- Recursive Replies Section -->
+            <div
+              *ngIf="comment.replies && comment.replies.length > 0"
+              class="replies"
+            >
+              <ng-container *ngFor="let reply of comment.replies">
+                <div class="reply">
+                  <div class="reply-header">
+                    <div class="header-content">
+                      <img
+                        [src]="reply.imagePath"
+                        alt="{{ reply.name }}'s profile"
+                        class="profile-image"
+                      />
+                      <h4>{{ reply.name }}</h4>
+                    </div>
+
+                    <!-- Dropdown Menu for Reply Options -->
+                    <div class="comment-menu">
+                      <button
+                        (click)="toggleMenu(reply.id)"
+                        class="menu-button"
+                      >
+                        ⋮
+                      </button>
+                      <div *ngIf="activeMenu === reply.id" class="menu-options">
+                        <button (click)="deleteComment(reply.id)">
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <p>{{ reply.description }}</p>
+
+                  <!-- Further Nested Replies -->
+                  <div
+                    *ngIf="reply.replies && reply.replies.length > 0"
+                    class="nested-replies"
+                  >
+                    <ng-container *ngFor="let nestedReply of reply.replies">
+                      <div class="reply">
+                        <div class="reply-header">
+                          <div class="header-content">
+                            <img
+                              [src]="nestedReply.imagePath"
+                              alt="{{ nestedReply.name }}'s profile"
+                              class="profile-image"
+                            />
+                            <h4>{{ nestedReply.name }}</h4>
+                          </div>
+
+                          <!-- Dropdown Menu for Nested Reply Options -->
+                          <div class="comment-menu">
+                            <button
+                              (click)="toggleMenu(nestedReply.id)"
+                              class="menu-button"
+                            >
+                              ⋮
+                            </button>
+                            <div
+                              *ngIf="activeMenu === nestedReply.id"
+                              class="menu-options"
+                            >
+                              <button (click)="deleteComment(nestedReply.id)">
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <p>{{ nestedReply.description }}</p>
+                      </div>
+                    </ng-container>
+                  </div>
+
+                  <!-- Reply Form for Each Reply -->
+                  <div class="reply-form">
+                    <input
+                      type="text"
+                      [(ngModel)]="replyText[reply.id]"
+                      placeholder="Write a reply..."
+                      class="reply-input"
+                      (keyup.enter)="sendReply(reply.id)"
+                    />
+                    <button
+                      (click)="sendReply(reply.id)"
+                      [disabled]="!replyText[reply.id]"
+                      class="reply-button"
+                    >
+                      Reply
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Reply Form for Each Comment -->
+            <div class="reply-form">
+              <input
+                type="text"
+                [(ngModel)]="replyText[comment.id]"
+                placeholder="Write a reply..."
+                class="reply-input"
+                (keyup.enter)="sendReply(comment.id)"
+              />
+              <button
+                (click)="sendReply(comment.id)"
+                [disabled]="!replyText[comment.id]"
+                class="reply-button"
+              >
+                Reply
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <div class="details-content">
-      <h2>{{ room?.title | transloco }}</h2>
-
-      <div class="details-info">
-        <p>
-          <strong>{{ "location" | transloco }}:</strong> {{ room?.location }}
-        </p>
-        <p>
-          <strong>{{ "contact" | transloco }}:</strong> {{ room?.phoneNumber }}
-        </p>
-        <p>
-          <strong>{{ "price" | transloco }}:</strong>
-          <span class="price">${{ room?.price }}</span>
-        </p>
-        <p>
-          <strong>{{ "description" | transloco }}:</strong>
-          {{ room?.description | transloco }}
-        </p>
-        <p>
-          <strong>{{ "dimensions" | transloco }}:</strong> {{ room?.width }}m x
-          {{ room?.height }}m
-        </p>
-        <p>
-          <strong>{{ "floor" | transloco }}:</strong> {{ room?.floor }}
-        </p>
-        <p>
-          <strong>{{ "mapLink" | transloco }}:</strong>
-          <a [href]="room?.linkMap" target="_blank">{{
-            "viewOnMap" | transloco
-          }}</a>
-        </p>
-        <p>
-          <strong>{{ "likes" | transloco }}:</strong> {{ room?.likeCount }}
-        </p>
-        <p>
-          <strong>{{ "views" | transloco }}:</strong> {{ room?.viewCount }}
-        </p>
-      </div>
-
-      <!-- Like Button with Material Icon (adjusted width) -->
-      <button
-        mat-raised-button
-        color="primary"
-        class="like-button"
-        (click)="likeRoom(room!.id!)"
-      >
-        <mat-icon>thumb_up</mat-icon> {{ "likes" | transloco }} ({{
-          room?.likeCount
-        }})
-      </button>
     </div>
   </div>
 
-  <!-- Full-screen modal -->
-  <div class="image-modal" *ngIf="selectedImage">
-    <div class="modal-content">
-      <img [src]="selectedImage" class="full-screen-image" />
-      <button mat-icon-button class="close-button">
-        <mat-icon>close</mat-icon>
-      </button>
+  <div class="additional-details-container">
+    <h3>Additional Details</h3>
+
+    <!-- Phone Number Section -->
+    <div class="contact-info">
+      <h4>Contact</h4>
+      <p>
+        <strong>Phone:</strong>
+        <a [href]="'tel:' + room?.phoneNumber">{{ room?.phoneNumber }}</a>
+      </p>
+    </div>
+
+    <!-- Map Section -->
+    <div class="additional-details-container">
+      <h3>Additional Details</h3>
+
+      <!-- Phone Number Section -->
+      <div class="contact-info">
+        <h4>Contact</h4>
+        <p>
+          <strong>Phone:</strong>
+          <a [href]="'tel:' + room?.phoneNumber">{{ room?.phoneNumber }}</a>
+        </p>
+      </div>
+
+      <div class="map-container">
+        <!-- Display the embedded map -->
+        <iframe
+          width="100%"
+          height="400"
+          [src]="urlSafe"
+          frameborder="0"
+          allowfullscreen
+        >
+        </iframe>
+
+        <!-- Optional "View More" link for Google Maps -->
+        <div *ngIf="linkMap" class="map-link">
+          <a [href]="linkMap" target="_blank" rel="noopener noreferrer">
+            View More on Google Maps
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

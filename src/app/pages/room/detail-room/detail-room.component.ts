@@ -1,12 +1,18 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import {
+  DomSanitizer,
+  SafeResourceUrl,
+  SafeUrl,
+} from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
+import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 import { RoomService } from 'src/app/Service/room.service';
+import Swal from 'sweetalert2';
 interface Room {
   id: number;
   likeCount: number;
@@ -35,6 +41,37 @@ interface Room {
   commune: number;
   village: number;
 }
+interface UserComment {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
+  replies: UserReply[];
+  totalReply: number;
+}
+
+interface UserReply {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
+  replies: UserReply[];
+  totalReply: number;
+}
+interface Location {
+  id: number;
+  englishName: string;
+  khmerName: string;
+}
+
+interface PaggingModel<T> {
+  totalPage: number;
+  totalElements: number;
+  currentPage: number;
+  result: T[];
+}
 @Component({
   selector: 'app-detail-room',
   templateUrl: './detail-room.component.html',
@@ -48,6 +85,13 @@ export class DetailRoomComponent {
   communeName: string = '';
   villageName: string = '';
   currentImage: SafeUrl | null = null;
+  isLoading: boolean = false;
+  comments: UserComment[] = [];
+  newCommentText: string = '';
+  replyText: { [key: number]: string } = {};
+  activeMenu: number | null = null;
+  urlSafe!: SafeResourceUrl;
+  linkMap: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,22 +101,170 @@ export class DetailRoomComponent {
     private districtService: DistrictService,
     private communeService: CommuneService,
     private villageService: VillageService,
-    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private readonly authenticationService: AuthenticationService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
-    const roomId = this.route.snapshot.paramMap.get('id');
+    const roomIdParam = this.route.snapshot.paramMap.get('id');
+    const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
+
     if (roomId) {
       this.getRoomDetails(roomId);
+      this.loadComments(roomId);
+    } else {
+      console.error('Invalid room ID');
     }
   }
-  getRoomDetails(id: string): void {
-    this.roomService.getRoomById(id).subscribe(
+
+  loadComments(roomId: number): void {
+    this.isLoading = true;
+    this.roomService.getComments(roomId).subscribe(
+      (response) => {
+        if (response.code === 200) {
+          this.comments = response.result.result as UserComment[];
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error loading comments:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  postComment(): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to post a comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+    if (!this.newCommentText.trim()) return;
+
+    const roomId = this.room?.id ?? 34;
+    const type = 'room';
+    const description = this.newCommentText;
+
+    this.isLoading = true;
+    this.roomService.postComment(roomId, description, type).subscribe(
+      (response) => {
+        if (response) {
+          this.loadComments(roomId); // Reload comments to fetch latest data
+          this.newCommentText = ''; // Clear input field
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error posting comment:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  sendReply(commentId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to reply to this comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const description = this.replyText[commentId];
+    if (!description) return;
+
+    this.isLoading = true;
+    this.roomService.replyToComment(commentId, description).subscribe(
+      (response) => {
+        if (response) {
+          const roomId = this.room?.id ?? 34;
+          this.loadComments(roomId); // Reload comments to fetch latest data
+          this.replyText[commentId] = ''; // Clear reply input
+        }
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error posting reply:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+  toggleMenu(commentId: number): void {
+    this.activeMenu = this.activeMenu === commentId ? null : commentId;
+  }
+
+  deleteComment(commentId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to delete a comment.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return; // Exit if the user is not logged in
+    }
+    this.isLoading = true;
+    this.roomService.deleteComment(commentId).subscribe(
+      () => {
+        const roomId = this.room?.id ?? 34;
+        this.loadComments(roomId); // Reload comments to update the list
+        this.activeMenu = null;
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error deleting comment:', error);
+        this.isLoading = false;
+      }
+    );
+  }
+
+  getRoomDetails(id: number): void {
+    // Change id type to number
+    this.roomService.getRoomById(id.toString()).subscribe(
       (response) => {
         this.room = response.result as Room;
         if (this.room) {
           this.loadImages(this.room);
-          this.fetchLocationDetails(this.room.province, this.room.district, this.room.commune, this.room.village);
+          this.fetchLocationDetails(
+            this.room.province,
+            this.room.district,
+            this.room.commune,
+            this.room.village
+          );
+
+          if (this.room.linkMap) {
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `https://maps.google.com/maps?q=${encodeURIComponent(
+                this.room.linkMap
+              )}&output=embed`
+            );
+            this.linkMap = this.room.linkMap;
+          }
         }
       },
       (error) => {
@@ -81,7 +273,17 @@ export class DetailRoomComponent {
     );
   }
 
+  setDefaultMapUrl(): void {
+    // Set the default map to Phnom Penh coordinates if no specific link is available
+    const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
+    this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
 
+  setMapUrl(): void {
+    // Set the URL to display Phnom Penh, Cambodia, on the map
+    const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
+    this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
   loadImages(room: Room): void {
     if (room.imagePaths && room.imagePaths.length > 0) {
       room.safeImagePaths = [];
@@ -92,7 +294,7 @@ export class DetailRoomComponent {
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             room.safeImagePaths!.push(safeUrl);
             if (!this.currentImage) {
-              this.currentImage = safeUrl; // Set the first image as the current image
+              this.currentImage = safeUrl;
             }
           },
           (error) => {
@@ -103,41 +305,67 @@ export class DetailRoomComponent {
     }
   }
 
-
-  fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
-    // Fetch province name
+  fetchLocationDetails(
+    provinceId: number,
+    districtId: number,
+    communeId: number,
+    villageId: number
+  ): void {
     this.districtService.getProvincesPublic().subscribe((res) => {
-      const province = res.result.find((p: any) => p.id === provinceId);
-      this.provinceName = province ? province.khmerName || province.englishName : 'Unknown Province';
+      const paginatedResponse = res as PaggingModel<Location>;
+      const provinceIdNumber = Number(provinceId); // Convert provinceId to a number
 
-      // Manually trigger change detection after setting the value
+      const province = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((p) => p.id === provinceIdNumber)
+        : null; // Compare as numbers
+      // console.log("res", res);
+
+      // console.log('Province ID:', provinceIdNumber); // Log the ID
+      // console.log('Provinces array:', paginatedResponse.result); // Log the provinces array
+      // console.log('Found province:', province); // Log the found province
+      // console.log('Province Khmer Name:', province ? province.khmerName : 'Not Found'); // Log the Khmer name
+
+      console.log('province response:', province);
+
+      this.provinceName = province
+        ? province.khmerName || province.englishName
+        : 'Unknown Province';
       this.cdr.detectChanges();
     });
 
-    // Fetch district name
     this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
-      const district = res.result.find((d: any) => d.id === districtId);
-      this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
-
-      // Manually trigger change detection after setting the value
+      console.log('Districts response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const district = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((d) => d.id === districtId)
+        : null;
+      this.districtName = district
+        ? district.khmerName || district.englishName
+        : 'Unknown District';
       this.cdr.detectChanges();
     });
 
-    // Fetch commune name
     this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
-      const commune = res.result.find((c: any) => c.id === communeId);
-      this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
-
-      // Manually trigger change detection after setting the value
+      console.log('Communes response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const commune = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((c) => c.id === communeId)
+        : null;
+      this.communeName = commune
+        ? commune.khmerName || commune.englishName
+        : 'Unknown Commune';
       this.cdr.detectChanges();
     });
 
-    // Fetch village name
     this.villageService.getByCommunePublic(communeId).subscribe((res) => {
-      const village = res.result.find((v: any) => v.id === villageId);
-      this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
-
-      // Manually trigger change detection after setting the value
+      console.log('Villages response:', res);
+      const paginatedResponse = res as PaggingModel<Location>;
+      const village = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((v) => v.id === villageId)
+        : null;
+      this.villageName = village
+        ? village.khmerName || village.englishName
+        : 'Unknown Village';
       this.cdr.detectChanges();
     });
   }
@@ -148,30 +376,14 @@ export class DetailRoomComponent {
       panelClass: 'full-screen-modal',
     });
   }
-
-  likeRoom(roomId: number): void {
-    if (!this.room || this.room.pending) return; // Ensure no pending request or null room
-
-    this.room.pending = true; // Set the pending state to prevent multiple clicks
-
-    if (this.room.liked) {
-      // Simulate "unlike" (no API call here)
-      this.room.likeCount -= 1;
-      this.room.liked = false;
-      this.room.pending = false; // Reset pending state after local unlike
-    } else {
-      // Call the like API
-      this.roomService.likeRoom(roomId).subscribe(() => {
-        this.room!.likeCount += 1;  // Increment the like count
-        this.room!.liked = true;    // Set liked state to true
-        this.room!.pending = false; // Reset pending state after API call
-      }, () => {
-        // Handle error case
-        this.room!.pending = false; // Reset pending state even on error
-      });
+  previousImage(): void {
+    if (this.room && this.room.safeImagePaths) {
+      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+      if (index > 0) {
+        this.currentImage = this.room.safeImagePaths[index - 1];
+      }
     }
   }
-
 
   nextImage(): void {
     if (this.room && this.room.safeImagePaths) {
@@ -184,15 +396,6 @@ export class DetailRoomComponent {
   selectImage(image: SafeUrl): void {
     this.currentImage = image;
   }
-  previousImage(): void {
-    if (this.room && this.room.safeImagePaths) {
-      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
-      if (index > 0) {
-        this.currentImage = this.room.safeImagePaths[index - 1];
-      }
-    }
-  }
-
 
   goBack(): void {
     window.history.back();

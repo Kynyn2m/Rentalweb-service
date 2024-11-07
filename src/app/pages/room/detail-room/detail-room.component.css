@@ -76,7 +76,6 @@
   width: 150px;
 }
 
-
 /* Full-Screen Modal Styles */
 .image-modal {
   position: fixed;
@@ -165,7 +164,8 @@
   object-fit: cover;
 }
 
-.nav-left, .nav-right {
+.nav-left,
+.nav-right {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -201,4 +201,369 @@
 
 .thumbnail.selected {
   border-color: #007bff;
+}
+/* Customize the main image container */
+.p-galleria-item-wrapper {
+  padding: 10px;
+  background-color: #f5f5f5;
+}
+
+/* Customize thumbnails */
+.p-galleria-thumbnail-item img {
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust the size of arrows */
+.p-galleria-item-nav-left,
+.p-galleria-item-nav-right {
+  font-size: 1.5rem;
+}
+
+/* Thumbnail styling */
+.p-galleria-thumbnail-item {
+  margin: 5px;
+}
+.page-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.details-container {
+  flex: 0 0 60%;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.additional-details-container {
+  flex: 0 0 40%;
+  padding: 20px;
+  background-color: #f3f3f3;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.ads-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #fafafa;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.additional-details-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info {
+  margin-bottom: 20px;
+}
+
+.contact-info a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+.map-container {
+  margin-top: 20px;
+}
+
+.map-container iframe {
+  border: 0;
+  border-radius: 8px;
+  width: 100%;
+  height: 250px;
+}
+
+/* comment */
+.details-card {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.gallery {
+  position: relative;
+  /* width: 300px; */
+}
+
+.main-image img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.nav-left,
+.nav-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  border-radius: 50%;
+}
+
+.nav-left {
+  left: 10px;
+}
+
+.nav-right {
+  right: 10px;
+}
+
+.image-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.thumbnail.selected {
+  opacity: 1;
+  border: 2px solid #388e3c;
+}
+
+.details-content {
+  flex: 1;
+}
+
+.details-info p {
+  margin: 0.5rem 0;
+}
+
+.price {
+  color: #e53935;
+  font-weight: bold;
+}
+
+/* commnet */
+
+.comments-section {
+  margin-top: 20px;
+}
+
+.comments-section h3 {
+  margin-bottom: 1rem;
+}
+
+.comment,
+.reply {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.comment-header,
+.reply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* New container for profile image and name */
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.comment h4,
+.reply h4 {
+  margin: 0;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.comment p,
+.reply p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.replies,
+.nested-replies {
+  margin-top: 10px;
+  padding-left: 20px;
+  border-left: 2px solid #ddd;
+}
+
+.reply-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  margin-left: 50px;
+}
+
+.reply-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 13px !important;
+}
+
+.reply-input:focus {
+  border-color: #1877f2;
+}
+
+.reply-button {
+  padding: 8px 12px;
+  border-radius: 20px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.reply-button:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+.new-comment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.new-comment-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 14px !important;
+}
+
+.new-comment-input:focus {
+  border-color: #1877f2;
+}
+
+.post-comment-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.post-comment-button:disabled {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+/* Dropdown Menu Styling */
+.comment-menu {
+  position: relative;
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.menu-options {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.menu-options button {
+  display: block;
+  padding: 8px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #444;
+}
+
+.menu-options button:hover {
+  background-color: #f2f2f2;
+}
+.comments-section {
+  margin-top: 20px;
+  position: relative;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.loading-content p {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #333;
 }
