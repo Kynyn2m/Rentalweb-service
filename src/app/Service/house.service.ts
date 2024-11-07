@@ -99,10 +99,17 @@ export class HouseService {
 
     return this.http.get<any>(this.apiUrl, { headers, params: httpParams });
   }
+
+
   likeHouse(postId: number, postType: string, options: any = {}): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
     const url = `${this.apilike}/public/like?postId=${postId}&postType=${postType}`;
     return this.http.post<any>(url, {}, { headers, ...options });
+}
+toggleFavorite(postId: number, postType: string): Observable<any> {
+  const headers = new HttpHeaders().set('api-version', '1');
+  const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+  return this.http.post<any>(url, {}, { headers });
 }
 
 

@@ -772,3 +772,42 @@ h3 {
 .not-favorited {
   color: grey; /* Outline or different color when not favorited */
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.like-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.like-icon {
+  transform: scale(1.5);
+  color: #1877f2;
+}
+
+.favorite-icon-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 10px;
+}
+
+.favorite-icon {
+  transform: scale(1.2);
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.favorite-icon:hover {
+  color: #e57373; /* Lighter red on hover */
+  transform: scale(1.1);
+}
+
+.favorite-icon.favorited {
+  color: #e53935; /* Red color when favorited */
+}
