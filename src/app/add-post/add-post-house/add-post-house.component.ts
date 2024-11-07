@@ -1,11 +1,21 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import * as L from 'leaflet';
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
 import { HouseService } from 'src/app/Service/house.service';
 import Swal from 'sweetalert2';
+
+const defaultIcon = L.icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
 
 @Component({
   selector: 'app-add-post-house',
@@ -17,6 +27,10 @@ export class AddPostHouseComponent implements OnInit {
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
   imageError: string = '';
+  map: any;
+  userLocation: { lat: number; lng: number } | null = null;
+  userMarker: any;
+
 
   provinceId_c: number | null = 0; // To track the selected province
   provinces_c: any[] = []; // Array to store the list of provinces
@@ -39,6 +53,9 @@ export class AddPostHouseComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.getUserLocation();
+
     this.addPostForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
@@ -66,6 +83,83 @@ export class AddPostHouseComponent implements OnInit {
       }
     );
   }
+
+  ngAfterViewInit(): void {
+    this.initializeMap();
+  }
+  initializeMap(): void {
+    this.map = L.map('map').setView([11.562108, 104.888535], 12); // Default center if no user location
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    // Listen for map clicks to add or move the pin
+    this.map.on('click', (event: any) => {
+      const { lat, lng } = event.latlng;
+      this.addUserMarker(lat, lng);
+    });
+  }
+
+  addUserMarker(lat: number, lng: number): void {
+    // Remove existing marker if any
+    if (this.userMarker) {
+      this.map.removeLayer(this.userMarker);
+    }
+
+    // Add a new marker at the user's location
+    this.userMarker = L.marker([lat, lng], { draggable: true, icon: defaultIcon }).addTo(this.map);
+    this.map.setView([lat, lng], 12); // Center map on the user location
+
+    // Update linkMap form control with the user's location in Google Maps format
+    const linkMap = `https://www.google.com/maps?q=${lat},${lng}`;
+    this.addPostForm.patchValue({ linkMap });
+
+    // Update linkMap if marker is dragged
+    this.userMarker.on('dragend', (event: any) => {
+      const position = event.target.getLatLng();
+      const updatedLinkMap = `https://www.google.com/maps?q=${position.lat},${position.lng}`;
+      this.addPostForm.patchValue({ linkMap: updatedLinkMap });
+    });
+  }
+
+  setCoordinates(lat: number, lng: number): void {
+    // Generate a Google Maps link with the selected latitude and longitude
+    const linkMap = `https://www.google.com/maps?q=${lat},${lng}`;
+
+    console.log('Picked Latitude:', lat);
+    console.log('Picked Longitude:', lng);
+    console.log('Generated LinkMap:', linkMap);
+
+    // Update form fields with latitude, longitude, and linkMap
+    this.addPostForm.patchValue({
+      latitude: lat,
+      longitude: lng,
+      linkMap: linkMap, // Update linkMap with the generated link
+    });
+  }
+  getUserLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          console.log('User Location:', lat, lng);
+
+          // Set up map with user location and place a pin
+          this.addUserMarker(lat, lng);
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          // Optionally, you can handle denied access or errors here
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
 
   onAddressSelectionComplete(): void {
     const selectedLocation = `${this.villageId_c}, ${this.communeId_c}, ${this.districtId_c}, ${this.provinceId_c}`;

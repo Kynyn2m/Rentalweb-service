@@ -1,4 +1,4 @@
- import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+ import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HouseService } from '../Service/house.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import { VillageService } from '../address/village.service';
 
 import Swal from 'sweetalert2';
 import { AuthenticationService } from '../authentication/authentication.service';
+import * as L from 'leaflet';
 
 
 
@@ -79,7 +80,7 @@ interface PaggingModel<T> {
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css'],
 })
-export class DetailsComponent implements OnInit {
+export class DetailsComponent implements OnInit , AfterViewInit {
   house: House | null = null;
   selectedImage: SafeUrl | null = null;
   provinceName: string = '';
@@ -94,7 +95,11 @@ export class DetailsComponent implements OnInit {
   newCommentText: string = '';
   activeMenu: number | null = null;
 
-   isLoading: boolean = false;
+  map: any;
+  userMarker: any;
+  markers: L.Marker[] = [];
+
+  isLoading: boolean = false;
 
 
 
@@ -256,24 +261,28 @@ export class DetailsComponent implements OnInit {
       }
     );
   }
+  ngAfterViewInit(): void {
+    if (this.house && this.house.linkMap) {
+      const coordinates = this.extractCoordinates(this.house.linkMap);
+      if (coordinates) {
+        this.initializeMap(coordinates.lat, coordinates.lng);
+      }
+    }
+  }
 
 
 
-
-  getHouseDetails(id: number): void { // Change id type to number
+  getHouseDetails(id: number): void {
     this.houseService.getHouseById(id.toString()).subscribe(
       (response) => {
         this.house = response.result as House;
-        if (this.house) {
+        if (this.house?.linkMap) {
           this.loadImages(this.house);
           this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
-
-          if (this.house.linkMap) {
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `https://maps.google.com/maps?q=${encodeURIComponent(this.house.linkMap)}&output=embed`
-            );
-            this.linkMap = this.house.linkMap;
-          }
+          // Sanitize the linkMap URL to embed in an iframe
+          this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+            `${this.house.linkMap}&output=embed`
+          );
         }
       },
       (error) => {
@@ -281,7 +290,6 @@ export class DetailsComponent implements OnInit {
       }
     );
   }
-
 
 
   setDefaultMapUrl(): void {
@@ -295,6 +303,65 @@ export class DetailsComponent implements OnInit {
     const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
+
+  extractCoordinates(linkMap: string): { lat: number; lng: number } | null {
+    const match = linkMap.match(/q=([-.\d]+),([-.\d]+)/);
+    return match ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) } : null;
+  }
+
+
+  initializeMap(lat: number, lng: number): void {
+    // Initialize the map centered on the property
+    this.map = L.map('house-map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    // Place marker at the property location
+    L.marker([lat, lng]).addTo(this.map).bindPopup('Property Location').openPopup();
+  }
+
+  searchNearby(amenity: string): void {
+    const coordinates = this.extractCoordinates(this.house?.linkMap || '');
+    if (!coordinates) return;
+
+    // Clear existing markers before adding new ones
+    this.clearMarkers();
+
+    const query = `
+      [out:json];
+      node(around:1000, ${coordinates.lat}, ${coordinates.lng})["amenity"="${amenity}"];
+      out;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        this.displayNearbyPlaces(data.elements);
+      })
+      .catch((error) => {
+        console.error('Error fetching nearby places:', error);
+      });
+  }
+
+
+  displayNearbyPlaces(places: any[]): void {
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map);
+        marker.bindPopup(`<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${place.tags.amenity}`);
+        this.markers.push(marker); // Store marker to manage later
+      }
+    });
+  }
+
+  clearMarkers(): void {
+    this.markers.forEach((marker) => this.map.removeLayer(marker));
+    this.markers = [];
+  }
+
   loadImages(house: House): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
       house.safeImagePaths = [];
