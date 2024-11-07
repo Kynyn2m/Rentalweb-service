@@ -2,12 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment'; // Ensure you have the environment file properly set up
+interface UserComment {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
 
+  totalReply: number;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class RoomService {
   private apiUrl = `${environment.apiUrl}/public/rooms`;
+  private apilike = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 
@@ -80,7 +89,47 @@ export class RoomService {
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
   }
+  // updateRoom(roomId: number, roomData: any): Observable<any> {
+  //   return this.http.put<any>(`${this.apiUrl}/${roomId}`, roomData);
+  // }
   deleteRoom(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  getComments(roomId: number): Observable<{
+    code: number;
+    message: string;
+    result: { result: UserComment[] };
+  }> {
+    const url = `${this.apiUrl}/${roomId}/comments`;
+    return this.http.get<{
+      code: number;
+      message: string;
+      result: { result: UserComment[] };
+    }>(url);
+  }
+  replyToComment(commentId: number, description: string): Observable<any> {
+    const url = `${environment.apiUrl}/comments/${commentId}`; // Directly use environment.baseUrl
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { description };
+    return this.http.post(url, body, { headers });
+  }
+  postComment(
+    roomId: number,
+    description: string,
+    type: string
+  ): Observable<any> {
+    const url = `${this.apilike}/comments`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = {
+      roomId: roomId.toString(),
+      type: type,
+      description: description,
+    };
+    return this.http.post(url, body, { headers });
+  }
+
+  deleteComment(commentId: number): Observable<any> {
+    const url = `${this.apilike}/comments/${commentId}`;
+    return this.http.delete(url);
   }
 }
