@@ -2,12 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment'; // Ensure you have the environment file properly set up
+interface UserComment {
+  id: number;
+  userId: number;
+  name: string;
+  description: string;
+  imagePath: string;
 
+  totalReply: number;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class LandService {
   private apiUrl = `${environment.apiUrl}/public/lands`;
+  private apilike = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 
@@ -86,5 +95,42 @@ export class LandService {
   }
   deleteLand(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  getComments(landId: number): Observable<{
+    code: number;
+    message: string;
+    result: { result: UserComment[] };
+  }> {
+    const url = `${this.apiUrl}/${landId}/comments`;
+    return this.http.get<{
+      code: number;
+      message: string;
+      result: { result: UserComment[] };
+    }>(url);
+  }
+  replyToComment(commentId: number, description: string): Observable<any> {
+    const url = `${environment.apiUrl}/comments/${commentId}`; // Directly use environment.baseUrl
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = { description };
+    return this.http.post(url, body, { headers });
+  }
+  postComment(
+    landId: number,
+    description: string,
+    type: string
+  ): Observable<any> {
+    const url = `${this.apilike}/comments`;
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const body = {
+      landId: landId.toString(),
+      type: type,
+      description: description,
+    };
+    return this.http.post(url, body, { headers });
+  }
+
+  deleteComment(commentId: number): Observable<any> {
+    const url = `${this.apilike}/comments/${commentId}`;
+    return this.http.delete(url);
   }
 }
