@@ -12,6 +12,15 @@ import Swal from 'sweetalert2';
 import { AuthenticationService } from '../authentication/authentication.service';
 import * as L from 'leaflet';
 
+const defaultIcon = L.icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
+
 
 
 /** Interfaces */
@@ -95,9 +104,20 @@ export class DetailsComponent implements OnInit , AfterViewInit {
   newCommentText: string = '';
   activeMenu: number | null = null;
 
-  map: any;
+  map: L.Map | null = null
   userMarker: any;
   markers: L.Marker[] = [];
+  isMapInitialized: boolean = false;
+
+
+bankCount: number = 0;
+gymCount: number = 0;
+restaurantCount: number = 0;
+hotelCount: number = 0;
+barPubCount: number = 0;
+cafeCount: number = 0;
+hospitalCount: number = 0;
+
 
   isLoading: boolean = false;
 
@@ -124,6 +144,7 @@ export class DetailsComponent implements OnInit , AfterViewInit {
     this.setDefaultMapUrl();
 
   }
+
 
   ngOnInit(): void {
     const houseIdParam = this.route.snapshot.paramMap.get('id');
@@ -261,6 +282,7 @@ export class DetailsComponent implements OnInit , AfterViewInit {
       }
     );
   }
+
   ngAfterViewInit(): void {
     if (this.house && this.house.linkMap) {
       const coordinates = this.extractCoordinates(this.house.linkMap);
@@ -271,18 +293,34 @@ export class DetailsComponent implements OnInit , AfterViewInit {
   }
 
 
-
   getHouseDetails(id: number): void {
     this.houseService.getHouseById(id.toString()).subscribe(
       (response) => {
         this.house = response.result as House;
-        if (this.house?.linkMap) {
+
+        if (this.house) {
           this.loadImages(this.house);
           this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
-          // Sanitize the linkMap URL to embed in an iframe
-          this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-            `${this.house.linkMap}&output=embed`
-          );
+
+          if (this.house.linkMap) {
+            // Sanitize the linkMap URL to embed in an iframe
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.house.linkMap}&output=embed`
+            );
+
+            // Extract coordinates from linkMap and initialize the map
+            const coordinates = this.extractCoordinates(this.house.linkMap);
+            if (coordinates) {
+              this.initializeMap(coordinates.lat, coordinates.lng);
+
+              // Fetch and display nearby locations once the map is initialized
+              this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
+            } else {
+              console.warn('Coordinates could not be parsed from linkMap');
+            }
+          } else {
+            console.warn('No linkMap provided for this house');
+          }
         }
       },
       (error) => {
@@ -290,6 +328,7 @@ export class DetailsComponent implements OnInit , AfterViewInit {
       }
     );
   }
+
 
 
   setDefaultMapUrl(): void {
@@ -309,58 +348,112 @@ export class DetailsComponent implements OnInit , AfterViewInit {
     return match ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) } : null;
   }
 
-
   initializeMap(lat: number, lng: number): void {
-    // Initialize the map centered on the property
-    this.map = L.map('house-map').setView([lat, lng], 14);
+    if (!this.map) {
+      setTimeout(() => {
+        const mapContainer = document.getElementById('house-map');
+        if (!mapContainer) {
+          console.error('Map container not found.');
+          return;
+        }
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(this.map);
+        // Initialize the map centered on the property
+        this.map = L.map('house-map').setView([lat, lng], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(this.map);
 
-    // Place marker at the property location
-    L.marker([lat, lng]).addTo(this.map).bindPopup('Property Location').openPopup();
+        // Place a marker at the property location
+        L.marker([lat, lng]).addTo(this.map).bindPopup('Property Location').openPopup();
+
+        // Fetch and display nearby locations
+        this.fetchAndDisplayNearbyLocations(lat, lng);
+      }, 0);
+    }
   }
 
-  searchNearby(amenity: string): void {
-    const coordinates = this.extractCoordinates(this.house?.linkMap || '');
-    if (!coordinates) return;
+  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
+    const amenities = ['bank', 'gym', 'restaurant', 'hotel', 'bar', 'pub', 'cafe', 'hospital'];
 
-    // Clear existing markers before adding new ones
-    this.clearMarkers();
+    amenities.forEach((amenity) => {
+      const query = `
+        [out:json];
+        node(around:5000, ${lat}, ${lng})["amenity"="${amenity}"];
+        out;
+      `;
+      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
-    const query = `
-      [out:json];
-      node(around:1000, ${coordinates.lat}, ${coordinates.lng})["amenity"="${amenity}"];
-      out;
-    `;
-    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+      console.log(`Fetching nearby ${amenity} with URL:`, url);
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        this.displayNearbyPlaces(data.elements);
-      })
-      .catch((error) => {
-        console.error('Error fetching nearby places:', error);
-      });
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(`Raw data for nearby ${amenity}:`, data);
+
+          if (data.elements && data.elements.length > 0) {
+            this.displayNearbyPlaces(data.elements, amenity);
+
+            // Update counters for each amenity type
+            switch (amenity) {
+              case 'bank':
+                this.bankCount = data.elements.length;
+                break;
+              case 'gym':
+                this.gymCount = data.elements.length;
+                break;
+              case 'restaurant':
+                this.restaurantCount = data.elements.length;
+                break;
+              case 'hotel':
+                this.hotelCount = data.elements.length;
+                break;
+              case 'bar':
+              case 'pub':
+                this.barPubCount = (this.barPubCount || 0) + data.elements.length;
+                break;
+              case 'cafe':
+                this.cafeCount = data.elements.length;
+                break;
+              case 'hospital':
+                this.hospitalCount = data.elements.length;
+                break;
+            }
+          } else {
+            console.log(`No ${amenity} found within the specified radius.`);
+          }
+        })
+        .catch((error) => {
+          console.error(`Error fetching nearby ${amenity} locations:`, error);
+        });
+    });
   }
 
+  displayNearbyPlaces(places: any[], amenity: string): void {
+    if (!this.map) {
+      console.error('Map is not initialized.');
+      return;
+    }
 
-  displayNearbyPlaces(places: any[]): void {
+    console.log(`Displaying ${places.length} nearby ${amenity} places on the map.`);
     places.forEach((place) => {
       if (place.lat && place.lon) {
-        const marker = L.marker([place.lat, place.lon]).addTo(this.map);
-        marker.bindPopup(`<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${place.tags.amenity}`);
-        this.markers.push(marker); // Store marker to manage later
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map as L.Map);
+        marker.bindPopup(`<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenity}`);
+        this.markers.push(marker);
+      } else {
+        console.log(`Skipping place without coordinates:`, place);
       }
     });
   }
 
+
   clearMarkers(): void {
-    this.markers.forEach((marker) => this.map.removeLayer(marker));
-    this.markers = [];
+    if (this.map) {
+      this.markers.forEach((marker) => this.map!.removeLayer(marker));
+      this.markers = [];
+    }
   }
+
 
   loadImages(house: House): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
