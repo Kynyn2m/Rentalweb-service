@@ -26,6 +26,11 @@
   background-color: var(--color-primary);
   color: white;
 }
+.sticky-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Adjust if you need the toolbar above other elements */
+}
 
 /* .title {
   padding-inline-start: 1rem;
@@ -315,3 +320,7 @@ menu-items .active mat-icon {
   top: 0;
   z-index: 1000;
 }
+
+
+
+

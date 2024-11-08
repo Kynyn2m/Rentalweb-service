@@ -135,7 +135,7 @@
         <mat-label>{{ "Phone Number" }}</mat-label>
         <input matInput
                formControlName="phoneNumber"
-               type="text"
+               type="number"
                placeholder="Enter phone number" />
         <mat-error *ngIf="
             addPostForm.get('phoneNumber')?.invalid &&

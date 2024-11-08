@@ -117,6 +117,7 @@ hotelCount: number = 0;
 barPubCount: number = 0;
 cafeCount: number = 0;
 hospitalCount: number = 0;
+supermarketCount: number = 0;
 
 
   isLoading: boolean = false;
@@ -372,13 +373,13 @@ hospitalCount: number = 0;
     }
   }
 
-  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
-    const amenities = ['bank', 'gym', 'restaurant', 'hotel', 'bar', 'pub', 'cafe', 'hospital'];
+fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
+    const amenities = ['bank', 'gym', 'restaurant', 'hotel', 'bar', 'pub', 'cafe', 'hospital', 'supermarket'];
 
     amenities.forEach((amenity) => {
       const query = `
         [out:json];
-        node(around:5000, ${lat}, ${lng})["amenity"="${amenity}"];
+        node(around:1000, ${lat}, ${lng})["amenity"="${amenity}"];
         out;
       `;
       const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
@@ -417,6 +418,9 @@ hospitalCount: number = 0;
               case 'hospital':
                 this.hospitalCount = data.elements.length;
                 break;
+              case 'supermarket':
+                this.supermarketCount = data.elements.length;
+                break;
             }
           } else {
             console.log(`No ${amenity} found within the specified radius.`);
@@ -426,9 +430,9 @@ hospitalCount: number = 0;
           console.error(`Error fetching nearby ${amenity} locations:`, error);
         });
     });
-  }
+}
 
-  displayNearbyPlaces(places: any[], amenity: string): void {
+displayNearbyPlaces(places: any[], amenity: string): void {
     if (!this.map) {
       console.error('Map is not initialized.');
       return;
@@ -444,15 +448,8 @@ hospitalCount: number = 0;
         console.log(`Skipping place without coordinates:`, place);
       }
     });
-  }
+}
 
-
-  clearMarkers(): void {
-    if (this.map) {
-      this.markers.forEach((marker) => this.map!.removeLayer(marker));
-      this.markers = [];
-    }
-  }
 
 
   loadImages(house: House): void {

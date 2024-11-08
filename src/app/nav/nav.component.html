@@ -1,13 +1,12 @@
 <mat-sidenav-container>
   <!-- Sidenav for Small Screens -->
-  <mat-sidenav
-    #sidenav
-    mode="over"
-    class="left-sidebar sticky-navbar"
-    (backdropClick)="sidenav.close()"
-  >
+  <mat-sidenav #sidenav
+               mode="over"
+               class="left-sidebar sticky-navbar"
+               (backdropClick)="sidenav.close()">
     <div class="close-btn">
-      <button mat-icon-button (click)="sidenav.close()">
+      <button mat-icon-button
+              (click)="sidenav.close()">
         <mat-icon style="color: red">close</mat-icon>
       </button>
     </div>
@@ -15,24 +14,18 @@
     <!-- Logo for small screens -->
     <div style="text-align: center; margin: 20px 0">
       <a [routerLink]="['/home']">
-        <img
-          src="/assets/img/ren_logo-2.png"
-          alt="Logo"
-          style="width: 150px; height: auto"
-      /></a>
+        <img src="/assets/img/ren_logo-2.png"
+             alt="Logo"
+             style="width: 150px; height: auto" /></a>
     </div>
 
     <!-- Non-admin Menu Items (Hide for Admins) -->
     <mat-nav-list *ngIf="!isAdmin">
       <ng-container *ngFor="let item of menuItems">
-        <mat-list-item
-          routerLinkActive="active"
-          *ngIf="item.adminOnly === false || item.adminOnly === undefined"
-        >
-          <a
-            [routerLink]="item.router"
-            matTooltip="{{ item.tooltip | transloco }}"
-          >
+        <mat-list-item routerLinkActive="active"
+                       *ngIf="item.adminOnly === false || item.adminOnly === undefined">
+          <a [routerLink]="item.router"
+             matTooltip="{{ item.tooltip | transloco }}">
             <mat-icon>{{ item.icon }}</mat-icon>
             <span>{{ item.title | transloco }}</span>
           </a>
@@ -42,14 +35,10 @@
 
     <mat-nav-list *ngIf="isAdmin">
       <ng-container *ngFor="let item of menuItems">
-        <mat-list-item
-          routerLinkActive="active"
-          *ngIf="item.adminOnly === true"
-        >
-          <a
-            [routerLink]="item.router"
-            matTooltip="{{ item.tooltip | transloco }}"
-          >
+        <mat-list-item routerLinkActive="active"
+                       *ngIf="item.adminOnly === true">
+          <a [routerLink]="item.router"
+             matTooltip="{{ item.tooltip | transloco }}">
             <mat-icon>{{ item.icon }}</mat-icon>
             <span>{{ item.title | transloco }}</span>
           </a>
@@ -58,16 +47,20 @@
     </mat-nav-list>
 
     <div class="social-icons">
-      <a href="https://facebook.com" target="_blank">
+      <a href="https://facebook.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://twitter.com" target="_blank">
+      <a href="https://twitter.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://linkedin.com" target="_blank">
+      <a href="https://linkedin.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
-      <a href="https://plus.google.com" target="_blank">
+      <a href="https://plus.google.com"
+         target="_blank">
         <mat-icon>facebook</mat-icon>
       </a>
     </div>
@@ -77,41 +70,37 @@
   <!-- Main Content -->
   <mat-sidenav-content class="sidenav-content">
     <mat-toolbar class="sticky-navbar">
-      <button
-        mat-icon-button
-        (click)="sidenav.toggle()"
-        *ngIf="isMediumScreen$ | async"
-      >
+      <button mat-icon-button
+              (click)="sidenav.toggle()"
+              *ngIf="isMediumScreen$ | async">
         <mat-icon>menu</mat-icon>
       </button>
 
       <!-- Logo for large screens -->
       <div style="background-color: white; padding: 5px; border-radius: 5px">
         <a [routerLink]="['/home']">
-          <img
-            src="/assets/img/ren_logo-2.png"
-            alt="Logo"
-            style="width: 50px; height: auto; cursor: pointer"
-          />
+          <img src="/assets/img/ren_logo-2.png"
+               alt="Logo"
+               style="width: 50px; height: auto; cursor: pointer" />
         </a>
       </div>
-      <div class="title-container" *ngIf="!(isMediumScreen$ | async)">
+      <div class="title-container"
+           *ngIf="!(isMediumScreen$ | async)">
         <h1 class="title">RENTAL WEB SERVICE</h1>
       </div>
       <div class="spacer"></div>
 
       <!-- Menu Items for Large Screens -->
-      <div class="menu-items" *ngIf="!(isMediumScreen$ | async)">
+      <div class="menu-items"
+           *ngIf="!(isMediumScreen$ | async)">
         <!-- Non-admin Menu Items (Hide for Admins) -->
         <ng-container *ngIf="!isAdmin">
           <ng-container *ngFor="let item of menuItems">
             <ng-container *ngIf="!item.adminOnly">
-              <a
-                mat-button
-                [routerLink]="item.router"
-                routerLinkActive="active-menu-item"
-                [matTooltip]="item.tooltip | transloco"
-              >
+              <a mat-button
+                 [routerLink]="item.router"
+                 routerLinkActive="active-menu-item"
+                 [matTooltip]="item.tooltip | transloco">
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title | transloco }}</span>
               </a>
@@ -123,12 +112,10 @@
         <ng-container *ngIf="isAdmin">
           <ng-container *ngFor="let item of menuItems">
             <ng-container *ngIf="item.adminOnly">
-              <a
-                mat-button
-                [routerLink]="item.router"
-                routerLinkActive="active-menu-item"
-                [matTooltip]="item.tooltip | transloco"
-              >
+              <a mat-button
+                 [routerLink]="item.router"
+                 routerLinkActive="active-menu-item"
+                 [matTooltip]="item.tooltip | transloco">
                 <mat-icon>{{ item.icon }}</mat-icon>
                 <span>{{ item.title | transloco }}</span>
               </a>
@@ -139,42 +126,50 @@
       <app-language-selector style="margin-right: 1rem"></app-language-selector>
 
       <!-- User Profile Section (Shown only when logged in) -->
-      <div *ngIf="isLoggedIn" class="header-munu" [matMenuTriggerFor]="menu">
-        <img
-          class="user-photo2 raised pd-1"
-          src="../../assets/icon images/computer.png"
-          alt="profile"
-        />
+      <div *ngIf="isLoggedIn"
+           class="header-munu"
+           [matMenuTriggerFor]="menu">
+        <img class="user-photo2 raised pd-1"
+             src="../../assets/icon images/computer.png"
+             alt="profile" />
       </div>
-      <div class="auth-container" *ngIf="!isLoggedIn">
-        <span [routerLink]="'/login'" class="login-link">{{
+      <div class="auth-container"
+           *ngIf="!isLoggedIn">
+        <span [routerLink]="'/login'"
+              class="login-link">{{
           "login" | transloco
         }}</span>
         <span class="separator"> / </span>
-        <span [routerLink]="'/reginster'" class="signup-link">{{
+        <span [routerLink]="'/reginster'"
+              class="signup-link">{{
           "register" | transloco
         }}</span>
       </div>
 
       <mat-menu #menu="matMenu">
         <!-- User Info Section -->
-        <div class="profile-info" *ngIf="fullName || email">
+        <div class="profile-info"
+             *ngIf="fullName || email">
           <div class="profile-info-text">
             <p class="user-fullname">{{ fullName }}</p>
-            <p style="margin-top: 5px" class="user-email">{{ email }}</p>
+            <p style="margin-top: 5px"
+               class="user-email">{{ email }}</p>
           </div>
         </div>
         <mat-divider></mat-divider>
-        <button mat-menu-item [routerLink]="'/profile'">
+        <button mat-menu-item
+                [routerLink]="'/profile'">
           <mat-icon>person</mat-icon>
           <span>Profile</span>
         </button>
-        <button mat-menu-item (click)="openChangePasswordDialog()">
+        <button mat-menu-item
+                (click)="openChangePasswordDialog()">
           <mat-icon>lock</mat-icon>
           <span>Change Password</span>
         </button>
 
-        <button mat-menu-item (click)="logout()">
+        <button mat-menu-item
+                (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
           <span>Logout</span>
         </button>

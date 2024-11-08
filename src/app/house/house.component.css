@@ -790,9 +790,12 @@ h3 {
 }
 
 .favorite-icon-container {
+  position: absolute;
   display: flex;
   justify-content: flex-end;
   padding: 5px 10px;
+  top: 47%;
+  left: 86%;
 }
 
 .favorite-icon {
