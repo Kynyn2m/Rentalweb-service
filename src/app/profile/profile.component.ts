@@ -7,6 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdateHouseDialogComponent } from './update-house-dialog/update-house-dialog.component';
 import { UpdateLandDialogComponent } from './update-land-dialog/update-land-dialog.component';
 import { UpdateRoomDialogComponent } from './update-room-dialog/update-room-dialog.component';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -14,6 +16,14 @@ import { UpdateRoomDialogComponent } from './update-room-dialog/update-room-dial
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
+
+  mainTabIndex = 0;
+
+  favorites = {
+    houses: [] as any[],
+    lands: [] as any[],
+    rooms: [] as any[]
+  };
   user: any = {
     id: '',
     fullName: '',
@@ -40,7 +50,8 @@ export class ProfileComponent implements OnInit {
     private profileService: ProfileService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +59,7 @@ export class ProfileComponent implements OnInit {
     this.fetchUserHouses();
     this.fetchUserLands();
     this.fetchUserRooms();
+    this.fetchFavorites();
   }
 
   // Fetch profile details and load the user's avatar
@@ -71,6 +83,31 @@ export class ProfileComponent implements OnInit {
       }
     );
   }
+  fetchFavorites(): void {
+    this.http.get<any>(`${environment.apiUrl}/public/favorites`).subscribe(
+      (response) => {
+        if (response.code === 200 && response.result) {
+          // Populate favorite items based on response structure
+          this.favorites.houses = response.result.houses || [];
+          this.favorites.lands = response.result.lands || [];
+          this.favorites.rooms = response.result.rooms || [];
+
+          // Process images for each favorite item just like in "My Properties"
+          this.favorites.houses.forEach((house) => this.loadImage(house, 'house'));
+          this.favorites.lands.forEach((land) => this.loadImage(land, 'land'));
+          this.favorites.rooms.forEach((room) => this.loadImage(room, 'room'));
+        } else {
+          this.snackBar.open('Failed to load favorites', 'Close', { duration: 3000 });
+        }
+      },
+      (error) => {
+        console.error('Error fetching favorites:', error);
+        this.snackBar.open('Failed to load favorites', 'Close', { duration: 3000 });
+      }
+    );
+  }
+
+
 
   // Handle file selection and create a preview
   onFileSelected(event: any): void {
