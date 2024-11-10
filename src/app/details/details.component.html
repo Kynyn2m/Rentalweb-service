@@ -221,14 +221,36 @@
 
   <div class="additional-details-container">
     <div class="additional-details-container">
-      <h3>Additional Details</h3>
-
       <!-- Phone Number Section -->
       <div class="contact-info">
-        <h4>Contact</h4>
-        <p><strong>Phone:</strong>
-          <a [href]="'tel:' + house?.phoneNumber">{{ house?.phoneNumber }}</a>
-        </p>
+        <div class="user-contact-card">
+          <div class="profile-header">
+            <img [src]="house?.user?.image"
+                 alt="User Profile"
+                 class="profile-image" />
+            <div class="profile-info">
+              <h3>{{ house?.user?.fullName }}</h3>
+              <p>@{{ house?.user?.username }}</p>
+              <p>Member Since {{ house?.user?.createdAt | date: 'dd, MMM yyyy' }}</p>
+            </div>
+          </div>
+
+          <div class="contact-info-pf">
+            <div class="contact-item">
+              <i class="fa fa-phone"></i>
+              <span>{{ house?.phoneNumber }}</span>
+              <a [href]="'tel:' + house?.phoneNumber"
+                 class="call-link">Click To Call</a>
+            </div>
+          </div>
+
+
+          <div class="location-info">
+            <i class="fa fa-map-marker-alt"></i>
+            <span>{{ districtName }} {{ communeName }} {{ villageName }}</span>
+          </div>
+        </div>
+
       </div>
 
       <div class="map-container"

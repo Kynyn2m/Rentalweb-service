@@ -46,6 +46,18 @@ interface House {
   village: number;
   liked: boolean;
   pending?: boolean;
+  user: User;
+}
+
+interface User {
+  id: number;
+  fullName: string;
+  gender: string;
+  email: string;
+  username: string;
+  postCount: number;
+  image: string;
+  createdAt: string;
 }
 
 interface UserComment {
@@ -298,29 +310,20 @@ supermarketCount: number = 0;
     this.houseService.getHouseById(id.toString()).subscribe(
       (response) => {
         this.house = response.result as House;
-
         if (this.house) {
           this.loadImages(this.house);
           this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
 
           if (this.house.linkMap) {
-            // Sanitize the linkMap URL to embed in an iframe
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.house.linkMap}&output=embed`
             );
 
-            // Extract coordinates from linkMap and initialize the map
             const coordinates = this.extractCoordinates(this.house.linkMap);
             if (coordinates) {
               this.initializeMap(coordinates.lat, coordinates.lng);
-
-              // Fetch and display nearby locations once the map is initialized
               this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
-            } else {
-              console.warn('Coordinates could not be parsed from linkMap');
             }
-          } else {
-            console.warn('No linkMap provided for this house');
           }
         }
       },
@@ -329,6 +332,7 @@ supermarketCount: number = 0;
       }
     );
   }
+
 
 
 
