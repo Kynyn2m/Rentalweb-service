@@ -19,14 +19,30 @@ export class UserService {
     page: number,
     size: number,
     searchText: string = '',
-    filter: FilterTemplate
+    filter: FilterTemplate = new FilterTemplate()
   ): Observable<ResponseModel> {
-    var url = `${environment.apiUrl}/users`;
-    if (size > 0) url = url + `?page=${page}&size=${size}&name=${searchText}`;
-    if (filter.status) url = url + `&status=${filter.status}`;
-    if (filter.categories) url = url + `&groupId=${filter.categories}`;
-    return this.http.get<ResponseModel>(url);
+    const url = `${environment.apiUrl}/users`;
+    const params = new URLSearchParams();
+
+    if (size > 0) {
+      params.append('page', page.toString());
+      params.append('size', size.toString());
+    }
+    if (searchText) {
+      params.append('name', searchText);
+    }
+    if (filter.status) {
+      params.append('status', filter.status);
+    }
+    if (filter.categories) {
+      params.append('groupId', filter.categories.toString());
+    }
+
+    // Construct the full URL with parameters
+    const fullUrl = `${url}?${params.toString()}`;
+    return this.http.get<ResponseModel>(fullUrl);
   }
+
   updateUser(user: USER_TYPE, id: number): Observable<ResponseModel> {
     return this.http.put<ResponseModel>(
       `${environment.apiUrl}/users/${id}`,
@@ -39,7 +55,10 @@ export class UserService {
       }
     );
   }
-  assignRolesToUser(userId: number, roleIds: number[]): Observable<ResponseModel> {
+  assignRolesToUser(
+    userId: number,
+    roleIds: number[]
+  ): Observable<ResponseModel> {
     const url = `${environment.apiUrl}/users/${userId}/roles`;
     return this.http.put<ResponseModel>(url, roleIds); // Sending the array of role IDs directly
   }
@@ -75,28 +94,18 @@ export class UserService {
     );
   }
 
-  // getAssignedRoles(
-  //   id: number,
-  //   roles: { roleId: number }[]
-  // ): Observable<ResponseModel> {
-  //   const url = `${environment.apiUrl}/users/${id}/roles`; // Correctly construct the URL
-  //   return this.http.post<ResponseModel>(url, roles);
-  // }
   getAssignedRoles(id: number): Observable<ResponseModel> {
     const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL as needed
     return this.http.get<ResponseModel>(url); // Use GET for fetching assigned roles
   }
 
-  // getUserRoles(id: number): Observable<ResponseModel> {
-  //   return this.http.get<ResponseModel>(' ${environment.apiUrl}/users/${id}');
+  // getUserRoles(
+  //   id: number,
+  //   roles: { roleId: number }[]
+  // ): Observable<ResponseModel> {
+  //   const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL for assigning roles
+  //   return this.http.post<ResponseModel>(url, roles);
   // }
-  getUserRoles(
-    id: number,
-    roles: { roleId: number }[]
-  ): Observable<ResponseModel> {
-    const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL for assigning roles
-    return this.http.post<ResponseModel>(url, roles);
-  }
 
   postUserRole(
     userId: number,

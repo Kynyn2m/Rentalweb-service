@@ -1,37 +1,28 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
-  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { AssignRoleComponent } from './assign-role/assign-role.component';
-import { UserService } from './user.service';
-import { FilterTemplate, RecommentFilter, Template, USER_TYPE } from './user';
-import { PaggingModel, ResponseModel } from 'src/app/_helpers/response-model';
-import { TranslocoService } from '@ngneat/transloco';
-import { ConfirmService } from 'src/app/components/confirm/confirm.service';
-import { AuthenticationService } from 'src/app/authentication/authentication.service';
-import { NavComponent } from 'src/app/nav/nav.component';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { environment } from 'src/environments/environment';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatSort } from '@angular/material/sort';
-import { USER } from './data.test';
+import { MatTableDataSource } from '@angular/material/table';
+import { UserService } from './user.service';
+import { USER_TYPE } from './user';
 import { UserFormComponent } from './user-form/user-form.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { RoleService } from '../role/role.service';
-import { AssignRoleDialogComponent, Role } from './assign-role-dialog/assign-role-dialog.component';
 import Swal from 'sweetalert2';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FilterTemplate } from './user';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css', '../../styles/styled.table.css'],
+  styleUrls: ['./user.component.css'],
 })
-export class UserComponent {
+export class UserComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'id',
     'fullName',
@@ -40,180 +31,144 @@ export class UserComponent {
     'username',
     'other',
   ];
-  // dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-  dataSource = new MatTableDataSource<USER_TYPE>();
-
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
-  size = environment.pageSize;
-  page = environment.currentPage;
-  error: any;
-  searchText: string = '';
-  searchUpdate = new Subject<string>();
+  dataSource = new MatTableDataSource<USER_TYPE>([]);
+  isLoading = true;
+  pagingModel: any;
   currentPage = 0;
-  rowClicked = -1;
-  _filter: FilterTemplate = new FilterTemplate();
-  pagingModel?: PaggingModel;
-  pageSizeOptions: number[] = environment.pageSizeOptions;
-  // ngAfterViewInit() {
-  //   this.dataSource.paginator = this.paginator;
-  // }
+  size = 10;
+  searchText = '';
+  filter: FilterTemplate = new FilterTemplate();
+  pageSizeOptions: number[] = [5, 10, 25, 50];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  page = environment.currentPage;
+
+  constructor(
+    private dialog: MatDialog,
+    private userService: UserService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private snackBar: MatSnackBar
+  ) {}
+
   ngOnInit(): void {
     this.getAll();
   }
 
-  readonly dialog = inject(MatDialog);
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
 
-  // openDialog() {
-  //   this.dialog.open(UserAddComponent );
-  // }
-  constructor(
-    // private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private userService: UserService,
-    private navComponent: NavComponent,
-    private confirmService: ConfirmService,
-    private changeDetectorRef: ChangeDetectorRef,
-    private rolesService: RoleService,
-    private readonly translocoService: TranslocoService,
-    private authenticationService: AuthenticationService
-  ) {}
   getAll() {
-    this.navComponent._loading = true;
+    this.isLoading = true;
     this.userService
-      .gets(this.page, this.size, this.searchText, this._filter)
+      .gets(this.currentPage, this.size, this.searchText, this.filter)
       .subscribe(
         (res) => {
-          const pagingModel = (res as ResponseModel).result;
-          this.pagingModel = pagingModel;
-          this.dataSource.data = (pagingModel as PaggingModel).result;
+          if (res && res.result) {
+            this.pagingModel = res.result;
+            this.dataSource.data = this.pagingModel.result;
+            this.paginator.length = this.pagingModel.totalElements;
+          } else {
+            console.error('Unexpected API response structure:', res);
+          }
+          this.isLoading = false;
           this.changeDetectorRef.detectChanges();
-          this.navComponent._loading = false;
         },
         (error) => {
-          this.error = error;
-          // this.navComponent._loading = false;
+          this.isLoading = false;
+          this.snackBar.open('Error fetching users', 'Close', {
+            duration: 3000,
+          });
+          console.error('Error fetching data:', error);
         }
       );
   }
-  updateUser(user: USER_TYPE) {
-    if (user.status === 'DEL') return; // Make sure the status check is correct
 
-    console.log('User to be updated:', user); // Check if fullName is included
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.width = '750px';
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = user;
-
-    this.dialog
-      .open(UserFormComponent, dialogConfig)
-      .afterClosed()
-      .subscribe((result) => {
-        this.getAll(); // Refresh data after dialog closes
-      });
-  }
-  deleteConfirm(user: USER_TYPE) {
-    const options = {
-      title: `${this.translocoService.translate(
-        'delete'
-      )} ${this.translocoService.translate('user')}`,
-      message: `${this.translocoService.translate('delete-confirmation')} ${
-        user.username
-      }?`,
-      cancelText: this.translocoService.translate('cancel'),
-      confirmText: this.translocoService.translate('yes'),
-    };
-
-    this.confirmService.open(options);
-
-    this.confirmService.confirmed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.userService.deleteUser(user.id).subscribe((data) => {
-          this.getAll();
-        });
-      }
-    });
-  }
-
-  openAssignRoleDialog(user: any): void {
-    this.rolesService.getRoles().subscribe((response) => {
-      const roles: Role[] = response.result.result; // Assuming 'result' contains the list of roles
-
-      // Open the dialog and pass the list of roles
-      const dialogRef = this.dialog.open(AssignRoleDialogComponent, {
-        width: '400px',
-        data: {
-          roles: roles, // Pass the roles to the dialog
-          assignedRoles: user.roles // Pass currently assigned roles
-        }
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          // Assign selected role IDs to the user
-          this.assignRolesToUser(user.id, result);
-        }
-      });
-    });
-  }
-
-  assignRolesToUser(userId: number, roleIds: number[]): void {
-    // Call the user service to assign roles
-    this.userService.assignRolesToUser(userId, roleIds).subscribe(() => {
-      console.log('Roles successfully assigned to user.');
-      // Show success alert
-      Swal.fire('Success', 'Roles have been successfully assigned.', 'success');
-    }, error => {
-      console.error('Error assigning roles:', error);
-      Swal.fire('Error', 'Failed to assign roles.', 'error');
-    });
-  }
-
-
-  assignRole(user: USER_TYPE) {
-    console.log('Assign role to user:', user);
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '600px';
-    dialogConfig.data = user;
-
-    const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.assignedRoles && result.assignedRoles.length > 0) {
-        const roles = result.assignedRoles.map((role: { id: number }) => ({
-          roleId: role.id,
-        }));
-
-        // Ensure both user.id and roles are provided
-        this.userService.getUserRoles(user.id, roles).subscribe(
-          (response) => {
-            console.log('User assigned successfully:', response);
-            this.getAll();
-            this.snackBar.open('User assigned successfully', 'Close', {
-              duration: 3000,
-            });
-          },
-          (error) => {
-            console.error('Error assigning User:', error);
-            this.snackBar.open('Error assigning user', 'Close', {
-              duration: 3000,
-            });
-          }
-        );
-      } else {
-        console.error('No roles selected');
-        this.snackBar.open('No roles selected', 'Close', { duration: 3000 });
-      }
-    });
+  onSearch() {
+    this.currentPage = 0; // Reset to the first page on a new search
+    this.getAll();
   }
 
   pageChanged(event: PageEvent) {
     this.size = event.pageSize;
-    this.page = event.pageIndex;
+    this.currentPage = event.pageIndex;
     this.getAll();
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  newDialog(): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = new USER_TYPE();
+
+    this.dialog
+      .open(UserFormComponent, dialogConfig)
+      .afterClosed()
+      .subscribe(() => this.getAll());
+  }
+
+  updateDialog(user: USER_TYPE): void {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true; // Prevent closing the dialog by clicking outside
+    dialogConfig.autoFocus = true; // Automatically focus the dialog input
+    dialogConfig.data = user; // Pass the user data to the dialog
+
+    this.dialog
+      .open(UserFormComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((updatedUser: USER_TYPE | undefined) => {
+        // Check if the dialog returned an updated user object
+        if (updatedUser) {
+          // Call the updateUser method to save changes
+          this.userService.updateUser(updatedUser, updatedUser.id).subscribe(
+            (res) => {
+              // Use default success message if 'message' is missing in the response
+              const message =
+                (res as any)?.message || 'User updated successfully';
+              this.snackBar.open(message, 'Close', { duration: 3000 });
+              this.getAll(); // Refresh the user list after update
+            },
+            (error) => {
+              // Display error message and log it
+              this.snackBar.open('Error updating user', 'Close', {
+                duration: 3000,
+              });
+              console.error('Error updating user:', error);
+            }
+          );
+        }
+      });
+  }
+
+  deleteConfirm(user: USER_TYPE): void {
+    Swal.fire({
+      title: `Delete ${user.username}?`,
+      text: 'Are you sure you want to delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.userService.deleteUser(user.id).subscribe(
+          () => {
+            Swal.fire('Deleted!', 'User has been deleted.', 'success');
+            this.getAll(); // Reload data after deletion
+          },
+          (error) => {
+            Swal.fire('Error', 'Failed to delete user', 'error');
+            console.error('Error deleting user:', error);
+          }
+        );
+      }
+    });
   }
 }

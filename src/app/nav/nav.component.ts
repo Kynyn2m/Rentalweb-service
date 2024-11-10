@@ -87,7 +87,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       adminOnly: true,
     },
     {
-      router: '/user',
+      router: '/user', // change to lowercase
       icon: 'perm_identity',
       title: 'User',
       tooltip: 'User',
@@ -98,6 +98,13 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       icon: 'border_color',
       title: 'Role',
       tooltip: 'Role',
+      adminOnly: true,
+    },
+    {
+      router: '/comment',
+      icon: 'comment',
+      title: 'Comment',
+      tooltip: 'Comment',
       adminOnly: true,
     },
     {
