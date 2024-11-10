@@ -112,12 +112,12 @@ toggleFavorite(postId: number, postType: string): Observable<any> {
   return this.http.post<any>(url, {}, { headers });
 }
 
-
- favoriteHouse(postId: number, postType: string): Observable<any> {
+favoriteHouse(postId: number, postType: string): Observable<any> {
   const headers = new HttpHeaders().set('api-version', '1');
   const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
-  return this.http.post<any>(url, {}, { headers });
+  return this.http.post(url, {}, { headers, responseType: 'text' });
 }
+
 
 
 

@@ -419,3 +419,48 @@ mat-card-content {
 .mat-card-title {
   text-align: center;
 }
+.views-likes {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.like-button.liked mat-icon {
+  color: #ff5252;
+}
+
+.details-button {
+  background-color: #4caf50;
+  color: white;
+}
+.favorite-icon-container {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 10px;
+  top: 47%;
+  left: 86%;
+}
+
+.favorite-icon {
+  transform: scale(1.2);
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.favorite-icon:hover {
+  color: #e57373; /* Lighter red on hover */
+  transform: scale(1.1);
+}
+
+.favorite-icon.favorited {
+  color: #e53935; /* Red color when favorited */
+}

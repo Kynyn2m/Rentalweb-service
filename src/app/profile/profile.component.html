@@ -263,6 +263,8 @@
             <ng-container *ngIf="favorites.houses.length; else noFavoriteHouses">
               <mat-card *ngFor="let house of favorites.houses"
                         class="history-card">
+
+                <!-- Image Carousel -->
                 <div class="image-carousel-container">
                   <button class="prev-image-button"
                           *ngIf="house.safeImagePaths?.length > 1"
@@ -278,11 +280,30 @@
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
-                <mat-card-content>
-                  <p><strong>Title:</strong> {{ house.title }}</p>
-                  <p><strong>Price:</strong> ${{ house.price }}</p>
-                  <p><strong>Description:</strong> {{ house.description }}</p>
+
+                <!-- Card Content -->
+                <mat-card-content class="card-content">
+                  <p class="card-title"><strong>Title:</strong> {{ house.title }}</p>
+                  <p class="card-price"
+                     style="color: red"><strong>Price:</strong> ${{ house.price }}</p>
+
+                  <!-- Card Actions -->
+                  <div class="actions">
+                    <button mat-raised-button
+                            color="warn"
+                            (click)="unfavoriteHouse(house.id); $event.stopPropagation()"
+                            class="unfavorite-button">
+                      Unfavorite
+                    </button>
+                    <button mat-raised-button
+                            color="success"
+                            class="details-button"
+                            (click)="goToDetails(house.id)">
+                      View Details
+                    </button>
+                  </div>
                 </mat-card-content>
+
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteHouses>
@@ -299,7 +320,10 @@
           <div class="history-cards">
             <ng-container *ngIf="favorites.lands.length; else noFavoriteLands">
               <mat-card *ngFor="let land of favorites.lands"
-                        class="history-card">
+                        class="history-card"
+                        (click)="goToDetails(land.id)">
+
+                <!-- Image Carousel -->
                 <div class="image-carousel-container">
                   <button class="prev-image-button"
                           *ngIf="land.safeImagePaths?.length > 1"
@@ -315,11 +339,30 @@
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
-                <mat-card-content>
-                  <p><strong>Title:</strong> {{ land.title }}</p>
-                  <p><strong>Price:</strong> ${{ land.price }}</p>
-                  <p><strong>Description:</strong> {{ land.description }}</p>
+
+                <!-- Card Content -->
+                <mat-card-content class="card-content">
+                  <p class="card-title"><strong>Title:</strong> {{ land.title }}</p>
+                  <p class="card-price"
+                     style="color: red"><strong>Price:</strong> ${{ land.price }}</p>
+
+                  <!-- Card Actions -->
+                  <div class="actions">
+                    <button mat-raised-button
+                            color="warn"
+                            (click)="unfavoriteHouse(land.id)"
+                            class="unfavorite-button">
+                      Unfavorite
+                    </button>
+                    <button mat-raised-button
+                            color="success"
+                            class="details-button"
+                            (click)="goToDetails(land.id)">
+                      View Details
+                    </button>
+                  </div>
                 </mat-card-content>
+
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteLands>
@@ -336,7 +379,10 @@
           <div class="history-cards">
             <ng-container *ngIf="favorites.rooms.length; else noFavoriteRooms">
               <mat-card *ngFor="let room of favorites.rooms"
-                        class="history-card">
+                        class="history-card"
+                        (click)="goToDetails(room.id)">
+
+                <!-- Image Carousel -->
                 <div class="image-carousel-container">
                   <button class="prev-image-button"
                           *ngIf="room.safeImagePaths?.length > 1"
@@ -352,11 +398,30 @@
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
-                <mat-card-content>
-                  <p><strong>Title:</strong> {{ room.title }}</p>
-                  <p><strong>Price:</strong> ${{ room.price }}</p>
-                  <p><strong>Description:</strong> {{ room.description }}</p>
+
+                <!-- Card Content -->
+                <mat-card-content class="card-content">
+                  <p class="card-title"><strong>Title:</strong> {{ room.title }}</p>
+                  <p class="card-price"
+                     style="color: red"><strong>Price:</strong> ${{ room.price }}</p>
+
+                  <!-- Card Actions -->
+                  <div class="actions">
+                    <button mat-raised-button
+                            color="warn"
+                            (click)="unfavoriteHouse(room.id)"
+                            class="unfavorite-button">
+                      Unfavorite
+                    </button>
+                    <button mat-raised-button
+                            color="success"
+                            class="details-button"
+                            (click)="goToDetails(room.id)">
+                      View Details
+                    </button>
+                  </div>
                 </mat-card-content>
+
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteRooms>
@@ -366,6 +431,8 @@
         </div>
 
       </mat-tab>
+
+
 
 
     </mat-tab-group>

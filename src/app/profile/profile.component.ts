@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service'; // Adjust path to your service
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'; // To handle image sanitization
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,6 +9,12 @@ import { UpdateLandDialogComponent } from './update-land-dialog/update-land-dial
 import { UpdateRoomDialogComponent } from './update-room-dialog/update-room-dialog.component';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { HouseService } from '../Service/house.service';
+import { Router } from '@angular/router';
+import { AuthenticationService } from '../authentication/authentication.service';
+
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-profile',
@@ -46,12 +52,24 @@ export class ProfileComponent implements OnInit {
   communes: any[] = [];
   villages: any[] = [];
 
+  private startX: number = 0;
+  private startY: number = 0;
+
   constructor(
     private profileService: ProfileService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     public dialog: MatDialog,
-    private http: HttpClient
+    private http: HttpClient,
+    private houseService: HouseService,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private cdr: ChangeDetectorRef,
+
+
+
+
+
   ) {}
 
   ngOnInit(): void {
@@ -284,6 +302,135 @@ export class ProfileComponent implements OnInit {
       item.safeImagePaths.push('/assets/img/default-placeholder.png'); // Add a single placeholder if no image exists
     }
   }
+  goToDetails(houseId: number): void {
+    this.houseService.viewHouse(houseId).subscribe(() => {
+      this.router.navigate(['/details', houseId]);
+    });
+  }
+
+
+  likeHouse(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const house = this.houses.find(h => h.id === houseId);
+    if (!house || house.pending) return;
+
+    house.pending = true;
+    console.log(`Toggling like for house ID ${houseId}`);
+
+    this.houseService.likeHouse(houseId, 'house').subscribe({
+      next: () => this.fetchHouseData(houseId),
+      error: (error) => {
+        console.error(`Error toggling like for house ID ${houseId}:`, error);
+        this.fetchHouseData(houseId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for house ID ${houseId}`);
+        house.pending = false;
+      }
+    });
+  }
+  private fetchHouseData(houseId: number): void {
+    console.log(`Fetching updated data for house ID ${houseId}...`);
+
+    this.houseService.getHouseById(houseId.toString()).subscribe({
+      next: (response) => {
+        const houseIndex = this.houses.findIndex(h => h.id === houseId);
+        if (houseIndex > -1 && response.result) {
+          const updatedHouse = response.result;
+          this.houses[houseIndex] = {
+            ...this.houses[houseIndex],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(`Error fetching latest data for house ID ${houseId}:`, error);
+      }
+    });
+  }
+
+  unfavoriteHouse(houseId: number): void {
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to remove this house from your favorites?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, unfavorite it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with unfavoriting if confirmed
+        this.houseService.favoriteHouse(houseId, 'house').subscribe({
+          next: (response) => {
+            console.log(`Successfully unfavorited house ID ${houseId}:`, response);
+            this.fetchFavorites();
+            this.snackBar.open('House successfully removed from favorites.', 'Close', {
+              duration: 3000,
+            });
+          },
+          error: (error) => {
+            if (error.status === 200) {
+              console.log(`Handled as success despite error block:`, error);
+              this.fetchFavorites();
+              this.snackBar.open('House successfully removed from favorites.', 'Close', {
+                duration: 3000,
+              });
+            } else {
+              console.error(`Error unfavoriting house ID ${houseId}:`, error);
+              this.snackBar.open('Failed to remove house from favorites.', 'Close', {
+                duration: 3000,
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
+  startClick(event: MouseEvent): void {
+    // Record the initial mouse position on mousedown
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+  }
+
+  endClick(event: MouseEvent, houseId: number): void {
+    // Calculate the distance the mouse moved
+    const distanceX = Math.abs(event.clientX - this.startX);
+    const distanceY = Math.abs(event.clientY - this.startY);
+
+    // Set a threshold distance to distinguish a click from text selection
+    const threshold = 5;
+    if (distanceX < threshold && distanceY < threshold) {
+      // Navigate to details only if it’s a genuine click (not a selection)
+      this.goToDetails(houseId);
+    }
+  }
+
+
+
+
+
+
 
   // Navigate to the previous image in the carousel
   prevImage(item: any): void {
