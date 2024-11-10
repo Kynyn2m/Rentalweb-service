@@ -176,7 +176,15 @@
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
-
+        <div class="favorite-icon-container">
+          <mat-icon
+            class="favorite-icon"
+            [ngClass]="{ favorited: room.favoriteable }"
+            (click)="toggleFavorite(room.id); $event.stopPropagation()"
+          >
+            {{ room.favoriteable ? "favorite" : "favorite_border" }}
+          </mat-icon>
+        </div>
         <mat-card-content>
           <h3>{{ room.title }}</h3>
           <p>{{ "location" | transloco }}: {{ room.provinceName }}</p>
@@ -196,12 +204,14 @@
             <!-- Like Button (aligned to the left) -->
             <button
               mat-raised-button
-              color="primary"
               class="like-button"
+              [ngClass]="{ liked: room.likeable }"
               (click)="likeRoom(room.id); $event.stopPropagation()"
             >
-              <mat-icon>thumb_up</mat-icon>
-              {{ room.likeCount }} {{ "likes" | transloco }}
+              <mat-icon class="like-icon">{{
+                room.likeable ? "thumb_up" : "thumb_up_off_alt"
+              }}</mat-icon>
+              <span>{{ room.likeCount }} {{ "Likes" | transloco }}</span>
             </button>
 
             <!-- View Details Button (aligned to the right) -->

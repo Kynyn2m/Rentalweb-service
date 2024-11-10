@@ -227,12 +227,9 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeRoom(room.id); $event.stopPropagation()"
-            >
+            <!-- (click)="likeRoom(room.id); $event.stopPropagation()" -->
+
+            <button mat-raised-button color="primary" class="like-button">
               <mat-icon>thumb_up</mat-icon>
               {{ room.likeCount }} {{ "likes" | transloco }}
             </button>
@@ -335,12 +332,8 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <button
-              mat-raised-button
-              color="primary"
-              class="like-button"
-              (click)="likeLand(land.id); $event.stopPropagation()"
-            >
+            <!-- (click)="likeLand(land.id); $event.stopPropagation()" -->
+            <button mat-raised-button color="primary" class="like-button">
               <mat-icon>thumb_up</mat-icon>
               {{ land.likeCount }} {{ "likes" | transloco }}
             </button>

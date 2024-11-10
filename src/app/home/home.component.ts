@@ -529,63 +529,63 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
     });
   }
-  likeRoom(RoomId: number): void {
-    const room = this.rooms.find((r) => r.id === RoomId);
+  // likeRoom(RoomId: number): void {
+  //   const room = this.rooms.find((r) => r.id === RoomId);
 
-    if (room && !room.pending) {
-      // Ensure there's no pending request
-      room.pending = true; // Set the pending state to prevent multiple clicks
+  //   if (room && !room.pending) {
+  //     // Ensure there's no pending request
+  //     room.pending = true; // Set the pending state to prevent multiple clicks
 
-      if (room.liked) {
-        // Simulate "unlike" (no API call here for unlike)
-        room.likeCount -= 1;
-        room.liked = false;
-        room.pending = false; // Reset the pending state after local unlike
-      } else {
-        // Call the like API
-        this.roomService.likeRoom(RoomId).subscribe(
-          () => {
-            room.likeCount += 1; // Increment the like count on the UI
-            room.liked = true; // Set the liked state to true
-            room.pending = false; // Reset the pending state after the API call completes
-          },
-          () => {
-            // Handle error case
-            room.pending = false; // Reset pending state even on error
-          }
-        );
-      }
-    }
-  }
+  //     if (room.liked) {
+  //       // Simulate "unlike" (no API call here for unlike)
+  //       room.likeCount -= 1;
+  //       room.liked = false;
+  //       room.pending = false; // Reset the pending state after local unlike
+  //     } else {
+  //       // Call the like API
+  //       this.roomService.likeRoom(RoomId).subscribe(
+  //         () => {
+  //           room.likeCount += 1; // Increment the like count on the UI
+  //           room.liked = true; // Set the liked state to true
+  //           room.pending = false; // Reset the pending state after the API call completes
+  //         },
+  //         () => {
+  //           // Handle error case
+  //           room.pending = false; // Reset pending state even on error
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
 
-  likeLand(landId: number): void {
-    const land = this.lands.find((l) => l.id === landId);
+  // likeLand(landId: number): void {
+  //   const land = this.lands.find((l) => l.id === landId);
 
-    if (land && !land.pending) {
-      // Ensure there's no pending request
-      land.pending = true; // Set the pending state to true to prevent multiple clicks
+  //   if (land && !land.pending) {
+  //     // Ensure there's no pending request
+  //     land.pending = true; // Set the pending state to true to prevent multiple clicks
 
-      if (land.liked) {
-        // Simulate "unlike" (no API call here)
-        land.likeCount -= 1;
-        land.liked = false;
-        land.pending = false; // Reset pending state after local unlike
-      } else {
-        // Call the like API
-        this.landervice.likeLand(landId).subscribe(
-          () => {
-            land.likeCount += 1; // Increment the like count on the UI
-            land.liked = true; // Set the liked state to true
-            land.pending = false; // Reset pending state after the API call completes
-          },
-          () => {
-            // Handle error case
-            land.pending = false; // Reset pending state even on error
-          }
-        );
-      }
-    }
-  }
+  //     if (land.liked) {
+  //       // Simulate "unlike" (no API call here)
+  //       land.likeCount -= 1;
+  //       land.liked = false;
+  //       land.pending = false; // Reset pending state after local unlike
+  //     } else {
+  //       // Call the like API
+  //       this.landervice.likeLand(landId).subscribe(
+  //         () => {
+  //           land.likeCount += 1; // Increment the like count on the UI
+  //           land.liked = true; // Set the liked state to true
+  //           land.pending = false; // Reset pending state after the API call completes
+  //         },
+  //         () => {
+  //           // Handle error case
+  //           land.pending = false; // Reset pending state even on error
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
 
   onBannerClick(): void {
     const currentImage = this.images[this.currentImageIndex];

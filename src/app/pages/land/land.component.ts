@@ -8,6 +8,8 @@ import { LandService } from 'src/app/add-post/add-post-land/land.service';
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
+import { AuthenticationService } from 'src/app/authentication/authentication.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-land',
@@ -51,7 +53,8 @@ export class LandComponent {
     private districtService: DistrictService,
     private cdr: ChangeDetectorRef,
     private communeService: CommuneService,
-    private villageService: VillageService
+    private villageService: VillageService,
+    private authenticationService: AuthenticationService
   ) {
     this.initializeGridCols();
   }
@@ -330,6 +333,66 @@ export class LandComponent {
     this.fetchLand(fromPrice, toPrice, search, this.currentPage);
   }
 
+  toggleFavorite(landId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this land.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+    const land = this.lands.find((h) => h.id === landId);
+    if (!land || land.pending) return;
+
+    land.pending = true;
+    console.log(`Toggling favorite for land ID ${landId}`);
+
+    this.landService.toggleFavorite(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
+      error: (error) => {
+        console.error(`Error toggling favorite for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
+      },
+      complete: () => {
+        land.pending = false;
+        console.log(`Completed favorite toggle for land ID ${landId}`);
+      },
+    });
+  }
+  private fetchLandData(landId: number): void {
+    console.log(`Fetching updated data for land ID ${landId}...`);
+
+    this.landService.getLandById(landId.toString()).subscribe({
+      next: (response) => {
+        const landIndex = this.lands.findIndex((h) => h.id === landId);
+        if (landIndex > -1 && response.result) {
+          const updatedLand = response.result;
+          this.lands[landIndex] = {
+            ...this.lands[landIndex],
+            likeCount: updatedLand.likeCount,
+            likeable: updatedLand.likeable,
+            favoriteable: updatedLand.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for land ID ${landId}:`,
+          error
+        );
+      },
+    });
+  }
   // Dynamically generate page numbers
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
@@ -358,27 +421,41 @@ export class LandComponent {
 
     return pages;
   }
+
   likeLand(landId: number): void {
-    const land = this.lands.find((h) => h.id === landId);
-    if (land && !land.pending) {
-      land.pending = true;
-      if (land.liked) {
-        land.likeCount -= 1;
-        land.liked = false;
-        land.pending = false;
-      } else {
-        this.landService.likeLand(landId).subscribe(
-          () => {
-            land.likeCount += 1;
-            land.liked = true;
-            land.pending = false;
-          },
-          () => {
-            land.pending = false;
-          }
-        );
-      }
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this land.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
     }
+
+    const land = this.lands.find((h) => h.id === landId);
+    if (!land || land.pending) return;
+
+    land.pending = true;
+    console.log(`Toggling like for land ID ${landId}`);
+
+    this.landService.likeLand(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
+      error: (error) => {
+        console.error(`Error toggling like for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for land ID ${landId}`);
+        land.pending = false;
+      },
+    });
   }
 
   loadImage(land: any): void {

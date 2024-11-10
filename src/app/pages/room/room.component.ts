@@ -7,7 +7,9 @@ import * as AOS from 'aos';
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
+import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { RoomService } from 'src/app/Service/room.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-room',
@@ -49,7 +51,8 @@ export class RoomComponent {
     private districtService: DistrictService,
     private cdr: ChangeDetectorRef,
     private communeService: CommuneService,
-    private villageService: VillageService
+    private villageService: VillageService,
+    private authenticationService: AuthenticationService
   ) {
     this.initializeGridCols();
   }
@@ -230,7 +233,7 @@ export class RoomComponent {
       queryParamsHandling: 'merge',
     });
 
-    // Convert null to undefined before passing to fetchHouses
+    // Convert null to undefined before passing to fetchRooms
     this.fetchRoom(
       this.fromPrice ?? undefined,
       this.toPrice ?? undefined,
@@ -323,15 +326,42 @@ export class RoomComponent {
 
     return pages;
   }
+
   likeRoom(roomId: number): void {
-    this.roomService.likeRoom(roomId).subscribe(() => {
-      const room = this.room.find((h) => h.id === roomId);
-      if (room) {
-        room.likeCount += 1;
-      }
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this room.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const room = this.room.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
+
+    room.pending = true;
+    console.log(`Toggling like for room ID ${roomId}`);
+
+    this.roomService.likeRoom(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
+      error: (error) => {
+        console.error(`Error toggling like for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for room ID ${roomId}`);
+        room.pending = false;
+      },
     });
   }
-
   loadImage(room: any): void {
     if (room.imagePaths && room.imagePaths.length > 0) {
       room.safeImagePaths = [];
@@ -356,7 +386,40 @@ export class RoomComponent {
       room.currentImageIndex = 0;
     }
   }
+  toggleFavorite(roomId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this room.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+    const room = this.room.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
 
+    room.pending = true;
+    console.log(`Toggling favorite for room ID ${roomId}`);
+
+    this.roomService.toggleFavorite(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
+      error: (error) => {
+        console.error(`Error toggling favorite for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
+      },
+      complete: () => {
+        room.pending = false;
+        console.log(`Completed favorite toggle for room ID ${roomId}`);
+      },
+    });
+  }
   // Navigate to the previous image (loop to the last image if it's the first one)
   prevImage(room: any): void {
     if (room.currentImageIndex > 0) {
@@ -387,6 +450,32 @@ export class RoomComponent {
           }
         }
       });
+  }
+  private fetchRoomData(roomId: number): void {
+    console.log(`Fetching updated data for room ID ${roomId}...`);
+
+    this.roomService.getRoomById(roomId.toString()).subscribe({
+      next: (response) => {
+        const roomIndex = this.room.findIndex((h) => h.id === roomId);
+        if (roomIndex > -1 && response.result) {
+          const updatedRoom = response.result;
+          this.room[roomIndex] = {
+            ...this.room[roomIndex],
+            likeCount: updatedRoom.likeCount,
+            likeable: updatedRoom.likeable,
+            favoriteable: updatedRoom.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for room ID ${roomId}:`,
+          error
+        );
+      },
+    });
   }
 
   goToDetails(roomId: number): void {
