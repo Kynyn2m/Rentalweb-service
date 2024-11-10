@@ -102,14 +102,11 @@ import { GalleriaModule } from 'primeng/galleria';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-
 import { DropdownModule } from 'primeng/dropdown';
-
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-
-
+import { CommentComponent } from './dashboard/comment/comment.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -164,7 +161,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     UpdateHouseDialogComponent,
     ChangePasswordDialogComponent,
     UpdateLandDialogComponent,
-    UpdateRoomDialogComponent
+    UpdateRoomDialogComponent,
+    CommentComponent,
   ],
   imports: [
     BrowserModule,
@@ -218,13 +216,12 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     DropdownModule,
     InputNumberModule,
     ToastModule,
-
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrInterceptor, multi: true },
     { provide: MAT_DATE_LOCALE, useValue: 'en-US' },
-    MessageService
+    MessageService,
   ],
   bootstrap: [AppComponent],
 })
