@@ -28,6 +28,7 @@ import { RoomListComponent } from './dashboard/room-list/room-list.component';
 import { DetailRoomComponent } from './pages/room/detail-room/detail-room.component';
 import { LandListComponent } from './dashboard/land-list/land-list.component';
 import { DetailLandComponent } from './pages/land/detail-land/detail-land.component';
+import { CommentComponent } from './dashboard/comment/comment.component';
 
 const routes: Routes = [
   { path: 'forget-password', component: ForgetPasswordComponent },
@@ -48,7 +49,10 @@ const routes: Routes = [
   },
 
   { path: 'role', component: RoleComponent, canActivate: [AdminGuard] },
+  // { path: 'User', component: UserComponent, canActivate: [AdminGuard] },
   { path: 'user', component: UserComponent, canActivate: [AdminGuard] },
+  { path: 'comment', component: CommentComponent, canActivate: [AdminGuard] },
+
   {
     path: 'house-list',
     component: HouseListComponent,
