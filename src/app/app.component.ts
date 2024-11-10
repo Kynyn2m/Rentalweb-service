@@ -1,4 +1,4 @@
-import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
+import { Component, Injectable, Input, OnInit, ViewChild } from '@angular/core';
 import { AuthenticationService } from './authentication/authentication.service';
 import { NavService } from './nav/nav.service';
 import { NavComponent } from './nav/nav.component';
@@ -11,7 +11,8 @@ import { NavComponent } from './nav/nav.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit  {
+export class AppComponent implements OnInit {
+  @Input() adminOnly: boolean = false;
   @ViewChild(NavComponent) navComponent!: NavComponent;
 
   title = 'Rental Web Service';
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit  {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private readonly navService: NavService,
+    private readonly navService: NavService
   ) {
     // Subscribe to authEmitter in navService to track authentication state
     this.navService.authEmitter.subscribe((isEmitterAuth: boolean) => {
@@ -38,8 +39,8 @@ export class AppComponent implements OnInit  {
       this.isAdmin = currentUser.id === 0;
     }
   }
-  Onscroll(): void{
-    window.scrollTo(0, 0 ,);
+  Onscroll(): void {
+    window.scrollTo(0, 0);
   }
 
   // This will receive updates from the login component or other components
