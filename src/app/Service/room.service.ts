@@ -65,11 +65,20 @@ export class RoomService {
     return this.http.get<any>(this.apiUrl, { headers, params: httpParams });
   }
 
-  likeRoom(roomId: number): Observable<any> {
+  toggleFavorite(postId: number, postType: string): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
-    return this.http.put<any>(`${this.apiUrl}/like/${roomId}`, {}, { headers });
+    const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+    return this.http.post<any>(url, {}, { headers });
   }
-
+  likeRoom(
+    postId: number,
+    postType: string,
+    options: any = {}
+  ): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    const url = `${this.apilike}/public/like?postId=${postId}&postType=${postType}`;
+    return this.http.post<any>(url, {}, { headers, ...options });
+  }
   // Fetch image with headers
   getImage(imageUrl: string): Observable<Blob> {
     const headers = new HttpHeaders().set('api-version', '1');
@@ -106,6 +115,11 @@ export class RoomService {
       message: string;
       result: { result: UserComment[] };
     }>(url);
+  }
+  favoriteRoom(postId: number, postType: string): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+    return this.http.post(url, {}, { headers, responseType: 'text' });
   }
   replyToComment(commentId: number, description: string): Observable<any> {
     const url = `${environment.apiUrl}/comments/${commentId}`; // Directly use environment.baseUrl

@@ -14,7 +14,8 @@ import { Router } from '@angular/router';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 import Swal from 'sweetalert2';
-
+import { RoomService } from '../Service/room.service';
+import { LandService } from '../add-post/add-post-land/land.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,13 +23,12 @@ import Swal from 'sweetalert2';
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
-
   mainTabIndex = 0;
 
   favorites = {
     houses: [] as any[],
     lands: [] as any[],
-    rooms: [] as any[]
+    rooms: [] as any[],
   };
   user: any = {
     id: '',
@@ -65,11 +65,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
-
-
-
-
-
+    private roomService: RoomService,
+    private landService: LandService
   ) {}
 
   ngOnInit(): void {
@@ -111,21 +108,25 @@ export class ProfileComponent implements OnInit {
           this.favorites.rooms = response.result.rooms || [];
 
           // Process images for each favorite item just like in "My Properties"
-          this.favorites.houses.forEach((house) => this.loadImage(house, 'house'));
+          this.favorites.houses.forEach((house) =>
+            this.loadImage(house, 'house')
+          );
           this.favorites.lands.forEach((land) => this.loadImage(land, 'land'));
           this.favorites.rooms.forEach((room) => this.loadImage(room, 'room'));
         } else {
-          this.snackBar.open('Failed to load favorites', 'Close', { duration: 3000 });
+          this.snackBar.open('Failed to load favorites', 'Close', {
+            duration: 3000,
+          });
         }
       },
       (error) => {
         console.error('Error fetching favorites:', error);
-        this.snackBar.open('Failed to load favorites', 'Close', { duration: 3000 });
+        this.snackBar.open('Failed to load favorites', 'Close', {
+          duration: 3000,
+        });
       }
     );
   }
-
-
 
   // Handle file selection and create a preview
   onFileSelected(event: any): void {
@@ -308,7 +309,16 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-
+  goToDetailsRoom(roomId: number): void {
+    this.roomService.viewRoom(roomId).subscribe(() => {
+      this.router.navigate(['/details-room', roomId]);
+    });
+  }
+  goToDetailsLand(landId: number): void {
+    this.landService.viewLand(landId).subscribe(() => {
+      this.router.navigate(['/details-land', landId]);
+    });
+  }
   likeHouse(houseId: number): void {
     if (!this.authenticationService.isLoggedIn()) {
       Swal.fire({
@@ -317,7 +327,7 @@ export class ProfileComponent implements OnInit {
         text: 'Please log in to like this house.',
         confirmButtonText: 'Login',
         showCancelButton: true,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['/login']);
@@ -326,7 +336,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const house = this.houses.find(h => h.id === houseId);
+    const house = this.houses.find((h) => h.id === houseId);
     if (!house || house.pending) return;
 
     house.pending = true;
@@ -341,7 +351,7 @@ export class ProfileComponent implements OnInit {
       complete: () => {
         console.log(`Completed like toggle for house ID ${houseId}`);
         house.pending = false;
-      }
+      },
     });
   }
   private fetchHouseData(houseId: number): void {
@@ -349,7 +359,7 @@ export class ProfileComponent implements OnInit {
 
     this.houseService.getHouseById(houseId.toString()).subscribe({
       next: (response) => {
-        const houseIndex = this.houses.findIndex(h => h.id === houseId);
+        const houseIndex = this.houses.findIndex((h) => h.id === houseId);
         if (houseIndex > -1 && response.result) {
           const updatedHouse = response.result;
           this.houses[houseIndex] = {
@@ -357,14 +367,17 @@ export class ProfileComponent implements OnInit {
             likeCount: updatedHouse.likeCount,
             likeable: updatedHouse.likeable,
             favoriteable: updatedHouse.favoriteable,
-            pending: false
+            pending: false,
           };
           this.cdr.detectChanges();
         }
       },
       error: (error) => {
-        console.error(`Error fetching latest data for house ID ${houseId}:`, error);
-      }
+        console.error(
+          `Error fetching latest data for house ID ${houseId}:`,
+          error
+        );
+      },
     });
   }
 
@@ -382,31 +395,152 @@ export class ProfileComponent implements OnInit {
         // Proceed with unfavoriting if confirmed
         this.houseService.favoriteHouse(houseId, 'house').subscribe({
           next: (response) => {
-            console.log(`Successfully unfavorited house ID ${houseId}:`, response);
+            console.log(
+              `Successfully unfavorited house ID ${houseId}:`,
+              response
+            );
             this.fetchFavorites();
-            this.snackBar.open('House successfully removed from favorites.', 'Close', {
-              duration: 3000,
-            });
+            this.snackBar.open(
+              'House successfully removed from favorites.',
+              'Close',
+              {
+                duration: 3000,
+              }
+            );
           },
           error: (error) => {
             if (error.status === 200) {
               console.log(`Handled as success despite error block:`, error);
               this.fetchFavorites();
-              this.snackBar.open('House successfully removed from favorites.', 'Close', {
-                duration: 3000,
-              });
+              this.snackBar.open(
+                'House successfully removed from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
             } else {
               console.error(`Error unfavoriting house ID ${houseId}:`, error);
-              this.snackBar.open('Failed to remove house from favorites.', 'Close', {
-                duration: 3000,
-              });
+              this.snackBar.open(
+                'Failed to remove house from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
             }
-          }
+          },
+        });
+      }
+    });
+  }
+  unfavoriteRoom(roomId: number): void {
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to remove this house from your favorites?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, unfavorite it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with unfavoriting if confirmed
+        this.roomService.favoriteRoom(roomId, 'room').subscribe({
+          next: (response) => {
+            console.log(
+              `Successfully unfavorited room ID ${roomId}:`,
+              response
+            );
+            this.fetchFavorites();
+            this.snackBar.open(
+              'Room successfully removed from favorites.',
+              'Close',
+              {
+                duration: 3000,
+              }
+            );
+          },
+          error: (error) => {
+            if (error.status === 200) {
+              console.log(`Handled as success despite error block:`, error);
+              this.fetchFavorites();
+              this.snackBar.open(
+                'Room successfully removed from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
+            } else {
+              console.error(`Error unfavoriting room ID ${roomId}:`, error);
+              this.snackBar.open(
+                'Failed to remove room from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
+            }
+          },
         });
       }
     });
   }
 
+  unfavoriteLand(landId: number): void {
+    // Show confirmation dialog using SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to remove this land from your favorites?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, unfavorite it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with unfavoriting if confirmed
+        this.landService.favoriteLand(landId, 'land').subscribe({
+          next: (response) => {
+            console.log(
+              `Successfully unfavorited land ID ${landId}:`,
+              response
+            );
+            this.fetchFavorites();
+            this.snackBar.open(
+              'Land successfully removed from favorites.',
+              'Close',
+              {
+                duration: 3000,
+              }
+            );
+          },
+          error: (error) => {
+            if (error.status === 200) {
+              console.log(`Handled as success despite error block:`, error);
+              this.fetchFavorites();
+              this.snackBar.open(
+                'Land successfully removed from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
+            } else {
+              console.error(`Error unfavoriting room ID ${landId}:`, error);
+              this.snackBar.open(
+                'Failed to remove land from favorites.',
+                'Close',
+                {
+                  duration: 3000,
+                }
+              );
+            }
+          },
+        });
+      }
+    });
+  }
   startClick(event: MouseEvent): void {
     // Record the initial mouse position on mousedown
     this.startX = event.clientX;
@@ -425,12 +559,6 @@ export class ProfileComponent implements OnInit {
       this.goToDetails(houseId);
     }
   }
-
-
-
-
-
-
 
   // Navigate to the previous image in the carousel
   prevImage(item: any): void {

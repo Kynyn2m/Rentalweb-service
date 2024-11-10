@@ -64,16 +64,28 @@ export class LandService {
 
     return this.http.get<any>(this.apiUrl, { headers, params: httpParams });
   }
-  likeLand(landId: number): Observable<any> {
+  toggleFavorite(postId: number, postType: string): Observable<any> {
     const headers = new HttpHeaders().set('api-version', '1');
-    return this.http.put<any>(`${this.apiUrl}/like/${landId}`, {}, { headers });
+    const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+    return this.http.post<any>(url, {}, { headers });
   }
 
   // Fetch image with headers
+
   getLandById(id: string): Observable<any> {
     const url = `${this.apiUrl}/${id}`; // Assuming this.apiUrl is set to your base API URL
     const headers = new HttpHeaders().set('api-version', '1');
     return this.http.get<any>(url, { headers });
+  }
+
+  likeLand(
+    postId: number,
+    postType: string,
+    options: any = {}
+  ): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    const url = `${this.apilike}/public/like?postId=${postId}&postType=${postType}`;
+    return this.http.post<any>(url, {}, { headers, ...options });
   }
   getImage(imageUrl: string): Observable<Blob> {
     const headers = new HttpHeaders().set('api-version', '1');
@@ -132,5 +144,10 @@ export class LandService {
   deleteComment(commentId: number): Observable<any> {
     const url = `${this.apilike}/comments/${commentId}`;
     return this.http.delete(url);
+  }
+  favoriteLand(postId: number, postType: string): Observable<any> {
+    const headers = new HttpHeaders().set('api-version', '1');
+    const url = `${this.apilike}/public/favorites?postId=${postId}&postType=${postType}`;
+    return this.http.post(url, {}, { headers, responseType: 'text' });
   }
 }
