@@ -11,6 +11,7 @@ import { VillageService } from '../address/village.service';
 import Swal from 'sweetalert2';
 import { AuthenticationService } from '../authentication/authentication.service';
 import * as L from 'leaflet';
+import { ShareOverlayComponent } from './share-overlay/share-overlay.component';
 
 const defaultIcon = L.icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -47,6 +48,7 @@ interface House {
   liked: boolean;
   pending?: boolean;
   user: User;
+  favoriteable: boolean;
 }
 
 interface User {
@@ -103,6 +105,8 @@ interface PaggingModel<T> {
 })
 export class DetailsComponent implements OnInit , AfterViewInit {
   house: House | null = null;
+  houseId!: number;
+  houses: any[] = [];
   selectedImage: SafeUrl | null = null;
   provinceName: string = '';
   districtName: string = '';
@@ -160,6 +164,7 @@ supermarketCount: number = 0;
 
 
   ngOnInit(): void {
+    this.houseId = +this.route.snapshot.paramMap.get('id')!;
     const houseIdParam = this.route.snapshot.paramMap.get('id');
     const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
 
@@ -311,27 +316,24 @@ supermarketCount: number = 0;
       (response) => {
         this.house = response.result as House;
         if (this.house) {
-          this.loadImages(this.house);
+          this.loadImages(this.house); // Load images if required
           this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
 
           if (this.house.linkMap) {
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.house.linkMap}&output=embed`
             );
-
-            const coordinates = this.extractCoordinates(this.house.linkMap);
-            if (coordinates) {
-              this.initializeMap(coordinates.lat, coordinates.lng);
-              this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
-            }
           }
+          console.log("Fetched updated house details:", this.house);
         }
+        this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
         console.error('Error fetching house details:', error);
       }
     );
   }
+
 
 
 
@@ -452,7 +454,96 @@ displayNearbyPlaces(places: any[], amenity: string): void {
         console.log(`Skipping place without coordinates:`, place);
       }
     });
-}
+  }
+
+
+  fetchHouseDetails(): void {
+    this.houseService.getHouseById(this.houseId.toString()).subscribe({
+      next: (response) => {
+        this.house = response.result;
+        if (this.house) {
+          this.loadImages(this.house);
+          this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
+          if (this.house.linkMap) {
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.house.linkMap}&output=embed`
+            );
+          }
+          console.log("Fetched updated house details:", this.house);
+        }
+        this.cdr.detectChanges(); // Ensure the view updates after fetching
+      },
+      error: (error) => {
+        console.error(`Error fetching house details for ID ${this.houseId}:`, error);
+      }
+    });
+  }
+
+
+
+
+  toggleFavorite(): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    console.log(`Attempting to toggle favorite for house ID: ${this.houseId}`);
+
+    this.houseService.toggleFavorite(this.houseId, 'house').subscribe({
+      next: () => {
+        // Toggle the 'favoriteable' status locally without blocking future clicks
+        if (this.house) {
+          this.house.favoriteable = !this.house.favoriteable;
+        }
+        console.log(`Successfully toggled favorite for house ID ${this.houseId}`);
+        this.getHouseDetails(this.houseId); // Re-fetch details to confirm state
+      },
+      error: (error) => {
+        console.warn(`Toggling favorite encountered an error. Assuming success. Error:`, error);
+        // Toggle locally regardless of error, for smooth UI
+        if (this.house) {
+          this.house.favoriteable = !this.house.favoriteable;
+        }
+      }
+    });
+  }
+
+  openShareOverlay(): void {
+    this.dialog.open(ShareOverlayComponent, {
+      width: '100%',
+      maxWidth: '400px'
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

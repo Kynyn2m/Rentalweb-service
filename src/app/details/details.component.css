@@ -792,3 +792,11 @@
 .share-button i {
   color: #2d98da;
 }
+.save-button.favorited {
+  background-color: #018ccf;
+  color: #fff;
+}
+.save-button.favorited i {
+
+  color: #fff;
+}

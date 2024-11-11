@@ -1,0 +1,17 @@
+<div class="share-overlay">
+  <h3>Share</h3>
+  <mat-divider></mat-divider>
+  <ul>
+    <li (click)="shareOnFacebook()">
+      <i class="fab fa-facebook"></i> Facebook
+    </li>
+    <li (click)="shareOnTwitter()">
+      <i class="fab fa-twitter"></i> Twitter
+    </li>
+    <li (click)="copyLink()">
+      <i class="fa fa-link"></i>Copy link
+    </li>
+  </ul>
+  <button class="close-button"
+          (click)="close()">close</button>
+</div>

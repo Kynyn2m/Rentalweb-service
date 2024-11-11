@@ -85,12 +85,21 @@
 
           <!-- Action Buttons Section -->
           <div class="action-buttons">
-            <button class="action-button save-button">
-              <i class="fa fa-bookmark"></i> Save
+            <button class="action-button save-button"
+                    [ngClass]="{ 'favorited': house?.favoriteable }"
+                    (click)="toggleFavorite()">
+              <i class="fa"
+                 [ngClass]="house?.favoriteable ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+              {{ house?.favoriteable ? 'Unfavorite' : 'Favorite' }}
             </button>
-            <button class="action-button share-button">
+
+
+
+            <button class="action-button share-button"
+                    (click)="openShareOverlay()">
               <i class="fa fa-share-alt"></i> Share
             </button>
+
           </div>
 
         </div>

@@ -1,0 +1,73 @@
+.share-overlay {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  transform: translateY(-100px);
+  opacity: 0;
+  animation: dropDown 0.3s forwards;
+}
+
+.share-overlay h3 {
+  font-size: 18px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.share-overlay ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.share-overlay ul li {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  font-size: 20px;
+  cursor: pointer;
+  border-top: 1px solid #e0e0e0;
+}
+
+.share-overlay ul li i {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.share-overlay ul li:first-child {
+  border-top: none;
+}
+
+.share-overlay .close-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  color: #757575;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+@keyframes dropDown {
+  from {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.share-overlay i.fa-facebook {
+  color: #3b5998; /* Facebook Blue */
+}
+
+.share-overlay i.fa-twitter {
+  color: #1da1f2; /* Twitter Blue */
+}
+
+.share-overlay i.fa-link {
+  color: #606770; /* Neutral color for the link icon */
+}
