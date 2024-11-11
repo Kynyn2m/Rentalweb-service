@@ -4,18 +4,19 @@
     <div class="profile-header-bar"></div>
 
     <div class="profile-photo">
-      <img [src]="user.avatarUrl || '/assets/img/user.png'"
-           alt="User Photo"
-           class="user-photo"
-           (error)="onImageError($event)" />
-      <input type="file"
-             (change)="onFileSelected($event)"
-             hidden
-             #fileInput />
-      <button mat-icon-button
-              color="primary"
-              (click)="fileInput.click()"
-              class="change-photo-icon">
+      <img
+        [src]="user.avatarUrl || '/assets/img/user.png'"
+        alt="User Photo"
+        class="user-photo"
+        (error)="onImageError($event)"
+      />
+      <input type="file" (change)="onFileSelected($event)" hidden #fileInput />
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="fileInput.click()"
+        class="change-photo-icon"
+      >
         <mat-icon>camera_alt</mat-icon>
       </button>
     </div>
@@ -24,34 +25,25 @@
       <mat-card-content>
         <div class="user-info-grid">
           <!-- ID (readonly) -->
-          <mat-form-field appearance="outline"
-                          class="full-width">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>ID</mat-label>
-            <input matInput
-                   [value]="user.id"
-                   readonly />
+            <input matInput [value]="user.id" readonly />
           </mat-form-field>
 
           <!-- Full Name -->
-          <mat-form-field appearance="outline"
-                          class="full-width">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Full Name</mat-label>
-            <input matInput
-                   [(ngModel)]="user.fullName" />
+            <input matInput [(ngModel)]="user.fullName" />
           </mat-form-field>
 
           <!-- Username -->
-          <mat-form-field appearance="outline"
-                          class="full-width">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Username</mat-label>
-            <input matInput
-                   disabled
-                   [(ngModel)]="user.username" />
+            <input matInput disabled [(ngModel)]="user.username" />
           </mat-form-field>
 
           <!-- Gender -->
-          <mat-form-field appearance="outline"
-                          class="full-width">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Gender</mat-label>
             <mat-select [(ngModel)]="user.gender">
               <mat-option value="male">Male</mat-option>
@@ -61,18 +53,14 @@
           </mat-form-field>
 
           <!-- Email -->
-          <mat-form-field appearance="outline"
-                          class="full-width">
+          <mat-form-field appearance="outline" class="full-width">
             <mat-label>Email</mat-label>
-            <input matInput
-                   [(ngModel)]="user.email" />
+            <input matInput [(ngModel)]="user.email" />
           </mat-form-field>
         </div>
 
         <div class="profile-actions">
-          <button mat-raised-button
-                  color="primary"
-                  (click)="saveProfile()">
+          <button mat-raised-button color="primary" (click)="saveProfile()">
             Save
           </button>
         </div>
@@ -87,10 +75,8 @@
 
     <!-- Main Tabs for "My Properties" and "My Favorite" -->
     <mat-tab-group [(selectedIndex)]="mainTabIndex">
-
       <!-- My Properties Tab -->
       <mat-tab label="My Posts">
-
         <!-- My Houses Section -->
         <div class="post-block">
           <div class="section-title">
@@ -98,20 +84,25 @@
           </div>
           <div class="history-cards">
             <ng-container *ngIf="houses.length; else noHouses">
-              <mat-card *ngFor="let house of houses"
-                        class="history-card">
+              <mat-card *ngFor="let house of houses" class="history-card">
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="house.safeImagePaths?.length > 1"
-                          (click)="prevImage(house); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="house.safeImagePaths?.length > 1"
+                    (click)="prevImage(house); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="house.safeImagePaths[house.currentImageIndex]"
-                       alt="{{ house.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="house.safeImagePaths?.length > 1"
-                          (click)="nextImage(house); $event.stopPropagation()">
+                  <img
+                    [src]="house.safeImagePaths[house.currentImageIndex]"
+                    alt="{{ house.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="house.safeImagePaths?.length > 1"
+                    (click)="nextImage(house); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
@@ -121,16 +112,20 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <div class="card-actions-right">
-                    <button mat-raised-button
-                            color="primary"
-                            (click)="openUpdateDialog(house)"
-                            class="update-button">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="openUpdateDialog(house)"
+                      class="update-button"
+                    >
                       <mat-icon>edit</mat-icon> Update
                     </button>
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="deleteHouse(house.id)"
-                            class="delete-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="deleteHouse(house.id)"
+                      class="delete-button"
+                    >
                       <mat-icon>delete</mat-icon> Delete
                     </button>
                   </div>
@@ -150,20 +145,25 @@
           </div>
           <div class="history-cards">
             <ng-container *ngIf="lands.length; else noLands">
-              <mat-card *ngFor="let land of lands"
-                        class="history-card">
+              <mat-card *ngFor="let land of lands" class="history-card">
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="land.safeImagePaths?.length > 1"
-                          (click)="prevImage(land); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="land.safeImagePaths?.length > 1"
+                    (click)="prevImage(land); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="land.safeImagePaths[land.currentImageIndex]"
-                       alt="{{ land.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="land.safeImagePaths?.length > 1"
-                          (click)="nextImage(land); $event.stopPropagation()">
+                  <img
+                    [src]="land.safeImagePaths[land.currentImageIndex]"
+                    alt="{{ land.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="land.safeImagePaths?.length > 1"
+                    (click)="nextImage(land); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
@@ -173,16 +173,20 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <div class="card-actions-right">
-                    <button mat-raised-button
-                            color="primary"
-                            (click)="openUpdateLand(land)"
-                            class="update-button">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="openUpdateLand(land)"
+                      class="update-button"
+                    >
                       <mat-icon>edit</mat-icon> Update
                     </button>
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="deleteLand(land.id)"
-                            class="delete-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="deleteLand(land.id)"
+                      class="delete-button"
+                    >
                       <mat-icon>delete</mat-icon> Delete
                     </button>
                   </div>
@@ -202,20 +206,25 @@
           </div>
           <div class="history-cards">
             <ng-container *ngIf="rooms.length; else noRooms">
-              <mat-card *ngFor="let room of rooms"
-                        class="history-card">
+              <mat-card *ngFor="let room of rooms" class="history-card">
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="room.safeImagePaths?.length > 1"
-                          (click)="prevImage(room); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="room.safeImagePaths?.length > 1"
+                    (click)="prevImage(room); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="room.safeImagePaths[room.currentImageIndex]"
-                       alt="{{ room.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="room.safeImagePaths?.length > 1"
-                          (click)="nextImage(room); $event.stopPropagation()">
+                  <img
+                    [src]="room.safeImagePaths[room.currentImageIndex]"
+                    alt="{{ room.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="room.safeImagePaths?.length > 1"
+                    (click)="nextImage(room); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
@@ -225,16 +234,20 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <div class="card-actions-right">
-                    <button mat-raised-button
-                            color="primary"
-                            (click)="openUpdateRoom(room)"
-                            class="update-button">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="openUpdateRoom(room)"
+                      class="update-button"
+                    >
                       <mat-icon>edit</mat-icon> Update
                     </button>
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="deleteRoom(room.id)"
-                            class="delete-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="deleteRoom(room.id)"
+                      class="delete-button"
+                    >
                       <mat-icon>delete</mat-icon> Delete
                     </button>
                   </div>
@@ -246,64 +259,77 @@
             </ng-template>
           </div>
         </div>
-
       </mat-tab>
-
-
 
       <!-- My Favorite Tab -->
       <mat-tab label="My Favorite">
-
         <!-- Favorite Houses Section -->
         <div class="post-block">
           <div class="section-title">
             <h3>Favorite Houses</h3>
           </div>
           <div class="history-cards">
-            <ng-container *ngIf="favorites.houses.length; else noFavoriteHouses">
-              <mat-card *ngFor="let house of favorites.houses"
-                        class="history-card">
-
+            <ng-container
+              *ngIf="favorites.houses.length; else noFavoriteHouses"
+            >
+              <mat-card
+                *ngFor="let house of favorites.houses"
+                class="history-card"
+              >
                 <!-- Image Carousel -->
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="house.safeImagePaths?.length > 1"
-                          (click)="prevImage(house); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="house.safeImagePaths?.length > 1"
+                    (click)="prevImage(house); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="house.safeImagePaths[house.currentImageIndex]"
-                       alt="{{ house.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="house.safeImagePaths?.length > 1"
-                          (click)="nextImage(house); $event.stopPropagation()">
+                  <img
+                    [src]="house.safeImagePaths[house.currentImageIndex]"
+                    alt="{{ house.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="house.safeImagePaths?.length > 1"
+                    (click)="nextImage(house); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
 
                 <!-- Card Content -->
                 <mat-card-content class="card-content">
-                  <p class="card-title"><strong>Title:</strong> {{ house.title }}</p>
-                  <p class="card-price"
-                     style="color: red"><strong>Price:</strong> ${{ house.price }}</p>
+                  <p class="card-title">
+                    <strong>Title:</strong> {{ house.title }}
+                  </p>
+                  <p class="card-price" style="color: red">
+                    <strong>Price:</strong> ${{ house.price }}
+                  </p>
 
                   <!-- Card Actions -->
                   <div class="actions">
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="unfavoriteHouse(house.id); $event.stopPropagation()"
-                            class="unfavorite-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="
+                        unfavoriteHouse(house.id); $event.stopPropagation()
+                      "
+                      class="unfavorite-button"
+                    >
                       Unfavorite
                     </button>
-                    <button mat-raised-button
-                            color="success"
-                            class="details-button"
-                            (click)="goToDetails(house.id)">
+                    <button
+                      mat-raised-button
+                      color="success"
+                      class="details-button"
+                      (click)="goToDetails(house.id)"
+                    >
                       View Details
                     </button>
                   </div>
                 </mat-card-content>
-
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteHouses>
@@ -319,50 +345,62 @@
           </div>
           <div class="history-cards">
             <ng-container *ngIf="favorites.lands.length; else noFavoriteLands">
-              <mat-card *ngFor="let land of favorites.lands"
-                        class="history-card"
-                        (click)="goToDetails(land.id)">
-
+              <mat-card
+                *ngFor="let land of favorites.lands"
+                class="history-card"
+              >
                 <!-- Image Carousel -->
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="land.safeImagePaths?.length > 1"
-                          (click)="prevImage(land); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="land.safeImagePaths?.length > 1"
+                    (click)="prevImage(land); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="land.safeImagePaths[land.currentImageIndex]"
-                       alt="{{ land.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="land.safeImagePaths?.length > 1"
-                          (click)="nextImage(land); $event.stopPropagation()">
+                  <img
+                    [src]="land.safeImagePaths[land.currentImageIndex]"
+                    alt="{{ land.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="land.safeImagePaths?.length > 1"
+                    (click)="nextImage(land); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
 
                 <!-- Card Content -->
                 <mat-card-content class="card-content">
-                  <p class="card-title"><strong>Title:</strong> {{ land.title }}</p>
-                  <p class="card-price"
-                     style="color: red"><strong>Price:</strong> ${{ land.price }}</p>
+                  <p class="card-title">
+                    <strong>Title:</strong> {{ land.title }}
+                  </p>
+                  <p class="card-price" style="color: red">
+                    <strong>Price:</strong> ${{ land.price }}
+                  </p>
 
                   <!-- Card Actions -->
                   <div class="actions">
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="unfavoriteHouse(land.id)"
-                            class="unfavorite-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="unfavoriteLand(land.id)"
+                      class="unfavorite-button"
+                    >
                       Unfavorite
                     </button>
-                    <button mat-raised-button
-                            color="success"
-                            class="details-button"
-                            (click)="goToDetails(land.id)">
+                    <button
+                      mat-raised-button
+                      color="success"
+                      class="details-button"
+                      (click)="goToDetailsLand(land.id)"
+                    >
                       View Details
                     </button>
                   </div>
                 </mat-card-content>
-
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteLands>
@@ -378,50 +416,62 @@
           </div>
           <div class="history-cards">
             <ng-container *ngIf="favorites.rooms.length; else noFavoriteRooms">
-              <mat-card *ngFor="let room of favorites.rooms"
-                        class="history-card"
-                        (click)="goToDetails(room.id)">
-
+              <mat-card
+                *ngFor="let room of favorites.rooms"
+                class="history-card"
+              >
                 <!-- Image Carousel -->
                 <div class="image-carousel-container">
-                  <button class="prev-image-button"
-                          *ngIf="room.safeImagePaths?.length > 1"
-                          (click)="prevImage(room); $event.stopPropagation()">
+                  <button
+                    class="prev-image-button"
+                    *ngIf="room.safeImagePaths?.length > 1"
+                    (click)="prevImage(room); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_back</mat-icon>
                   </button>
-                  <img [src]="room.safeImagePaths[room.currentImageIndex]"
-                       alt="{{ room.title }}"
-                       class="history-card-img" />
-                  <button class="next-image-button"
-                          *ngIf="room.safeImagePaths?.length > 1"
-                          (click)="nextImage(room); $event.stopPropagation()">
+                  <img
+                    [src]="room.safeImagePaths[room.currentImageIndex]"
+                    alt="{{ room.title }}"
+                    class="history-card-img"
+                  />
+                  <button
+                    class="next-image-button"
+                    *ngIf="room.safeImagePaths?.length > 1"
+                    (click)="nextImage(room); $event.stopPropagation()"
+                  >
                     <mat-icon>arrow_forward</mat-icon>
                   </button>
                 </div>
 
                 <!-- Card Content -->
                 <mat-card-content class="card-content">
-                  <p class="card-title"><strong>Title:</strong> {{ room.title }}</p>
-                  <p class="card-price"
-                     style="color: red"><strong>Price:</strong> ${{ room.price }}</p>
+                  <p class="card-title">
+                    <strong>Title:</strong> {{ room.title }}
+                  </p>
+                  <p class="card-price" style="color: red">
+                    <strong>Price:</strong> ${{ room.price }}
+                  </p>
 
                   <!-- Card Actions -->
                   <div class="actions">
-                    <button mat-raised-button
-                            color="warn"
-                            (click)="unfavoriteHouse(room.id)"
-                            class="unfavorite-button">
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      (click)="unfavoriteRoom(room.id)"
+                      class="unfavorite-button"
+                    >
                       Unfavorite
                     </button>
-                    <button mat-raised-button
-                            color="success"
-                            class="details-button"
-                            (click)="goToDetails(room.id)">
+                    <button
+                      mat-raised-button
+                      color="success"
+                      class="details-button"
+                      (click)="goToDetailsRoom(room.id)"
+                    >
                       View Details
                     </button>
                   </div>
                 </mat-card-content>
-
               </mat-card>
             </ng-container>
             <ng-template #noFavoriteRooms>
@@ -429,13 +479,7 @@
             </ng-template>
           </div>
         </div>
-
       </mat-tab>
-
-
-
-
     </mat-tab-group>
   </div>
-
 </div>

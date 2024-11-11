@@ -50,12 +50,10 @@
   margin: 0 auto;
 }
 
-
 h2 {
   text-align: center;
   padding: 1.5rem;
 }
-
 
 .card-grid {
   display: grid;
@@ -85,7 +83,7 @@ mat-card {
   justify-content: space-between;
   height: 100%;
   width: calc(25% - 20px); /* Keeping 4 columns with 20px gap */
- width: 100%;
+  width: 100%;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   overflow: hidden;
 }
@@ -744,4 +742,30 @@ h3 {
   align-items: center;
   width: 100%;
   height: 300px; /* Adjust this height based on your design */
+}
+
+.favorite-icon-container {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  padding: 5px 10px;
+  top: 47%;
+  left: 86%;
+}
+
+.favorite-icon {
+  transform: scale(1.2);
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.favorite-icon:hover {
+  color: #e57373; /* Lighter red on hover */
+  transform: scale(1.1);
+}
+
+.favorite-icon.favorited {
+  color: #e53935; /* Red color when favorited */
 }

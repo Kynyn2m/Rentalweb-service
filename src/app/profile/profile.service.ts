@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
   private apiUrl = `${environment.apiUrl}/profile`;
@@ -12,7 +12,7 @@ export class ProfileService {
   private userlandUrl = `${environment.apiUrl}/public/lands/me`;
   private userroomUrl = `${environment.apiUrl}/public/rooms/me`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // Get profile information
   getProfile(): Observable<any> {
@@ -22,10 +22,14 @@ export class ProfileService {
   // Update profile
   updateProfile(profileData: FormData): Observable<any> {
     const headers = new HttpHeaders({
-      'enctype': 'multipart/form-data'
+      enctype: 'multipart/form-data',
     });
 
     return this.http.put<any>(this.apiUrl, profileData, { headers });
+  }
+  viewRoom(roomId: number): Observable<any> {
+    const url = `${environment.apiUrl}/public/rooms/view/${roomId}`;
+    return this.http.put(url, {}); // Sending an empty body since it's a view count
   }
 
   // Get user houses
