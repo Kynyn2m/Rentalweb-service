@@ -717,3 +717,78 @@
 .location-info {
   color: white;
 }
+.map-display {
+  text-align: center;
+  margin-top: 1rem;
+  position: relative;
+}
+
+.map-display iframe {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.show-map-btn {
+  margin-top: -2rem;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+}
+
+.show-map-btn i {
+  margin-right: 5px;
+  color: #007bff;
+}
+
+/* Action Buttons Section */
+.action-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+.action-button {
+  background-color: transparent;
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.action-button i {
+  margin-right: 5px;
+  font-size: 1.2rem;
+}
+
+.action-button:hover {
+  background-color: #e0e0e0;
+}
+
+.save-button i {
+  color: #ff6b6b;
+}
+
+.report-button i {
+  color: #ffcc00;
+}
+
+.share-button i {
+  color: #2d98da;
+}
