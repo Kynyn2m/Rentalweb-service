@@ -108,13 +108,23 @@ interface PaggingModel<T> {
   currentPage: number;
   result: T[];
 }
+interface AmenityCounts {
+  bankCount: number;
+  gymCount: number;
+  restaurantCount: number;
+  hotelCount: number;
+  barPubCount: number;
+  cafeCount: number;
+  hospitalCount: number;
+  supermarketCount: number;
+}
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css'],
 })
-export class DetailsComponent implements OnInit, AfterViewInit {
+export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
   house: House | null = null;
   houseId!: number;
   houses: any[] = [];
@@ -167,18 +177,26 @@ export class DetailsComponent implements OnInit, AfterViewInit {
   ) {
     this.setDefaultMapUrl();
   }
-
   ngOnInit(): void {
-    this.houseId = +this.route.snapshot.paramMap.get('id')!;
-    this.fetchHouseDetails();
-    this.loadRelatedHouses();
+    // Extract or use default coordinates to fetch nearby locations on page load
     this.houseId = +this.route.snapshot.paramMap.get('id')!;
     const houseIdParam = this.route.snapshot.paramMap.get('id');
     const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
 
     if (houseId) {
-      this.getHouseDetails(houseId);
-      this.loadComments(houseId);
+      this.getHouseDetails(houseId); // Fetch house details and link map
+      this.loadComments(houseId); // Load comments for the house
+
+      // Fetch and display nearby locations when coordinates are available
+      if (this.house?.linkMap) {
+        const coordinates = this.extractCoordinates(this.house.linkMap);
+        if (coordinates) {
+          this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
+        }
+      } else {
+        // Use default coordinates if no specific linkMap is available
+        this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
+      }
     } else {
       console.error('Invalid house ID');
     }
@@ -416,72 +434,40 @@ export class DetailsComponent implements OnInit, AfterViewInit {
 
   fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
     const amenities = [
-      'bank',
-      'gym',
-      'restaurant',
-      'hotel',
-      'bar',
-      'pub',
-      'cafe',
-      'hospital',
-      'supermarket',
+      { type: 'bank', countProp: 'bankCount' },
+      { type: 'gym', countProp: 'gymCount' },
+      { type: 'restaurant', countProp: 'restaurantCount' },
+      { type: 'hotel', countProp: 'hotelCount' },
+      { type: 'bar', countProp: 'barPubCount' },
+      { type: 'pub', countProp: 'barPubCount' },
+      { type: 'cafe', countProp: 'cafeCount' },
+      { type: 'hospital', countProp: 'hospitalCount' },
+      { type: 'supermarket', countProp: 'supermarketCount' },
     ];
 
     amenities.forEach((amenity) => {
       const query = `
-        [out:json];
-        node(around:1000, ${lat}, ${lng})["amenity"="${amenity}"];
-        out;
-      `;
+          [out:json][timeout:25];
+          node(around:1000, ${lat}, ${lng})["amenity"="${amenity.type}"];
+          out center 10;  // Limit to 10 actual amenities of this type
+        `;
       const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
         query
       )}`;
 
-      console.log(`Fetching nearby ${amenity} with URL:`, url);
-
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          console.log(`Raw data for nearby ${amenity}:`, data);
-
-          if (data.elements && data.elements.length > 0) {
-            this.displayNearbyPlaces(data.elements, amenity);
-
-            // Update counters for each amenity type
-            switch (amenity) {
-              case 'bank':
-                this.bankCount = data.elements.length;
-                break;
-              case 'gym':
-                this.gymCount = data.elements.length;
-                break;
-              case 'restaurant':
-                this.restaurantCount = data.elements.length;
-                break;
-              case 'hotel':
-                this.hotelCount = data.elements.length;
-                break;
-              case 'bar':
-              case 'pub':
-                this.barPubCount =
-                  (this.barPubCount || 0) + data.elements.length;
-                break;
-              case 'cafe':
-                this.cafeCount = data.elements.length;
-                break;
-              case 'hospital':
-                this.hospitalCount = data.elements.length;
-                break;
-              case 'supermarket':
-                this.supermarketCount = data.elements.length;
-                break;
-            }
-          } else {
-            console.log(`No ${amenity} found within the specified radius.`);
-          }
+          const count = data.elements ? data.elements.length : 0;
+          (this as any)[amenity.countProp] = count; // Update specific count property
+          this.displayNearbyPlaces(data.elements, amenity.type);
+          this.cdr.detectChanges(); // Update UI counts
         })
         .catch((error) => {
-          console.error(`Error fetching nearby ${amenity} locations:`, error);
+          console.error(
+            `Error fetching nearby ${amenity.type} locations:`,
+            error
+          );
         });
     });
   }
