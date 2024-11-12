@@ -25,6 +25,7 @@ import {
   CommentData,
   UpdateCommentDialogComponent,
 } from './update-comment-dialog/update-comment-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const defaultIcon = L.icon({
   iconUrl:
@@ -173,7 +174,8 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
     private readonly villageService: VillageService,
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
-    private readonly router: Router
+    private readonly router: Router,
+    private snackBar: MatSnackBar,
   ) {
     this.setDefaultMapUrl();
   }
@@ -295,6 +297,7 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       }
     });
   }
+
   updateComment(updatedComment: CommentData): void {
     const updateData = {
       id: updatedComment.id,
@@ -312,9 +315,17 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       },
       (error) => {
         console.error('Error updating comment:', error);
+
+        // Display snackbar with the error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'], // Optional: custom class for error styling
+        });
       }
     );
   }
+
 
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
@@ -344,10 +355,18 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
         this.activeMenu = null;
       },
       (error) => {
-        console.error('Error deleting comment:', error);
+        console.error('Sorry you can delete only your own comnment');
+
+        // Show a snackbar with the exact error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000, // Snackbar duration in milliseconds
+          panelClass: ['error-snackbar'], // Optional: custom class for styling
+        });
       }
     );
   }
+
 
   ngAfterViewInit(): void {
     if (this.house && this.house.linkMap) {
