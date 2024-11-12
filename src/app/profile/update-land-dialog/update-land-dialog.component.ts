@@ -7,6 +7,19 @@ import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { ProvinceService } from 'src/app/address/province.service';
 import { VillageService } from 'src/app/address/village.service';
+import * as L from 'leaflet';
+
+const defaultIcon = L.icon({
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 41],
+});
 
 @Component({
   selector: 'app-update-land-dialog',
@@ -24,6 +37,9 @@ export class UpdateLandDialogComponent {
   selectedFiles: File[] = [];
   imagePreviews: SafeUrl[] = [];
 
+  map: any;
+  userMarker: any;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private districtService: DistrictService,
@@ -39,6 +55,7 @@ export class UpdateLandDialogComponent {
   }
 
   ngOnInit(): void {
+    this.initializeMap();
     console.log('Land data:', this.landData);
 
     this.fetchProvinces();
@@ -61,6 +78,53 @@ export class UpdateLandDialogComponent {
     }
   }
 
+  initializeMap(): void {
+    this.map = L.map('map').setView([11.562108, 104.888535], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    if (this.landData.linkMap) {
+      const [lat, lng] = this.getCoordinatesFromLinkMap(this.landData.linkMap);
+      this.addUserMarker(lat, lng);
+    }
+
+    this.map.on('click', (event: any) => {
+      const { lat, lng } = event.latlng;
+      this.addUserMarker(lat, lng);
+    });
+  }
+
+  getCoordinatesFromLinkMap(linkMap: string): [number, number] {
+    const match = /q=(-?\d+(\.\d+)?),(-?\d+(\.\d+)?)/.exec(linkMap);
+    if (match) {
+      return [parseFloat(match[1]), parseFloat(match[3])];
+    }
+    return [11.562108, 104.888535]; // Default coordinates if parsing fails
+  }
+
+  addUserMarker(lat: number, lng: number): void {
+    if (this.userMarker) {
+      this.map.removeLayer(this.userMarker);
+    }
+
+    this.userMarker = L.marker([lat, lng], {
+      draggable: true,
+      icon: defaultIcon,
+    }).addTo(this.map);
+    this.map.setView([lat, lng], 12);
+    this.updateMapLink(lat, lng);
+
+    this.userMarker.on('dragend', (event: any) => {
+      const position = event.target.getLatLng();
+      this.updateMapLink(position.lat, position.lng);
+    });
+  }
+
+  updateMapLink(lat: number, lng: number): void {
+    this.landData.linkMap = `https://www.google.com/maps?q=${lat},${lng}`;
+  }
   fetchProvinces(): void {
     this.provinceService.getAllPublic().subscribe((res) => {
       this.provinces = res.result.result || [];

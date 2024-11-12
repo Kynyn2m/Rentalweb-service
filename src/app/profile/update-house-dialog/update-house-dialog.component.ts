@@ -8,13 +8,28 @@ import { ProvinceService } from 'src/app/address/province.service';
 import { VillageService } from 'src/app/address/village.service';
 import { HouseService } from 'src/app/Service/house.service';
 import { ProfileService } from '../profile.service';
+import * as L from 'leaflet';
+
+const defaultIcon = L.icon({
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png', // URL for the icon image
+  iconSize: [25, 41], // Size of the icon
+  iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location
+  popupAnchor: [1, -34], // Position of the popup relative to the icon
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // URL for the shadow image
+  shadowSize: [41, 41], // Size of the shadow
+  shadowAnchor: [12, 41], // Anchor for the shadow
+});
 
 @Component({
   selector: 'app-update-house-dialog',
   templateUrl: './update-house-dialog.component.html',
-  styleUrls: ['./update-house-dialog.component.css']
+  styleUrls: ['./update-house-dialog.component.css'],
 })
 export class UpdateHouseDialogComponent implements OnInit {
+  map: any;
+  userMarker: any;
   houseData: any; // The house data passed into the dialog
   provinces: any[] = [];
   districts: any[] = [];
@@ -22,8 +37,10 @@ export class UpdateHouseDialogComponent implements OnInit {
   villages: any[] = [];
   imagePreview: SafeUrl | null = null; // Change type to SafeUrl
   selectedFile: File | null = null;
-  selectedFiles: File[] = [];  // Array to hold multiple selected files
+  selectedFiles: File[] = []; // Array to hold multiple selected files
   imagePreviews: SafeUrl[] = []; // Array for image previews
+
+  existingImagePaths: string[] = []; // Array to hold paths of existing images
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -41,6 +58,7 @@ export class UpdateHouseDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initializeMap();
     console.log('House data:', this.houseData);
 
     // Fetch provinces when the dialog opens
@@ -48,8 +66,8 @@ export class UpdateHouseDialogComponent implements OnInit {
 
     // Load existing house data and populate form fields if they exist
     if (this.houseData.province) {
-      this.houseData.provinceId = this.houseData.province;  // Bind province to provinceId
-      this.onProvinceSelected(this.houseData.provinceId);    // Ensure districts load as well
+      this.houseData.provinceId = this.houseData.province; // Bind province to provinceId
+      this.onProvinceSelected(this.houseData.provinceId); // Ensure districts load as well
     }
 
     if (this.houseData.district) {
@@ -68,12 +86,52 @@ export class UpdateHouseDialogComponent implements OnInit {
     }
   }
 
+  initializeMap(): void {
+    this.map = L.map('map').setView([11.562108, 104.888535], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    this.map.on('click', (event: any) => {
+      const { lat, lng } = event.latlng;
+      this.addUserMarker(lat, lng);
+    });
+  }
+
+  addUserMarker(lat: number, lng: number): void {
+    if (this.userMarker) {
+      this.map.removeLayer(this.userMarker);
+    }
+
+    this.userMarker = L.marker([lat, lng], {
+      draggable: true,
+      icon: defaultIcon, // Use the custom icon here
+    }).addTo(this.map);
+
+    this.map.setView([lat, lng], 12);
+
+    this.updateMapLink(lat, lng);
+
+    this.userMarker.on('dragend', (event: any) => {
+      const position = event.target.getLatLng();
+      this.updateMapLink(position.lat, position.lng);
+    });
+  }
+
+  updateMapLink(lat: number, lng: number): void {
+    this.houseData.linkMap = `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
   fetchProvinces(): void {
     this.provinceService.getAllPublic().subscribe((res) => {
       this.provinces = res.result.result || [];
 
       if (this.houseData.provinceId) {
-        console.log('Selected Province after fetching:', this.houseData.provinceId);  // Check if provinceId is correct
+        console.log(
+          'Selected Province after fetching:',
+          this.houseData.provinceId
+        ); // Check if provinceId is correct
       }
     });
   }
@@ -86,8 +144,8 @@ export class UpdateHouseDialogComponent implements OnInit {
 
           // Pre-select district if it exists in houseData
           if (this.houseData.district) {
-            this.houseData.districtId = this.houseData.district;  // Pre-select the district
-            this.onDistrictSelected(this.houseData.districtId);    // Trigger commune loading
+            this.houseData.districtId = this.houseData.district; // Pre-select the district
+            this.onDistrictSelected(this.houseData.districtId); // Trigger commune loading
           }
 
           // Clear communes and villages when the province changes
@@ -111,8 +169,8 @@ export class UpdateHouseDialogComponent implements OnInit {
 
           // Pre-select commune if it exists in houseData
           if (this.houseData.commune) {
-            this.houseData.communeId = this.houseData.commune;  // Pre-select the commune
-            this.onCommuneSelected(this.houseData.communeId);   // Trigger village loading
+            this.houseData.communeId = this.houseData.commune; // Pre-select the commune
+            this.onCommuneSelected(this.houseData.communeId); // Trigger village loading
           }
 
           // Clear villages when the district changes
@@ -134,7 +192,7 @@ export class UpdateHouseDialogComponent implements OnInit {
 
           // Pre-select village if it exists in houseData
           if (this.houseData.village) {
-            this.houseData.villageId = this.houseData.village;  // Pre-select the village
+            this.houseData.villageId = this.houseData.village; // Pre-select the village
           }
         },
         (error) => {
@@ -145,17 +203,22 @@ export class UpdateHouseDialogComponent implements OnInit {
   }
 
   loadImages(imagePaths: string[]): void {
+    this.existingImagePaths = [...imagePaths]; // Store existing image paths
     this.imagePreviews = []; // Clear existing previews
     imagePaths.forEach((imagePath) => {
       this.houseService.getImage(imagePath).subscribe(
         (imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          this.imagePreviews.push(safeUrl);  // Push sanitized URLs to the array
+          this.imagePreviews.push(safeUrl); // Show existing image previews
         },
         (error) => {
           console.error('Error loading image:', error);
-          this.imagePreviews.push(this.sanitizer.bypassSecurityTrustUrl('/assets/img/default-placeholder.png'));  // Add a placeholder if image loading fails
+          this.imagePreviews.push(
+            this.sanitizer.bypassSecurityTrustUrl(
+              '/assets/img/default-placeholder.png'
+            )
+          );
         }
       );
     });
@@ -165,25 +228,25 @@ export class UpdateHouseDialogComponent implements OnInit {
     const files: FileList = event.target.files;
     if (files) {
       Array.from(files).forEach((file) => {
-        this.selectedFiles.push(file as File); // Add each file to the selectedFiles array
+        this.selectedFiles.push(file); // Add each file to the selectedFiles array
         const reader = new FileReader();
         reader.onload = (e: any) => {
-          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target.result);
-          this.imagePreviews.push(previewUrl); // Add preview to the imagePreviews array
+          const previewUrl = this.sanitizer.bypassSecurityTrustUrl(
+            e.target.result
+          );
+          this.imagePreviews.push(previewUrl); // Show preview for new images
         };
-        reader.readAsDataURL(file as File);
+        reader.readAsDataURL(file);
       });
     }
   }
-
   // Cancel (remove) image preview and selected file
   cancelImage(index: number): void {
-    this.selectedFiles.splice(index, 1);  // Remove the file from the array
-    this.imagePreviews.splice(index, 1);  // Remove the preview from the array
+    this.selectedFiles.splice(index, 1); // Remove the file from the array
+    this.imagePreviews.splice(index, 1); // Remove the preview from the array
   }
 
   save(): void {
-    // Prepare the house data to be sent to the API
     const houseUpdateData: any = {
       title: this.houseData.title,
       description: this.houseData.description,
@@ -196,10 +259,10 @@ export class UpdateHouseDialogComponent implements OnInit {
       provinceId: this.houseData.provinceId,
       districtId: this.houseData.districtId,
       communeId: this.houseData.communeId,
-      villageId: this.houseData.villageId
+      villageId: this.houseData.villageId,
     };
 
-    // Create FormData to send to the API
+    // Initialize FormData and append non-file fields
     const formData = new FormData();
     for (const key in houseUpdateData) {
       if (houseUpdateData.hasOwnProperty(key)) {
@@ -207,12 +270,22 @@ export class UpdateHouseDialogComponent implements OnInit {
       }
     }
 
-    // If files are selected, append them to the form data
-    for (const file of this.selectedFiles) {
-      formData.append('images', file);  // Append each selected file
-    }
+    // Append existing images as URLs
+    this.existingImagePaths.forEach((path, index) => {
+      formData.append(`existingImages[${index}]`, path);
+    });
 
-    // Call the updateHouse method from the house service
+    // Append each selected file (new images) to FormData
+    this.selectedFiles.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // Log FormData for debugging
+    formData.forEach((value, key) => {
+      console.log(`FormData key: ${key}, value:`, value);
+    });
+
+    // Make the API call to update house data
     this.houseService.updateHouse(this.houseData.id, formData).subscribe(
       (response) => {
         console.log('House updated successfully', response);

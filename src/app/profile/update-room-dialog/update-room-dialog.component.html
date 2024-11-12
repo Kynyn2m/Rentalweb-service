@@ -1,9 +1,12 @@
-<h2 mat-dialog-title>Update Room</h2>
+<h2 mat-dialog-title
+    style="text-align: center; padding: 1rem;">Update Room</h2>
 <mat-dialog-content class="update-room-dialog-content">
   <!-- Title Input -->
   <mat-form-field class="full-width">
     <mat-label>Title</mat-label>
-    <input matInput [(ngModel)]="roomData.title" required />
+    <input matInput
+           [(ngModel)]="roomData.title"
+           required />
   </mat-form-field>
 
   <!-- Two-column layout for Price and Width -->
@@ -11,13 +14,18 @@
     <!-- Price Input -->
     <mat-form-field>
       <mat-label>Price</mat-label>
-      <input matInput type="number" [(ngModel)]="roomData.price" required />
+      <input matInput
+             type="number"
+             [(ngModel)]="roomData.price"
+             required />
     </mat-form-field>
 
     <!-- Width Input -->
     <mat-form-field>
       <mat-label>Width</mat-label>
-      <input matInput type="number" [(ngModel)]="roomData.width" />
+      <input matInput
+             type="number"
+             [(ngModel)]="roomData.width" />
     </mat-form-field>
   </div>
 
@@ -26,20 +34,26 @@
     <!-- Height Input -->
     <mat-form-field>
       <mat-label>Height</mat-label>
-      <input matInput type="number" [(ngModel)]="roomData.height" />
+      <input matInput
+             type="number"
+             [(ngModel)]="roomData.height" />
     </mat-form-field>
 
     <!-- Floor Input -->
     <mat-form-field>
       <mat-label>Floor</mat-label>
-      <input matInput type="number" [(ngModel)]="roomData.floor" />
+      <input matInput
+             type="number"
+             [(ngModel)]="roomData.floor" />
     </mat-form-field>
   </div>
 
   <!-- Description Input -->
   <mat-form-field class="full-width">
     <mat-label>Description</mat-label>
-    <textarea matInput [(ngModel)]="roomData.description" rows="3"></textarea>
+    <textarea matInput
+              [(ngModel)]="roomData.description"
+              rows="3"></textarea>
   </mat-form-field>
 
   <!-- Two-column layout for Province, District -->
@@ -47,11 +61,10 @@
     <!-- Province Selector -->
     <mat-form-field class="full-width">
       <mat-label>Province</mat-label>
-      <mat-select
-        [(ngModel)]="roomData.provinceId"
-        (selectionChange)="onProvinceSelected($event.value)"
-      >
-        <mat-option *ngFor="let province of provinces" [value]="province.id">
+      <mat-select [(ngModel)]="roomData.provinceId"
+                  (selectionChange)="onProvinceSelected($event.value)">
+        <mat-option *ngFor="let province of provinces"
+                    [value]="province.id">
           {{ province.khmerName }} / {{ province.englishName }}
         </mat-option>
       </mat-select>
@@ -60,11 +73,10 @@
     <!-- District Selector -->
     <mat-form-field class="full-width">
       <mat-label>District</mat-label>
-      <mat-select
-        [(ngModel)]="roomData.districtId"
-        (selectionChange)="onDistrictSelected($event.value)"
-      >
-        <mat-option *ngFor="let district of districts" [value]="district.id">
+      <mat-select [(ngModel)]="roomData.districtId"
+                  (selectionChange)="onDistrictSelected($event.value)">
+        <mat-option *ngFor="let district of districts"
+                    [value]="district.id">
           {{ district.khmerName }} / {{ district.englishName }}
         </mat-option>
       </mat-select>
@@ -76,11 +88,10 @@
     <!-- Commune Selector -->
     <mat-form-field class="full-width">
       <mat-label>Commune</mat-label>
-      <mat-select
-        [(ngModel)]="roomData.communeId"
-        (selectionChange)="onCommuneSelected($event.value)"
-      >
-        <mat-option *ngFor="let commune of communes" [value]="commune.id">
+      <mat-select [(ngModel)]="roomData.communeId"
+                  (selectionChange)="onCommuneSelected($event.value)">
+        <mat-option *ngFor="let commune of communes"
+                    [value]="commune.id">
           {{ commune.khmerName }} / {{ commune.englishName }}
         </mat-option>
       </mat-select>
@@ -90,7 +101,8 @@
     <mat-form-field class="full-width">
       <mat-label>Village</mat-label>
       <mat-select [(ngModel)]="roomData.villageId">
-        <mat-option *ngFor="let village of villages" [value]="village.id">
+        <mat-option *ngFor="let village of villages"
+                    [value]="village.id">
           {{ village.khmerName }} / {{ village.englishName }}
         </mat-option>
       </mat-select>
@@ -100,43 +112,43 @@
   <!-- Phone Number Input -->
   <mat-form-field class="full-width">
     <mat-label>Phone Number</mat-label>
-    <input matInput type="tel" [(ngModel)]="roomData.phoneNumber" required />
+    <input matInput
+           type="tel"
+           [(ngModel)]="roomData.phoneNumber"
+           required />
   </mat-form-field>
 
-  <!-- Map Link Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Map Link</mat-label>
-    <input matInput [(ngModel)]="roomData.linkMap" />
-  </mat-form-field>
+  <h3>Pick Location on Map</h3>
+  <div id="map"
+       class="map-container"></div>
 
   <mat-card class="file-upload-card">
     <mat-card-content>
       <div class="file-upload-container">
-        <label for="fileInput" class="file-upload-label">
+        <label for="fileInput"
+               class="file-upload-label">
           <mat-icon>cloud_upload</mat-icon>
           Upload Images
         </label>
-        <input
-          id="fileInput"
-          type="file"
-          (change)="onFilesSelected($event)"
-          multiple
-        />
+        <input id="fileInput"
+               type="file"
+               (change)="onFilesSelected($event)"
+               multiple />
       </div>
     </mat-card-content>
   </mat-card>
 
   <!-- Display loaded images with cancel option -->
-  <div
-    class="image-preview-wrapper"
-    *ngIf="imagePreviews && imagePreviews.length > 0"
-  >
-    <div
-      *ngFor="let img of imagePreviews; let i = index"
-      class="image-preview-container"
-    >
-      <img [src]="img" alt="Room Image" class="image-preview" />
-      <button mat-button class="cancel-image-button" (click)="cancelImage(i)">
+  <div class="image-preview-wrapper"
+       *ngIf="imagePreviews && imagePreviews.length > 0">
+    <div *ngFor="let img of imagePreviews; let i = index"
+         class="image-preview-container">
+      <img [src]="img"
+           alt="Room Image"
+           class="image-preview" />
+      <button mat-button
+              class="cancel-image-button"
+              (click)="cancelImage(i)">
         Cancel
       </button>
     </div>
@@ -144,6 +156,9 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="save()">Save</button>
+  <button mat-button
+          (click)="cancel()">Cancel</button>
+  <button mat-raised-button
+          color="primary"
+          (click)="save()">Save</button>
 </mat-dialog-actions>
