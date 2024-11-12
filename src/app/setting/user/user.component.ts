@@ -67,6 +67,7 @@ export class UserComponent implements OnInit, AfterViewInit {
       .gets(this.currentPage, this.size, this.searchText, this.filter)
       .subscribe(
         (res) => {
+          console.log('API Response:', res); // Debugging line
           if (res && res.result) {
             this.pagingModel = res.result;
             this.dataSource.data = this.pagingModel.result;
