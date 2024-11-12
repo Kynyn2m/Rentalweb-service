@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Update House</h2>
+<h2 mat-dialog-title
+    style="text-align: center; padding: 1rem;">Update House</h2>
 <mat-dialog-content class="update-house-dialog-content">
 
   <!-- Title Input -->
@@ -119,11 +120,12 @@
   </mat-form-field>
 
   <!-- Map Link Input -->
-  <mat-form-field class="full-width">
-    <mat-label>Map Link</mat-label>
-    <input matInput
-           [(ngModel)]="houseData.linkMap">
-  </mat-form-field>
+  <div class="tittle-map">
+    <h3>Pick Location on Map</h3>
+  </div>
+
+  <div id="map"
+       class="map-container"></div>
 
   <mat-card class="file-upload-card">
     <mat-card-content>

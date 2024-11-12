@@ -146,20 +146,6 @@
     <!-- Link Map, Floor, Width, Height -->
     <div fxLayout="row wrap"
          fxLayoutGap="16px">
-      <mat-form-field appearance="outline"
-                      fxFlex="100%"
-                      fxFlex.gt-sm="48%">
-        <mat-label>Link Map</mat-label>
-        <input matInput
-               formControlName="linkMap"
-               placeholder="Enter map link" />
-        <mat-error *ngIf="
-            addPostForm.get('linkMap')?.invalid &&
-            addPostForm.get('linkMap')?.touched
-          ">
-          Map link is required
-        </mat-error>
-      </mat-form-field>
 
       <mat-form-field appearance="outline"
                       fxFlex="100%"
@@ -206,7 +192,12 @@
             addPostForm.get('height')?.touched
           ">Height is required</mat-error>
       </mat-form-field>
+
     </div>
+    <h3 class="map-title">Pick Location on Map</h3>
+    <div id="map"
+         class="map-container"></div>
+
 
     <!-- Image Upload -->
     <div class="file-input-container">

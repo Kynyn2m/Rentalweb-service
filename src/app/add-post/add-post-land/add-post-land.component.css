@@ -128,3 +128,14 @@ input[type="file"] {
   width: 100%;
   margin-bottom: 20px;
 }
+.map-container {
+  height: 300px;
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+.map-title{
+  text-align: center;
+  padding: 1rem;
+}

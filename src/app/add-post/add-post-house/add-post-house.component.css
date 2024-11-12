@@ -125,3 +125,7 @@ input[type="file"] {
   margin-bottom: 16px;
   border-radius: 8px;
 }
+.map-title{
+  text-align: center;
+  padding: 1rem;
+}
