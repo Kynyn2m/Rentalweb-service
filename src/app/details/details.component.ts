@@ -13,6 +13,8 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import * as L from 'leaflet';
 import { ShareOverlayComponent } from './share-overlay/share-overlay.component';
 
+
+
 const defaultIcon = L.icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
@@ -125,6 +127,8 @@ export class DetailsComponent implements OnInit , AfterViewInit {
   markers: L.Marker[] = [];
   isMapInitialized: boolean = false;
 
+  lightboxImages: { src: string, caption: string, thumb: string }[] = [];
+
 
 bankCount: number = 0;
 gymCount: number = 0;
@@ -133,7 +137,14 @@ hotelCount: number = 0;
 barPubCount: number = 0;
 cafeCount: number = 0;
 hospitalCount: number = 0;
-supermarketCount: number = 0;
+  supermarketCount: number = 0;
+
+  isFullScreen: boolean = false;
+fullScreenImage: string | null = null;
+isZoomed: boolean = false;
+  zoomTransform: string = 'scale(1)';
+
+
 
 
   isLoading: boolean = false;
@@ -159,6 +170,7 @@ supermarketCount: number = 0;
 
   ) {
     this.setDefaultMapUrl();
+
 
   }
 
@@ -191,6 +203,23 @@ supermarketCount: number = 0;
       }
     );
   }
+  openFullScreen(imageUrl: string): void {
+    this.isFullScreen = true;
+    this.fullScreenImage = imageUrl;
+  }
+
+  closeFullScreen(): void {
+    this.isFullScreen = false;
+    this.fullScreenImage = null;
+    this.isZoomed = false;
+    this.zoomTransform = 'scale(1)';
+  }
+
+  toggleZoom(): void {
+    this.isZoomed = !this.isZoomed;
+    this.zoomTransform = this.isZoomed ? 'scale(2)' : 'scale(1)';
+  }
+
 
   postComment(): void {
     if (!this.authenticationService.isLoggedIn()) {
@@ -550,12 +579,22 @@ displayNearbyPlaces(places: any[], amenity: string): void {
   loadImages(house: House): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
       house.safeImagePaths = [];
+      this.lightboxImages = []; // Clear any previous images
+
       house.imagePaths.forEach((imagePath) => {
         this.houseService.getImage(imagePath).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             house.safeImagePaths!.push(safeUrl);
+
+            // Add the image to the lightbox images array
+            this.lightboxImages.push({
+              src: objectURL,
+              caption: house.title,
+              thumb: objectURL
+            });
+
             if (!this.currentImage) {
               this.currentImage = safeUrl;
             }
@@ -567,6 +606,9 @@ displayNearbyPlaces(places: any[], amenity: string): void {
       });
     }
   }
+
+
+
 
   fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
     this.districtService.getProvincesPublic().subscribe((res) => {

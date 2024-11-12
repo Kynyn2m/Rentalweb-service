@@ -23,6 +23,10 @@
                class="thumbnail" />
         </div>
       </div>
+      <div class="created-at">
+        <p>Posted on: {{ house?.createdAt | date: 'MMMM d, y' }}</p>
+      </div>
+
 
 
       <div class="details-content">
@@ -72,16 +76,24 @@
 
           <!-- Map Display Section -->
           <div class="map-display">
-            <iframe *ngIf="urlSafe"
-                    width="100%"
-                    height="200"
-                    [src]="urlSafe"
-                    frameborder="0"
-                    allowfullscreen></iframe>
-            <button class="show-map-btn">
-              <i class="fa fa-map"></i> Show on Google Map
-            </button>
+            <div class="map-wrapper">
+              <iframe *ngIf="urlSafe"
+                      width="100%"
+                      height="200"
+                      [src]="urlSafe"
+                      frameborder="0"
+                      allowfullscreen></iframe>
+
+              <!-- Wrap the button in an anchor tag with `href` pointing to `linkMap` -->
+              <a [href]="house?.linkMap"
+                 target="_blank"
+                 class="show-map-btn">
+                <i class="fa fa-map"></i> Show on Google Map
+              </a>
+            </div>
           </div>
+
+
 
           <!-- Action Buttons Section -->
           <div class="action-buttons">
