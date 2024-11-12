@@ -10,10 +10,15 @@
     <div class="details-card">
       <!-- Gallery and main details content -->
       <div class="gallery">
-        <div class="main-image">
+        <!-- Main Image with click event to open full screen -->
+        <div class="main-image"
+             *ngIf="currentImage"
+             (click)="openImageViewer(currentImage)">
           <img [src]="currentImage"
                alt="House Image" />
         </div>
+
+        <!-- Image Thumbnails for selecting images without full screen opening -->
         <div class="image-thumbnails">
           <img *ngFor="let image of house?.safeImagePaths; let i = index"
                [src]="image"
@@ -23,6 +28,8 @@
                class="thumbnail" />
         </div>
       </div>
+
+
       <div class="created-at">
         <p>Posted on: {{ house?.createdAt | date: 'MMMM d, y' }}</p>
       </div>
@@ -257,11 +264,6 @@
 
 
 
-
-
-
-
-
       </div>
 
     </div>
@@ -279,7 +281,7 @@
                  class="profile-image" />
             <div class="profile-info">
               <h3>{{ house?.user?.fullName }}</h3>
-              <p>@{{ house?.user?.username }}</p>
+              <p>&#64;{{ house?.user?.username }}</p>
               <p>Member Since {{ house?.user?.createdAt | date: 'dd, MMM yyyy' }}</p>
             </div>
           </div>
@@ -347,3 +349,95 @@
                 frameborder="0"
                 allowfullscreen></iframe>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="house-list-all">
+  <div *ngIf="houses.length > 0"
+       class="related-posts-container">
+    <h2>Related Posts</h2>
+    <div class="card-grid">
+      <mat-card *ngFor="let house of houses">
+        <div class="image-container">
+          <img mat-card-image
+               *ngIf="house.safeImagePaths && house.safeImagePaths.length > 0 && house.currentImageIndex !== undefined"
+               [src]="house.safeImagePaths[house.currentImageIndex]"
+               alt="{{ house.title }}"
+               style="width: 100%; height: 200px; object-fit: cover" />
+
+          <div *ngIf="!house.safeImagePaths?.length"
+               class="no-image-placeholder">
+            No Image Available
+          </div>
+
+          <!-- Navigation Buttons for Images in Related Posts Card -->
+          <button class="prev-image-button"
+                  *ngIf="house.safeImagePaths?.length > 1"
+                  (click)="prevCardImage(house); $event.stopPropagation()">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <button class="next-image-button"
+                  *ngIf="house.safeImagePaths?.length > 1"
+                  (click)="nextCardImage(house); $event.stopPropagation()">
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+        <div class="favorite-icon-container">
+          <mat-icon class="favorite-icon"
+                    [ngClass]="{ 'favorited': house.favoriteable }"
+                    (click)="toggleFavorite1(house.id); $event.stopPropagation()">
+            {{ house.favoriteable ? 'favorite' : 'favorite_border' }}
+          </mat-icon>
+        </div>
+
+        <mat-card-content>
+          <h3>{{ house.title }}</h3>
+          <p>Location: {{ house.provinceName }}</p>
+          <p style="color: red; font-weight: bold; margin-bottom: 10px">Price: ${{ house.price }}</p>
+
+          <div class="views-likes">
+            <div class="views">
+              <mat-icon>visibility</mat-icon>
+              <span>{{ house.viewCount }} views</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button mat-raised-button
+                    class="like-button1"
+                    [ngClass]="{ 'liked': house.likeable }"
+                    (click)="likeHouse(house.id); $event.stopPropagation()">
+              <mat-icon>{{ house.likeable ? 'thumb_up' : 'thumb_up_off_alt' }}</mat-icon>
+              <span>{{ house.likeCount }} Likes</span>
+            </button>
+            <button mat-raised-button
+                    color="success"
+                    class="details-button"
+                    (click)="goToDetails1(house.id)">
+              View Details
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="pagination">
+      <button (click)="loadRelatedHouses(currentPage - 1)"
+              [disabled]="currentPage <= 0"
+              class="pagination-button">
+        Previous
+      </button>
+      <button (click)="loadRelatedHouses(currentPage + 1)"
+              [disabled]="currentPage >= totalPages - 1"
+              class="pagination-button">
+        Next
+      </button>
+    </div>
+
+  </div>
+
+
+</div>

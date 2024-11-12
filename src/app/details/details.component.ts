@@ -1,7 +1,16 @@
- import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HouseService } from '../Service/house.service';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import {
+  DomSanitizer,
+  SafeResourceUrl,
+  SafeUrl,
+} from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageDialogComponent } from './image-dialog.component';
 import { DistrictService } from '../address/district.service';
@@ -13,18 +22,16 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import * as L from 'leaflet';
 import { ShareOverlayComponent } from './share-overlay/share-overlay.component';
 
-
-
 const defaultIcon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   shadowSize: [41, 41],
 });
-
-
 
 /** Interfaces */
 interface House {
@@ -51,6 +58,7 @@ interface House {
   pending?: boolean;
   user: User;
   favoriteable: boolean;
+  currentImageIndex: number;
 }
 
 interface User {
@@ -84,8 +92,6 @@ interface UserReply {
   totalReply: number;
 }
 
-
-
 interface Location {
   id: number;
   englishName: string;
@@ -99,13 +105,12 @@ interface PaggingModel<T> {
   result: T[];
 }
 
-
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css'],
 })
-export class DetailsComponent implements OnInit , AfterViewInit {
+export class DetailsComponent implements OnInit, AfterViewInit {
   house: House | null = null;
   houseId!: number;
   houses: any[] = [];
@@ -122,39 +127,27 @@ export class DetailsComponent implements OnInit , AfterViewInit {
   newCommentText: string = '';
   activeMenu: number | null = null;
 
-  map: L.Map | null = null
+  map: L.Map | null = null;
   userMarker: any;
   markers: L.Marker[] = [];
   isMapInitialized: boolean = false;
 
-  lightboxImages: { src: string, caption: string, thumb: string }[] = [];
+  currentPage = 0;
+  totalPages = 1;
+  itemsPerPage = 12;
 
-
-bankCount: number = 0;
-gymCount: number = 0;
-restaurantCount: number = 0;
-hotelCount: number = 0;
-barPubCount: number = 0;
-cafeCount: number = 0;
-hospitalCount: number = 0;
+  bankCount: number = 0;
+  gymCount: number = 0;
+  restaurantCount: number = 0;
+  hotelCount: number = 0;
+  barPubCount: number = 0;
+  cafeCount: number = 0;
+  hospitalCount: number = 0;
   supermarketCount: number = 0;
 
-  isFullScreen: boolean = false;
-fullScreenImage: string | null = null;
-isZoomed: boolean = false;
-  zoomTransform: string = 'scale(1)';
-
-
-
+  loading: boolean = false;
 
   isLoading: boolean = false;
-
-
-
-
-
-
-
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -166,16 +159,15 @@ isZoomed: boolean = false;
     private readonly villageService: VillageService,
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
-    private readonly router: Router,
-
+    private readonly router: Router
   ) {
     this.setDefaultMapUrl();
-
-
   }
 
-
   ngOnInit(): void {
+    this.houseId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchHouseDetails();
+    this.loadRelatedHouses();
     this.houseId = +this.route.snapshot.paramMap.get('id')!;
     const houseIdParam = this.route.snapshot.paramMap.get('id');
     const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
@@ -189,37 +181,17 @@ isZoomed: boolean = false;
   }
 
   loadComments(houseId: number): void {
-
     this.houseService.getComments(houseId).subscribe(
       (response) => {
         if (response.code === 200) {
           this.comments = response.result.result as UserComment[];
         }
-
       },
       (error) => {
         console.error('Error loading comments:', error);
-
       }
     );
   }
-  openFullScreen(imageUrl: string): void {
-    this.isFullScreen = true;
-    this.fullScreenImage = imageUrl;
-  }
-
-  closeFullScreen(): void {
-    this.isFullScreen = false;
-    this.fullScreenImage = null;
-    this.isZoomed = false;
-    this.zoomTransform = 'scale(1)';
-  }
-
-  toggleZoom(): void {
-    this.isZoomed = !this.isZoomed;
-    this.zoomTransform = this.isZoomed ? 'scale(2)' : 'scale(1)';
-  }
-
 
   postComment(): void {
     if (!this.authenticationService.isLoggedIn()) {
@@ -243,18 +215,15 @@ isZoomed: boolean = false;
     const type = 'house';
     const description = this.newCommentText;
 
-
     this.houseService.postComment(houseId, description, type).subscribe(
       (response) => {
         if (response) {
           this.loadComments(houseId); // Reload comments to fetch latest data
           this.newCommentText = ''; // Clear input field
         }
-
       },
       (error) => {
         console.error('Error posting comment:', error);
-
       }
     );
   }
@@ -279,7 +248,6 @@ isZoomed: boolean = false;
     const description = this.replyText[commentId];
     if (!description) return;
 
-
     this.houseService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
@@ -287,11 +255,9 @@ isZoomed: boolean = false;
           this.loadComments(houseId); // Reload comments to fetch latest data
           this.replyText[commentId] = ''; // Clear reply input
         }
-
       },
       (error) => {
         console.error('Error posting reply:', error);
-
       }
     );
   }
@@ -307,7 +273,7 @@ isZoomed: boolean = false;
         text: 'Please log in to delete a comment.',
         confirmButtonText: 'Login',
         showCancelButton: true,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['/login']);
@@ -321,11 +287,9 @@ isZoomed: boolean = false;
         const houseId = this.house?.id ?? 34;
         this.loadComments(houseId); // Reload comments to update the list
         this.activeMenu = null;
-
       },
       (error) => {
         console.error('Error deleting comment:', error);
-
       }
     );
   }
@@ -339,21 +303,25 @@ isZoomed: boolean = false;
     }
   }
 
-
   getHouseDetails(id: number): void {
     this.houseService.getHouseById(id.toString()).subscribe(
       (response) => {
         this.house = response.result as House;
         if (this.house) {
           this.loadImages(this.house); // Load images if required
-          this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
+          this.fetchLocationDetails(
+            this.house.province,
+            this.house.district,
+            this.house.commune,
+            this.house.village
+          );
 
           if (this.house.linkMap) {
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.house.linkMap}&output=embed`
             );
           }
-          console.log("Fetched updated house details:", this.house);
+          console.log('Fetched updated house details:', this.house);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
@@ -362,10 +330,6 @@ isZoomed: boolean = false;
       }
     );
   }
-
-
-
-
 
   setDefaultMapUrl(): void {
     // Set the default map to Phnom Penh coordinates if no specific link is available
@@ -381,7 +345,9 @@ isZoomed: boolean = false;
 
   extractCoordinates(linkMap: string): { lat: number; lng: number } | null {
     const match = linkMap.match(/q=([-.\d]+),([-.\d]+)/);
-    return match ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) } : null;
+    return match
+      ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) }
+      : null;
   }
 
   initializeMap(lat: number, lng: number): void {
@@ -400,7 +366,10 @@ isZoomed: boolean = false;
         }).addTo(this.map);
 
         // Place a marker at the property location
-        L.marker([lat, lng]).addTo(this.map).bindPopup('Property Location').openPopup();
+        L.marker([lat, lng])
+          .addTo(this.map)
+          .bindPopup('Property Location')
+          .openPopup();
 
         // Fetch and display nearby locations
         this.fetchAndDisplayNearbyLocations(lat, lng);
@@ -408,8 +377,18 @@ isZoomed: boolean = false;
     }
   }
 
-fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
-    const amenities = ['bank', 'gym', 'restaurant', 'hotel', 'bar', 'pub', 'cafe', 'hospital', 'supermarket'];
+  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
+    const amenities = [
+      'bank',
+      'gym',
+      'restaurant',
+      'hotel',
+      'bar',
+      'pub',
+      'cafe',
+      'hospital',
+      'supermarket',
+    ];
 
     amenities.forEach((amenity) => {
       const query = `
@@ -417,7 +396,9 @@ fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
         node(around:1000, ${lat}, ${lng})["amenity"="${amenity}"];
         out;
       `;
-      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+        query
+      )}`;
 
       console.log(`Fetching nearby ${amenity} with URL:`, url);
 
@@ -445,7 +426,8 @@ fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
                 break;
               case 'bar':
               case 'pub':
-                this.barPubCount = (this.barPubCount || 0) + data.elements.length;
+                this.barPubCount =
+                  (this.barPubCount || 0) + data.elements.length;
                 break;
               case 'cafe':
                 this.cafeCount = data.elements.length;
@@ -465,19 +447,25 @@ fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
           console.error(`Error fetching nearby ${amenity} locations:`, error);
         });
     });
-}
+  }
 
-displayNearbyPlaces(places: any[], amenity: string): void {
+  displayNearbyPlaces(places: any[], amenity: string): void {
     if (!this.map) {
       console.error('Map is not initialized.');
       return;
     }
 
-    console.log(`Displaying ${places.length} nearby ${amenity} places on the map.`);
+    console.log(
+      `Displaying ${places.length} nearby ${amenity} places on the map.`
+    );
     places.forEach((place) => {
       if (place.lat && place.lon) {
-        const marker = L.marker([place.lat, place.lon]).addTo(this.map as L.Map);
-        marker.bindPopup(`<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenity}`);
+        const marker = L.marker([place.lat, place.lon]).addTo(
+          this.map as L.Map
+        );
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenity}`
+        );
         this.markers.push(marker);
       } else {
         console.log(`Skipping place without coordinates:`, place);
@@ -485,31 +473,35 @@ displayNearbyPlaces(places: any[], amenity: string): void {
     });
   }
 
-
   fetchHouseDetails(): void {
     this.houseService.getHouseById(this.houseId.toString()).subscribe({
       next: (response) => {
         this.house = response.result;
         if (this.house) {
-          this.loadImages(this.house);
-          this.fetchLocationDetails(this.house.province, this.house.district, this.house.commune, this.house.village);
+          this.loadCardImages(this.house);
+          this.fetchLocationDetails(
+            this.house.province,
+            this.house.district,
+            this.house.commune,
+            this.house.village
+          );
           if (this.house.linkMap) {
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.house.linkMap}&output=embed`
             );
           }
-          console.log("Fetched updated house details:", this.house);
+          console.log('Fetched updated house details:', this.house);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       error: (error) => {
-        console.error(`Error fetching house details for ID ${this.houseId}:`, error);
-      }
+        console.error(
+          `Error fetching house details for ID ${this.houseId}:`,
+          error
+        );
+      },
     });
   }
-
-
-
 
   toggleFavorite(): void {
     if (!this.authenticationService.isLoggedIn()) {
@@ -519,7 +511,7 @@ displayNearbyPlaces(places: any[], amenity: string): void {
         text: 'Please log in to favorite this house.',
         confirmButtonText: 'Login',
         showCancelButton: true,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['/login']);
@@ -536,67 +528,51 @@ displayNearbyPlaces(places: any[], amenity: string): void {
         if (this.house) {
           this.house.favoriteable = !this.house.favoriteable;
         }
-        console.log(`Successfully toggled favorite for house ID ${this.houseId}`);
+        console.log(
+          `Successfully toggled favorite for house ID ${this.houseId}`
+        );
         this.getHouseDetails(this.houseId); // Re-fetch details to confirm state
       },
       error: (error) => {
-        console.warn(`Toggling favorite encountered an error. Assuming success. Error:`, error);
+        console.warn(
+          `Toggling favorite encountered an error. Assuming success. Error:`,
+          error
+        );
         // Toggle locally regardless of error, for smooth UI
         if (this.house) {
           this.house.favoriteable = !this.house.favoriteable;
         }
-      }
+      },
     });
   }
 
   openShareOverlay(): void {
     this.dialog.open(ShareOverlayComponent, {
       width: '100%',
-      maxWidth: '400px'
+      maxWidth: '400px',
     });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   loadImages(house: House): void {
     if (house.imagePaths && house.imagePaths.length > 0) {
-      house.safeImagePaths = [];
-      this.lightboxImages = []; // Clear any previous images
+      house.safeImagePaths = []; // Clear existing paths
 
-      house.imagePaths.forEach((imagePath) => {
+      // Track the loading order to set the first image consistently
+      let imagesLoaded = 0;
+
+      house.imagePaths.forEach((imagePath, index) => {
         this.houseService.getImage(imagePath).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
             house.safeImagePaths!.push(safeUrl);
 
-            // Add the image to the lightbox images array
-            this.lightboxImages.push({
-              src: objectURL,
-              caption: house.title,
-              thumb: objectURL
-            });
+            imagesLoaded++;
 
-            if (!this.currentImage) {
+            // Set `currentImage` and `currentImageIndex` to the first loaded image
+            if (imagesLoaded === 1) {
               this.currentImage = safeUrl;
+              house.currentImageIndex = 0; // Assign 0 since images are available
             }
           },
           (error) => {
@@ -604,22 +580,72 @@ displayNearbyPlaces(places: any[], amenity: string): void {
           }
         );
       });
+    } else {
+      // Handle cases with no images
+      house.safeImagePaths = [];
+      this.currentImage = null;
+      house.currentImageIndex = -1; // Use -1 or any number indicating no images
     }
   }
 
+  // Function to load images specifically for card houses in Related Posts
+  loadCardImages(house: House): void {
+    house.safeImagePaths = []; // Clear any existing images
+    house.imagePaths.forEach((imagePath) => {
+      this.houseService.getImage(imagePath).subscribe(
+        (imageBlob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          house.safeImagePaths!.push(safeUrl);
+        },
+        (error) => {
+          console.error('Error loading image:', error);
+        }
+      );
+    });
+    house.currentImageIndex = 0; // Set default image index
+  }
 
+  // Function to go to the previous image for a specific card house
+  prevCardImage(house: House): void {
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex > 0
+          ? house.currentImageIndex - 1
+          : house.safeImagePaths.length - 1;
+    }
+  }
 
+  // Function to go to the next image for a specific card house
+  nextCardImage(house: House): void {
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex < house.safeImagePaths.length - 1
+          ? house.currentImageIndex + 1
+          : 0;
+    }
+  }
 
-  fetchLocationDetails(provinceId: number, districtId: number, communeId: number, villageId: number): void {
+  openImageViewer(image: SafeUrl): void {
+    this.dialog.open(ImageDialogComponent, {
+      data: { image: image as string },
+      panelClass: 'full-screen-modal',
+    });
+  }
+  fetchLocationDetails(
+    provinceId: number,
+    districtId: number,
+    communeId: number,
+    villageId: number
+  ): void {
     this.districtService.getProvincesPublic().subscribe((res) => {
       const paginatedResponse = res as PaggingModel<Location>;
       const provinceIdNumber = Number(provinceId); // Convert provinceId to a number
 
-      const province = Array.isArray(paginatedResponse.result) ?
-        paginatedResponse.result.find((p) => p.id === provinceIdNumber) : null; // Compare as numbers
+      const province = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((p) => p.id === provinceIdNumber)
+        : null; // Compare as numbers
       // console.log("res", res);
-
-
 
       // console.log('Province ID:', provinceIdNumber); // Log the ID
       // console.log('Provinces array:', paginatedResponse.result); // Log the provinces array
@@ -628,39 +654,48 @@ displayNearbyPlaces(places: any[], amenity: string): void {
 
       console.log('province response:', province);
 
-
-      this.provinceName = province ? (province.khmerName || province.englishName) : 'Unknown Province';
+      this.provinceName = province
+        ? province.khmerName || province.englishName
+        : 'Unknown Province';
       this.cdr.detectChanges();
     });
 
     this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
       console.log('Districts response:', res);
       const paginatedResponse = res as PaggingModel<Location>;
-      const district = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((d) => d.id === districtId) : null;
-      this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
+      const district = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((d) => d.id === districtId)
+        : null;
+      this.districtName = district
+        ? district.khmerName || district.englishName
+        : 'Unknown District';
       this.cdr.detectChanges();
     });
 
     this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
       console.log('Communes response:', res);
       const paginatedResponse = res as PaggingModel<Location>;
-      const commune = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((c) => c.id === communeId) : null;
-      this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
+      const commune = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((c) => c.id === communeId)
+        : null;
+      this.communeName = commune
+        ? commune.khmerName || commune.englishName
+        : 'Unknown Commune';
       this.cdr.detectChanges();
     });
 
     this.villageService.getByCommunePublic(communeId).subscribe((res) => {
       console.log('Villages response:', res);
       const paginatedResponse = res as PaggingModel<Location>;
-      const village = Array.isArray(paginatedResponse.result) ? paginatedResponse.result.find((v) => v.id === villageId) : null;
-      this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
+      const village = Array.isArray(paginatedResponse.result)
+        ? paginatedResponse.result.find((v) => v.id === villageId)
+        : null;
+      this.villageName = village
+        ? village.khmerName || village.englishName
+        : 'Unknown Village';
       this.cdr.detectChanges();
     });
   }
-
-
-
-
 
   openImageInFullScreen(image: SafeUrl): void {
     this.dialog.open(ImageDialogComponent, {
@@ -691,5 +726,209 @@ displayNearbyPlaces(places: any[], amenity: string): void {
 
   goBack(): void {
     window.history.back();
+  }
+
+  loadSafeImagePaths(house: House): SafeUrl[] {
+    return house.imagePaths.map((path) =>
+      this.sanitizer.bypassSecurityTrustUrl(path)
+    );
+  }
+
+  loadRelatedHouses(page: number = 0): void {
+    this.loading = true;
+    this.houseService.getHouses({ page, size: this.itemsPerPage }).subscribe(
+      (response) => {
+        const responseData = response.result;
+        this.houses = responseData.result;
+        this.totalPages = responseData.totalPage;
+
+        // Call loadImage for each house to load its images
+        this.houses.forEach((house) => {
+          this.loadImage(house);
+        });
+
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('Error loading houses:', error);
+      }
+    );
+  }
+
+  loadImage(house: any): void {
+    if (house.imagePaths && house.imagePaths.length > 0) {
+      house.safeImagePaths = [];
+      house.imagePaths.forEach((imageUrl: string) => {
+        this.houseService.getImage(imageUrl).subscribe(
+          (imageBlob) => {
+            const objectURL = URL.createObjectURL(imageBlob);
+            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            house.safeImagePaths.push(safeUrl);
+          },
+          (error) => {
+            console.error('Error loading image:', error);
+          }
+        );
+      });
+      house.currentImageIndex = 0;
+    } else {
+      house.safeImagePaths = [];
+      house.currentImageIndex = 0;
+    }
+  }
+
+  prevImage1(house: House): void {
+    // Check if safeImagePaths exists and has images
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex > 0
+          ? house.currentImageIndex - 1
+          : house.safeImagePaths.length - 1;
+    }
+  }
+
+  nextImage1(house: House): void {
+    // Check if safeImagePaths exists and has images
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex < house.safeImagePaths.length - 1
+          ? house.currentImageIndex + 1
+          : 0;
+    }
+  }
+
+  likeHouse(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const house = this.houses.find((h) => h.id === houseId);
+    if (!house || house.pending) return;
+
+    house.pending = true;
+    console.log(`Toggling like for house ID ${houseId}`);
+
+    // Provide the `postType` argument, such as 'house' or another applicable value.
+    this.houseService.likeHouse(houseId, 'house').subscribe({
+      next: () => this.fetchHouseData(houseId),
+      error: (error) => {
+        console.error(`Error toggling like for house ID ${houseId}:`, error);
+        this.fetchHouseData(houseId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for house ID ${houseId}`);
+        house.pending = false;
+      },
+    });
+  }
+
+  toggleFavorite1(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const house = this.houses.find((h) => h.id === houseId);
+    if (!house || house.pending) return;
+
+    house.pending = true;
+    console.log(`Toggling favorite for house ID ${houseId}`);
+
+    this.houseService.toggleFavorite(houseId, 'house').subscribe({
+      next: () => this.fetchHouseData(houseId),
+      error: (error) => {
+        console.error(
+          `Error toggling favorite for house ID ${houseId}:`,
+          error
+        );
+        this.fetchHouseData(houseId);
+      },
+      complete: () => {
+        house.pending = false;
+        console.log(`Completed favorite toggle for house ID ${houseId}`);
+      },
+    });
+  }
+
+  updateHouseData(houseId: number): void {
+    this.houseService.getHouseById(houseId.toString()).subscribe({
+      next: (response) => {
+        const updatedHouse = response.result;
+        const index = this.houses.findIndex((h) => h.id === houseId);
+        if (index !== -1) {
+          this.houses[index] = {
+            ...this.houses[index],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false,
+          };
+        }
+      },
+      error: (error) => {
+        console.error(`Error updating data for house ID ${houseId}:`, error);
+      },
+    });
+  }
+
+  goToDetails(houseId: number): void {
+    this.router.navigate(['/details', houseId]);
+  }
+  goToDetails1(houseId: number): void {
+    this.router.navigate(['/details', houseId]).then(() => {
+      window.location.reload();
+      // this.fetchHouseDetails();
+    });
+  }
+
+  private fetchHouseData(houseId: number): void {
+    console.log(`Fetching updated data for house ID ${houseId}...`);
+
+    this.houseService.getHouseById(houseId.toString()).subscribe({
+      next: (response) => {
+        const houseIndex = this.houses.findIndex((h) => h.id === houseId);
+        if (houseIndex > -1 && response.result) {
+          const updatedHouse = response.result;
+          this.houses[houseIndex] = {
+            ...this.houses[houseIndex],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for house ID ${houseId}:`,
+          error
+        );
+      },
+    });
   }
 }
