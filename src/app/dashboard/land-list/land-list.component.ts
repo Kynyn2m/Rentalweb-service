@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -7,7 +7,7 @@ import { ConfirmComponent } from 'src/app/components/confirm/confirm.component';
 import { LandFormComponent } from './land-form/land-form.component';
 import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 interface Land {
   id: number;
@@ -49,7 +49,8 @@ export class LandListComponent {
   pageSizeOptions: number[] = environment.pageSizeOptions;
   currentPage = 0;
   page = environment.currentPage;
-
+  searchTerm: string = '';
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(
     private landService: LandService,
     private sanitizer: DomSanitizer,
@@ -61,27 +62,55 @@ export class LandListComponent {
     this.fetchLand();
   }
 
-  fetchLand(): void {
-    this.loading = true; // Start loading
-    this.landService.getLand().subscribe(
-      response => {
+  fetchLand(page: number = this.currentPage, size: number = this.size): void {
+    this.loading = true;
+    const params: any = {
+      page: page,
+      size: size,
+    };
+
+    if (this.searchTerm) {
+      params.search = this.searchTerm;
+    }
+
+    this.landService.getLand(params).subscribe(
+      (response) => {
         if (response.code === 200) {
           this.land = response.result.result as Land[];
-          this.land.forEach(land => this.loadImage(land));
+          this.pagingModel = response.result.pagingModel;
+
+          // Set the length of paginator based on total elements
+          if (this.pagingModel) {
+            this.paginator.length = this.pagingModel.totalElements;
+          }
+
+          this.land.forEach((land) => this.loadImage(land));
         }
-        this.loading = false; // Stop loading after fetch
+        this.loading = false;
       },
-      error => {
+      (error) => {
         console.error('Error fetching land data', error);
-        this.loading = false; // Stop loading on error
+        this.loading = false;
       }
     );
+  }
+
+  applyFilter(searchValue: string): void {
+    this.searchTerm = searchValue;
+    this.fetchLand(this.currentPage, this.size); // Fetch with the updated search term
+  }
+
+  clearFilter(searchInput: HTMLInputElement): void {
+    this.searchTerm = '';
+    searchInput.value = ''; // Clear the input field
+    this.fetchLand(this.currentPage, this.size); // Fetch without search term to reset the list
   }
   pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.fetchLand();
+    this.fetchLand(this.currentPage, this.size);
   }
+
   loadImage(land: Land): void {
     if (!land.imagePaths || land.imagePaths.length === 0) {
       console.error('No image paths available for land:', land);
@@ -102,8 +131,6 @@ export class LandListComponent {
     );
   }
 
-
-
   openDeleteDialog(land: Land): void {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '400px',
@@ -111,11 +138,11 @@ export class LandListComponent {
         title: 'Delete land',
         message: `Are you sure you want to delete the land: ${land.title}?`,
         confirmText: 'Yes, Delete',
-        cancelText: 'Cancel'
-      }
+        cancelText: 'Cancel',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
         this.deleteland(land);
       }
@@ -126,12 +153,16 @@ export class LandListComponent {
   deleteland(land: Land): void {
     this.landService.deleteLand(land.id).subscribe(
       (response) => {
-        this.snackBar.open(`${land.title} has been deleted.`, 'Close', { duration: 3000 });
+        this.snackBar.open(`${land.title} has been deleted.`, 'Close', {
+          duration: 3000,
+        });
         this.fetchLand(); // Refresh the list after deletion
       },
       (error) => {
         console.error('Error deleting land:', error);
-        this.snackBar.open(`Failed to delete ${land.title}.`, 'Close', { duration: 3000 });
+        this.snackBar.open(`Failed to delete ${land.title}.`, 'Close', {
+          duration: 3000,
+        });
       }
     );
   }
@@ -140,11 +171,11 @@ export class LandListComponent {
       width: '600px',
       data: {
         ...land,
-        imagePath: land.imagePaths // Ensure the correct imagePath is passed
-      }
+        imagePath: land.imagePaths, // Ensure the correct imagePath is passed
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.fetchLand();
       }
