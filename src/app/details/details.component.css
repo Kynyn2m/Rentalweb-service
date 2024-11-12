@@ -225,7 +225,7 @@
 
 .additional-details-container {
   flex: 0 0 40%;
-  background-color: #f3f3f3;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
@@ -383,7 +383,7 @@
   gap: 8px;
 }
 
-.profile-image {
+.profile-image1 {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -1036,6 +1036,19 @@ mat-card-content p {
   color: #666;
   opacity: 0.6;
 }
-.related-posts-container h2{
+.related-posts-container h3{
   padding: 1rem;
+}
+.menu-option {
+  /* Ensure no hiding styles */
+  display: block; /* Or flex */
+  padding: 5px;
+}
+
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  /* Ensure sufficient size */
+  max-height: fit-content;
+  max-width: fit-content;
 }

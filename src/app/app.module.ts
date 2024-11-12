@@ -108,6 +108,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CommentComponent } from './dashboard/comment/comment.component';
 import { ShareOverlayComponent } from './details/share-overlay/share-overlay.component';
+import { UpdateCommentDialogComponent } from './details/update-comment-dialog/update-comment-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 @NgModule({
   declarations: [
@@ -165,6 +166,7 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
     UpdateRoomDialogComponent,
     CommentComponent,
     ShareOverlayComponent,
+    UpdateCommentDialogComponent,
   ],
   imports: [
     BrowserModule,

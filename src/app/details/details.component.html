@@ -160,7 +160,7 @@
               <div class="header-content">
                 <img [src]="comment.imagePath"
                      alt="{{ comment.name }}'s profile"
-                     class="profile-image" />
+                     class="profile-image1" />
                 <h4>{{ comment.name }}</h4>
               </div>
 
@@ -170,6 +170,7 @@
                         class="menu-button">⋮</button>
                 <div *ngIf="activeMenu === comment.id"
                      class="menu-options">
+                  <button (click)="openUpdateDialog(comment)">Update</button>
                   <button (click)="deleteComment(comment.id)">Delete</button>
                 </div>
               </div>
@@ -185,7 +186,7 @@
                     <div class="header-content">
                       <img [src]="reply.imagePath"
                            alt="{{ reply.name }}'s profile"
-                           class="profile-image" />
+                           class="profile-image1" />
                       <h4>{{ reply.name }}</h4>
                     </div>
 
@@ -195,6 +196,7 @@
                               class="menu-button">⋮</button>
                       <div *ngIf="activeMenu === reply.id"
                            class="menu-options">
+                        <button (click)="openUpdateDialog(reply)">Update</button>
                         <button (click)="deleteComment(reply.id)">Delete</button>
                       </div>
                     </div>
@@ -210,7 +212,7 @@
                           <div class="header-content">
                             <img [src]="nestedReply.imagePath"
                                  alt="{{ nestedReply.name }}'s profile"
-                                 class="profile-image" />
+                                 class="profile-image1" />
                             <h4>{{ nestedReply.name }}</h4>
                           </div>
 
@@ -220,6 +222,7 @@
                                     class="menu-button">⋮</button>
                             <div *ngIf="activeMenu === nestedReply.id"
                                  class="menu-options">
+                              <button (click)="openUpdateDialog(nestedReply)">Update</button>
                               <button (click)="deleteComment(nestedReply.id)">Delete</button>
                             </div>
                           </div>

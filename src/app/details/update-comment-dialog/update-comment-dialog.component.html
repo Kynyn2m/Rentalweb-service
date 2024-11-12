@@ -1,0 +1,16 @@
+<h2 mat-dialog-title
+    align="center">Update Comment</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="outline">
+    <mat-label>Comment</mat-label>
+    <input matInput
+           [(ngModel)]="data.description" />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button
+          (click)="onCancel()">Cancel</button>
+  <button mat-button
+          (click)="onSave()"
+          color="primary">Save</button>
+</mat-dialog-actions>

@@ -21,6 +21,10 @@ import Swal from 'sweetalert2';
 import { AuthenticationService } from '../authentication/authentication.service';
 import * as L from 'leaflet';
 import { ShareOverlayComponent } from './share-overlay/share-overlay.component';
+import {
+  CommentData,
+  UpdateCommentDialogComponent,
+} from './update-comment-dialog/update-comment-dialog.component';
 
 const defaultIcon = L.icon({
   iconUrl:
@@ -261,6 +265,39 @@ export class DetailsComponent implements OnInit, AfterViewInit {
       }
     );
   }
+  openUpdateDialog(comment: UserComment | UserReply): void {
+    const dialogRef = this.dialog.open(UpdateCommentDialogComponent, {
+      width: '400px',
+      data: { id: comment.id, description: comment.description },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.updateComment(result); // Call the method to update the comment
+      }
+    });
+  }
+  updateComment(updatedComment: CommentData): void {
+    const updateData = {
+      id: updatedComment.id,
+      description: updatedComment.description,
+      houseId: this.house?.id ?? null, // Replace with actual houseId if necessary
+      type: 'house', // or 'land'/'room' as per requirement
+    };
+
+    this.houseService.updateComment(updateData.id, updateData).subscribe(
+      () => {
+        const comment = this.comments.find((c) => c.id === updatedComment.id);
+        if (comment) {
+          comment.description = updatedComment.description; // Update in the local data
+        }
+      },
+      (error) => {
+        console.error('Error updating comment:', error);
+      }
+    );
+  }
+
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
   }
