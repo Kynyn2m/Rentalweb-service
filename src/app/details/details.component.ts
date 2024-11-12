@@ -180,6 +180,9 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
     this.setDefaultMapUrl();
   }
   ngOnInit(): void {
+    this.houseId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchHouseDetails();
+    this.loadRelatedHouses();
     // Extract or use default coordinates to fetch nearby locations on page load
     this.houseId = +this.route.snapshot.paramMap.get('id')!;
     const houseIdParam = this.route.snapshot.paramMap.get('id');

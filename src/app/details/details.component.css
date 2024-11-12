@@ -972,7 +972,7 @@ mat-card-content p {
   margin-top: 15px;
 }
 
-.like-button1 {
+.mat-mdc-raised-button:not(:disabled)  {
   display: flex;
   align-items: center;
   gap: 5px;
