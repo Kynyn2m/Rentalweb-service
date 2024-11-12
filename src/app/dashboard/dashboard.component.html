@@ -1,60 +1,106 @@
 <div class="dashboard-container">
   <h1 class="dashboard-title">Rental Web Service - Admin Dashboard</h1>
 
-  <!-- Statistics Section -->
   <div class="dashboard-statistics">
-    <mat-card class="stat-card orange-card"
-              (click)="goToUser()">
-      <mat-card-header>
-        <mat-icon class="card-icon">group</mat-icon>
-        <mat-card-title>Total Users</mat-card-title>
+    <mat-card class="stat-card orange-card" (click)="goToUser()">
+      <mat-card-header class="card-header">
+        <div class="stat-content">
+          <mat-card-title class="tx">Total Users</mat-card-title>
+          <p class="stat-value">{{ totalUsers }}</p>
+          <div class="stat-footer">
+            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
+          </div>
+        </div>
+        <div class="icon-container">
+          <mat-icon class="card-icon">group</mat-icon>
+        </div>
       </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalUsers }}</p>
-      </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card blue-card"
-              (click)="goToRoomList()">
-      <mat-card-header>
-        <mat-icon class="card-icon">meeting_room</mat-icon>
-        <mat-card-title>Total Room</mat-card-title>
+    <mat-card class="stat-card yellow-card" (click)="goToRoomList()">
+      <mat-card-header class="card-header">
+        <div class="stat-content">
+          <mat-card-title class="tx">Total Room</mat-card-title>
+          <p class="stat-value">{{ totalRoom }}</p>
+          <div class="stat-footer">
+            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
+          </div>
+        </div>
+        <div class="icon-container">
+          <mat-icon class="card-icon">meeting_room</mat-icon>
+        </div>
       </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalRoom }}</p>
-      </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card red-card"
-              (click)="goToLandList()">
-      <mat-card-header>
-        <mat-icon class="card-icon">landscape</mat-icon>
-        <mat-card-title>Total Land</mat-card-title>
+    <mat-card class="stat-card green-card" (click)="goToLandList()">
+      <mat-card-header class="card-header">
+        <div class="stat-content">
+          <mat-card-title class="tx">Total Land</mat-card-title>
+          <p class="stat-value">{{ totalLand }}</p>
+          <div class="stat-footer">
+            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
+          </div>
+        </div>
+        <div class="icon-container">
+          <mat-icon class="card-icon">terrain</mat-icon>
+        </div>
       </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalLand }}</p>
-      </mat-card-content>
     </mat-card>
 
-    <mat-card class="stat-card teal-card"
-              (click)="goToHouseList()">
-      <mat-card-header>
-        <mat-icon class="card-icon">house</mat-icon>
-        <mat-card-title>Total House</mat-card-title>
+    <mat-card class="stat-card blue-card" (click)="goToHouseList()">
+      <mat-card-header class="card-header">
+        <div class="stat-content">
+          <mat-card-title class="tx">Total House</mat-card-title>
+          <p class="stat-value">{{ totalHouse }}</p>
+          <div class="stat-footer">
+            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
+          </div>
+        </div>
+        <div class="icon-container">
+          <mat-icon class="card-icon">home</mat-icon>
+        </div>
       </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalHouse }}</p>
-      </mat-card-content>
     </mat-card>
-
-    <!-- <mat-card class="stat-card green-card">
-      <mat-card-header>
-        <mat-icon class="card-icon">attach_money</mat-icon>
-        <mat-card-title>totalPost</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>{{ totalPost }}</p>
-      </mat-card-content>
-    </mat-card> -->
   </div>
+</div>
+
+<!-- table -->
+<div class="dashboard-table-container">
+  <h2 class="table-title">Summary of Data</h2>
+  <table class="dashboard-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Total Count</th>
+        <!-- <th>Completion</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Total Users</td>
+        <td>{{ totalUsers }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Total Rooms</td>
+        <td>{{ totalRoom }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Total Lands</td>
+        <td>{{ totalLand }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Total Houses</td>
+        <td>{{ totalHouse }}</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Total Posts</td>
+        <td>{{ totalPost }}</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </div>

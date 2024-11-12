@@ -95,7 +95,15 @@
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
-
+        <div class="favorite-icon-container">
+          <mat-icon
+            class="favorite-icon"
+            [ngClass]="{ favorited: house.favoriteable }"
+            (click)="toggleFavoriteHouse(house.id); $event.stopPropagation()"
+          >
+            {{ house.favoriteable ? "favorite" : "favorite_border" }}
+          </mat-icon>
+        </div>
         <mat-card-content>
           <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3>
           <!-- Stop click propagation here -->
@@ -122,15 +130,17 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <!-- <button
+            <button
               mat-raised-button
-              color="primary"
               class="like-button"
+              [ngClass]="{ liked: house.likeable }"
               (click)="likeHouse(house.id); $event.stopPropagation()"
             >
-              <mat-icon>thumb_up</mat-icon>
-              {{ house.likeCount }} {{ "likes" | transloco }}
-            </button> -->
+              <mat-icon class="like-icon">{{
+                house.likeable ? "thumb_up" : "thumb_up_off_alt"
+              }}</mat-icon>
+              <span>{{ house.likeCount }} {{ "Likes" | transloco }}</span>
+            </button>
             <button
               mat-raised-button
               color="success"
@@ -209,7 +219,15 @@
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
-
+        <div class="favorite-icon-container">
+          <mat-icon
+            class="favorite-icon"
+            [ngClass]="{ favorited: room.favoriteable }"
+            (click)="toggleFavoriteRoom(room.id); $event.stopPropagation()"
+          >
+            {{ room.favoriteable ? "favorite" : "favorite_border" }}
+          </mat-icon>
+        </div>
         <mat-card-content>
           <h3>{{ room.title }}</h3>
           <p>{{ "location" | transloco }}: {{ room.provinceName }}</p>
@@ -229,9 +247,16 @@
             <!-- Like Button (aligned to the left) -->
             <!-- (click)="likeRoom(room.id); $event.stopPropagation()" -->
 
-            <button mat-raised-button color="primary" class="like-button">
-              <mat-icon>thumb_up</mat-icon>
-              {{ room.likeCount }} {{ "likes" | transloco }}
+            <button
+              mat-raised-button
+              class="like-button"
+              [ngClass]="{ liked: room.likeable }"
+              (click)="likeRoom(room.id); $event.stopPropagation()"
+            >
+              <mat-icon class="like-icon">{{
+                room.likeable ? "thumb_up" : "thumb_up_off_alt"
+              }}</mat-icon>
+              <span>{{ room.likeCount }} {{ "Likes" | transloco }}</span>
             </button>
 
             <!-- View Details Button (aligned to the right) -->
@@ -314,7 +339,15 @@
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
-
+        <div class="favorite-icon-container">
+          <mat-icon
+            class="favorite-icon"
+            [ngClass]="{ favorited: land.favoriteable }"
+            (click)="toggleFavoriteland(land.id); $event.stopPropagation()"
+          >
+            {{ land.favoriteable ? "favorite" : "favorite_border" }}
+          </mat-icon>
+        </div>
         <mat-card-content>
           <h3>{{ land.title }}</h3>
           <p>{{ "location" | transloco }}: {{ land.provinceName }}</p>
@@ -332,8 +365,13 @@
 
           <div class="actions">
             <!-- Like Button (aligned to the left) -->
-            <!-- (click)="likeLand(land.id); $event.stopPropagation()" -->
-            <button mat-raised-button color="primary" class="like-button">
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="like-button"
+              (click)="likeLand(land.id); $event.stopPropagation()"
+            >
               <mat-icon>thumb_up</mat-icon>
               {{ land.likeCount }} {{ "likes" | transloco }}
             </button>

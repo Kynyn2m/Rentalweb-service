@@ -1,5 +1,5 @@
 // home.component.ts
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HouseService } from 'src/app/Service/house.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -8,6 +8,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { RoomService } from '../Service/room.service';
 import { LandService } from '../add-post/add-post-land/land.service';
 import { DistrictService } from '../address/district.service';
+import Swal from 'sweetalert2';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Component({
   selector: 'app-home',
@@ -58,7 +60,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private roomService: RoomService,
     private sanitizer: DomSanitizer,
     private districtService: DistrictService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private authenticationService: AuthenticationService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -529,64 +533,295 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
     });
   }
-  // likeRoom(RoomId: number): void {
-  //   const room = this.rooms.find((r) => r.id === RoomId);
+  toggleFavoriteHouse(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
 
-  //   if (room && !room.pending) {
-  //     // Ensure there's no pending request
-  //     room.pending = true; // Set the pending state to prevent multiple clicks
+    const house = this.houses.find((h) => h.id === houseId);
+    if (!house || house.pending) return;
 
-  //     if (room.liked) {
-  //       // Simulate "unlike" (no API call here for unlike)
-  //       room.likeCount -= 1;
-  //       room.liked = false;
-  //       room.pending = false; // Reset the pending state after local unlike
-  //     } else {
-  //       // Call the like API
-  //       this.roomService.likeRoom(RoomId).subscribe(
-  //         () => {
-  //           room.likeCount += 1; // Increment the like count on the UI
-  //           room.liked = true; // Set the liked state to true
-  //           room.pending = false; // Reset the pending state after the API call completes
-  //         },
-  //         () => {
-  //           // Handle error case
-  //           room.pending = false; // Reset pending state even on error
-  //         }
-  //       );
-  //     }
-  //   }
-  // }
+    house.pending = true;
+    console.log(`Toggling favorite for house ID ${houseId}`);
 
-  // likeLand(landId: number): void {
-  //   const land = this.lands.find((l) => l.id === landId);
+    this.houseService.toggleFavorite(houseId, 'house').subscribe({
+      next: () => this.fetchHouseData(houseId),
+      error: (error) => {
+        console.error(
+          `Error toggling favorite for house ID ${houseId}:`,
+          error
+        );
+        this.fetchHouseData(houseId);
+      },
+      complete: () => {
+        house.pending = false;
+        console.log(`Completed favorite toggle for house ID ${houseId}`);
+      },
+    });
+  }
+  likeHouse(houseId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
 
-  //   if (land && !land.pending) {
-  //     // Ensure there's no pending request
-  //     land.pending = true; // Set the pending state to true to prevent multiple clicks
+    const house = this.houses.find((h) => h.id === houseId);
+    if (!house || house.pending) return;
 
-  //     if (land.liked) {
-  //       // Simulate "unlike" (no API call here)
-  //       land.likeCount -= 1;
-  //       land.liked = false;
-  //       land.pending = false; // Reset pending state after local unlike
-  //     } else {
-  //       // Call the like API
-  //       this.landervice.likeLand(landId).subscribe(
-  //         () => {
-  //           land.likeCount += 1; // Increment the like count on the UI
-  //           land.liked = true; // Set the liked state to true
-  //           land.pending = false; // Reset pending state after the API call completes
-  //         },
-  //         () => {
-  //           // Handle error case
-  //           land.pending = false; // Reset pending state even on error
-  //         }
-  //       );
-  //     }
-  //   }
-  // }
+    house.pending = true;
+    console.log(`Toggling like for house ID ${houseId}`);
 
+    this.houseService.likeHouse(houseId, 'house').subscribe({
+      next: () => this.fetchHouseData(houseId),
+      error: (error) => {
+        console.error(`Error toggling like for house ID ${houseId}:`, error);
+        this.fetchHouseData(houseId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for house ID ${houseId}`);
+        house.pending = false;
+      },
+    });
+  }
+  private fetchHouseData(houseId: number): void {
+    console.log(`Fetching updated data for house ID ${houseId}...`);
+
+    this.houseService.getHouseById(houseId.toString()).subscribe({
+      next: (response) => {
+        const houseIndex = this.houses.findIndex((h) => h.id === houseId);
+        if (houseIndex > -1 && response.result) {
+          const updatedHouse = response.result;
+          this.houses[houseIndex] = {
+            ...this.houses[houseIndex],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for house ID ${houseId}:`,
+          error
+        );
+      },
+    });
+  }
+  likeRoom(roomId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this room.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const room = this.rooms.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
+
+    room.pending = true;
+    console.log(`Toggling like for room ID ${roomId}`);
+
+    this.roomService.likeRoom(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
+      error: (error) => {
+        console.error(`Error toggling like for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for room ID ${roomId}`);
+        room.pending = false;
+      },
+    });
+  }
+  private fetchRoomData(roomId: number): void {
+    console.log(`Fetching updated data for room ID ${roomId}...`);
+
+    this.roomService.getRoomById(roomId.toString()).subscribe({
+      next: (response) => {
+        const roomIndex = this.rooms.findIndex((h) => h.id === roomId);
+        if (roomIndex > -1 && response.result) {
+          const updatedRoom = response.result;
+          this.rooms[roomIndex] = {
+            ...this.rooms[roomIndex],
+            likeCount: updatedRoom.likeCount,
+            likeable: updatedRoom.likeable,
+            favoriteable: updatedRoom.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for room ID ${roomId}:`,
+          error
+        );
+      },
+    });
+  }
+  likeLand(landId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this land.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const land = this.lands.find((h) => h.id === landId);
+    if (!land || land.pending) return;
+
+    land.pending = true;
+    console.log(`Toggling like for land ID ${landId}`);
+
+    this.landervice.likeLand(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
+      error: (error) => {
+        console.error(`Error toggling like for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for land ID ${landId}`);
+        land.pending = false;
+      },
+    });
+  }
+  private fetchLandData(landId: number): void {
+    console.log(`Fetching updated data for land ID ${landId}...`);
+
+    this.landervice.getLandById(landId.toString()).subscribe({
+      next: (response) => {
+        const landIndex = this.lands.findIndex((h) => h.id === landId);
+        if (landIndex > -1 && response.result) {
+          const updatedLand = response.result;
+          this.lands[landIndex] = {
+            ...this.lands[landIndex],
+            likeCount: updatedLand.likeCount,
+            likeable: updatedLand.likeable,
+            favoriteable: updatedLand.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for land ID ${landId}:`,
+          error
+        );
+      },
+    });
+  }
+  toggleFavoriteRoom(roomId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this room.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+    const room = this.rooms.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
+
+    room.pending = true;
+    console.log(`Toggling favorite for room ID ${roomId}`);
+
+    this.roomService.toggleFavorite(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
+      error: (error) => {
+        console.error(`Error toggling favorite for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
+      },
+      complete: () => {
+        room.pending = false;
+        console.log(`Completed favorite toggle for room ID ${roomId}`);
+      },
+    });
+  }
+  toggleFavoriteland(landId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this land.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+    const land = this.lands.find((h) => h.id === landId);
+    if (!land || land.pending) return;
+
+    land.pending = true;
+    console.log(`Toggling favorite for land ID ${landId}`);
+
+    this.landervice.toggleFavorite(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
+      error: (error) => {
+        console.error(`Error toggling favorite for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
+      },
+      complete: () => {
+        land.pending = false;
+        console.log(`Completed favorite toggle for land ID ${landId}`);
+      },
+    });
+  }
   onBannerClick(): void {
     const currentImage = this.images[this.currentImageIndex];
     if (currentImage.route) {
