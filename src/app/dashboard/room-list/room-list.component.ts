@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { MatTableDataSource } from '@angular/material/table';
 import { RoomService } from 'src/app/Service/room.service';
 import { RoomFormComponent } from './room-form/room-form.component';
 import { ConfirmComponent } from 'src/app/components/confirm/confirm.component';
 import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
 import { PageEvent } from '@angular/material/paginator';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
 interface Room {
   id: number;
   title: string;
@@ -25,12 +27,13 @@ interface Room {
   viewCount: number;
   createdAt: string;
 }
+
 @Component({
   selector: 'app-room-list',
   templateUrl: './room-list.component.html',
   styleUrls: ['./room-list.component.css'],
 })
-export class RoomListComponent {
+export class RoomListComponent implements OnInit {
   displayedColumns: string[] = [
     'image',
     'title',
@@ -44,13 +47,14 @@ export class RoomListComponent {
     'createdAt',
     'actions',
   ];
-  room: Room[] = [];
+  dataSource = new MatTableDataSource<Room>([]);
   loading: boolean = true;
   pagingModel?: PaggingModel;
   size = environment.pageSize;
   pageSizeOptions: number[] = environment.pageSizeOptions;
   currentPage = 0;
   page = environment.currentPage;
+
   constructor(
     private roomService: RoomService,
     private sanitizer: DomSanitizer,
@@ -59,43 +63,56 @@ export class RoomListComponent {
   ) {}
 
   ngOnInit(): void {
-    this.fetchRoom();
+    this.fetchRoom(); // Initial fetch without search
   }
 
-  fetchRoom(): void {
-    this.loading = true; // Start loading
-    this.roomService.getRooms().subscribe(
-      response => {
+  fetchRoom(search?: string): void {
+    this.loading = true;
+    const params = {
+      page: this.currentPage,
+      size: this.size,
+      search: search || '', // Include the search term if provided
+    };
+
+    this.roomService.getRooms(params).subscribe(
+      (response) => {
         if (response.code === 200) {
-          this.room = response.result.result as Room[];
-          this.room.forEach(room => this.loadImage(room));
+          this.dataSource.data = response.result.result as Room[];
+          this.pagingModel = response.result; // Capture pagination data
+          this.dataSource.data.forEach((room) => this.loadImage(room));
         }
-        this.loading = false; // Stop loading after fetch
+        this.loading = false;
       },
-      error => {
+      (error) => {
         console.error('Error fetching room data', error);
-        this.loading = false; // Stop loading on error
+        this.loading = false;
       }
     );
   }
+
+  applyFilter(searchValue: string): void {
+    this.fetchRoom(searchValue); // Call fetchRoom with the search value
+  }
+
+  clearFilter(searchInput: HTMLInputElement): void {
+    searchInput.value = ''; // Clear the input field
+    this.applyFilter(''); // Reset the filter to show all rooms
+  }
+
   pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.fetchRoom();
+    this.fetchRoom(); // Re-fetch rooms on page change
   }
+
   loadImage(room: Room): void {
-    if (!room.imagePaths || room.imagePaths.length === 0) {
-      console.error('No image paths available for room:', room);
-      return;
-    }
+    if (!room.imagePaths || room.imagePaths.length === 0) return;
 
-    const firstImagePath = room.imagePaths[0]; // Use the first image for display
-
+    const firstImagePath = room.imagePaths[0];
     this.roomService.getImage(firstImagePath).subscribe(
       (imageBlob) => {
         const objectURL = URL.createObjectURL(imageBlob);
         room.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-        console.log('Image loaded:', room.safeImagePath);
       },
       (error) => {
         console.error('Error loading image:', error);
@@ -103,49 +120,51 @@ export class RoomListComponent {
     );
   }
 
-
-
   openDeleteDialog(room: Room): void {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '400px',
       data: {
-        title: 'Delete House',
+        title: 'Delete Room',
         message: `Are you sure you want to delete the room: ${room.title}?`,
         confirmText: 'Yes, Delete',
-        cancelText: 'Cancel'
-      }
+        cancelText: 'Cancel',
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
-        this.deleteHouse(room);
+        this.deleteRoom(room);
       }
     });
   }
 
-  // Handle room deletion
-  deleteHouse(room: Room): void {
+  deleteRoom(room: Room): void {
     this.roomService.deleteRoom(room.id).subscribe(
-      (response) => {
-        this.snackBar.open(`${room.title} has been deleted.`, 'Close', { duration: 3000 });
+      () => {
+        this.snackBar.open(`${room.title} has been deleted.`, 'Close', {
+          duration: 3000,
+        });
         this.fetchRoom(); // Refresh the list after deletion
       },
       (error) => {
         console.error('Error deleting room:', error);
-        this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', { duration: 3000 });
+        this.snackBar.open(`Failed to delete ${room.title}.`, 'Close', {
+          duration: 3000,
+        });
       }
     );
   }
+
   openUpdateDialog(room: Room): void {
     const dialogRef = this.dialog.open(RoomFormComponent, {
       width: '600px',
       data: {
         ...room,
-        imagePath: room.imagePaths // Ensure the correct imagePath is passed
-      }
+        imagePath: room.imagePaths,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.fetchRoom();
       }

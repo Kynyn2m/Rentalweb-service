@@ -5,3 +5,16 @@
 h2 {
   text-align: center;
 }
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 0;
+  top: 2;
+  z-index: 1;
+  column-gap: 0.5rem;
+  margin-left: 0rem;
+}
+.header {
+  padding: 1rem;
+  text-align: center;
+}
