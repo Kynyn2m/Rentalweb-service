@@ -9,18 +9,20 @@ import { HouseService } from 'src/app/Service/house.service';
 import Swal from 'sweetalert2';
 
 const defaultIcon = L.icon({
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
   shadowSize: [41, 41],
 });
 
 @Component({
   selector: 'app-add-post-house',
   templateUrl: './add-post-house.component.html',
-  styleUrls: ['./add-post-house.component.css']
+  styleUrls: ['./add-post-house.component.css'],
 })
 export class AddPostHouseComponent implements OnInit {
   addPostForm!: FormGroup;
@@ -31,14 +33,13 @@ export class AddPostHouseComponent implements OnInit {
   userLocation: { lat: number; lng: number } | null = null;
   userMarker: any;
 
-
   provinceId_c: number | null = 0; // To track the selected province
   provinces_c: any[] = []; // Array to store the list of provinces
   districtId_c: number | null = 0; // To track the selected district
   districts_c: any[] = []; // Array to store the list of districts
-  communeId_c: number | null = 0;   // To track the selected commune
+  communeId_c: number | null = 0; // To track the selected commune
   communes_c: any[] = [];
-  villageId_c: number | null = 0;   // To track the selected village
+  villageId_c: number | null = 0; // To track the selected village
   villages_c: any[] = [];
 
   constructor(
@@ -48,12 +49,10 @@ export class AddPostHouseComponent implements OnInit {
     private readonly districtService: DistrictService,
     private readonly cdr: ChangeDetectorRef,
     private readonly communeService: CommuneService,
-    private readonly villageService: VillageService,
-
+    private readonly villageService: VillageService
   ) {}
 
   ngOnInit(): void {
-
     this.getUserLocation();
 
     this.addPostForm = this.fb.group({
@@ -108,7 +107,10 @@ export class AddPostHouseComponent implements OnInit {
     }
 
     // Add a new marker at the user's location
-    this.userMarker = L.marker([lat, lng], { draggable: true, icon: defaultIcon }).addTo(this.map);
+    this.userMarker = L.marker([lat, lng], {
+      draggable: true,
+      icon: defaultIcon,
+    }).addTo(this.map);
     this.map.setView([lat, lng], 12); // Center map on the user location
 
     // Update linkMap form control with the user's location in Google Maps format
@@ -160,7 +162,6 @@ export class AddPostHouseComponent implements OnInit {
     }
   }
 
-
   onAddressSelectionComplete(): void {
     const selectedLocation = `${this.villageId_c}, ${this.communeId_c}, ${this.districtId_c}, ${this.provinceId_c}`;
     this.addPostForm.patchValue({
@@ -195,7 +196,6 @@ export class AddPostHouseComponent implements OnInit {
     console.log('Selected District ID:', this.districtId_c);
 
     if (this.districtId_c) {
-
       this.communeService.getByDistrictPublic(this.districtId_c).subscribe(
         (res) => {
           console.log('Communes Response:', res);
@@ -213,7 +213,6 @@ export class AddPostHouseComponent implements OnInit {
       );
     }
   }
-
 
   onCommuneSelected(event: any): void {
     this.communeId_c = event.value;
@@ -241,8 +240,6 @@ export class AddPostHouseComponent implements OnInit {
     this.villageId_c = event.value;
     console.log('Selected Village ID:', this.villageId_c);
   }
-
-
 
   onFileSelected(event: any): void {
     const files: File[] = Array.from(event.target.files);
@@ -287,9 +284,15 @@ export class AddPostHouseComponent implements OnInit {
     if (this.addPostForm.valid) {
       const formData = new FormData();
       formData.append('title', this.addPostForm.get('title')?.value);
-      formData.append('description', this.addPostForm.get('description')?.value);
+      formData.append(
+        'description',
+        this.addPostForm.get('description')?.value
+      );
       formData.append('price', this.addPostForm.get('price')?.value);
-      formData.append('phoneNumber', this.addPostForm.get('phoneNumber')?.value);
+      formData.append(
+        'phoneNumber',
+        this.addPostForm.get('phoneNumber')?.value
+      );
       formData.append('linkMap', this.addPostForm.get('linkMap')?.value);
       formData.append('floor', this.addPostForm.get('floor')?.value);
       formData.append('width', this.addPostForm.get('width')?.value);
@@ -326,7 +329,7 @@ export class AddPostHouseComponent implements OnInit {
               <a href="https://t.me/Kinynom" target="_blank" style="display: inline-block; padding: 10px 20px; margin-top: 10px; background-color: #3085d6; color: white; text-decoration: none; border-radius: 5px;">Contact Admin via Telegram</a>
             `,
             icon: 'error',
-            showConfirmButton: false
+            showConfirmButton: false,
           });
         }
       );
@@ -334,10 +337,6 @@ export class AddPostHouseComponent implements OnInit {
       console.log('Form is invalid, please check inputs.');
     }
   }
-
-
-
-
 
   // Navigate back to the previous route
   goBack(): void {

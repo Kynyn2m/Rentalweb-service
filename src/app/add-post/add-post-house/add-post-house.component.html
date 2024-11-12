@@ -147,9 +147,7 @@
     <!-- Link Map, Floor, Width, Height -->
     <div fxLayout="row wrap"
          fxLayoutGap="16px">
-      <h3 class="map-title">Pick Location on Map</h3>
-      <div id="map"
-           class="map-container"></div>
+
       <mat-form-field appearance="outline"
                       fxFlex="100%"
                       fxFlex.gt-sm="48%">
@@ -195,7 +193,11 @@
             addPostForm.get('height')?.touched
           ">Height is required</mat-error>
       </mat-form-field>
+
     </div>
+    <h3 class="map-title">Pick Location on Map</h3>
+    <div id="map"
+         class="map-container"></div>
 
     <!-- Image Upload -->
     <div class="file-input-container">
