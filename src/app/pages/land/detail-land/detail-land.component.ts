@@ -184,8 +184,8 @@ export class DetailLandComponent
     const landId = landIdParam ? parseInt(landIdParam, 10) : null;
 
     if (landId) {
-      this.getLandDetails(landId); // Fetch land details and link map
-      this.loadComments(landId); // Load comments for the land
+      this.getLandDetails(landId); // Fetch house details and link map
+      this.loadComments(landId); // Load comments for the house
 
       // Fetch and display nearby locations when coordinates are available
       if (this.lande?.linkMap) {
@@ -388,11 +388,30 @@ export class DetailLandComponent
             this.lande.village
           );
 
+          // Check and set the linkMap
           if (this.lande.linkMap) {
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.lande.linkMap}&output=embed`
+            // Log linkMap to ensure it's being received
+            console.log('Original land linkMap:', this.lande.linkMap);
+
+            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(
+              this.lande.linkMap
             );
+            this.linkMap = isCoordinates
+              ? `https://www.google.com/maps?q=${this.lande.linkMap}`
+              : this.lande.linkMap;
+
+            // Log formatted linkMap to ensure correct format
+            console.log('Formatted linkMap:', this.linkMap);
+
+            // Sanitize URL for embedding
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.linkMap}&output=embed`
+            );
+          } else {
+            console.warn('No linkMap provided for this land');
           }
+
           console.log('Fetched updated land details:', this.lande);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
@@ -568,7 +587,9 @@ export class DetailLandComponent
         if (this.lande) {
           this.lande.favoriteable = !this.lande.favoriteable;
         }
-        console.log(`Successfully toggled favorite for land ID ${this.landId}`);
+        console.log(
+          `Successfully toggled favorite for house ID ${this.landId}`
+        );
         this.getLandDetails(this.landId); // Re-fetch details to confirm state
       },
       error: (error) => {
