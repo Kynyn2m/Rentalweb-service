@@ -3,7 +3,7 @@ export const environment = {
   roleAdmin: 'ADMIN',
   apiUrl: 'http://localhost:8080',
   // apiUrl: 'https://rantel-backed.onrender.com',
-  pageSize: 10,
+  pageSize: 5,
   sizeZero: 0,
   currentPage: 0,
   pageSizeOptions: [5, 10, 25, 50, 100],

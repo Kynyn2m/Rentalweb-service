@@ -54,6 +54,14 @@ export class CommentComponent implements OnInit, AfterViewInit {
     this.loadComments(event.pageIndex, event.pageSize);
   }
 
+  applyFilter(filterValue: string): void {
+    this.comments.filter = filterValue.trim().toLowerCase();
+  }
+
+  clearFilter(searchInput: HTMLInputElement): void {
+    searchInput.value = ''; // Clear the input field
+    this.comments.filter = ''; // Reset the filter
+  }
   deleteComment(commentId: number): void {
     Swal.fire({
       title: 'Are you sure?',
