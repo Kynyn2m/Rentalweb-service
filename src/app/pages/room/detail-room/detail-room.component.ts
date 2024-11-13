@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -14,7 +19,10 @@ import { VillageService } from 'src/app/address/village.service';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 import { ShareOverlayComponent } from 'src/app/details/share-overlay/share-overlay.component';
-import { CommentData, UpdateCommentDialogComponent } from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
+import {
+  CommentData,
+  UpdateCommentDialogComponent,
+} from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
 import { RoomService } from 'src/app/Service/room.service';
 import Swal from 'sweetalert2';
 const defaultIcon = L.icon({
@@ -34,7 +42,7 @@ interface Room {
   description: string;
   location: string;
   price: number;
-  landSize: number;
+  roomsSize: number;
   phoneNumber: string;
   imagePath: string;
   imagePaths: string[];
@@ -108,7 +116,9 @@ interface PaggingModel<T> {
   templateUrl: './detail-room.component.html',
   styleUrls: ['./detail-room.component.css'],
 })
-export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCounts {
+export class DetailRoomComponent
+  implements OnInit, AfterViewInit, AmenityCounts
+{
   rooms: Room | null = null;
   roomId!: number;
   room: any[] = [];
@@ -158,22 +168,22 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
     private readonly router: Router,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.setDefaultMapUrl();
   }
   ngOnInit(): void {
     this.roomId = +this.route.snapshot.paramMap.get('id')!;
-    this.fetchHouseDetails();
-    this.loadRelatedHouses();
+    this.fetchRoomDetails();
+    this.loadRelatedRooms();
     // Extract or use default coordinates to fetch nearby locations on page load
     this.roomId = +this.route.snapshot.paramMap.get('id')!;
     const roomIdParam = this.route.snapshot.paramMap.get('id');
     const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
 
     if (roomId) {
-      this.getHouseDetails(roomId); // Fetch house details and link map
-      this.loadComments(roomId); // Load comments for the house
+      this.getRoomDetails(roomId); // Fetch room details and link map
+      this.loadComments(roomId); // Load comments for the room
 
       // Fetch and display nearby locations when coordinates are available
       if (this.rooms?.linkMap) {
@@ -186,7 +196,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
         this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
       }
     } else {
-      console.error('Invalid house ID');
+      console.error('Invalid room ID');
     }
   }
 
@@ -288,8 +298,8 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     const updateData = {
       id: updatedComment.id,
       description: updatedComment.description,
-      roomId: this.rooms?.id ?? null, // Replace with actual houseId if necessary
-      type: 'land', // or 'land'/'room' as per requirement
+      roomId: this.rooms?.id ?? null, // Replace with actual roomId if necessary
+      type: 'rooms', // or 'rooms'/'room' as per requirement
     };
 
     this.roomService.updateComment(updateData.id, updateData).subscribe(
@@ -303,7 +313,8 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
         console.error('Error updating comment:', error);
 
         // Display snackbar with the error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can update only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar'], // Optional: custom class for error styling
@@ -311,7 +322,6 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       }
     );
   }
-
 
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
@@ -344,7 +354,8 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
         console.error('Sorry you can delete only your own comnment');
 
         // Show a snackbar with the exact error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can delete only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000, // Snackbar duration in milliseconds
           panelClass: ['error-snackbar'], // Optional: custom class for styling
@@ -352,7 +363,6 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       }
     );
   }
-
 
   ngAfterViewInit(): void {
     if (this.rooms && this.rooms.linkMap) {
@@ -363,7 +373,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     }
   }
 
-  getHouseDetails(id: number): void {
+  getRoomDetails(id: number): void {
     this.roomService.getRoomById(id.toString()).subscribe(
       (response) => {
         this.rooms = response.result as Room;
@@ -381,12 +391,12 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
               `${this.rooms.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated house details:', this.rooms);
+          console.log('Fetched updated room details:', this.rooms);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
-        console.error('Error fetching house details:', error);
+        console.error('Error fetching room details:', error);
       }
     );
   }
@@ -413,14 +423,14 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
   initializeMap(lat: number, lng: number): void {
     if (!this.map) {
       setTimeout(() => {
-        const mapContainer = document.getElementById('house-map');
+        const mapContainer = document.getElementById('room-map');
         if (!mapContainer) {
           console.error('Map container not found.');
           return;
         }
 
         // Initialize the map centered on the property
-        this.map = L.map('house-map').setView([lat, lng], 14);
+        this.map = L.map('room-map').setView([lat, lng], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(this.map);
@@ -501,7 +511,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     });
   }
 
-  fetchHouseDetails(): void {
+  fetchRoomDetails(): void {
     this.roomService.getRoomById(this.roomId.toString()).subscribe({
       next: (response) => {
         this.rooms = response.result;
@@ -518,13 +528,13 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
               `${this.rooms.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated house details:', this.rooms);
+          console.log('Fetched updated room details:', this.rooms);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       error: (error) => {
         console.error(
-          `Error fetching house details for ID ${this.roomId}:`,
+          `Error fetching room details for ID ${this.roomId}:`,
           error
         );
       },
@@ -536,7 +546,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this house.',
+        text: 'Please log in to favorite this room.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -548,18 +558,16 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       return;
     }
 
-    console.log(`Attempting to toggle favorite for house ID: ${this.roomId}`);
+    console.log(`Attempting to toggle favorite for room ID: ${this.roomId}`);
 
-    this.roomService.toggleFavorite(this.roomId, 'house').subscribe({
+    this.roomService.toggleFavorite(this.roomId, 'room').subscribe({
       next: () => {
         // Toggle the 'favoriteable' status locally without blocking future clicks
         if (this.rooms) {
           this.rooms.favoriteable = !this.rooms.favoriteable;
         }
-        console.log(
-          `Successfully toggled favorite for house ID ${this.roomId}`
-        );
-        this.getHouseDetails(this.roomId); // Re-fetch details to confirm state
+        console.log(`Successfully toggled favorite for room ID ${this.roomId}`);
+        this.getRoomDetails(this.roomId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(
@@ -581,26 +589,26 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     });
   }
 
-  loadImages(land: Room): void {
-    if (land.imagePaths && land.imagePaths.length > 0) {
-      land.safeImagePaths = []; // Clear existing paths
+  loadImages(rooms: Room): void {
+    if (rooms.imagePaths && rooms.imagePaths.length > 0) {
+      rooms.safeImagePaths = []; // Clear existing paths
 
       // Track the loading order to set the first image consistently
       let imagesLoaded = 0;
 
-      land.imagePaths.forEach((imagePath, index) => {
+      rooms.imagePaths.forEach((imagePath, index) => {
         this.roomService.getImage(imagePath).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            land.safeImagePaths!.push(safeUrl);
+            rooms.safeImagePaths!.push(safeUrl);
 
             imagesLoaded++;
 
             // Set `currentImage` and `currentImageIndex` to the first loaded image
             if (imagesLoaded === 1) {
               this.currentImage = safeUrl;
-              land.currentImageIndex = 0; // Assign 0 since images are available
+              rooms.currentImageIndex = 0; // Assign 0 since images are available
             }
           },
           (error) => {
@@ -610,46 +618,46 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       });
     } else {
       // Handle cases with no images
-      land.safeImagePaths = [];
+      rooms.safeImagePaths = [];
       this.currentImage = null;
-      land.currentImageIndex = -1; // Use -1 or any number indicating no images
+      rooms.currentImageIndex = -1; // Use -1 or any number indicating no images
     }
   }
 
-  // Function to load images specifically for card houses in Related Posts
-  loadCardImages(land: Room): void {
-    land.safeImagePaths = []; // Clear any existing images
-    land.imagePaths.forEach((imagePath) => {
+  // Function to load images specifically for card rooms in Related Posts
+  loadCardImages(rooms: Room): void {
+    rooms.safeImagePaths = []; // Clear any existing images
+    rooms.imagePaths.forEach((imagePath) => {
       this.roomService.getImage(imagePath).subscribe(
         (imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          land.safeImagePaths!.push(safeUrl);
+          rooms.safeImagePaths!.push(safeUrl);
         },
         (error) => {
           console.error('Error loading image:', error);
         }
       );
     });
-    land.currentImageIndex = 0; // Set default image index
+    rooms.currentImageIndex = 0; // Set default image index
   }
 
-  // Function to go to the previous image for a specific card house
-  prevCardImage(house: Room): void {
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex > 0
-          ? house.currentImageIndex - 1
-          : house.safeImagePaths.length - 1;
+  // Function to go to the previous image for a specific card room
+  prevCardImage(room: Room): void {
+    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
+      room.currentImageIndex =
+        room.currentImageIndex > 0
+          ? room.currentImageIndex - 1
+          : room.safeImagePaths.length - 1;
     }
   }
 
-  // Function to go to the next image for a specific card house
-  nextCardImage(house: Room): void {
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex < house.safeImagePaths.length - 1
-          ? house.currentImageIndex + 1
+  // Function to go to the next image for a specific card room
+  nextCardImage(room: Room): void {
+    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
+      room.currentImageIndex =
+        room.currentImageIndex < room.safeImagePaths.length - 1
+          ? room.currentImageIndex + 1
           : 0;
     }
   }
@@ -756,13 +764,13 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     window.history.back();
   }
 
-  loadSafeImagePaths(house: Room): SafeUrl[] {
-    return house.imagePaths.map((path) =>
+  loadSafeImagePaths(room: Room): SafeUrl[] {
+    return room.imagePaths.map((path) =>
       this.sanitizer.bypassSecurityTrustUrl(path)
     );
   }
 
-  loadRelatedHouses(page: number = 0): void {
+  loadRelatedRooms(page: number = 0): void {
     this.loading = true;
     this.roomService.getRooms({ page, size: this.itemsPerPage }).subscribe(
       (response) => {
@@ -770,68 +778,68 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
         this.room = responseData.result;
         this.totalPages = responseData.totalPage;
 
-        // Call loadImage for each house to load its images
-        this.room.forEach((house) => {
-          this.loadImage(house);
+        // Call loadImage for each room to load its images
+        this.room.forEach((room) => {
+          this.loadImage(room);
         });
 
         this.loading = false;
       },
       (error) => {
         this.loading = false;
-        console.error('Error loading houses:', error);
+        console.error('Error loading rooms:', error);
       }
     );
   }
 
-  loadImage(land: any): void {
-    if (land.imagePaths && land.imagePaths.length > 0) {
-      land.safeImagePaths = [];
-      land.imagePaths.forEach((imageUrl: string) => {
+  loadImage(rooms: any): void {
+    if (rooms.imagePaths && rooms.imagePaths.length > 0) {
+      rooms.safeImagePaths = [];
+      rooms.imagePaths.forEach((imageUrl: string) => {
         this.roomService.getImage(imageUrl).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            land.safeImagePaths.push(safeUrl);
+            rooms.safeImagePaths.push(safeUrl);
           },
           (error) => {
             console.error('Error loading image:', error);
           }
         );
       });
-      land.currentImageIndex = 0;
+      rooms.currentImageIndex = 0;
     } else {
-      land.safeImagePaths = [];
-      land.currentImageIndex = 0;
+      rooms.safeImagePaths = [];
+      rooms.currentImageIndex = 0;
     }
   }
 
-  prevImage1(house: Room): void {
+  prevImage1(room: Room): void {
     // Check if safeImagePaths exists and has images
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex > 0
-          ? house.currentImageIndex - 1
-          : house.safeImagePaths.length - 1;
+    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
+      room.currentImageIndex =
+        room.currentImageIndex > 0
+          ? room.currentImageIndex - 1
+          : room.safeImagePaths.length - 1;
     }
   }
 
-  nextImage1(house: Room): void {
+  nextImage1(room: Room): void {
     // Check if safeImagePaths exists and has images
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex < house.safeImagePaths.length - 1
-          ? house.currentImageIndex + 1
+    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
+      room.currentImageIndex =
+        room.currentImageIndex < room.safeImagePaths.length - 1
+          ? room.currentImageIndex + 1
           : 0;
     }
   }
 
-  likeHouse(roomId: number): void {
+  likeRoom(roomId: number): void {
     if (!this.authenticationService.isLoggedIn()) {
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to like this house.',
+        text: 'Please log in to like this room.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -843,22 +851,22 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       return;
     }
 
-    const house = this.room.find((h) => h.id === roomId);
-    if (!house || house.pending) return;
+    const room = this.room.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
 
-    house.pending = true;
-    console.log(`Toggling like for house ID ${roomId}`);
+    room.pending = true;
+    console.log(`Toggling like for room ID ${roomId}`);
 
-    // Provide the `postType` argument, such as 'house' or another applicable value.
-    this.roomService.likeRoom(roomId, 'house').subscribe({
-      next: () => this.fetchHouseData(roomId),
+    // Provide the `postType` argument, such as 'room' or another applicable value.
+    this.roomService.likeRoom(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
       error: (error) => {
-        console.error(`Error toggling like for house ID ${roomId}:`, error);
-        this.fetchHouseData(roomId);
+        console.error(`Error toggling like for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
       },
       complete: () => {
-        console.log(`Completed like toggle for house ID ${roomId}`);
-        house.pending = false;
+        console.log(`Completed like toggle for room ID ${roomId}`);
+        room.pending = false;
       },
     });
   }
@@ -868,7 +876,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this house.',
+        text: 'Please log in to favorite this room.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -880,72 +888,69 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       return;
     }
 
-    const house = this.room.find((h) => h.id === roomId);
-    if (!house || house.pending) return;
+    const room = this.room.find((h) => h.id === roomId);
+    if (!room || room.pending) return;
 
-    house.pending = true;
-    console.log(`Toggling favorite for house ID ${roomId}`);
+    room.pending = true;
+    console.log(`Toggling favorite for room ID ${roomId}`);
 
-    this.roomService.toggleFavorite(roomId, 'house').subscribe({
-      next: () => this.fetchHouseData(roomId),
+    this.roomService.toggleFavorite(roomId, 'room').subscribe({
+      next: () => this.fetchRoomData(roomId),
       error: (error) => {
-        console.error(
-          `Error toggling favorite for house ID ${roomId}:`,
-          error
-        );
-        this.fetchHouseData(roomId);
+        console.error(`Error toggling favorite for room ID ${roomId}:`, error);
+        this.fetchRoomData(roomId);
       },
       complete: () => {
-        house.pending = false;
-        console.log(`Completed favorite toggle for house ID ${roomId}`);
+        room.pending = false;
+        console.log(`Completed favorite toggle for room ID ${roomId}`);
       },
     });
   }
 
-  updateHouseData(roomId: number): void {
+  updateRoomData(roomId: number): void {
     this.roomService.getRoomById(roomId.toString()).subscribe({
       next: (response) => {
-        const updatedHouse = response.result;
+        const updatedRoom = response.result;
         const index = this.room.findIndex((h) => h.id === roomId);
         if (index !== -1) {
           this.room[index] = {
             ...this.room[index],
-            likeCount: updatedHouse.likeCount,
-            likeable: updatedHouse.likeable,
-            favoriteable: updatedHouse.favoriteable,
+            likeCount: updatedRoom.likeCount,
+            likeable: updatedRoom.likeable,
+            favoriteable: updatedRoom.favoriteable,
             pending: false,
           };
         }
       },
       error: (error) => {
-        console.error(`Error updating data for house ID ${roomId}:`, error);
+        console.error(`Error updating data for room ID ${roomId}:`, error);
       },
     });
   }
 
-  goToDetails(roomId: number): void {
-    this.router.navigate(['/details', roomId]);
+  goToDetailsRoom(roomId: number): void {
+    this.router.navigate(['/details-room', roomId]);
   }
-  goToDetails1(roomId: number): void {
-    this.router.navigate(['/details', roomId]).then(() => {
+
+  goToDetailsRoom1(roomId: number): void {
+    this.router.navigate(['/details-room', roomId]).then(() => {
       window.location.reload();
       // this.fetchHouseDetails();
     });
   }
-
-  private fetchHouseData(roomId: number): void {
-    console.log(`Fetching updated data for house ID ${roomId}...`);
+  private fetchRoomData(roomId: number): void {
+    console.log(`Fetching updated data for room ID ${roomId}...`);
 
     this.roomService.getRoomById(roomId.toString()).subscribe({
       next: (response) => {
-        const houseIndex = this.room.findIndex((h) => h.id === roomId);
-        if (houseIndex > -1 && response.result) {
-          const updatedHouse = response.result;
-          this.room[houseIndex] = {
-            ...this.room[houseIndex],
-            likeCount: updatedHouse.likeCount,
-            likeable: updatedHouse.likeable,
-            favoriteable: updatedHouse.favoriteable,
+        const roomIndex = this.room.findIndex((h) => h.id === roomId);
+        if (roomIndex > -1 && response.result) {
+          const updatedRoom = response.result;
+          this.room[roomIndex] = {
+            ...this.room[roomIndex],
+            likeCount: updatedRoom.likeCount,
+            likeable: updatedRoom.likeable,
+            favoriteable: updatedRoom.favoriteable,
             pending: false,
           };
           this.cdr.detectChanges();
@@ -953,7 +958,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
       },
       error: (error) => {
         console.error(
-          `Error fetching latest data for house ID ${roomId}:`,
+          `Error fetching latest data for room ID ${roomId}:`,
           error
         );
       },

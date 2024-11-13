@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -15,9 +20,11 @@ import { VillageService } from 'src/app/address/village.service';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 import { ShareOverlayComponent } from 'src/app/details/share-overlay/share-overlay.component';
-import { CommentData, UpdateCommentDialogComponent } from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
+import {
+  CommentData,
+  UpdateCommentDialogComponent,
+} from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
 import Swal from 'sweetalert2';
-
 
 const defaultIcon = L.icon({
   iconUrl:
@@ -111,7 +118,9 @@ interface PaggingModel<T> {
   templateUrl: './detail-land.component.html',
   styleUrls: ['./detail-land.component.css'],
 })
-export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts{
+export class DetailLandComponent
+  implements OnInit, AfterViewInit, AmenityCounts
+{
   lande: Land | null = null;
   landId!: number;
   land: any[] = [];
@@ -161,22 +170,22 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
     private readonly router: Router,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.setDefaultMapUrl();
   }
   ngOnInit(): void {
     this.landId = +this.route.snapshot.paramMap.get('id')!;
-    this.fetchHouseDetails();
-    this.loadRelatedHouses();
+    this.fetchLandDetails();
+    this.loadRelatedLand();
     // Extract or use default coordinates to fetch nearby locations on page load
     this.landId = +this.route.snapshot.paramMap.get('id')!;
     const landIdParam = this.route.snapshot.paramMap.get('id');
     const landId = landIdParam ? parseInt(landIdParam, 10) : null;
 
     if (landId) {
-      this.getHouseDetails(landId); // Fetch house details and link map
-      this.loadComments(landId); // Load comments for the house
+      this.getLandDetails(landId); // Fetch land details and link map
+      this.loadComments(landId); // Load comments for the land
 
       // Fetch and display nearby locations when coordinates are available
       if (this.lande?.linkMap) {
@@ -189,7 +198,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
       }
     } else {
-      console.error('Invalid house ID');
+      console.error('Invalid land ID');
     }
   }
 
@@ -291,8 +300,8 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     const updateData = {
       id: updatedComment.id,
       description: updatedComment.description,
-      landId: this.lande?.id ?? null, // Replace with actual houseId if necessary
-      type: 'land', // or 'land'/'room' as per requirement
+      landId: this.lande?.id ?? null, // Replace with actual landId if necessary
+      type: 'land', // or 'land'/'land' as per requirement
     };
 
     this.landService.updateComment(updateData.id, updateData).subscribe(
@@ -306,7 +315,8 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         console.error('Error updating comment:', error);
 
         // Display snackbar with the error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can update only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar'], // Optional: custom class for error styling
@@ -314,7 +324,6 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       }
     );
   }
-
 
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
@@ -347,7 +356,8 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         console.error('Sorry you can delete only your own comnment');
 
         // Show a snackbar with the exact error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can delete only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000, // Snackbar duration in milliseconds
           panelClass: ['error-snackbar'], // Optional: custom class for styling
@@ -355,7 +365,6 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       }
     );
   }
-
 
   ngAfterViewInit(): void {
     if (this.lande && this.lande.linkMap) {
@@ -366,7 +375,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     }
   }
 
-  getHouseDetails(id: number): void {
+  getLandDetails(id: number): void {
     this.landService.getLandById(id.toString()).subscribe(
       (response) => {
         this.lande = response.result as Land;
@@ -384,12 +393,12 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
               `${this.lande.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated house details:', this.lande);
+          console.log('Fetched updated land details:', this.lande);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
-        console.error('Error fetching house details:', error);
+        console.error('Error fetching land details:', error);
       }
     );
   }
@@ -416,14 +425,14 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
   initializeMap(lat: number, lng: number): void {
     if (!this.map) {
       setTimeout(() => {
-        const mapContainer = document.getElementById('house-map');
+        const mapContainer = document.getElementById('land-map');
         if (!mapContainer) {
           console.error('Map container not found.');
           return;
         }
 
         // Initialize the map centered on the property
-        this.map = L.map('house-map').setView([lat, lng], 14);
+        this.map = L.map('land-map').setView([lat, lng], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors',
         }).addTo(this.map);
@@ -504,7 +513,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     });
   }
 
-  fetchHouseDetails(): void {
+  fetchLandDetails(): void {
     this.landService.getLandById(this.landId.toString()).subscribe({
       next: (response) => {
         this.lande = response.result;
@@ -521,13 +530,13 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
               `${this.lande.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated house details:', this.lande);
+          console.log('Fetched updated land details:', this.lande);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       error: (error) => {
         console.error(
-          `Error fetching house details for ID ${this.landId}:`,
+          `Error fetching land details for ID ${this.landId}:`,
           error
         );
       },
@@ -539,7 +548,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this house.',
+        text: 'Please log in to favorite this land.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -551,18 +560,16 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       return;
     }
 
-    console.log(`Attempting to toggle favorite for house ID: ${this.landId}`);
+    console.log(`Attempting to toggle favorite for land ID: ${this.landId}`);
 
-    this.landService.toggleFavorite(this.landId, 'house').subscribe({
+    this.landService.toggleFavorite(this.landId, 'land').subscribe({
       next: () => {
         // Toggle the 'favoriteable' status locally without blocking future clicks
         if (this.lande) {
           this.lande.favoriteable = !this.lande.favoriteable;
         }
-        console.log(
-          `Successfully toggled favorite for house ID ${this.landId}`
-        );
-        this.getHouseDetails(this.landId); // Re-fetch details to confirm state
+        console.log(`Successfully toggled favorite for land ID ${this.landId}`);
+        this.getLandDetails(this.landId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(
@@ -619,7 +626,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     }
   }
 
-  // Function to load images specifically for card houses in Related Posts
+  // Function to load images specifically for card land in Related Posts
   loadCardImages(land: Land): void {
     land.safeImagePaths = []; // Clear any existing images
     land.imagePaths.forEach((imagePath) => {
@@ -637,22 +644,22 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     land.currentImageIndex = 0; // Set default image index
   }
 
-  // Function to go to the previous image for a specific card house
-  prevCardImage(house: Land): void {
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex > 0
-          ? house.currentImageIndex - 1
-          : house.safeImagePaths.length - 1;
+  // Function to go to the previous image for a specific card land
+  prevCardImage(land: Land): void {
+    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
+      land.currentImageIndex =
+        land.currentImageIndex > 0
+          ? land.currentImageIndex - 1
+          : land.safeImagePaths.length - 1;
     }
   }
 
-  // Function to go to the next image for a specific card house
-  nextCardImage(house: Land): void {
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex < house.safeImagePaths.length - 1
-          ? house.currentImageIndex + 1
+  // Function to go to the next image for a specific card land
+  nextCardImage(land: Land): void {
+    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
+      land.currentImageIndex =
+        land.currentImageIndex < land.safeImagePaths.length - 1
+          ? land.currentImageIndex + 1
           : 0;
     }
   }
@@ -759,13 +766,13 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     window.history.back();
   }
 
-  loadSafeImagePaths(house: Land): SafeUrl[] {
-    return house.imagePaths.map((path) =>
+  loadSafeImagePaths(land: Land): SafeUrl[] {
+    return land.imagePaths.map((path) =>
       this.sanitizer.bypassSecurityTrustUrl(path)
     );
   }
 
-  loadRelatedHouses(page: number = 0): void {
+  loadRelatedLand(page: number = 0): void {
     this.loading = true;
     this.landService.getLand({ page, size: this.itemsPerPage }).subscribe(
       (response) => {
@@ -773,16 +780,16 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         this.land = responseData.result;
         this.totalPages = responseData.totalPage;
 
-        // Call loadImage for each house to load its images
-        this.land.forEach((house) => {
-          this.loadImage(house);
+        // Call loadImage for each land to load its images
+        this.land.forEach((land) => {
+          this.loadImage(land);
         });
 
         this.loading = false;
       },
       (error) => {
         this.loading = false;
-        console.error('Error loading houses:', error);
+        console.error('Error loading land:', error);
       }
     );
   }
@@ -809,32 +816,32 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     }
   }
 
-  prevImage1(house: Land): void {
+  prevImage1(land: Land): void {
     // Check if safeImagePaths exists and has images
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex > 0
-          ? house.currentImageIndex - 1
-          : house.safeImagePaths.length - 1;
+    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
+      land.currentImageIndex =
+        land.currentImageIndex > 0
+          ? land.currentImageIndex - 1
+          : land.safeImagePaths.length - 1;
     }
   }
 
-  nextImage1(house: Land): void {
+  nextImage1(land: Land): void {
     // Check if safeImagePaths exists and has images
-    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
-      house.currentImageIndex =
-        house.currentImageIndex < house.safeImagePaths.length - 1
-          ? house.currentImageIndex + 1
+    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
+      land.currentImageIndex =
+        land.currentImageIndex < land.safeImagePaths.length - 1
+          ? land.currentImageIndex + 1
           : 0;
     }
   }
 
-  likeHouse(landId: number): void {
+  likeLand(landId: number): void {
     if (!this.authenticationService.isLoggedIn()) {
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to like this house.',
+        text: 'Please log in to like this land.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -846,22 +853,22 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       return;
     }
 
-    const house = this.land.find((h) => h.id === landId);
-    if (!house || house.pending) return;
+    const land = this.land.find((h) => h.id === landId);
+    if (!land || land.pending) return;
 
-    house.pending = true;
-    console.log(`Toggling like for house ID ${landId}`);
+    land.pending = true;
+    console.log(`Toggling like for land ID ${landId}`);
 
-    // Provide the `postType` argument, such as 'house' or another applicable value.
-    this.landService.likeLand(landId, 'house').subscribe({
-      next: () => this.fetchHouseData(landId),
+    // Provide the `postType` argument, such as 'land' or another applicable value.
+    this.landService.likeLand(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
       error: (error) => {
-        console.error(`Error toggling like for house ID ${landId}:`, error);
-        this.fetchHouseData(landId);
+        console.error(`Error toggling like for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
       },
       complete: () => {
-        console.log(`Completed like toggle for house ID ${landId}`);
-        house.pending = false;
+        console.log(`Completed like toggle for land ID ${landId}`);
+        land.pending = false;
       },
     });
   }
@@ -871,7 +878,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this house.',
+        text: 'Please log in to favorite this land.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -883,72 +890,71 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       return;
     }
 
-    const house = this.land.find((h) => h.id === landId);
-    if (!house || house.pending) return;
+    const land = this.land.find((h) => h.id === landId);
+    if (!land || land.pending) return;
 
-    house.pending = true;
-    console.log(`Toggling favorite for house ID ${landId}`);
+    land.pending = true;
+    console.log(`Toggling favorite for land ID ${landId}`);
 
-    this.landService.toggleFavorite(landId, 'house').subscribe({
-      next: () => this.fetchHouseData(landId),
+    this.landService.toggleFavorite(landId, 'land').subscribe({
+      next: () => this.fetchLandData(landId),
       error: (error) => {
-        console.error(
-          `Error toggling favorite for house ID ${landId}:`,
-          error
-        );
-        this.fetchHouseData(landId);
+        console.error(`Error toggling favorite for land ID ${landId}:`, error);
+        this.fetchLandData(landId);
       },
       complete: () => {
-        house.pending = false;
-        console.log(`Completed favorite toggle for house ID ${landId}`);
+        land.pending = false;
+        console.log(`Completed favorite toggle for land ID ${landId}`);
       },
     });
   }
 
-  updateHouseData(landId: number): void {
+  updateLandData(landId: number): void {
     this.landService.getLandById(landId.toString()).subscribe({
       next: (response) => {
-        const updatedHouse = response.result;
+        const updatedLand = response.result;
         const index = this.land.findIndex((h) => h.id === landId);
         if (index !== -1) {
           this.land[index] = {
             ...this.land[index],
-            likeCount: updatedHouse.likeCount,
-            likeable: updatedHouse.likeable,
-            favoriteable: updatedHouse.favoriteable,
+            likeCount: updatedLand.likeCount,
+            likeable: updatedLand.likeable,
+            favoriteable: updatedLand.favoriteable,
             pending: false,
           };
         }
       },
       error: (error) => {
-        console.error(`Error updating data for house ID ${landId}:`, error);
+        console.error(`Error updating data for land ID ${landId}:`, error);
       },
     });
   }
 
-  goToDetails(landId: number): void {
-    this.router.navigate(['/details', landId]);
+  goToDetailsLand(landId: number): void {
+    this.router.navigate(['/details-land', landId]).then(() => {
+      window.location.reload();
+      // this.fetchLandDetails();
+    });
   }
-  goToDetails1(landId: number): void {
-    this.router.navigate(['/details', landId]).then(() => {
+  goToDetailsLand1(lanId: number): void {
+    this.router.navigate(['/details-land', lanId]).then(() => {
       window.location.reload();
       // this.fetchHouseDetails();
     });
   }
-
-  private fetchHouseData(landId: number): void {
-    console.log(`Fetching updated data for house ID ${landId}...`);
+  private fetchLandData(landId: number): void {
+    console.log(`Fetching updated data for land ID ${landId}...`);
 
     this.landService.getLandById(landId.toString()).subscribe({
       next: (response) => {
-        const houseIndex = this.land.findIndex((h) => h.id === landId);
-        if (houseIndex > -1 && response.result) {
-          const updatedHouse = response.result;
-          this.land[houseIndex] = {
-            ...this.land[houseIndex],
-            likeCount: updatedHouse.likeCount,
-            likeable: updatedHouse.likeable,
-            favoriteable: updatedHouse.favoriteable,
+        const landIndex = this.land.findIndex((h) => h.id === landId);
+        if (landIndex > -1 && response.result) {
+          const updatedLand = response.result;
+          this.land[landIndex] = {
+            ...this.land[landIndex],
+            likeCount: updatedLand.likeCount,
+            likeable: updatedLand.likeable,
+            favoriteable: updatedLand.favoriteable,
             pending: false,
           };
           this.cdr.detectChanges();
@@ -956,7 +962,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       },
       error: (error) => {
         console.error(
-          `Error fetching latest data for house ID ${landId}:`,
+          `Error fetching latest data for land ID ${landId}:`,
           error
         );
       },

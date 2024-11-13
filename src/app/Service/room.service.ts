@@ -25,9 +25,11 @@ export class RoomService {
   createPost(formData: FormData): Observable<any> {
     return this.http.post<any>(this.apiUrl, formData);
   }
+
   updateRoom(roomId: number, landData: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${roomId}`, landData);
   }
+
   getComments(roomId: number): Observable<{
     code: number;
     message: string;
@@ -154,10 +156,6 @@ export class RoomService {
     return this.http.put(url, {}); // Sending an empty body since it's a view count
   }
 
-  updateHouse(id: number, formData: FormData): Observable<any> {
-    const headers = new HttpHeaders().set('api-version', '1');
-    return this.http.put(`${this.apiUrl}/${id}`, formData, { headers });
-  }
   deleteRoom(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
