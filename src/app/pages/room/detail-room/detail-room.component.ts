@@ -172,7 +172,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
 
     if (roomId) {
-      this.getHouseDetails(roomId); // Fetch house details and link map
+      this.getRoomDetails(roomId); // Fetch house details and link map
       this.loadComments(roomId); // Load comments for the house
 
       // Fetch and display nearby locations when coordinates are available
@@ -363,7 +363,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
     }
   }
 
-  getHouseDetails(id: number): void {
+  getRoomDetails(id: number): void {
     this.roomService.getRoomById(id.toString()).subscribe(
       (response) => {
         this.rooms = response.result as Room;
@@ -376,17 +376,34 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
             this.rooms.village
           );
 
+          // Check and set the linkMap
           if (this.rooms.linkMap) {
+            // Log linkMap to ensure it's being received
+            console.log('Original room linkMap:', this.rooms.linkMap);
+
+            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(this.rooms.linkMap);
+            this.linkMap = isCoordinates
+              ? `https://www.google.com/maps?q=${this.rooms.linkMap}`
+              : this.rooms.linkMap;
+
+            // Log formatted linkMap to ensure correct format
+            console.log('Formatted linkMap:', this.linkMap);
+
+            // Sanitize URL for embedding
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.rooms.linkMap}&output=embed`
+              `${this.linkMap}&output=embed`
             );
+          } else {
+            console.warn('No linkMap provided for this room');
           }
-          console.log('Fetched updated house details:', this.rooms);
+
+          console.log('Fetched updated room details:', this.rooms);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
-        console.error('Error fetching house details:', error);
+        console.error('Error fetching room details:', error);
       }
     );
   }
@@ -559,7 +576,7 @@ export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCount
         console.log(
           `Successfully toggled favorite for house ID ${this.roomId}`
         );
-        this.getHouseDetails(this.roomId); // Re-fetch details to confirm state
+        this.getRoomDetails(this.roomId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(

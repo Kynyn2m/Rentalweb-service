@@ -175,7 +175,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     const landId = landIdParam ? parseInt(landIdParam, 10) : null;
 
     if (landId) {
-      this.getHouseDetails(landId); // Fetch house details and link map
+      this.getLandDetails(landId); // Fetch house details and link map
       this.loadComments(landId); // Load comments for the house
 
       // Fetch and display nearby locations when coordinates are available
@@ -366,7 +366,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     }
   }
 
-  getHouseDetails(id: number): void {
+    getLandDetails(id: number): void {
     this.landService.getLandById(id.toString()).subscribe(
       (response) => {
         this.lande = response.result as Land;
@@ -379,17 +379,34 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
             this.lande.village
           );
 
+          // Check and set the linkMap
           if (this.lande.linkMap) {
+            // Log linkMap to ensure it's being received
+            console.log('Original land linkMap:', this.lande.linkMap);
+
+            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(this.lande.linkMap);
+            this.linkMap = isCoordinates
+              ? `https://www.google.com/maps?q=${this.lande.linkMap}`
+              : this.lande.linkMap;
+
+            // Log formatted linkMap to ensure correct format
+            console.log('Formatted linkMap:', this.linkMap);
+
+            // Sanitize URL for embedding
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.lande.linkMap}&output=embed`
+              `${this.linkMap}&output=embed`
             );
+          } else {
+            console.warn('No linkMap provided for this land');
           }
-          console.log('Fetched updated house details:', this.lande);
+
+          console.log('Fetched updated land details:', this.lande);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
-        console.error('Error fetching house details:', error);
+        console.error('Error fetching land details:', error);
       }
     );
   }
@@ -562,7 +579,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         console.log(
           `Successfully toggled favorite for house ID ${this.landId}`
         );
-        this.getHouseDetails(this.landId); // Re-fetch details to confirm state
+        this.getLandDetails(this.landId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(
