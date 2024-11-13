@@ -393,11 +393,28 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
             this.house.village
           );
 
+          // Check and set the linkMap
           if (this.house.linkMap) {
+            // Log linkMap to ensure it's being received
+            console.log('Original house linkMap:', this.house.linkMap);
+
+            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(this.house.linkMap);
+            this.linkMap = isCoordinates
+              ? `https://www.google.com/maps?q=${this.house.linkMap}`
+              : this.house.linkMap;
+
+            // Log formatted linkMap to ensure correct format
+            console.log('Formatted linkMap:', this.linkMap);
+
+            // Sanitize URL for embedding
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.house.linkMap}&output=embed`
+              `${this.linkMap}&output=embed`
             );
+          } else {
+            console.warn('No linkMap provided for this house');
           }
+
           console.log('Fetched updated house details:', this.house);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
@@ -407,7 +424,6 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       }
     );
   }
-
   setDefaultMapUrl(): void {
     // Set the default map to Phnom Penh coordinates if no specific link is available
     const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;

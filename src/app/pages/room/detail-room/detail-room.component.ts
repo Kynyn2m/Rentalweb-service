@@ -182,8 +182,8 @@ export class DetailRoomComponent
     const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
 
     if (roomId) {
-      this.getRoomDetails(roomId); // Fetch room details and link map
-      this.loadComments(roomId); // Load comments for the room
+      this.getRoomDetails(roomId); // Fetch house details and link map
+      this.loadComments(roomId); // Load comments for the house
 
       // Fetch and display nearby locations when coordinates are available
       if (this.rooms?.linkMap) {
@@ -386,11 +386,30 @@ export class DetailRoomComponent
             this.rooms.village
           );
 
+          // Check and set the linkMap
           if (this.rooms.linkMap) {
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.rooms.linkMap}&output=embed`
+            // Log linkMap to ensure it's being received
+            console.log('Original room linkMap:', this.rooms.linkMap);
+
+            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(
+              this.rooms.linkMap
             );
+            this.linkMap = isCoordinates
+              ? `https://www.google.com/maps?q=${this.rooms.linkMap}`
+              : this.rooms.linkMap;
+
+            // Log formatted linkMap to ensure correct format
+            console.log('Formatted linkMap:', this.linkMap);
+
+            // Sanitize URL for embedding
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.linkMap}&output=embed`
+            );
+          } else {
+            console.warn('No linkMap provided for this room');
           }
+
           console.log('Fetched updated room details:', this.rooms);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
@@ -566,7 +585,9 @@ export class DetailRoomComponent
         if (this.rooms) {
           this.rooms.favoriteable = !this.rooms.favoriteable;
         }
-        console.log(`Successfully toggled favorite for room ID ${this.roomId}`);
+        console.log(
+          `Successfully toggled favorite for house ID ${this.roomId}`
+        );
         this.getRoomDetails(this.roomId); // Re-fetch details to confirm state
       },
       error: (error) => {
