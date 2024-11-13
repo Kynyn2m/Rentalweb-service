@@ -1,45 +1,56 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   DomSanitizer,
   SafeResourceUrl,
   SafeUrl,
 } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as L from 'leaflet';
 import { CommuneService } from 'src/app/address/commune.service';
 import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
+import { ShareOverlayComponent } from 'src/app/details/share-overlay/share-overlay.component';
+import { CommentData, UpdateCommentDialogComponent } from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
 import { RoomService } from 'src/app/Service/room.service';
 import Swal from 'sweetalert2';
-interface Room {
-  id: number;
-  likeCount: number;
-  liked: boolean;
-  // Add the pending flag
-  pending?: boolean;
-}
+const defaultIcon = L.icon({
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
+
 interface Room {
   id: number;
   title: string;
   description: string;
   location: string;
   price: number;
-  width: number;
-  height: number;
-  floor: number;
+  landSize: number;
   phoneNumber: string;
+  imagePath: string;
   imagePaths: string[];
-  safeImagePaths?: SafeUrl[];
+  safeImagePath?: SafeUrl; // Safe image URL after sanitization
   likeCount: number;
   linkMap: string;
   viewCount: number;
+  safeImagePaths?: SafeUrl[];
   createdAt: string;
   province: number;
   district: number;
   commune: number;
   village: number;
+  user: User;
+  favoriteable: boolean;
+  currentImageIndex: number;
 }
 interface UserComment {
   id: number;
@@ -49,6 +60,16 @@ interface UserComment {
   imagePath: string;
   replies: UserReply[];
   totalReply: number;
+}
+interface User {
+  id: number;
+  fullName: string;
+  gender: string;
+  email: string;
+  username: string;
+  postCount: number;
+  image: string;
+  createdAt: string;
 }
 
 interface UserReply {
@@ -65,6 +86,16 @@ interface Location {
   englishName: string;
   khmerName: string;
 }
+interface AmenityCounts {
+  bankCount: number;
+  gymCount: number;
+  restaurantCount: number;
+  hotelCount: number;
+  barPubCount: number;
+  cafeCount: number;
+  hospitalCount: number;
+  supermarketCount: number;
+}
 
 interface PaggingModel<T> {
   totalPage: number;
@@ -77,59 +108,97 @@ interface PaggingModel<T> {
   templateUrl: './detail-room.component.html',
   styleUrls: ['./detail-room.component.css'],
 })
-export class DetailRoomComponent {
-  room: Room | null = null;
+export class DetailRoomComponent  implements OnInit, AfterViewInit, AmenityCounts {
+  rooms: Room | null = null;
+  roomId!: number;
+  room: any[] = [];
   selectedImage: SafeUrl | null = null;
   provinceName: string = '';
   districtName: string = '';
   communeName: string = '';
   villageName: string = '';
   currentImage: SafeUrl | null = null;
-  isLoading: boolean = false;
-  comments: UserComment[] = [];
-  newCommentText: string = '';
-  replyText: { [key: number]: string } = {};
-  activeMenu: number | null = null;
   urlSafe!: SafeResourceUrl;
   linkMap: string | null = null;
+  comments: UserComment[] = [];
+  replyText: { [key: number]: string } = {};
+  newCommentText: string = '';
+  activeMenu: number | null = null;
+
+  map: L.Map | null = null;
+  userMarker: any;
+  markers: L.Marker[] = [];
+  isMapInitialized: boolean = false;
+
+  currentPage = 0;
+  totalPages = 1;
+  itemsPerPage = 12;
+
+  bankCount: number = 0;
+  gymCount: number = 0;
+  restaurantCount: number = 0;
+  hotelCount: number = 0;
+  barPubCount: number = 0;
+  cafeCount: number = 0;
+  hospitalCount: number = 0;
+  supermarketCount: number = 0;
+
+  loading: boolean = false;
+
+  isLoading: boolean = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
+    private readonly route: ActivatedRoute,
+    private readonly sanitizer: DomSanitizer,
     private roomService: RoomService,
-    private dialog: MatDialog,
-    private districtService: DistrictService,
-    private communeService: CommuneService,
-    private villageService: VillageService,
-    private cdr: ChangeDetectorRef,
+    private readonly dialog: MatDialog,
+    private readonly districtService: DistrictService,
+    private readonly communeService: CommuneService,
+    private readonly villageService: VillageService,
+    private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
-    private readonly router: Router
-  ) {}
-
+    private readonly router: Router,
+    private snackBar: MatSnackBar,
+  ) {
+    this.setDefaultMapUrl();
+  }
   ngOnInit(): void {
+    this.roomId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchHouseDetails();
+    this.loadRelatedHouses();
+    // Extract or use default coordinates to fetch nearby locations on page load
+    this.roomId = +this.route.snapshot.paramMap.get('id')!;
     const roomIdParam = this.route.snapshot.paramMap.get('id');
     const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
 
     if (roomId) {
-      this.getRoomDetails(roomId);
-      this.loadComments(roomId);
+      this.getHouseDetails(roomId); // Fetch house details and link map
+      this.loadComments(roomId); // Load comments for the house
+
+      // Fetch and display nearby locations when coordinates are available
+      if (this.rooms?.linkMap) {
+        const coordinates = this.extractCoordinates(this.rooms.linkMap);
+        if (coordinates) {
+          this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
+        }
+      } else {
+        // Use default coordinates if no specific linkMap is available
+        this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
+      }
     } else {
-      console.error('Invalid room ID');
+      console.error('Invalid house ID');
     }
   }
 
   loadComments(roomId: number): void {
-    this.isLoading = true;
     this.roomService.getComments(roomId).subscribe(
       (response) => {
         if (response.code === 200) {
           this.comments = response.result.result as UserComment[];
         }
-        this.isLoading = false;
       },
       (error) => {
         console.error('Error loading comments:', error);
-        this.isLoading = false;
       }
     );
   }
@@ -152,22 +221,19 @@ export class DetailRoomComponent {
     }
     if (!this.newCommentText.trim()) return;
 
-    const roomId = this.room?.id ?? 34;
+    const roomId = this.rooms?.id ?? 34;
     const type = 'room';
     const description = this.newCommentText;
 
-    this.isLoading = true;
     this.roomService.postComment(roomId, description, type).subscribe(
       (response) => {
         if (response) {
           this.loadComments(roomId); // Reload comments to fetch latest data
           this.newCommentText = ''; // Clear input field
         }
-        this.isLoading = false;
       },
       (error) => {
         console.error('Error posting comment:', error);
-        this.isLoading = false;
       }
     );
   }
@@ -192,22 +258,61 @@ export class DetailRoomComponent {
     const description = this.replyText[commentId];
     if (!description) return;
 
-    this.isLoading = true;
     this.roomService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          const roomId = this.room?.id ?? 34;
+          const roomId = this.rooms?.id ?? 34;
           this.loadComments(roomId); // Reload comments to fetch latest data
           this.replyText[commentId] = ''; // Clear reply input
         }
-        this.isLoading = false;
       },
       (error) => {
         console.error('Error posting reply:', error);
-        this.isLoading = false;
       }
     );
   }
+  openUpdateDialog(comment: UserComment | UserReply): void {
+    const dialogRef = this.dialog.open(UpdateCommentDialogComponent, {
+      width: '400px',
+      data: { id: comment.id, description: comment.description },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.updateComment(result); // Call the method to update the comment
+      }
+    });
+  }
+
+  updateComment(updatedComment: CommentData): void {
+    const updateData = {
+      id: updatedComment.id,
+      description: updatedComment.description,
+      roomId: this.rooms?.id ?? null, // Replace with actual houseId if necessary
+      type: 'land', // or 'land'/'room' as per requirement
+    };
+
+    this.roomService.updateComment(updateData.id, updateData).subscribe(
+      () => {
+        const comment = this.comments.find((c) => c.id === updatedComment.id);
+        if (comment) {
+          comment.description = updatedComment.description; // Update in the local data
+        }
+      },
+      (error) => {
+        console.error('Error updating comment:', error);
+
+        // Display snackbar with the error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'], // Optional: custom class for error styling
+        });
+      }
+    );
+  }
+
+
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
   }
@@ -228,47 +333,60 @@ export class DetailRoomComponent {
       });
       return; // Exit if the user is not logged in
     }
-    this.isLoading = true;
+
     this.roomService.deleteComment(commentId).subscribe(
       () => {
-        const roomId = this.room?.id ?? 34;
+        const roomId = this.rooms?.id ?? 34;
         this.loadComments(roomId); // Reload comments to update the list
         this.activeMenu = null;
-        this.isLoading = false;
       },
       (error) => {
-        console.error('Error deleting comment:', error);
-        this.isLoading = false;
+        console.error('Sorry you can delete only your own comnment');
+
+        // Show a snackbar with the exact error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000, // Snackbar duration in milliseconds
+          panelClass: ['error-snackbar'], // Optional: custom class for styling
+        });
       }
     );
   }
 
-  getRoomDetails(id: number): void {
-    // Change id type to number
+
+  ngAfterViewInit(): void {
+    if (this.rooms && this.rooms.linkMap) {
+      const coordinates = this.extractCoordinates(this.rooms.linkMap);
+      if (coordinates) {
+        this.initializeMap(coordinates.lat, coordinates.lng);
+      }
+    }
+  }
+
+  getHouseDetails(id: number): void {
     this.roomService.getRoomById(id.toString()).subscribe(
       (response) => {
-        this.room = response.result as Room;
-        if (this.room) {
-          this.loadImages(this.room);
+        this.rooms = response.result as Room;
+        if (this.rooms) {
+          this.loadImages(this.rooms); // Load images if required
           this.fetchLocationDetails(
-            this.room.province,
-            this.room.district,
-            this.room.commune,
-            this.room.village
+            this.rooms.province,
+            this.rooms.district,
+            this.rooms.commune,
+            this.rooms.village
           );
 
-          if (this.room.linkMap) {
+          if (this.rooms.linkMap) {
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `https://maps.google.com/maps?q=${encodeURIComponent(
-                this.room.linkMap
-              )}&output=embed`
+              `${this.rooms.linkMap}&output=embed`
             );
-            this.linkMap = this.room.linkMap;
           }
+          console.log('Fetched updated house details:', this.rooms);
         }
+        this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       (error) => {
-        console.error('Error fetching room details:', error);
+        console.error('Error fetching house details:', error);
       }
     );
   }
@@ -284,17 +402,205 @@ export class DetailRoomComponent {
     const url = `https://maps.google.com/maps?q=11.5564,104.9282&z=14&output=embed`;
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
-  loadImages(room: Room): void {
-    if (room.imagePaths && room.imagePaths.length > 0) {
-      room.safeImagePaths = [];
-      room.imagePaths.forEach((imagePath) => {
+
+  extractCoordinates(linkMap: string): { lat: number; lng: number } | null {
+    const match = linkMap.match(/q=([-.\d]+),([-.\d]+)/);
+    return match
+      ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) }
+      : null;
+  }
+
+  initializeMap(lat: number, lng: number): void {
+    if (!this.map) {
+      setTimeout(() => {
+        const mapContainer = document.getElementById('house-map');
+        if (!mapContainer) {
+          console.error('Map container not found.');
+          return;
+        }
+
+        // Initialize the map centered on the property
+        this.map = L.map('house-map').setView([lat, lng], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(this.map);
+
+        // Place a marker at the property location
+        L.marker([lat, lng])
+          .addTo(this.map)
+          .bindPopup('Property Location')
+          .openPopup();
+
+        // Fetch and display nearby locations
+        this.fetchAndDisplayNearbyLocations(lat, lng);
+      }, 0);
+    }
+  }
+
+  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
+    const amenities = [
+      { type: 'bank', countProp: 'bankCount' },
+      { type: 'gym', countProp: 'gymCount' },
+      { type: 'restaurant', countProp: 'restaurantCount' },
+      { type: 'hotel', countProp: 'hotelCount' },
+      { type: 'bar', countProp: 'barPubCount' },
+      { type: 'pub', countProp: 'barPubCount' },
+      { type: 'cafe', countProp: 'cafeCount' },
+      { type: 'hospital', countProp: 'hospitalCount' },
+      { type: 'supermarket', countProp: 'supermarketCount' },
+    ];
+
+    amenities.forEach((amenity) => {
+      const query = `
+          [out:json][timeout:25];
+          node(around:1000, ${lat}, ${lng})["amenity"="${amenity.type}"];
+          out center 10;  // Limit to 10 actual amenities of this type
+        `;
+      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+        query
+      )}`;
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          const count = data.elements ? data.elements.length : 0;
+          (this as any)[amenity.countProp] = count; // Update specific count property
+          this.displayNearbyPlaces(data.elements, amenity.type);
+          this.cdr.detectChanges(); // Update UI counts
+        })
+        .catch((error) => {
+          console.error(
+            `Error fetching nearby ${amenity.type} locations:`,
+            error
+          );
+        });
+    });
+  }
+
+  displayNearbyPlaces(places: any[], amenity: string): void {
+    if (!this.map) {
+      console.error('Map is not initialized.');
+      return;
+    }
+
+    console.log(
+      `Displaying ${places.length} nearby ${amenity} places on the map.`
+    );
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(
+          this.map as L.Map
+        );
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenity}`
+        );
+        this.markers.push(marker);
+      } else {
+        console.log(`Skipping place without coordinates:`, place);
+      }
+    });
+  }
+
+  fetchHouseDetails(): void {
+    this.roomService.getRoomById(this.roomId.toString()).subscribe({
+      next: (response) => {
+        this.rooms = response.result;
+        if (this.rooms) {
+          this.loadCardImages(this.rooms);
+          this.fetchLocationDetails(
+            this.rooms.province,
+            this.rooms.district,
+            this.rooms.commune,
+            this.rooms.village
+          );
+          if (this.rooms.linkMap) {
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.rooms.linkMap}&output=embed`
+            );
+          }
+          console.log('Fetched updated house details:', this.rooms);
+        }
+        this.cdr.detectChanges(); // Ensure the view updates after fetching
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching house details for ID ${this.roomId}:`,
+          error
+        );
+      },
+    });
+  }
+
+  toggleFavorite(): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    console.log(`Attempting to toggle favorite for house ID: ${this.roomId}`);
+
+    this.roomService.toggleFavorite(this.roomId, 'house').subscribe({
+      next: () => {
+        // Toggle the 'favoriteable' status locally without blocking future clicks
+        if (this.rooms) {
+          this.rooms.favoriteable = !this.rooms.favoriteable;
+        }
+        console.log(
+          `Successfully toggled favorite for house ID ${this.roomId}`
+        );
+        this.getHouseDetails(this.roomId); // Re-fetch details to confirm state
+      },
+      error: (error) => {
+        console.warn(
+          `Toggling favorite encountered an error. Assuming success. Error:`,
+          error
+        );
+        // Toggle locally regardless of error, for smooth UI
+        if (this.rooms) {
+          this.rooms.favoriteable = !this.rooms.favoriteable;
+        }
+      },
+    });
+  }
+
+  openShareOverlay(): void {
+    this.dialog.open(ShareOverlayComponent, {
+      width: '100%',
+      maxWidth: '400px',
+    });
+  }
+
+  loadImages(land: Room): void {
+    if (land.imagePaths && land.imagePaths.length > 0) {
+      land.safeImagePaths = []; // Clear existing paths
+
+      // Track the loading order to set the first image consistently
+      let imagesLoaded = 0;
+
+      land.imagePaths.forEach((imagePath, index) => {
         this.roomService.getImage(imagePath).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            room.safeImagePaths!.push(safeUrl);
-            if (!this.currentImage) {
+            land.safeImagePaths!.push(safeUrl);
+
+            imagesLoaded++;
+
+            // Set `currentImage` and `currentImageIndex` to the first loaded image
+            if (imagesLoaded === 1) {
               this.currentImage = safeUrl;
+              land.currentImageIndex = 0; // Assign 0 since images are available
             }
           },
           (error) => {
@@ -302,9 +608,58 @@ export class DetailRoomComponent {
           }
         );
       });
+    } else {
+      // Handle cases with no images
+      land.safeImagePaths = [];
+      this.currentImage = null;
+      land.currentImageIndex = -1; // Use -1 or any number indicating no images
     }
   }
 
+  // Function to load images specifically for card houses in Related Posts
+  loadCardImages(land: Room): void {
+    land.safeImagePaths = []; // Clear any existing images
+    land.imagePaths.forEach((imagePath) => {
+      this.roomService.getImage(imagePath).subscribe(
+        (imageBlob) => {
+          const objectURL = URL.createObjectURL(imageBlob);
+          const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          land.safeImagePaths!.push(safeUrl);
+        },
+        (error) => {
+          console.error('Error loading image:', error);
+        }
+      );
+    });
+    land.currentImageIndex = 0; // Set default image index
+  }
+
+  // Function to go to the previous image for a specific card house
+  prevCardImage(house: Room): void {
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex > 0
+          ? house.currentImageIndex - 1
+          : house.safeImagePaths.length - 1;
+    }
+  }
+
+  // Function to go to the next image for a specific card house
+  nextCardImage(house: Room): void {
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex < house.safeImagePaths.length - 1
+          ? house.currentImageIndex + 1
+          : 0;
+    }
+  }
+
+  openImageViewer(image: SafeUrl): void {
+    this.dialog.open(ImageDialogComponent, {
+      data: { image: image as string },
+      panelClass: 'full-screen-modal',
+    });
+  }
   fetchLocationDetails(
     provinceId: number,
     districtId: number,
@@ -377,19 +732,19 @@ export class DetailRoomComponent {
     });
   }
   previousImage(): void {
-    if (this.room && this.room.safeImagePaths) {
-      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
+    if (this.rooms && this.rooms.safeImagePaths) {
+      const index = this.rooms.safeImagePaths.indexOf(this.currentImage!);
       if (index > 0) {
-        this.currentImage = this.room.safeImagePaths[index - 1];
+        this.currentImage = this.rooms.safeImagePaths[index - 1];
       }
     }
   }
 
   nextImage(): void {
-    if (this.room && this.room.safeImagePaths) {
-      const index = this.room.safeImagePaths.indexOf(this.currentImage!);
-      if (index < this.room.safeImagePaths.length - 1) {
-        this.currentImage = this.room.safeImagePaths[index + 1];
+    if (this.rooms && this.rooms.safeImagePaths) {
+      const index = this.rooms.safeImagePaths.indexOf(this.currentImage!);
+      if (index < this.rooms.safeImagePaths.length - 1) {
+        this.currentImage = this.rooms.safeImagePaths[index + 1];
       }
     }
   }
@@ -399,5 +754,209 @@ export class DetailRoomComponent {
 
   goBack(): void {
     window.history.back();
+  }
+
+  loadSafeImagePaths(house: Room): SafeUrl[] {
+    return house.imagePaths.map((path) =>
+      this.sanitizer.bypassSecurityTrustUrl(path)
+    );
+  }
+
+  loadRelatedHouses(page: number = 0): void {
+    this.loading = true;
+    this.roomService.getRooms({ page, size: this.itemsPerPage }).subscribe(
+      (response) => {
+        const responseData = response.result;
+        this.room = responseData.result;
+        this.totalPages = responseData.totalPage;
+
+        // Call loadImage for each house to load its images
+        this.room.forEach((house) => {
+          this.loadImage(house);
+        });
+
+        this.loading = false;
+      },
+      (error) => {
+        this.loading = false;
+        console.error('Error loading houses:', error);
+      }
+    );
+  }
+
+  loadImage(land: any): void {
+    if (land.imagePaths && land.imagePaths.length > 0) {
+      land.safeImagePaths = [];
+      land.imagePaths.forEach((imageUrl: string) => {
+        this.roomService.getImage(imageUrl).subscribe(
+          (imageBlob) => {
+            const objectURL = URL.createObjectURL(imageBlob);
+            const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            land.safeImagePaths.push(safeUrl);
+          },
+          (error) => {
+            console.error('Error loading image:', error);
+          }
+        );
+      });
+      land.currentImageIndex = 0;
+    } else {
+      land.safeImagePaths = [];
+      land.currentImageIndex = 0;
+    }
+  }
+
+  prevImage1(house: Room): void {
+    // Check if safeImagePaths exists and has images
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex > 0
+          ? house.currentImageIndex - 1
+          : house.safeImagePaths.length - 1;
+    }
+  }
+
+  nextImage1(house: Room): void {
+    // Check if safeImagePaths exists and has images
+    if (house.safeImagePaths && house.safeImagePaths.length > 1) {
+      house.currentImageIndex =
+        house.currentImageIndex < house.safeImagePaths.length - 1
+          ? house.currentImageIndex + 1
+          : 0;
+    }
+  }
+
+  likeHouse(roomId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to like this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const house = this.room.find((h) => h.id === roomId);
+    if (!house || house.pending) return;
+
+    house.pending = true;
+    console.log(`Toggling like for house ID ${roomId}`);
+
+    // Provide the `postType` argument, such as 'house' or another applicable value.
+    this.roomService.likeRoom(roomId, 'house').subscribe({
+      next: () => this.fetchHouseData(roomId),
+      error: (error) => {
+        console.error(`Error toggling like for house ID ${roomId}:`, error);
+        this.fetchHouseData(roomId);
+      },
+      complete: () => {
+        console.log(`Completed like toggle for house ID ${roomId}`);
+        house.pending = false;
+      },
+    });
+  }
+
+  toggleFavorite1(roomId: number): void {
+    if (!this.authenticationService.isLoggedIn()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Not Logged In',
+        text: 'Please log in to favorite this house.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigate(['/login']);
+        }
+      });
+      return;
+    }
+
+    const house = this.room.find((h) => h.id === roomId);
+    if (!house || house.pending) return;
+
+    house.pending = true;
+    console.log(`Toggling favorite for house ID ${roomId}`);
+
+    this.roomService.toggleFavorite(roomId, 'house').subscribe({
+      next: () => this.fetchHouseData(roomId),
+      error: (error) => {
+        console.error(
+          `Error toggling favorite for house ID ${roomId}:`,
+          error
+        );
+        this.fetchHouseData(roomId);
+      },
+      complete: () => {
+        house.pending = false;
+        console.log(`Completed favorite toggle for house ID ${roomId}`);
+      },
+    });
+  }
+
+  updateHouseData(roomId: number): void {
+    this.roomService.getRoomById(roomId.toString()).subscribe({
+      next: (response) => {
+        const updatedHouse = response.result;
+        const index = this.room.findIndex((h) => h.id === roomId);
+        if (index !== -1) {
+          this.room[index] = {
+            ...this.room[index],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false,
+          };
+        }
+      },
+      error: (error) => {
+        console.error(`Error updating data for house ID ${roomId}:`, error);
+      },
+    });
+  }
+
+  goToDetails(roomId: number): void {
+    this.router.navigate(['/details', roomId]);
+  }
+  goToDetails1(roomId: number): void {
+    this.router.navigate(['/details', roomId]).then(() => {
+      window.location.reload();
+      // this.fetchHouseDetails();
+    });
+  }
+
+  private fetchHouseData(roomId: number): void {
+    console.log(`Fetching updated data for house ID ${roomId}...`);
+
+    this.roomService.getRoomById(roomId.toString()).subscribe({
+      next: (response) => {
+        const houseIndex = this.room.findIndex((h) => h.id === roomId);
+        if (houseIndex > -1 && response.result) {
+          const updatedHouse = response.result;
+          this.room[houseIndex] = {
+            ...this.room[houseIndex],
+            likeCount: updatedHouse.likeCount,
+            likeable: updatedHouse.likeable,
+            favoriteable: updatedHouse.favoriteable,
+            pending: false,
+          };
+          this.cdr.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Error fetching latest data for house ID ${roomId}:`,
+          error
+        );
+      },
+    });
   }
 }

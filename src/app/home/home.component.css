@@ -1078,12 +1078,24 @@ button.next:hover {
   background-color: rgb(218, 119, 20);
 }
 .favorite-icon-container {
-  position: absolute;
+  /* position: absolute;
   display: flex;
   justify-content: flex-end;
   padding: 5px 10px;
   top: 47%;
-  left: 86%;
+  left: 86%; */
+  position: absolute;
+  display: flex;
+  width: 36px;
+  height: 36px;
+  justify-content: flex-end;
+  padding: 8px 8px 1px 6px;
+  /* padding: 5px 10px; */
+  top: 2%;
+  left: 85%;
+  background: white;
+  border-radius: 50%;
+  box-shadow: rgb(247 205 10 / 40%) 0px 0px 0px 2px, rgb(151 118 19 / 65%) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
 }
 
 .favorite-icon {
