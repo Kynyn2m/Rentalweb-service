@@ -1,4 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -15,9 +20,11 @@ import { VillageService } from 'src/app/address/village.service';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { ImageDialogComponent } from 'src/app/details/image-dialog.component';
 import { ShareOverlayComponent } from 'src/app/details/share-overlay/share-overlay.component';
-import { CommentData, UpdateCommentDialogComponent } from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
+import {
+  CommentData,
+  UpdateCommentDialogComponent,
+} from 'src/app/details/update-comment-dialog/update-comment-dialog.component';
 import Swal from 'sweetalert2';
-
 
 const defaultIcon = L.icon({
   iconUrl:
@@ -111,7 +118,9 @@ interface PaggingModel<T> {
   templateUrl: './detail-land.component.html',
   styleUrls: ['./detail-land.component.css'],
 })
-export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts{
+export class DetailLandComponent
+  implements OnInit, AfterViewInit, AmenityCounts
+{
   lande: Land | null = null;
   landId!: number;
   land: any[] = [];
@@ -161,7 +170,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
     private readonly router: Router,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.setDefaultMapUrl();
   }
@@ -306,7 +315,8 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         console.error('Error updating comment:', error);
 
         // Display snackbar with the error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can update only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar'], // Optional: custom class for error styling
@@ -314,7 +324,6 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       }
     );
   }
-
 
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
@@ -347,7 +356,8 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
         console.error('Sorry you can delete only your own comnment');
 
         // Show a snackbar with the exact error message from the API response
-        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        const errorMessage =
+          error.error?.message || 'Sorry you can delete only your own comnment';
         this.snackBar.open(errorMessage, 'Close', {
           duration: 3000, // Snackbar duration in milliseconds
           panelClass: ['error-snackbar'], // Optional: custom class for styling
@@ -355,7 +365,6 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
       }
     );
   }
-
 
   ngAfterViewInit(): void {
     if (this.lande && this.lande.linkMap) {
@@ -366,7 +375,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     }
   }
 
-    getLandDetails(id: number): void {
+  getLandDetails(id: number): void {
     this.landService.getLandById(id.toString()).subscribe(
       (response) => {
         this.lande = response.result as Land;
@@ -385,7 +394,9 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
             console.log('Original land linkMap:', this.lande.linkMap);
 
             // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
-            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(this.lande.linkMap);
+            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(
+              this.lande.linkMap
+            );
             this.linkMap = isCoordinates
               ? `https://www.google.com/maps?q=${this.lande.linkMap}`
               : this.lande.linkMap;
@@ -909,10 +920,7 @@ export class DetailLandComponent implements OnInit, AfterViewInit, AmenityCounts
     this.landService.toggleFavorite(landId, 'house').subscribe({
       next: () => this.fetchHouseData(landId),
       error: (error) => {
-        console.error(
-          `Error toggling favorite for house ID ${landId}:`,
-          error
-        );
+        console.error(`Error toggling favorite for house ID ${landId}:`, error);
         this.fetchHouseData(landId);
       },
       complete: () => {
