@@ -242,6 +242,9 @@ menu-items .active mat-icon {
   height: 45px;
   align-items: center;
   margin-left: -0.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .selected-menu-item {
   background-color: #ff7043;
@@ -320,7 +323,46 @@ menu-items .active mat-icon {
   top: 0;
   z-index: 1000;
 }
+.header-menu span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white; /* Subtle dark color */
+  transition: font-size 0.3s ease, color 0.3s ease;
+}
+
+/* Adjust for small screens */
+@media (max-width: 768px) {
+  .header-menu span {
+    font-size: 0.9rem; /* Slightly smaller for mobile */
+  }
+}
+
+/* Add a hover effect for a dynamic feel */
+.header-menu span:hover {
+  color: #d5a644; /* Accent color on hover */
+}
 
 
 
 
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 14px; /* Space between name and image */
+}
+
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+}
+.online-icon {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  background-color: #00ff00; /* Green color for "online" */
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}

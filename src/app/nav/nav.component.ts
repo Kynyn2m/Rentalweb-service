@@ -32,6 +32,7 @@ import { ChangePasswordDialogComponent } from './change-password-dialog/change-p
   styleUrls: ['./nav.component.css'],
 })
 export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
+  user: any = { fullName: '', profileUrl: '' };
   fullName: string | null = null;
   email: string | null = null;
   menuItems = [
@@ -201,6 +202,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       .subscribe();
     if (this.isLoggedIn) {
       this.loadUserProfile();
+
     }
   }
 
@@ -283,6 +285,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
         if (response.code === 200) {
           this.fullName = response.result.fullName;
           this.email = response.result.email;
+          this.user.profileUrl = response.result.profileUrl;
         }
       },
       (error) => {
