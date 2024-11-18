@@ -123,16 +123,22 @@
           </ng-container>
         </ng-container>
       </div>
-      <app-language-selector style="margin-right: 1rem"></app-language-selector>
+      <!-- <app-language-selector style="margin-right: 1rem"></app-language-selector> -->
 
       <!-- User Profile Section (Shown only when logged in) -->
       <div *ngIf="isLoggedIn"
-           class="header-munu"
+           class="header-menu"
            [matMenuTriggerFor]="menu">
-        <img class="user-photo2 raised pd-1"
-             src="../../assets/icon images/computer.png"
-             alt="profile" />
+        <span>{{ fullName }}</span>
+        <div class="profile-image-container">
+          <img class="user-photo2"
+               [src]="user.profileUrl || '../../assets/icon images/computer.png'"
+               alt="profile" />
+          <div class="online-icon"></div>
+        </div>
       </div>
+
+
       <div class="auth-container"
            *ngIf="!isLoggedIn">
         <span [routerLink]="'/login'"

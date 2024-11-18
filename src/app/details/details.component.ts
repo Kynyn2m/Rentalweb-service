@@ -25,17 +25,19 @@ import {
   CommentData,
   UpdateCommentDialogComponent,
 } from './update-comment-dialog/update-comment-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const defaultIcon = L.icon({
-  iconUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl:
-    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  shadowSize: [41, 41],
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41], // Size of the icon
+  iconAnchor: [12, 41], // Point of the icon which will correspond to marker's location
+  popupAnchor: [1, -34], // Point from which the popup should open relative to the iconAnchor
+  shadowSize: [41, 41], // Size of the shadow
 });
+
+L.Marker.prototype.options.icon = defaultIcon;
+
 
 /** Interfaces */
 interface House {
@@ -126,6 +128,8 @@ interface AmenityCounts {
 })
 export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
   house: House | null = null;
+  selectedAmenity: string | null = null;
+  amenitiesCount: { [key: string]: number } = {};
   houseId!: number;
   houses: any[] = [];
   selectedImage: SafeUrl | null = null;
@@ -145,6 +149,9 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
   userMarker: any;
   markers: L.Marker[] = [];
   isMapInitialized: boolean = false;
+  amenityCache: { [key: string]: any[] } = {};
+  isLoadingAmenity: boolean = false;
+
 
   currentPage = 0;
   totalPages = 1;
@@ -158,6 +165,19 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
   cafeCount: number = 0;
   hospitalCount: number = 0;
   supermarketCount: number = 0;
+
+  amenities = [
+    { type: 'cafe', label: 'Cafes', countProp: 'cafeCount', icon: 'fa-coffee' },
+    { type: 'pub', label: 'Pubs', countProp: 'barPubCount', icon: 'fa-beer' },
+    { type: 'restaurant', label: 'Restaurants', countProp: 'restaurantCount', icon: 'fa-utensils' },
+    { type: 'hotel', label: 'Hotels', countProp: 'hotelCount', icon: 'fa-hotel' },
+    { type: 'bank', label: 'Banks', countProp: 'bankCount', icon: 'fa-university' },
+    { type: 'gym', label: 'Gyms', countProp: 'gymCount', icon: 'fa-dumbbell' },
+    { type: 'hospital', label: 'Hospitals', countProp: 'hospitalCount', icon: 'fa-hospital' },
+    { type: 'supermarket', label: 'Supermarkets', countProp: 'supermarketCount', icon: 'fa-shopping-cart' },
+  ];
+
+
 
   loading: boolean = false;
 
@@ -173,34 +193,31 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
     private readonly villageService: VillageService,
     private readonly cdr: ChangeDetectorRef,
     private readonly authenticationService: AuthenticationService,
-    private readonly router: Router
+    private readonly router: Router,
+    private snackBar: MatSnackBar,
   ) {
     this.setDefaultMapUrl();
   }
+
   ngOnInit(): void {
+    this.houseId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchHouseDetails();
+    this.loadRelatedHouses();
     // Extract or use default coordinates to fetch nearby locations on page load
     this.houseId = +this.route.snapshot.paramMap.get('id')!;
     const houseIdParam = this.route.snapshot.paramMap.get('id');
     const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
 
     if (houseId) {
-      this.getHouseDetails(houseId); // Fetch house details and link map
-      this.loadComments(houseId); // Load comments for the house
-
-      // Fetch and display nearby locations when coordinates are available
-      if (this.house?.linkMap) {
-        const coordinates = this.extractCoordinates(this.house.linkMap);
-        if (coordinates) {
-          this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
-        }
-      } else {
-        // Use default coordinates if no specific linkMap is available
-        this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
-      }
+      this.getHouseDetails(houseId); // Fetch house details
+      this.loadComments(houseId);
     } else {
       console.error('Invalid house ID');
     }
   }
+
+
+
 
   loadComments(houseId: number): void {
     this.houseService.getComments(houseId).subscribe(
@@ -295,6 +312,7 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       }
     });
   }
+
   updateComment(updatedComment: CommentData): void {
     const updateData = {
       id: updatedComment.id,
@@ -312,9 +330,17 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       },
       (error) => {
         console.error('Error updating comment:', error);
+
+        // Display snackbar with the error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can update only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'], // Optional: custom class for error styling
+        });
       }
     );
   }
+
 
   toggleMenu(commentId: number): void {
     this.activeMenu = this.activeMenu === commentId ? null : commentId;
@@ -344,19 +370,30 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
         this.activeMenu = null;
       },
       (error) => {
-        console.error('Error deleting comment:', error);
+        console.error('Sorry you can delete only your own comnment');
+
+        // Show a snackbar with the exact error message from the API response
+        const errorMessage = error.error?.message || 'Sorry you can delete only your own comnment';
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 3000, // Snackbar duration in milliseconds
+          panelClass: ['error-snackbar'], // Optional: custom class for styling
+        });
       }
     );
   }
 
+
   ngAfterViewInit(): void {
-    if (this.house && this.house.linkMap) {
-      const coordinates = this.extractCoordinates(this.house.linkMap);
-      if (coordinates) {
-        this.initializeMap(coordinates.lat, coordinates.lng);
-      }
+    const houseIdParam = this.route.snapshot.paramMap.get('id');
+    const houseId = houseIdParam ? parseInt(houseIdParam, 10) : null;
+
+    if (houseId) {
+      this.getHouseDetails(houseId);
     }
   }
+
+
+
 
   getHouseDetails(id: number): void {
     this.houseService.getHouseById(id.toString()).subscribe(
@@ -370,20 +407,100 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
             this.house.commune,
             this.house.village
           );
-
-          if (this.house.linkMap) {
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.house.linkMap}&output=embed`
-            );
+          const coordinates = this.extractCoordinates(this.house.linkMap);
+          if (coordinates) {
+            this.initializeMap(coordinates.lat, coordinates.lng);
+            this.fetchAllNearbyCounts(coordinates.lat, coordinates.lng); // Fetch counts for all amenities
           }
-          console.log('Fetched updated house details:', this.house);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+        this.cdr.detectChanges();
       },
-      (error) => {
-        console.error('Error fetching house details:', error);
-      }
+      (error) => console.error('Error fetching house details:', error)
     );
+  }
+
+
+
+  fetchAllNearbyCounts(lat: number, lng: number): void {
+    const promises = this.amenities.map((amenity) =>
+      fetch(this.getOverpassUrl(lat, lng, amenity.type))
+        .then((response) => response.json())
+        .then((data) => {
+          this.amenitiesCount[amenity.type] = data.elements.length; // Store the count
+        })
+        .catch((error) => {
+          console.error(`Error fetching ${amenity.type} count:`, error);
+          this.amenitiesCount[amenity.type] = 0;
+        })
+    );
+
+    Promise.all(promises).then(() => {
+      console.log('All nearby amenity counts fetched:', this.amenitiesCount);
+      this.cdr.detectChanges(); // Update the UI
+    });
+  }
+
+  getOverpassUrl(lat: number, lng: number, amenityType: string): string {
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center;
+    `;
+    return `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+  }
+
+
+
+
+
+  fetchAndDisplayNearbyLocations(lat: number, lng: number, amenityType: string): Promise<void> {
+    // Use cached data if available
+    if (this.amenityCache[amenityType]) {
+      console.log(`Using cached data for ${amenityType}`);
+      this.updateMarkers(this.amenityCache[amenityType], amenityType);
+      return Promise.resolve();
+    }
+
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+    return fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(`Fetched ${data.elements.length} ${amenityType}(s).`);
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.amenityCache[amenityType] = data.elements; // Cache the results
+        this.updateMarkers(data.elements, amenityType);
+      })
+      .catch((error) => {
+        console.error(`Error fetching ${amenityType}:`, error);
+        this.amenitiesCount[amenityType] = 0;
+      });
+  }
+
+
+
+  updateMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
+    });
   }
 
   setDefaultMapUrl(): void {
@@ -400,76 +517,86 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
 
   extractCoordinates(linkMap: string): { lat: number; lng: number } | null {
     const match = linkMap.match(/q=([-.\d]+),([-.\d]+)/);
-    return match
-      ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) }
-      : null;
+    return match ? { lat: parseFloat(match[1]), lng: parseFloat(match[2]) } : null;
   }
 
   initializeMap(lat: number, lng: number): void {
-    if (!this.map) {
-      setTimeout(() => {
-        const mapContainer = document.getElementById('house-map');
-        if (!mapContainer) {
-          console.error('Map container not found.');
-          return;
-        }
+    if (this.map) return;
 
-        // Initialize the map centered on the property
-        this.map = L.map('house-map').setView([lat, lng], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors',
-        }).addTo(this.map);
-
-        // Place a marker at the property location
-        L.marker([lat, lng])
-          .addTo(this.map)
-          .bindPopup('Property Location')
-          .openPopup();
-
-        // Fetch and display nearby locations
-        this.fetchAndDisplayNearbyLocations(lat, lng);
-      }, 0);
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error('Map container not found.');
+      return;
     }
+
+    this.map = L.map('map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    L.marker([lat, lng], { icon: defaultIcon })
+      .addTo(this.map)
+      .bindPopup('House Location')
+      .openPopup();
   }
 
-  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
-    const amenities = [
-      { type: 'bank', countProp: 'bankCount' },
-      { type: 'gym', countProp: 'gymCount' },
-      { type: 'restaurant', countProp: 'restaurantCount' },
-      { type: 'hotel', countProp: 'hotelCount' },
-      { type: 'bar', countProp: 'barPubCount' },
-      { type: 'pub', countProp: 'barPubCount' },
-      { type: 'cafe', countProp: 'cafeCount' },
-      { type: 'hospital', countProp: 'hospitalCount' },
-      { type: 'supermarket', countProp: 'supermarketCount' },
-    ];
 
-    amenities.forEach((amenity) => {
-      const query = `
-          [out:json][timeout:25];
-          node(around:1000, ${lat}, ${lng})["amenity"="${amenity.type}"];
-          out center 10;  // Limit to 10 actual amenities of this type
-        `;
-      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-        query
-      )}`;
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const count = data.elements ? data.elements.length : 0;
-          (this as any)[amenity.countProp] = count; // Update specific count property
-          this.displayNearbyPlaces(data.elements, amenity.type);
-          this.cdr.detectChanges(); // Update UI counts
-        })
-        .catch((error) => {
-          console.error(
-            `Error fetching nearby ${amenity.type} locations:`,
-            error
-          );
-        });
+
+  fetchAndDisplayNearbyPlaces(lat: number, lng: number, amenityType: string): void {
+    const query = `
+      [out:json][timeout:25];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Update count and display pins
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.displayMarkers(data.elements, amenityType);
+      })
+      .catch((error) => console.error(`Error fetching ${amenityType}:`, error));
+  }
+
+  displayMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
     });
+  }
+
+  onAmenityClick(amenityType: string): void {
+    if (this.selectedAmenity === amenityType) {
+      console.log(`Amenity ${amenityType} is already displayed.`);
+      return; // Avoid fetching if the same amenity is already selected
+    }
+
+    this.selectedAmenity = amenityType;
+    this.isLoadingAmenity = true;
+
+    const coordinates = this.extractCoordinates(this.house?.linkMap || '');
+    if (coordinates) {
+      this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng, amenityType)
+        .finally(() => {
+          this.isLoadingAmenity = false; // Hide spinner after fetching
+        });
+    }
   }
 
   displayNearbyPlaces(places: any[], amenity: string): void {

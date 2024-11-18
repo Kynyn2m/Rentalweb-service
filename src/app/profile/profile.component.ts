@@ -37,6 +37,7 @@ export class ProfileComponent implements OnInit {
     email: '',
     username: '',
     avatarUrl: '',
+    profileUrl: '',
     address: '',
   };
   selectedFile: File | null = null;
@@ -84,7 +85,7 @@ export class ProfileComponent implements OnInit {
         if (response.code === 200) {
           this.user = response.result;
           this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(
-            this.user.avatarUrl
+            this.user.profileUrl
           ); // Set the avatar
         } else {
           this.error = 'Failed to fetch profile data';
@@ -134,16 +135,48 @@ export class ProfileComponent implements OnInit {
     if (file) {
       this.selectedFile = file;
 
-      // Create a preview URL using FileReader for the newly selected image
+      // Create a preview URL for the selected image
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(
-          reader.result as string
-        );
+        this.imagePreview = reader.result as string; // Set preview for immediate display
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Trigger file reading and load preview
     }
   }
+
+
+  saveProfile(): void {
+    const formData = new FormData();
+    formData.append('fullName', this.user.fullName);
+    formData.append('gender', this.user.gender);
+    formData.append('email', this.user.email);
+    formData.append('phoneNumber', this.user.phoneNumber);
+    formData.append('username', this.user.username);
+
+    // Append the image if a file is selected
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile); // Ensure key is 'image'
+    } else {
+      console.warn('No file selected for upload.'); // Debugging: to check file selection
+    }
+
+    // Call the profile service to update profile data
+    this.profileService.updateProfile(formData).subscribe(
+      (response) => {
+        console.log('Profile updated successfully', response);
+        this.snackBar.open('Profile updated successfully', 'Close', {
+          duration: 3000,
+        });
+        this.fetchProfile(); // Refresh profile data to display changes
+      },
+      (error) => {
+        console.error('Error updating profile:', error);
+        this.error = 'Error updating profile';
+      }
+    );
+  }
+
+
   deleteLand(landId: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
@@ -209,31 +242,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  // Save profile updates including file upload
-  saveProfile(): void {
-    const formData = new FormData();
-    formData.append('fullName', this.user.fullName);
-    formData.append('gender', this.user.gender);
-    formData.append('email', this.user.email);
-    formData.append('username', this.user.username);
-    if (this.selectedFile) {
-      formData.append('avatar', this.selectedFile); // Ensure key matches backend expectation
-    }
 
-    this.profileService.updateProfile(formData).subscribe(
-      (response) => {
-        console.log('Profile updated successfully', response);
-        this.snackBar.open('Profile updated successfully', 'Close', {
-          duration: 3000,
-        });
-        this.fetchProfile(); // Refresh the profile after update
-      },
-      (error) => {
-        console.error('Error updating profile:', error);
-        this.error = 'Error updating profile';
-      }
-    );
-  }
 
   // Fallback in case the avatar image fails to load
   onImageError(event: any): void {

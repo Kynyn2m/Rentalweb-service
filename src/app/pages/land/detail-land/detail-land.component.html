@@ -8,59 +8,120 @@
     <div class="details-card">
       <!-- Gallery and main details content -->
       <div class="gallery">
-        <div class="main-image">
+        <!-- Main Image with click event to open full screen -->
+        <div
+          class="main-image"
+          *ngIf="currentImage"
+          (click)="openImageViewer(currentImage)"
+        >
           <img [src]="currentImage" alt="Land Image" />
-          <button class="nav-left" (click)="previousImage()">&#10094;</button>
-          <button class="nav-right" (click)="nextImage()">&#10095;</button>
         </div>
+
+        <!-- Image Thumbnails for selecting images without full screen opening -->
         <div class="image-thumbnails">
           <img
-            *ngFor="let image of land?.safeImagePaths; let i = index"
+            *ngFor="let image of lande?.safeImagePaths; let i = index"
             [src]="image"
             [class.selected]="currentImage === image"
             (click)="selectImage(image)"
-            alt="{{ land?.title }}"
+            alt="{{ lande?.title }}"
             class="thumbnail"
           />
         </div>
       </div>
 
-      <div class="details-content">
-        <h2>{{ land?.title }}</h2>
+      <div class="created-at">
+        <p>Posted on: {{ lande?.createdAt | date : "MMMM d, y" }}</p>
+      </div>
 
-        <div class="details-info">
-          <p>
-            <strong>{{ "location" | transloco }}:</strong> {{ provinceName }},
-            {{ districtName }}, {{ communeName }}, {{ villageName }}
-          </p>
-          <p>
-            <strong>{{ "contact" | transloco }}:</strong>
-            {{ land?.phoneNumber }}
-          </p>
-          <p>
-            <strong>{{ "price" | transloco }}:</strong>
-            <span class="price">${{ land?.price }}</span>
-          </p>
-          <p>
-            <strong>{{ "description" | transloco }}:</strong>
-            {{ land?.description }}
-          </p>
-          <p></p>
-          <p>
-            <strong>{{ "landSize" | transloco }}:</strong> {{ land?.landSize }}
-          </p>
-          <p>
-            <strong>{{ "mapLink" | transloco }}:</strong>
-            <a [href]="land?.linkMap" target="_blank">{{
-              "viewOnMap" | transloco
-            }}</a>
-          </p>
-          <p>
-            <strong>{{ "likes" | transloco }}:</strong> {{ land?.likeCount }}
-          </p>
-          <p>
-            <strong>{{ "views" | transloco }}:</strong> {{ land?.viewCount }}
-          </p>
+      <div class="details-content">
+        <div class="details-title">
+          <h2>{{ lande?.title }}</h2>
+          <div class="details-info">
+            <div class="detail-item">
+              <i class="fa fa-map-marker-alt icon"></i>
+              <span
+                ><strong>Location:</strong> {{ districtName }},
+                {{ communeName }}, {{ villageName }}</span
+              >
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-phone icon"></i>
+              <span><strong>Contact:</strong> {{ lande?.phoneNumber }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-dollar-sign icon"></i>
+              <span
+                ><strong>Price:</strong>
+                <span class="price">${{ lande?.price }}</span></span
+              >
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-info-circle icon"></i>
+              <span
+                ><strong>Description:</strong> {{ lande?.description }}</span
+              >
+            </div>
+
+            <div class="detail-item">
+              <i class="fa fa-map icon"></i>
+              <span
+                ><strong>Map Link:</strong>
+                <a [href]="linkMap" target="_blank">View on Map</a>
+              </span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-heart icon"></i>
+              <span><strong>Likes:</strong> {{ lande?.likeCount }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-eye icon"></i>
+              <span><strong>Views:</strong> {{ lande?.viewCount }}</span>
+            </div>
+          </div>
+
+          <!-- Map Display Section -->
+          <div class="map-display">
+            <div class="map-wrapper">
+              <iframe
+                *ngIf="urlSafe"
+                width="100%"
+                height="200"
+                [src]="urlSafe"
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
+
+              <!-- Wrap the button in an anchor tag with `href` pointing to `linkMap` -->
+              <a [href]="lande?.linkMap" target="_blank" class="show-map-btn">
+                <i class="fa fa-map"></i> Show on Google Map
+              </a>
+            </div>
+          </div>
+
+          <!-- Action Buttons Section -->
+          <div class="action-buttons">
+            <button
+              class="action-button save-button"
+              [ngClass]="{ favorited: lande?.favoriteable }"
+              (click)="toggleFavorite()"
+            >
+              <i
+                class="fa"
+                [ngClass]="
+                  lande?.favoriteable ? 'fas fa-bookmark' : 'far fa-bookmark'
+                "
+              ></i>
+              {{ lande?.favoriteable ? "Unfavorite" : "Favorite" }}
+            </button>
+
+            <button
+              class="action-button share-button"
+              (click)="openShareOverlay()"
+            >
+              <i class="fa fa-share-alt"></i> Share
+            </button>
+          </div>
         </div>
 
         <div class="comments-section">
@@ -102,7 +163,7 @@
                 <img
                   [src]="comment.imagePath"
                   alt="{{ comment.name }}'s profile"
-                  class="profile-image"
+                  class="profile-image1"
                 />
                 <h4>{{ comment.name }}</h4>
               </div>
@@ -113,6 +174,7 @@
                   ⋮
                 </button>
                 <div *ngIf="activeMenu === comment.id" class="menu-options">
+                  <button (click)="openUpdateDialog(comment)">Update</button>
                   <button (click)="deleteComment(comment.id)">Delete</button>
                 </div>
               </div>
@@ -131,7 +193,7 @@
                       <img
                         [src]="reply.imagePath"
                         alt="{{ reply.name }}'s profile"
-                        class="profile-image"
+                        class="profile-image1"
                       />
                       <h4>{{ reply.name }}</h4>
                     </div>
@@ -145,6 +207,9 @@
                         ⋮
                       </button>
                       <div *ngIf="activeMenu === reply.id" class="menu-options">
+                        <button (click)="openUpdateDialog(reply)">
+                          Update
+                        </button>
                         <button (click)="deleteComment(reply.id)">
                           Delete
                         </button>
@@ -165,7 +230,7 @@
                             <img
                               [src]="nestedReply.imagePath"
                               alt="{{ nestedReply.name }}'s profile"
-                              class="profile-image"
+                              class="profile-image1"
                             />
                             <h4>{{ nestedReply.name }}</h4>
                           </div>
@@ -182,6 +247,9 @@
                               *ngIf="activeMenu === nestedReply.id"
                               class="menu-options"
                             >
+                              <button (click)="openUpdateDialog(nestedReply)">
+                                Update
+                              </button>
                               <button (click)="deleteComment(nestedReply.id)">
                                 Delete
                               </button>
@@ -238,31 +306,82 @@
   </div>
 
   <div class="additional-details-container">
-    <h3>Additional Details</h3>
-
-    <!-- Phone Number Section -->
-    <div class="contact-info">
-      <h4>Contact</h4>
-      <p>
-        <strong>Phone:</strong>
-        <a [href]="'tel:' + land?.phoneNumber">{{ land?.phoneNumber }}</a>
-      </p>
-    </div>
-
-    <!-- Map Section -->
     <div class="additional-details-container">
-      <h3>Additional Details</h3>
-
       <!-- Phone Number Section -->
       <div class="contact-info">
-        <h4>Contact</h4>
-        <p>
-          <strong>Phone:</strong>
-          <a [href]="'tel:' + land?.phoneNumber">{{ land?.phoneNumber }}</a>
-        </p>
+        <div class="user-contact-card">
+          <div class="profile-header">
+            <img
+              [src]="lande?.user?.image"
+              alt="User Profile"
+              class="profile-image"
+            />
+            <div class="profile-info">
+              <h3>{{ lande?.user?.fullName }}</h3>
+              <p>&#64;{{ lande?.user?.username }}</p>
+              <p>
+                Member Since
+                {{ lande?.user?.createdAt | date : "dd, MMM yyyy" }}
+              </p>
+            </div>
+          </div>
+
+          <div class="contact-info-pf">
+            <div class="contact-item">
+              <i class="fa fa-phone"></i>
+              <span>{{ lande?.phoneNumber }}</span>
+              <a [href]="'tel:' + lande?.phoneNumber" class="call-link"
+                >Click To Call</a
+              >
+            </div>
+          </div>
+
+          <div class="location-info">
+            <i class="fa fa-map-marker-alt"></i>
+            <span
+              >{{ districtName }} , {{ communeName }} , {{ villageName }}</span
+            >
+          </div>
+        </div>
       </div>
 
-      <div class="map-container">
+      <div class="map-container" *ngIf="lande && urlSafe">
+        <!-- Nearby amenities count display -->
+        <div class="nearby-info">
+          <div class="amenity-card">
+            <p class="amenity-type">Banks</p>
+            <p class="amenity-count">{{ bankCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Gyms</p>
+            <p class="amenity-count">{{ gymCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Restaurants</p>
+            <p class="amenity-count">{{ restaurantCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Hotels</p>
+            <p class="amenity-count">{{ hotelCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Pubs</p>
+            <p class="amenity-count">{{ barPubCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Cafes</p>
+            <p class="amenity-count">{{ cafeCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Hospitals</p>
+            <p class="amenity-count">{{ hospitalCount }}</p>
+          </div>
+          <div class="amenity-card">
+            <p class="amenity-type">Supermarkets</p>
+            <p class="amenity-count">{{ supermarketCount }}</p>
+          </div>
+        </div>
+
         <!-- Display the embedded map -->
         <iframe
           width="100%"
@@ -270,16 +389,120 @@
           [src]="urlSafe"
           frameborder="0"
           allowfullscreen
-        >
-        </iframe>
-
-        <!-- Optional "View More" link for Google Maps -->
-        <div *ngIf="linkMap" class="map-link">
-          <a [href]="linkMap" target="_blank" rel="noopener noreferrer">
-            View More on Google Maps
-          </a>
-        </div>
+        ></iframe>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="land-list-all">
+  <div *ngIf="land.length > 0" class="related-posts-container">
+    <h3>Related Posts</h3>
+    <div class="card-grid">
+      <mat-card *ngFor="let lands of land">
+        <div class="image-container">
+          <img
+            mat-card-image
+            *ngIf="
+              lands.safeImagePaths &&
+              lands.safeImagePaths.length > 0 &&
+              lands.currentImageIndex !== undefined
+            "
+            [src]="lands.safeImagePaths[lands.currentImageIndex]"
+            alt="{{ lands.title }}"
+            style="width: 100%; height: 200px; object-fit: cover"
+            (click)="goToDetailsLand1(lands.id)"
+          />/>
+
+          <div
+            *ngIf="!lands.safeImagePaths?.length"
+            class="no-image-placeholder"
+          >
+            No Image Available
+          </div>
+
+          <!-- Navigation Buttons for Images in Related Posts Card -->
+          <button
+            class="prev-image-button"
+            *ngIf="lands.safeImagePaths?.length > 1"
+            (click)="prevCardImage(lands); $event.stopPropagation()"
+          >
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+
+          <button
+            class="next-image-button"
+            *ngIf="lands.safeImagePaths?.length > 1"
+            (click)="nextCardImage(lands); $event.stopPropagation()"
+          >
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </div>
+
+        <div class="favorite-icon-container">
+          <mat-icon
+            class="favorite-icon"
+            [ngClass]="{ favorited: lands.favoriteable }"
+            (click)="toggleFavorite1(lands.id); $event.stopPropagation()"
+          >
+            {{ lands.favoriteable ? "favorite" : "favorite_border" }}
+          </mat-icon>
+        </div>
+
+        <mat-card-content>
+          <h3>{{ lands.title }}</h3>
+          <p>Location: {{ lands.provinceName }}</p>
+          <p style="color: red; font-weight: bold; margin-bottom: 10px">
+            Price: ${{ lands.price }}
+          </p>
+
+          <div class="views-likes">
+            <div class="views">
+              <mat-icon>visibility</mat-icon>
+              <span>{{ lands.viewCount }} views</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              mat-raised-button
+              class="like-button1"
+              [ngClass]="{ liked: lands.likeable }"
+              (click)="likeLand(lands.id); $event.stopPropagation()"
+            >
+              <mat-icon>{{
+                lands.likeable ? "thumb_up" : "thumb_up_off_alt"
+              }}</mat-icon>
+              <span>{{ lands.likeCount }} Likes</span>
+            </button>
+            <button
+              mat-raised-button
+              color="success"
+              class="details-button"
+              (click)="goToDetailsLand1(lands.id)"
+            >
+              View Details
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="pagination">
+      <button
+        (click)="loadRelatedLand(currentPage - 1)"
+        [disabled]="currentPage <= 0"
+        class="pagination-button"
+      >
+        Previous
+      </button>
+      <button
+        (click)="loadRelatedLand(currentPage + 1)"
+        [disabled]="currentPage >= totalPages - 1"
+        class="pagination-button"
+      >
+        Next
+      </button>
     </div>
   </div>
 </div>

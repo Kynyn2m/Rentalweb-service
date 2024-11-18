@@ -1,4 +1,24 @@
 <h2 class="header">list comment</h2>
+
+<section class="section">
+  <mat-form-field class="btn-search">
+    <mat-label>{{ "search" | transloco }}</mat-label>
+    <input type="text" matInput #searchInput placeholder="Search comments" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <div class="button-search">
+    <button
+      mat-raised-button
+      color="success"
+      (click)="applyFilter(searchInput.value)"
+    >
+      {{ "search" | transloco }}
+    </button>
+    <button mat-raised-button color="warn" (click)="clearFilter(searchInput)">
+      Clear
+    </button>
+  </div>
+</section>
 <table mat-table [dataSource]="comments" class="mat-elevation-z8">
   <!-- ID Column -->
   <ng-container matColumnDef="id">

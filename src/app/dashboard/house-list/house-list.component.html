@@ -3,7 +3,12 @@
 <section class="section">
   <mat-form-field class="btn-search">
     <mat-label>{{ "search" | transloco }}</mat-label>
-    <input type="text" matInput [(ngModel)]="searchTerm" />
+    <input
+      type="text"
+      matInput
+      [(ngModel)]="searchTerm"
+      placeholder="Search house"
+    />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="button-search">
