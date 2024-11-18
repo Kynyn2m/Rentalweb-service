@@ -3,6 +3,9 @@
   <router-outlet (activate)="Onscroll()"></router-outlet>
 </div>
 
-<app-footer></app-footer>
+<div *ngIf="!isAdmin">
+  <app-footer></app-footer>
+</div>
+
 <p-scrollTop styleClass="custom-scrolltop"></p-scrollTop>
 <p-toast position="bottom-center"></p-toast>

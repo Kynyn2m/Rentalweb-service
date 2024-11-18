@@ -148,6 +148,7 @@ mat-icon {
 .dashboard-table td {
   padding: 12px 0px;
   text-align: left;
+  padding: 1rem;
 }
 
 .dashboard-table th {
