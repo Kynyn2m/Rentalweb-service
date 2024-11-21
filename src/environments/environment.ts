@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
   roleAdmin: 'ADMIN',
-  apiUrl: 'http://172.20.10.2:8080',
-  // apiUrl: 'http://localhost:8080',
+  // apiUrl: 'http://172.20.10.2:8080',
+  apiUrl: 'http://localhost:8080',
   // apiUrl: 'https://rantel-backed.onrender.com',
   pageSize: 5,
   sizeZero: 0,

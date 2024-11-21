@@ -1,3 +1,4 @@
+import { RoleService } from 'src/app/setting/role/role.service';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -18,7 +19,7 @@ import { FilterTemplate } from './user';
 import { environment } from 'src/environments/environment';
 import * as XLSX from 'xlsx';
 import { AssignRoleComponent } from './assign-role/assign-role.component';
-import { AssignRoleDialogComponent } from './assign-role-dialog/assign-role-dialog.component';
+import { AssignRoleDialogComponent, Role } from './assign-role-dialog/assign-role-dialog.component';
 
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -54,6 +55,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
+    private rolesService: RoleService,
     private changeDetectorRef: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) {}
@@ -135,18 +137,79 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  newDialog(): void {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = new USER_TYPE();
+  openAssignRoleDialog(user: any): void {
+    this.rolesService.getRoles().subscribe((response) => {
+      const roles: Role[] = response.result.result; // Assuming 'result' contains the list of roles
 
-    this.dialog
-      .open(AssignRoleDialogComponent, dialogConfig)
-      .afterClosed()
-      .subscribe(() => this.getAll());
+      // Open the dialog and pass the list of roles
+      const dialogRef = this.dialog.open(AssignRoleDialogComponent, {
+        width: '400px',
+        data: {
+          roles: roles, // Pass the roles to the dialog
+          assignedRoles: user.roles // Pass currently assigned roles
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          // Assign selected role IDs to the user
+          this.assignRolesToUser(user.id, result);
+        }
+      });
+    });
   }
 
+  assignRolesToUser(userId: number, roleIds: number[]): void {
+    // Call the user service to assign roles
+    this.userService.assignRolesToUser(userId, roleIds).subscribe(() => {
+      console.log('Roles successfully assigned to user.');
+      // Show success alert
+      Swal.fire('Success', 'Roles have been successfully assigned.', 'success');
+    }, error => {
+      console.error('Error assigning roles:', error);
+      Swal.fire('Error', 'Failed to assign roles.', 'error');
+    });
+  }
+
+
+  assignRole(user: USER_TYPE) {
+    console.log('Assign role to user:', user);
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '600px';
+    dialogConfig.data = user;
+
+    const dialogRef = this.dialog.open(AssignRoleComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.assignedRoles && result.assignedRoles.length > 0) {
+        const roles = result.assignedRoles.map((role: { id: number }) => ({
+          roleId: role.id,
+        }));
+
+        // Ensure both user.id and roles are provided
+        this.userService.getUserRoles(user.id, roles).subscribe(
+          (response) => {
+            console.log('User assigned successfully:', response);
+            this.getAll();
+            this.snackBar.open('User assigned successfully', 'Close', {
+              duration: 3000,
+            });
+          },
+          (error) => {
+            console.error('Error assigning User:', error);
+            this.snackBar.open('Error assigning user', 'Close', {
+              duration: 3000,
+            });
+          }
+        );
+      } else {
+        console.error('No roles selected');
+        this.snackBar.open('No roles selected', 'Close', { duration: 3000 });
+      }
+    });
+  }
   updateDialog(user: USER_TYPE): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true; // Prevent closing the dialog by clicking outside
