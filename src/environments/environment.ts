@@ -4,6 +4,7 @@ export const environment = {
   apiUrl: 'http://192.168.1.181:8080',
   // apiUrl: 'http://localhost:8080',
   // apiUrl: 'https://rantel-backed.onrender.com',
+  
   pageSize: 5,
   sizeZero: 0,
   currentPage: 0,
