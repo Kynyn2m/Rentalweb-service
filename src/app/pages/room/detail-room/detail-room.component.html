@@ -58,11 +58,16 @@
 
             <div class="detail-item">
               <i class="fa fa-map icon"></i>
-              <span><strong>Map Link:</strong>
-                <a [href]="linkMap"
-                   target="_blank">View on Map</a>
+              <span>
+                <strong>Map Link:</strong>
+                <a [href]="rooms?.linkMap"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                  View on Map
+                </a>
               </span>
             </div>
+
 
             <div class="detail-item">
               <i class="fa fa-heart icon"></i>
