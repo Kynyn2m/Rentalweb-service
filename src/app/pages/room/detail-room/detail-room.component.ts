@@ -42,7 +42,7 @@ interface Room {
   description: string;
   location: string;
   price: number;
-  roomsSize: number;
+  roomize: number;
   phoneNumber: string;
   imagePath: string;
   imagePaths: string[];
@@ -122,6 +122,9 @@ export class DetailRoomComponent
   rooms: Room | null = null;
   roomId!: number;
   room: any[] = [];
+  selectedAmenity: string | null = null;
+  amenitiesCount: { [key: string]: number } = {};
+  roomsId!: number;
   selectedImage: SafeUrl | null = null;
   provinceName: string = '';
   districtName: string = '';
@@ -139,6 +142,8 @@ export class DetailRoomComponent
   userMarker: any;
   markers: L.Marker[] = [];
   isMapInitialized: boolean = false;
+  amenityCache: { [key: string]: any[] } = {};
+  isLoadingAmenity: boolean = false;
 
   currentPage = 0;
   totalPages = 1;
@@ -153,6 +158,42 @@ export class DetailRoomComponent
   hospitalCount: number = 0;
   supermarketCount: number = 0;
 
+  amenities = [
+    { type: 'cafe', label: 'Cafes', countProp: 'cafeCount', icon: 'fa-coffee' },
+    { type: 'pub', label: 'Pubs', countProp: 'barPubCount', icon: 'fa-beer' },
+    {
+      type: 'restaurant',
+      label: 'Restaurants',
+      countProp: 'restaurantCount',
+      icon: 'fa-utensils',
+    },
+    {
+      type: 'hotel',
+      label: 'Hotels',
+      countProp: 'hotelCount',
+      icon: 'fa-hotel',
+    },
+    {
+      type: 'bank',
+      label: 'Banks',
+      countProp: 'bankCount',
+      icon: 'fa-university',
+    },
+    { type: 'gym', label: 'Gyms', countProp: 'gymCount', icon: 'fa-dumbbell' },
+    {
+      type: 'hospital',
+      label: 'Hospitals',
+      countProp: 'hospitalCount',
+      icon: 'fa-hospital',
+    },
+    {
+      type: 'supermarket',
+      label: 'Supermarkets',
+      countProp: 'supermarketCount',
+      icon: 'fa-shopping-cart',
+    },
+  ];
+
   loading: boolean = false;
 
   isLoading: boolean = false;
@@ -160,7 +201,7 @@ export class DetailRoomComponent
   constructor(
     private readonly route: ActivatedRoute,
     private readonly sanitizer: DomSanitizer,
-    private roomService: RoomService,
+    private readonly roomService: RoomService,
     private readonly dialog: MatDialog,
     private readonly districtService: DistrictService,
     private readonly communeService: CommuneService,
@@ -172,36 +213,26 @@ export class DetailRoomComponent
   ) {
     this.setDefaultMapUrl();
   }
+
   ngOnInit(): void {
-    this.roomId = +this.route.snapshot.paramMap.get('id')!;
-    this.fetchRoomDetails();
+    this.roomsId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchRoomsDetails();
     this.loadRelatedRooms();
     // Extract or use default coordinates to fetch nearby locations on page load
-    this.roomId = +this.route.snapshot.paramMap.get('id')!;
-    const roomIdParam = this.route.snapshot.paramMap.get('id');
-    const roomId = roomIdParam ? parseInt(roomIdParam, 10) : null;
+    this.roomsId = +this.route.snapshot.paramMap.get('id')!;
+    const roomsIdParam = this.route.snapshot.paramMap.get('id');
+    const roomsId = roomsIdParam ? parseInt(roomsIdParam, 10) : null;
 
-    if (roomId) {
-      this.getRoomDetails(roomId); // Fetch house details and link map
-      this.loadComments(roomId); // Load comments for the house
-
-      // Fetch and display nearby locations when coordinates are available
-      if (this.rooms?.linkMap) {
-        const coordinates = this.extractCoordinates(this.rooms.linkMap);
-        if (coordinates) {
-          this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
-        }
-      } else {
-        // Use default coordinates if no specific linkMap is available
-        this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
-      }
+    if (roomsId) {
+      this.goToRoom(roomsId); // Fetch rooms details
+      this.loadComments(roomsId);
     } else {
-      console.error('Invalid room ID');
+      console.error('Invalid rooms ID');
     }
   }
 
-  loadComments(roomId: number): void {
-    this.roomService.getComments(roomId).subscribe(
+  loadComments(roomsId: number): void {
+    this.roomService.getComments(roomsId).subscribe(
       (response) => {
         if (response.code === 200) {
           this.comments = response.result.result as UserComment[];
@@ -231,14 +262,14 @@ export class DetailRoomComponent
     }
     if (!this.newCommentText.trim()) return;
 
-    const roomId = this.rooms?.id ?? 34;
-    const type = 'room';
+    const roomsId = this.rooms?.id ?? 34;
+    const type = 'rooms';
     const description = this.newCommentText;
 
-    this.roomService.postComment(roomId, description, type).subscribe(
+    this.roomService.postComment(roomsId, description, type).subscribe(
       (response) => {
         if (response) {
-          this.loadComments(roomId); // Reload comments to fetch latest data
+          this.loadComments(roomsId); // Reload comments to fetch latest data
           this.newCommentText = ''; // Clear input field
         }
       },
@@ -271,8 +302,8 @@ export class DetailRoomComponent
     this.roomService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          const roomId = this.rooms?.id ?? 34;
-          this.loadComments(roomId); // Reload comments to fetch latest data
+          const roomsId = this.rooms?.id ?? 34;
+          this.loadComments(roomsId); // Reload comments to fetch latest data
           this.replyText[commentId] = ''; // Clear reply input
         }
       },
@@ -298,8 +329,8 @@ export class DetailRoomComponent
     const updateData = {
       id: updatedComment.id,
       description: updatedComment.description,
-      roomId: this.rooms?.id ?? null, // Replace with actual roomId if necessary
-      type: 'rooms', // or 'rooms'/'room' as per requirement
+      roomsId: this.rooms?.id ?? null, // Replace with actual roomsId if necessary
+      type: 'rooms', // or 'land'/'room' as per requirement
     };
 
     this.roomService.updateComment(updateData.id, updateData).subscribe(
@@ -346,8 +377,8 @@ export class DetailRoomComponent
 
     this.roomService.deleteComment(commentId).subscribe(
       () => {
-        const roomId = this.rooms?.id ?? 34;
-        this.loadComments(roomId); // Reload comments to update the list
+        const roomsId = this.rooms?.id ?? 34;
+        this.loadComments(roomsId); // Reload comments to update the list
         this.activeMenu = null;
       },
       (error) => {
@@ -365,15 +396,20 @@ export class DetailRoomComponent
   }
 
   ngAfterViewInit(): void {
-    if (this.rooms && this.rooms.linkMap) {
-      const coordinates = this.extractCoordinates(this.rooms.linkMap);
-      if (coordinates) {
-        this.initializeMap(coordinates.lat, coordinates.lng);
-      }
+    const roomsIdParam = this.route.snapshot.paramMap.get('id');
+    const roomsId = roomsIdParam ? parseInt(roomsIdParam, 10) : null;
+
+    if (roomsId) {
+      this.goToRoom(roomsId);
     }
   }
-
-  getRoomDetails(id: number): void {
+  goToDetails1(houseId: number): void {
+    this.router.navigate(['/details', houseId]).then(() => {
+      window.location.reload();
+      // this.fetchHouseDetails();
+    });
+  }
+  goToRoom(id: number): void {
     this.roomService.getRoomById(id.toString()).subscribe(
       (response) => {
         this.rooms = response.result as Room;
@@ -385,39 +421,100 @@ export class DetailRoomComponent
             this.rooms.commune,
             this.rooms.village
           );
-
-          // Check and set the linkMap
-          if (this.rooms.linkMap) {
-            // Log linkMap to ensure it's being received
-            console.log('Original room linkMap:', this.rooms.linkMap);
-
-            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
-            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(
-              this.rooms.linkMap
-            );
-            this.linkMap = isCoordinates
-              ? `https://www.google.com/maps?q=${this.rooms.linkMap}`
-              : this.rooms.linkMap;
-
-            // Log formatted linkMap to ensure correct format
-            console.log('Formatted linkMap:', this.linkMap);
-
-            // Sanitize URL for embedding
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.linkMap}&output=embed`
-            );
-          } else {
-            console.warn('No linkMap provided for this room');
+          const coordinates = this.extractCoordinates(this.rooms.linkMap);
+          if (coordinates) {
+            this.initializeMap(coordinates.lat, coordinates.lng);
+            this.fetchAllNearbyCounts(coordinates.lat, coordinates.lng); // Fetch counts for all amenities
           }
-
-          console.log('Fetched updated room details:', this.rooms);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+        this.cdr.detectChanges();
       },
-      (error) => {
-        console.error('Error fetching room details:', error);
-      }
+      (error) => console.error('Error fetching rooms details:', error)
     );
+  }
+
+  fetchAllNearbyCounts(lat: number, lng: number): void {
+    const promises = this.amenities.map((amenity) =>
+      fetch(this.getOverpassUrl(lat, lng, amenity.type))
+        .then((response) => response.json())
+        .then((data) => {
+          this.amenitiesCount[amenity.type] = data.elements.length; // Store the count
+        })
+        .catch((error) => {
+          console.error(`Error fetching ${amenity.type} count:`, error);
+          this.amenitiesCount[amenity.type] = 0;
+        })
+    );
+
+    Promise.all(promises).then(() => {
+      console.log('All nearby amenity counts fetched:', this.amenitiesCount);
+      this.cdr.detectChanges(); // Update the UI
+    });
+  }
+
+  getOverpassUrl(lat: number, lng: number, amenityType: string): string {
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center;
+    `;
+    return `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
+  }
+
+  fetchAndDisplayNearbyLocations(
+    lat: number,
+    lng: number,
+    amenityType: string
+  ): Promise<void> {
+    // Use cached data if available
+    if (this.amenityCache[amenityType]) {
+      console.log(`Using cached data for ${amenityType}`);
+      this.updateMarkers(this.amenityCache[amenityType], amenityType);
+      return Promise.resolve();
+    }
+
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
+
+    return fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(`Fetched ${data.elements.length} ${amenityType}(s).`);
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.amenityCache[amenityType] = data.elements; // Cache the results
+        this.updateMarkers(data.elements, amenityType);
+      })
+      .catch((error) => {
+        console.error(`Error fetching ${amenityType}:`, error);
+        this.amenitiesCount[amenityType] = 0;
+      });
+  }
+
+  updateMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
+    });
   }
 
   setDefaultMapUrl(): void {
@@ -440,70 +537,88 @@ export class DetailRoomComponent
   }
 
   initializeMap(lat: number, lng: number): void {
-    if (!this.map) {
-      setTimeout(() => {
-        const mapContainer = document.getElementById('room-map');
-        if (!mapContainer) {
-          console.error('Map container not found.');
-          return;
-        }
+    if (this.map) return;
 
-        // Initialize the map centered on the property
-        this.map = L.map('room-map').setView([lat, lng], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors',
-        }).addTo(this.map);
-
-        // Place a marker at the property location
-        L.marker([lat, lng])
-          .addTo(this.map)
-          .bindPopup('Property Location')
-          .openPopup();
-
-        // Fetch and display nearby locations
-        this.fetchAndDisplayNearbyLocations(lat, lng);
-      }, 0);
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error('Map container not found.');
+      return;
     }
+
+    this.map = L.map('map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    L.marker([lat, lng], { icon: defaultIcon })
+      .addTo(this.map)
+      .bindPopup('Rooms Location')
+      .openPopup();
   }
 
-  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
-    const amenities = [
-      { type: 'bank', countProp: 'bankCount' },
-      { type: 'gym', countProp: 'gymCount' },
-      { type: 'restaurant', countProp: 'restaurantCount' },
-      { type: 'hotel', countProp: 'hotelCount' },
-      { type: 'bar', countProp: 'barPubCount' },
-      { type: 'pub', countProp: 'barPubCount' },
-      { type: 'cafe', countProp: 'cafeCount' },
-      { type: 'hospital', countProp: 'hospitalCount' },
-      { type: 'supermarket', countProp: 'supermarketCount' },
-    ];
+  fetchAndDisplayNearbyPlaces(
+    lat: number,
+    lng: number,
+    amenityType: string
+  ): void {
+    const query = `
+      [out:json][timeout:25];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
 
-    amenities.forEach((amenity) => {
-      const query = `
-          [out:json][timeout:25];
-          node(around:1000, ${lat}, ${lng})["amenity"="${amenity.type}"];
-          out center 10;  // Limit to 10 actual amenities of this type
-        `;
-      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-        query
-      )}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Update count and display pins
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.displayMarkers(data.elements, amenityType);
+      })
+      .catch((error) => console.error(`Error fetching ${amenityType}:`, error));
+  }
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const count = data.elements ? data.elements.length : 0;
-          (this as any)[amenity.countProp] = count; // Update specific count property
-          this.displayNearbyPlaces(data.elements, amenity.type);
-          this.cdr.detectChanges(); // Update UI counts
-        })
-        .catch((error) => {
-          console.error(
-            `Error fetching nearby ${amenity.type} locations:`,
-            error
-          );
-        });
+  displayMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
     });
+  }
+
+  onAmenityClick(amenityType: string): void {
+    if (this.selectedAmenity === amenityType) {
+      console.log(`Amenity ${amenityType} is already displayed.`);
+      return; // Avoid fetching if the same amenity is already selected
+    }
+
+    this.selectedAmenity = amenityType;
+    this.isLoadingAmenity = true;
+
+    const coordinates = this.extractCoordinates(this.rooms?.linkMap || '');
+    if (coordinates) {
+      this.fetchAndDisplayNearbyLocations(
+        coordinates.lat,
+        coordinates.lng,
+        amenityType
+      ).finally(() => {
+        this.isLoadingAmenity = false; // Hide spinner after fetching
+      });
+    }
   }
 
   displayNearbyPlaces(places: any[], amenity: string): void {
@@ -530,8 +645,8 @@ export class DetailRoomComponent
     });
   }
 
-  fetchRoomDetails(): void {
-    this.roomService.getRoomById(this.roomId.toString()).subscribe({
+  fetchRoomsDetails(): void {
+    this.roomService.getRoomById(this.roomsId.toString()).subscribe({
       next: (response) => {
         this.rooms = response.result;
         if (this.rooms) {
@@ -547,13 +662,13 @@ export class DetailRoomComponent
               `${this.rooms.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated room details:', this.rooms);
+          console.log('Fetched updated rooms details:', this.rooms);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       error: (error) => {
         console.error(
-          `Error fetching room details for ID ${this.roomId}:`,
+          `Error fetching rooms details for ID ${this.roomsId}:`,
           error
         );
       },
@@ -565,7 +680,7 @@ export class DetailRoomComponent
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this room.',
+        text: 'Please log in to favorite this rooms.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -577,18 +692,18 @@ export class DetailRoomComponent
       return;
     }
 
-    console.log(`Attempting to toggle favorite for room ID: ${this.roomId}`);
+    console.log(`Attempting to toggle favorite for rooms ID: ${this.roomsId}`);
 
-    this.roomService.toggleFavorite(this.roomId, 'room').subscribe({
+    this.roomService.toggleFavorite(this.roomsId, 'rooms').subscribe({
       next: () => {
         // Toggle the 'favoriteable' status locally without blocking future clicks
         if (this.rooms) {
           this.rooms.favoriteable = !this.rooms.favoriteable;
         }
         console.log(
-          `Successfully toggled favorite for house ID ${this.roomId}`
+          `Successfully toggled favorite for rooms ID ${this.roomsId}`
         );
-        this.getRoomDetails(this.roomId); // Re-fetch details to confirm state
+        this.goToRoom(this.roomsId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(
@@ -645,7 +760,7 @@ export class DetailRoomComponent
     }
   }
 
-  // Function to load images specifically for card rooms in Related Posts
+  // Function to load images specifically for card room in Related Posts
   loadCardImages(rooms: Room): void {
     rooms.safeImagePaths = []; // Clear any existing images
     rooms.imagePaths.forEach((imagePath) => {
@@ -663,22 +778,22 @@ export class DetailRoomComponent
     rooms.currentImageIndex = 0; // Set default image index
   }
 
-  // Function to go to the previous image for a specific card room
-  prevCardImage(room: Room): void {
-    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
-      room.currentImageIndex =
-        room.currentImageIndex > 0
-          ? room.currentImageIndex - 1
-          : room.safeImagePaths.length - 1;
+  // Function to go to the previous image for a specific card rooms
+  prevCardImage(rooms: Room): void {
+    if (rooms.safeImagePaths && rooms.safeImagePaths.length > 1) {
+      rooms.currentImageIndex =
+        rooms.currentImageIndex > 0
+          ? rooms.currentImageIndex - 1
+          : rooms.safeImagePaths.length - 1;
     }
   }
 
-  // Function to go to the next image for a specific card room
-  nextCardImage(room: Room): void {
-    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
-      room.currentImageIndex =
-        room.currentImageIndex < room.safeImagePaths.length - 1
-          ? room.currentImageIndex + 1
+  // Function to go to the next image for a specific card rooms
+  nextCardImage(rooms: Room): void {
+    if (rooms.safeImagePaths && rooms.safeImagePaths.length > 1) {
+      rooms.currentImageIndex =
+        rooms.currentImageIndex < rooms.safeImagePaths.length - 1
+          ? rooms.currentImageIndex + 1
           : 0;
     }
   }
@@ -785,8 +900,8 @@ export class DetailRoomComponent
     window.history.back();
   }
 
-  loadSafeImagePaths(room: Room): SafeUrl[] {
-    return room.imagePaths.map((path) =>
+  loadSafeImagePaths(rooms: Room): SafeUrl[] {
+    return rooms.imagePaths.map((path) =>
       this.sanitizer.bypassSecurityTrustUrl(path)
     );
   }
@@ -799,16 +914,16 @@ export class DetailRoomComponent
         this.room = responseData.result;
         this.totalPages = responseData.totalPage;
 
-        // Call loadImage for each room to load its images
-        this.room.forEach((room) => {
-          this.loadImage(room);
+        // Call loadImage for each rooms to load its images
+        this.room.forEach((rooms) => {
+          this.loadImage(rooms);
         });
 
         this.loading = false;
       },
       (error) => {
         this.loading = false;
-        console.error('Error loading rooms:', error);
+        console.error('Error loading room:', error);
       }
     );
   }
@@ -835,22 +950,22 @@ export class DetailRoomComponent
     }
   }
 
-  prevImage1(room: Room): void {
+  prevImage1(rooms: Room): void {
     // Check if safeImagePaths exists and has images
-    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
-      room.currentImageIndex =
-        room.currentImageIndex > 0
-          ? room.currentImageIndex - 1
-          : room.safeImagePaths.length - 1;
+    if (rooms.safeImagePaths && rooms.safeImagePaths.length > 1) {
+      rooms.currentImageIndex =
+        rooms.currentImageIndex > 0
+          ? rooms.currentImageIndex - 1
+          : rooms.safeImagePaths.length - 1;
     }
   }
 
-  nextImage1(room: Room): void {
+  nextImage1(rooms: Room): void {
     // Check if safeImagePaths exists and has images
-    if (room.safeImagePaths && room.safeImagePaths.length > 1) {
-      room.currentImageIndex =
-        room.currentImageIndex < room.safeImagePaths.length - 1
-          ? room.currentImageIndex + 1
+    if (rooms.safeImagePaths && rooms.safeImagePaths.length > 1) {
+      rooms.currentImageIndex =
+        rooms.currentImageIndex < rooms.safeImagePaths.length - 1
+          ? rooms.currentImageIndex + 1
           : 0;
     }
   }
@@ -950,15 +1065,15 @@ export class DetailRoomComponent
   }
 
   goToDetailsRoom(roomId: number): void {
-    this.router.navigate(['/details-room', roomId]);
+    this.router.navigate(['/detail-room', roomId]);
   }
-
   goToDetailsRoom1(roomId: number): void {
     this.router.navigate(['/details-room', roomId]).then(() => {
       window.location.reload();
-      // this.fetchHouseDetails();
+      // this.fetchRoomsDetails();
     });
   }
+
   private fetchRoomData(roomId: number): void {
     console.log(`Fetching updated data for room ID ${roomId}...`);
 
