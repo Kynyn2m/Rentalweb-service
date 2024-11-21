@@ -652,21 +652,36 @@ export class DetailLandComponent
       next: (response) => {
         this.lande = response.result;
         if (this.lande) {
+          // Load images for the land
           this.loadCardImages(this.lande);
+
+          // Fetch location details
           this.fetchLocationDetails(
             this.lande.province,
             this.lande.district,
             this.lande.commune,
             this.lande.village
           );
-          if (this.lande.linkMap) {
+
+          // Handle map link
+          if (this.lande.linkMap && this.isValidGoogleMapsLink(this.lande.linkMap)) {
+            // Sanitize and prepare the URL for embedding
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.lande.linkMap}&output=embed`
+            );
+            console.log('Google Maps link validated and set:', this.lande.linkMap);
+          } else {
+            console.warn('Invalid or missing linkMap, using fallback URL.');
+            this.lande.linkMap = this.generateDefaultGoogleMapsLink(11.5564, 104.9282);
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.lande.linkMap}&output=embed`
             );
           }
           console.log('Fetched updated lande details:', this.lande);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+
+        // Ensure the UI updates
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(
@@ -676,6 +691,15 @@ export class DetailLandComponent
       },
     });
   }
+
+  isValidGoogleMapsLink(link: string): boolean {
+    const googleMapsRegex = /^https:\/\/(www\.)?google\.com\/maps/;
+    return googleMapsRegex.test(link);
+  }
+  generateDefaultGoogleMapsLink(lat: number, lng: number): string {
+    return `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
 
   toggleFavorite(): void {
     if (!this.authenticationService.isLoggedIn()) {

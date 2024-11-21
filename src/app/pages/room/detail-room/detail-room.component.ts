@@ -650,30 +650,50 @@ export class DetailRoomComponent
       next: (response) => {
         this.rooms = response.result;
         if (this.rooms) {
+          // Load card images for the room
           this.loadCardImages(this.rooms);
+
+          // Fetch location details
           this.fetchLocationDetails(
             this.rooms.province,
             this.rooms.district,
             this.rooms.commune,
             this.rooms.village
           );
-          if (this.rooms.linkMap) {
+
+          // Handle map link
+          if (this.rooms.linkMap && this.isValidGoogleMapsLink(this.rooms.linkMap)) {
+            // Sanitize and prepare the URL for embedding
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.rooms.linkMap}&output=embed`
+            );
+            console.log('Google Maps link validated and set:', this.rooms.linkMap);
+          } else {
+            console.warn('Invalid or missing linkMap, using fallback URL.');
+            this.rooms.linkMap = this.generateDefaultGoogleMapsLink(11.5564, 104.9282);
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.rooms.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated rooms details:', this.rooms);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+
+        // Ensure the UI updates
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error(
-          `Error fetching rooms details for ID ${this.roomsId}:`,
-          error
-        );
+        console.error(`Error fetching rooms details for ID ${this.roomsId}:`, error);
       },
     });
   }
+
+  isValidGoogleMapsLink(link: string): boolean {
+    const googleMapsRegex = /^https:\/\/(www\.)?google\.com\/maps/;
+    return googleMapsRegex.test(link);
+  }
+  generateDefaultGoogleMapsLink(lat: number, lng: number): string {
+    return `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
 
   toggleFavorite(): void {
     if (!this.authenticationService.isLoggedIn()) {

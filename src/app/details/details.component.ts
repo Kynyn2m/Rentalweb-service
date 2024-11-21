@@ -628,30 +628,49 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       next: (response) => {
         this.house = response.result;
         if (this.house) {
+          // Load images for the house
           this.loadCardImages(this.house);
+
+          // Fetch location details
           this.fetchLocationDetails(
             this.house.province,
             this.house.district,
             this.house.commune,
             this.house.village
           );
-          if (this.house.linkMap) {
+
+          // Handle map link
+          if (this.house.linkMap && this.isValidGoogleMapsLink(this.house.linkMap)) {
+            // Sanitize and prepare the URL for embedding
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
+              `${this.house.linkMap}&output=embed`
+            );
+            console.log('Google Maps link validated and set:', this.house.linkMap);
+          } else {
+            console.warn('Invalid or missing linkMap, using fallback URL.');
+            this.house.linkMap = this.generateDefaultGoogleMapsLink(11.5564, 104.9282);
             this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
               `${this.house.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated house details:', this.house);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+
+        // Ensure the UI updates
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error(
-          `Error fetching house details for ID ${this.houseId}:`,
-          error
-        );
+        console.error(`Error fetching house details for ID ${this.houseId}:`, error);
       },
     });
   }
+  isValidGoogleMapsLink(link: string): boolean {
+    const googleMapsRegex = /^https:\/\/(www\.)?google\.com\/maps/;
+    return googleMapsRegex.test(link);
+  }
+  generateDefaultGoogleMapsLink(lat: number, lng: number): string {
+    return `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
 
   toggleFavorite(): void {
     if (!this.authenticationService.isLoggedIn()) {
