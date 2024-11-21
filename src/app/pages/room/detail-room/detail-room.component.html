@@ -2,31 +2,30 @@
 <div class="page-container">
   <div class="details-container">
     <!-- Existing content of details-container -->
-    <button mat-button class="back-button" (click)="goBack()">
+    <button mat-button
+            class="back-button"
+            (click)="goBack()">
       <mat-icon>arrow_back</mat-icon> Back
     </button>
     <div class="details-card">
       <!-- Gallery and main details content -->
       <div class="gallery">
         <!-- Main Image with click event to open full screen -->
-        <div
-          class="main-image"
-          *ngIf="currentImage"
-          (click)="openImageViewer(currentImage)"
-        >
-          <img [src]="currentImage" alt="Room Image" />
+        <div class="main-image"
+             *ngIf="currentImage"
+             (click)="openImageViewer(currentImage)">
+          <img [src]="currentImage"
+               alt="Room Image" />
         </div>
 
         <!-- Image Thumbnails for selecting images without full screen opening -->
         <div class="image-thumbnails">
-          <img
-            *ngFor="let image of rooms?.safeImagePaths; let i = index"
-            [src]="image"
-            [class.selected]="currentImage === image"
-            (click)="selectImage(image)"
-            alt="{{ rooms?.title }}"
-            class="thumbnail"
-          />
+          <img *ngFor="let image of rooms?.safeImagePaths; let i = index"
+               [src]="image"
+               [class.selected]="currentImage === image"
+               (click)="selectImage(image)"
+               alt="{{ rooms?.title }}"
+               class="thumbnail" />
         </div>
       </div>
 
@@ -40,10 +39,8 @@
           <div class="details-info">
             <div class="detail-item">
               <i class="fa fa-map-marker-alt icon"></i>
-              <span
-                ><strong>Location:</strong> {{ districtName }},
-                {{ communeName }}, {{ villageName }}</span
-              >
+              <span><strong>Location:</strong> {{ districtName }},
+                {{ communeName }}, {{ villageName }}</span>
             </div>
             <div class="detail-item">
               <i class="fa fa-phone icon"></i>
@@ -51,23 +48,19 @@
             </div>
             <div class="detail-item">
               <i class="fa fa-dollar-sign icon"></i>
-              <span
-                ><strong>Price:</strong>
-                <span class="price">${{ rooms?.price }}</span></span
-              >
+              <span><strong>Price:</strong>
+                <span class="price">${{ rooms?.price }}</span></span>
             </div>
             <div class="detail-item">
               <i class="fa fa-info-circle icon"></i>
-              <span
-                ><strong>Description:</strong> {{ rooms?.description }}</span
-              >
+              <span><strong>Description:</strong> {{ rooms?.description }}</span>
             </div>
 
             <div class="detail-item">
               <i class="fa fa-map icon"></i>
-              <span
-                ><strong>Map Link:</strong>
-                <a [href]="linkMap" target="_blank">View on Map</a>
+              <span><strong>Map Link:</strong>
+                <a [href]="linkMap"
+                   target="_blank">View on Map</a>
               </span>
             </div>
             <div class="detail-item">
@@ -83,17 +76,17 @@
           <!-- Map Display Section -->
           <div class="map-display">
             <div class="map-wrapper">
-              <iframe
-                *ngIf="urlSafe"
-                width="100%"
-                height="200"
-                [src]="urlSafe"
-                frameborder="0"
-                allowfullscreen
-              ></iframe>
+              <iframe *ngIf="urlSafe"
+                      width="100%"
+                      height="200"
+                      [src]="urlSafe"
+                      frameborder="0"
+                      allowfullscreen></iframe>
 
               <!-- Wrap the button in an anchor tag with `href` pointing to `linkMap` -->
-              <a [href]="rooms?.linkMap" target="_blank" class="show-map-btn">
+              <a [href]="rooms?.linkMap"
+                 target="_blank"
+                 class="show-map-btn">
                 <i class="fa fa-map"></i> Show on Google Map
               </a>
             </div>
@@ -101,24 +94,18 @@
 
           <!-- Action Buttons Section -->
           <div class="action-buttons">
-            <button
-              class="action-button save-button"
-              [ngClass]="{ favorited: rooms?.favoriteable }"
-              (click)="toggleFavorite()"
-            >
-              <i
-                class="fa"
-                [ngClass]="
+            <button class="action-button save-button"
+                    [ngClass]="{ favorited: rooms?.favoriteable }"
+                    (click)="toggleFavorite()">
+              <i class="fa"
+                 [ngClass]="
                   rooms?.favoriteable ? 'fas fa-bookmark' : 'far fa-bookmark'
-                "
-              ></i>
+                "></i>
               {{ rooms?.favoriteable ? "Unfavorite" : "Favorite" }}
             </button>
 
-            <button
-              class="action-button share-button"
-              (click)="openShareOverlay()"
-            >
+            <button class="action-button share-button"
+                    (click)="openShareOverlay()">
               <i class="fa fa-share-alt"></i> Share
             </button>
           </div>
@@ -128,52 +115,48 @@
           <h3>Comments ({{ comments.length }})</h3>
 
           <!-- Loading Overlay -->
-          <div *ngIf="isLoading" class="loading-overlay">
+          <div *ngIf="isLoading"
+               class="loading-overlay">
             <div class="loading-content">
-              <mat-progress-spinner
-                mode="indeterminate"
-                diameter="50"
-                color="primary"
-              ></mat-progress-spinner>
+              <mat-progress-spinner mode="indeterminate"
+                                    diameter="50"
+                                    color="primary"></mat-progress-spinner>
             </div>
           </div>
 
           <!-- New Comment Form -->
           <div class="new-comment-form">
-            <input
-              type="text"
-              [(ngModel)]="newCommentText"
-              placeholder="Write a new comment..."
-              class="new-comment-input"
-              (keyup.enter)="postComment()"
-            />
-            <button
-              (click)="postComment()"
-              [disabled]="!newCommentText"
-              class="post-comment-button"
-            >
+            <input type="text"
+                   [(ngModel)]="newCommentText"
+                   placeholder="Write a new comment..."
+                   class="new-comment-input"
+                   (keyup.enter)="postComment()" />
+            <button (click)="postComment()"
+                    [disabled]="!newCommentText"
+                    class="post-comment-button">
               Post Comment
             </button>
           </div>
 
           <!-- Display Comments and Replies Recursively -->
-          <div *ngFor="let comment of comments" class="comment">
+          <div *ngFor="let comment of comments"
+               class="comment">
             <div class="comment-header">
               <div class="header-content">
-                <img
-                  [src]="comment.imagePath"
-                  alt="{{ comment.name }}'s profile"
-                  class="profile-image1"
-                />
+                <img [src]="comment.imagePath"
+                     alt="{{ comment.name }}'s profile"
+                     class="profile-image1" />
                 <h4>{{ comment.name }}</h4>
               </div>
 
               <!-- Dropdown Menu for Comment Options -->
               <div class="comment-menu">
-                <button (click)="toggleMenu(comment.id)" class="menu-button">
+                <button (click)="toggleMenu(comment.id)"
+                        class="menu-button">
                   ⋮
                 </button>
-                <div *ngIf="activeMenu === comment.id" class="menu-options">
+                <div *ngIf="activeMenu === comment.id"
+                     class="menu-options">
                   <button (click)="openUpdateDialog(comment)">Update</button>
                   <button (click)="deleteComment(comment.id)">Delete</button>
                 </div>
@@ -182,31 +165,26 @@
             <p>{{ comment.description }}</p>
 
             <!-- Recursive Replies Section -->
-            <div
-              *ngIf="comment.replies && comment.replies.length > 0"
-              class="replies"
-            >
+            <div *ngIf="comment.replies && comment.replies.length > 0"
+                 class="replies">
               <ng-container *ngFor="let reply of comment.replies">
                 <div class="reply">
                   <div class="reply-header">
                     <div class="header-content">
-                      <img
-                        [src]="reply.imagePath"
-                        alt="{{ reply.name }}'s profile"
-                        class="profile-image1"
-                      />
+                      <img [src]="reply.imagePath"
+                           alt="{{ reply.name }}'s profile"
+                           class="profile-image1" />
                       <h4>{{ reply.name }}</h4>
                     </div>
 
                     <!-- Dropdown Menu for Reply Options -->
                     <div class="comment-menu">
-                      <button
-                        (click)="toggleMenu(reply.id)"
-                        class="menu-button"
-                      >
+                      <button (click)="toggleMenu(reply.id)"
+                              class="menu-button">
                         ⋮
                       </button>
-                      <div *ngIf="activeMenu === reply.id" class="menu-options">
+                      <div *ngIf="activeMenu === reply.id"
+                           class="menu-options">
                         <button (click)="openUpdateDialog(reply)">
                           Update
                         </button>
@@ -219,34 +197,26 @@
                   <p>{{ reply.description }}</p>
 
                   <!-- Further Nested Replies -->
-                  <div
-                    *ngIf="reply.replies && reply.replies.length > 0"
-                    class="nested-replies"
-                  >
+                  <div *ngIf="reply.replies && reply.replies.length > 0"
+                       class="nested-replies">
                     <ng-container *ngFor="let nestedReply of reply.replies">
                       <div class="reply">
                         <div class="reply-header">
                           <div class="header-content">
-                            <img
-                              [src]="nestedReply.imagePath"
-                              alt="{{ nestedReply.name }}'s profile"
-                              class="profile-image1"
-                            />
+                            <img [src]="nestedReply.imagePath"
+                                 alt="{{ nestedReply.name }}'s profile"
+                                 class="profile-image1" />
                             <h4>{{ nestedReply.name }}</h4>
                           </div>
 
                           <!-- Dropdown Menu for Nested Reply Options -->
                           <div class="comment-menu">
-                            <button
-                              (click)="toggleMenu(nestedReply.id)"
-                              class="menu-button"
-                            >
+                            <button (click)="toggleMenu(nestedReply.id)"
+                                    class="menu-button">
                               ⋮
                             </button>
-                            <div
-                              *ngIf="activeMenu === nestedReply.id"
-                              class="menu-options"
-                            >
+                            <div *ngIf="activeMenu === nestedReply.id"
+                                 class="menu-options">
                               <button (click)="openUpdateDialog(nestedReply)">
                                 Update
                               </button>
@@ -263,18 +233,14 @@
 
                   <!-- Reply Form for Each Reply -->
                   <div class="reply-form">
-                    <input
-                      type="text"
-                      [(ngModel)]="replyText[reply.id]"
-                      placeholder="Write a reply..."
-                      class="reply-input"
-                      (keyup.enter)="sendReply(reply.id)"
-                    />
-                    <button
-                      (click)="sendReply(reply.id)"
-                      [disabled]="!replyText[reply.id]"
-                      class="reply-button"
-                    >
+                    <input type="text"
+                           [(ngModel)]="replyText[reply.id]"
+                           placeholder="Write a reply..."
+                           class="reply-input"
+                           (keyup.enter)="sendReply(reply.id)" />
+                    <button (click)="sendReply(reply.id)"
+                            [disabled]="!replyText[reply.id]"
+                            class="reply-button">
                       Reply
                     </button>
                   </div>
@@ -284,18 +250,14 @@
 
             <!-- Reply Form for Each Comment -->
             <div class="reply-form">
-              <input
-                type="text"
-                [(ngModel)]="replyText[comment.id]"
-                placeholder="Write a reply..."
-                class="reply-input"
-                (keyup.enter)="sendReply(comment.id)"
-              />
-              <button
-                (click)="sendReply(comment.id)"
-                [disabled]="!replyText[comment.id]"
-                class="reply-button"
-              >
+              <input type="text"
+                     [(ngModel)]="replyText[comment.id]"
+                     placeholder="Write a reply..."
+                     class="reply-input"
+                     (keyup.enter)="sendReply(comment.id)" />
+              <button (click)="sendReply(comment.id)"
+                      [disabled]="!replyText[comment.id]"
+                      class="reply-button">
                 Reply
               </button>
             </div>
@@ -311,11 +273,9 @@
       <div class="contact-info">
         <div class="user-contact-card">
           <div class="profile-header">
-            <img
-              [src]="rooms?.user?.image"
-              alt="User Profile"
-              class="profile-image"
-            />
+            <img [src]="rooms?.user?.image"
+                 alt="User Profile"
+                 class="profile-image" />
             <div class="profile-info">
               <h3>{{ rooms?.user?.fullName }}</h3>
               <p>&#64;{{ rooms?.user?.username }}</p>
@@ -330,21 +290,19 @@
             <div class="contact-item">
               <i class="fa fa-phone"></i>
               <span>{{ rooms?.phoneNumber }}</span>
-              <a [href]="'tel:' + rooms?.phoneNumber" class="call-link"
-                >Click To Call</a
-              >
+              <a [href]="'tel:' + rooms?.phoneNumber"
+                 class="call-link">Click To Call</a>
             </div>
           </div>
 
           <div class="location-info">
             <i class="fa fa-map-marker-alt"></i>
-            <span
-              >{{ districtName }} , {{ communeName }} , {{ villageName }}</span
-            >
+            <span>{{ districtName }} , {{ communeName }} , {{ villageName }}</span>
           </div>
         </div>
       </div>
-      <div class="map-container" *ngIf="rooms && urlSafe">
+      <div class="map-container"
+           *ngIf="rooms && urlSafe">
         <!-- Inform the user about the nearby radius -->
         <p class="nearby-info">
           Nearby locations are within approximately 1 km radius
@@ -352,11 +310,9 @@
 
         <!-- Nearby amenities count display -->
         <div class="amenity-filters">
-          <button
-            *ngFor="let amenity of amenities"
-            [class.active]="selectedAmenity === amenity.type"
-            (click)="onAmenityClick(amenity.type)"
-          >
+          <button *ngFor="let amenity of amenities"
+                  [class.active]="selectedAmenity === amenity.type"
+                  (click)="onAmenityClick(amenity.type)">
             <i [class]="'fas ' + amenity.icon"></i> {{ amenity.label }}
             <span *ngIf="amenitiesCount[amenity.type] !== undefined">
               ({{ amenitiesCount[amenity.type] || 0 }})
@@ -365,62 +321,59 @@
         </div>
 
         <!-- Display the embedded map -->
-        <div id="map" style="height: 400px; width: 100%"></div>
+        <div id="map"
+             style="height: 400px; width: 100%"></div>
       </div>
+    </div>
+    <div class="banner-container">
+      <img src="assets/img/poster/www.reallygreatsite.com.png"
+           alt="Promotional Banner"
+           class="banner-image" />
     </div>
   </div>
 </div>
 
 <div class="room-list-all">
-  <div *ngIf="room.length > 0" class="related-posts-container">
+  <div *ngIf="room.length > 0"
+       class="related-posts-container">
     <h3>Related Posts</h3>
     <div class="card-grid">
       <mat-card *ngFor="let rooms of room">
         <div class="image-container">
-          <img
-            mat-card-image
-            *ngIf="
+          <img mat-card-image
+               *ngIf="
               rooms.safeImagePaths &&
               rooms.safeImagePaths.length > 0 &&
               rooms.currentImageIndex !== undefined
             "
-            [src]="rooms.safeImagePaths[rooms.currentImageIndex]"
-            alt="{{ rooms.title }}"
-            style="width: 100%; height: 200px; object-fit: cover"
-            (click)="goToDetailsRoom1(rooms.id)"
-          />
+               [src]="rooms.safeImagePaths[rooms.currentImageIndex]"
+               alt="{{ rooms.title }}"
+               style="width: 100%; height: 200px; object-fit: cover"
+               (click)="goToDetailsRoom1(rooms.id)" />
 
-          <div
-            *ngIf="!rooms.safeImagePaths?.length"
-            class="no-image-placeholder"
-          >
+          <div *ngIf="!rooms.safeImagePaths?.length"
+               class="no-image-placeholder">
             No Image Available
           </div>
 
           <!-- Navigation Buttons for Images in Related Posts Card -->
-          <button
-            class="prev-image-button"
-            *ngIf="rooms.safeImagePaths?.length > 1"
-            (click)="prevCardImage(rooms); $event.stopPropagation()"
-          >
+          <button class="prev-image-button"
+                  *ngIf="rooms.safeImagePaths?.length > 1"
+                  (click)="prevCardImage(rooms); $event.stopPropagation()">
             <mat-icon>arrow_back</mat-icon>
           </button>
 
-          <button
-            class="next-image-button"
-            *ngIf="rooms.safeImagePaths?.length > 1"
-            (click)="nextCardImage(rooms); $event.stopPropagation()"
-          >
+          <button class="next-image-button"
+                  *ngIf="rooms.safeImagePaths?.length > 1"
+                  (click)="nextCardImage(rooms); $event.stopPropagation()">
             <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
 
         <div class="favorite-icon-container">
-          <mat-icon
-            class="favorite-icon"
-            [ngClass]="{ favorited: rooms.favoriteable }"
-            (click)="toggleFavorite1(rooms.id); $event.stopPropagation()"
-          >
+          <mat-icon class="favorite-icon"
+                    [ngClass]="{ favorited: rooms.favoriteable }"
+                    (click)="toggleFavorite1(rooms.id); $event.stopPropagation()">
             {{ rooms.favoriteable ? "favorite" : "favorite_border" }}
           </mat-icon>
         </div>
@@ -440,23 +393,19 @@
           </div>
 
           <div class="actions">
-            <button
-              mat-raised-button
-              class="like-button1"
-              [ngClass]="{ liked: rooms.likeable }"
-              (click)="likeRoom(rooms.id); $event.stopPropagation()"
-            >
+            <button mat-raised-button
+                    class="like-button1"
+                    [ngClass]="{ liked: rooms.likeable }"
+                    (click)="likeRoom(rooms.id); $event.stopPropagation()">
               <mat-icon>{{
                 rooms.likeable ? "thumb_up" : "thumb_up_off_alt"
               }}</mat-icon>
               <span>{{ rooms.likeCount }} Likes</span>
             </button>
-            <button
-              mat-raised-button
-              color="success"
-              class="details-button"
-              (click)="goToDetailsRoom1(rooms.id)"
-            >
+            <button mat-raised-button
+                    color="success"
+                    class="details-button"
+                    (click)="goToDetailsRoom1(rooms.id)">
               View Details
             </button>
           </div>
@@ -465,18 +414,14 @@
     </div>
 
     <div class="pagination">
-      <button
-        (click)="loadRelatedRooms(currentPage - 1)"
-        [disabled]="currentPage <= 0"
-        class="pagination-button"
-      >
+      <button (click)="loadRelatedRooms(currentPage - 1)"
+              [disabled]="currentPage <= 0"
+              class="pagination-button">
         Previous
       </button>
-      <button
-        (click)="loadRelatedRooms(currentPage + 1)"
-        [disabled]="currentPage >= totalPages - 1"
-        class="pagination-button"
-      >
+      <button (click)="loadRelatedRooms(currentPage + 1)"
+              [disabled]="currentPage >= totalPages - 1"
+              class="pagination-button">
         Next
       </button>
     </div>
