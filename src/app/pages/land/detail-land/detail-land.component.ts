@@ -265,7 +265,7 @@ export class DetailLandComponent
     if (!this.newCommentText.trim()) return;
 
     const landeId = this.lande?.id ?? 34;
-    const type = 'lande';
+    const type = 'land';
     const description = this.newCommentText;
 
     this.landService.postComment(landeId, description, type).subscribe(
