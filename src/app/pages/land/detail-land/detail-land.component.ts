@@ -124,6 +124,9 @@ export class DetailLandComponent
   lande: Land | null = null;
   landId!: number;
   land: any[] = [];
+  selectedAmenity: string | null = null;
+  amenitiesCount: { [key: string]: number } = {};
+  landeId!: number;
   selectedImage: SafeUrl | null = null;
   provinceName: string = '';
   districtName: string = '';
@@ -141,6 +144,8 @@ export class DetailLandComponent
   userMarker: any;
   markers: L.Marker[] = [];
   isMapInitialized: boolean = false;
+  amenityCache: { [key: string]: any[] } = {};
+  isLoadingAmenity: boolean = false;
 
   currentPage = 0;
   totalPages = 1;
@@ -155,6 +160,42 @@ export class DetailLandComponent
   hospitalCount: number = 0;
   supermarketCount: number = 0;
 
+  amenities = [
+    { type: 'cafe', label: 'Cafes', countProp: 'cafeCount', icon: 'fa-coffee' },
+    { type: 'pub', label: 'Pubs', countProp: 'barPubCount', icon: 'fa-beer' },
+    {
+      type: 'restaurant',
+      label: 'Restaurants',
+      countProp: 'restaurantCount',
+      icon: 'fa-utensils',
+    },
+    {
+      type: 'hotel',
+      label: 'Hotels',
+      countProp: 'hotelCount',
+      icon: 'fa-hotel',
+    },
+    {
+      type: 'bank',
+      label: 'Banks',
+      countProp: 'bankCount',
+      icon: 'fa-university',
+    },
+    { type: 'gym', label: 'Gyms', countProp: 'gymCount', icon: 'fa-dumbbell' },
+    {
+      type: 'hospital',
+      label: 'Hospitals',
+      countProp: 'hospitalCount',
+      icon: 'fa-hospital',
+    },
+    {
+      type: 'supermarket',
+      label: 'Supermarkets',
+      countProp: 'supermarketCount',
+      icon: 'fa-shopping-cart',
+    },
+  ];
+
   loading: boolean = false;
 
   isLoading: boolean = false;
@@ -162,7 +203,7 @@ export class DetailLandComponent
   constructor(
     private readonly route: ActivatedRoute,
     private readonly sanitizer: DomSanitizer,
-    private landService: LandService,
+    private readonly landService: LandService,
     private readonly dialog: MatDialog,
     private readonly districtService: DistrictService,
     private readonly communeService: CommuneService,
@@ -174,36 +215,26 @@ export class DetailLandComponent
   ) {
     this.setDefaultMapUrl();
   }
+
   ngOnInit(): void {
-    this.landId = +this.route.snapshot.paramMap.get('id')!;
-    this.fetchLandDetails();
+    this.landeId = +this.route.snapshot.paramMap.get('id')!;
+    this.fetchLandeDetails();
     this.loadRelatedLand();
     // Extract or use default coordinates to fetch nearby locations on page load
-    this.landId = +this.route.snapshot.paramMap.get('id')!;
-    const landIdParam = this.route.snapshot.paramMap.get('id');
-    const landId = landIdParam ? parseInt(landIdParam, 10) : null;
+    this.landeId = +this.route.snapshot.paramMap.get('id')!;
+    const landeIdParam = this.route.snapshot.paramMap.get('id');
+    const landeId = landeIdParam ? parseInt(landeIdParam, 10) : null;
 
-    if (landId) {
-      this.getLandDetails(landId); // Fetch house details and link map
-      this.loadComments(landId); // Load comments for the house
-
-      // Fetch and display nearby locations when coordinates are available
-      if (this.lande?.linkMap) {
-        const coordinates = this.extractCoordinates(this.lande.linkMap);
-        if (coordinates) {
-          this.fetchAndDisplayNearbyLocations(coordinates.lat, coordinates.lng);
-        }
-      } else {
-        // Use default coordinates if no specific linkMap is available
-        this.fetchAndDisplayNearbyLocations(11.5564, 104.9282);
-      }
+    if (landeId) {
+      this.goToLand(landeId); // Fetch lande details
+      this.loadComments(landeId);
     } else {
-      console.error('Invalid land ID');
+      console.error('Invalid lande ID');
     }
   }
 
-  loadComments(landId: number): void {
-    this.landService.getComments(landId).subscribe(
+  loadComments(landeId: number): void {
+    this.landService.getComments(landeId).subscribe(
       (response) => {
         if (response.code === 200) {
           this.comments = response.result.result as UserComment[];
@@ -233,14 +264,14 @@ export class DetailLandComponent
     }
     if (!this.newCommentText.trim()) return;
 
-    const landId = this.lande?.id ?? 34;
-    const type = 'land';
+    const landeId = this.lande?.id ?? 34;
+    const type = 'lande';
     const description = this.newCommentText;
 
-    this.landService.postComment(landId, description, type).subscribe(
+    this.landService.postComment(landeId, description, type).subscribe(
       (response) => {
         if (response) {
-          this.loadComments(landId); // Reload comments to fetch latest data
+          this.loadComments(landeId); // Reload comments to fetch latest data
           this.newCommentText = ''; // Clear input field
         }
       },
@@ -273,8 +304,8 @@ export class DetailLandComponent
     this.landService.replyToComment(commentId, description).subscribe(
       (response) => {
         if (response) {
-          const landId = this.lande?.id ?? 34;
-          this.loadComments(landId); // Reload comments to fetch latest data
+          const landeId = this.lande?.id ?? 34;
+          this.loadComments(landeId); // Reload comments to fetch latest data
           this.replyText[commentId] = ''; // Clear reply input
         }
       },
@@ -300,8 +331,8 @@ export class DetailLandComponent
     const updateData = {
       id: updatedComment.id,
       description: updatedComment.description,
-      landId: this.lande?.id ?? null, // Replace with actual landId if necessary
-      type: 'land', // or 'land'/'land' as per requirement
+      landeId: this.lande?.id ?? null, // Replace with actual landeId if necessary
+      type: 'lande', // or 'land'/'land' as per requirement
     };
 
     this.landService.updateComment(updateData.id, updateData).subscribe(
@@ -348,8 +379,8 @@ export class DetailLandComponent
 
     this.landService.deleteComment(commentId).subscribe(
       () => {
-        const landId = this.lande?.id ?? 34;
-        this.loadComments(landId); // Reload comments to update the list
+        const landeId = this.lande?.id ?? 34;
+        this.loadComments(landeId); // Reload comments to update the list
         this.activeMenu = null;
       },
       (error) => {
@@ -367,15 +398,20 @@ export class DetailLandComponent
   }
 
   ngAfterViewInit(): void {
-    if (this.lande && this.lande.linkMap) {
-      const coordinates = this.extractCoordinates(this.lande.linkMap);
-      if (coordinates) {
-        this.initializeMap(coordinates.lat, coordinates.lng);
-      }
+    const landeIdParam = this.route.snapshot.paramMap.get('id');
+    const landeId = landeIdParam ? parseInt(landeIdParam, 10) : null;
+
+    if (landeId) {
+      this.goToLand(landeId);
     }
   }
-
-  getLandDetails(id: number): void {
+  goToDetails1(houseId: number): void {
+    this.router.navigate(['/details', houseId]).then(() => {
+      window.location.reload();
+      // this.fetchHouseDetails();
+    });
+  }
+  goToLand(id: number): void {
     this.landService.getLandById(id.toString()).subscribe(
       (response) => {
         this.lande = response.result as Land;
@@ -387,39 +423,100 @@ export class DetailLandComponent
             this.lande.commune,
             this.lande.village
           );
-
-          // Check and set the linkMap
-          if (this.lande.linkMap) {
-            // Log linkMap to ensure it's being received
-            console.log('Original land linkMap:', this.lande.linkMap);
-
-            // Check if linkMap is in the format of coordinates (e.g., "11.5564,104.9282")
-            const isCoordinates = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/.test(
-              this.lande.linkMap
-            );
-            this.linkMap = isCoordinates
-              ? `https://www.google.com/maps?q=${this.lande.linkMap}`
-              : this.lande.linkMap;
-
-            // Log formatted linkMap to ensure correct format
-            console.log('Formatted linkMap:', this.linkMap);
-
-            // Sanitize URL for embedding
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(
-              `${this.linkMap}&output=embed`
-            );
-          } else {
-            console.warn('No linkMap provided for this land');
+          const coordinates = this.extractCoordinates(this.lande.linkMap);
+          if (coordinates) {
+            this.initializeMap(coordinates.lat, coordinates.lng);
+            this.fetchAllNearbyCounts(coordinates.lat, coordinates.lng); // Fetch counts for all amenities
           }
-
-          console.log('Fetched updated land details:', this.lande);
         }
-        this.cdr.detectChanges(); // Ensure the view updates after fetching
+        this.cdr.detectChanges();
       },
-      (error) => {
-        console.error('Error fetching land details:', error);
-      }
+      (error) => console.error('Error fetching lande details:', error)
     );
+  }
+
+  fetchAllNearbyCounts(lat: number, lng: number): void {
+    const promises = this.amenities.map((amenity) =>
+      fetch(this.getOverpassUrl(lat, lng, amenity.type))
+        .then((response) => response.json())
+        .then((data) => {
+          this.amenitiesCount[amenity.type] = data.elements.length; // Store the count
+        })
+        .catch((error) => {
+          console.error(`Error fetching ${amenity.type} count:`, error);
+          this.amenitiesCount[amenity.type] = 0;
+        })
+    );
+
+    Promise.all(promises).then(() => {
+      console.log('All nearby amenity counts fetched:', this.amenitiesCount);
+      this.cdr.detectChanges(); // Update the UI
+    });
+  }
+
+  getOverpassUrl(lat: number, lng: number, amenityType: string): string {
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center;
+    `;
+    return `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
+  }
+
+  fetchAndDisplayNearbyLocations(
+    lat: number,
+    lng: number,
+    amenityType: string
+  ): Promise<void> {
+    // Use cached data if available
+    if (this.amenityCache[amenityType]) {
+      console.log(`Using cached data for ${amenityType}`);
+      this.updateMarkers(this.amenityCache[amenityType], amenityType);
+      return Promise.resolve();
+    }
+
+    const query = `
+      [out:json][timeout:10];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
+
+    return fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(`Fetched ${data.elements.length} ${amenityType}(s).`);
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.amenityCache[amenityType] = data.elements; // Cache the results
+        this.updateMarkers(data.elements, amenityType);
+      })
+      .catch((error) => {
+        console.error(`Error fetching ${amenityType}:`, error);
+        this.amenitiesCount[amenityType] = 0;
+      });
+  }
+
+  updateMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
+    });
   }
 
   setDefaultMapUrl(): void {
@@ -442,70 +539,88 @@ export class DetailLandComponent
   }
 
   initializeMap(lat: number, lng: number): void {
-    if (!this.map) {
-      setTimeout(() => {
-        const mapContainer = document.getElementById('land-map');
-        if (!mapContainer) {
-          console.error('Map container not found.');
-          return;
-        }
+    if (this.map) return;
 
-        // Initialize the map centered on the property
-        this.map = L.map('land-map').setView([lat, lng], 14);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors',
-        }).addTo(this.map);
-
-        // Place a marker at the property location
-        L.marker([lat, lng])
-          .addTo(this.map)
-          .bindPopup('Property Location')
-          .openPopup();
-
-        // Fetch and display nearby locations
-        this.fetchAndDisplayNearbyLocations(lat, lng);
-      }, 0);
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+      console.error('Map container not found.');
+      return;
     }
+
+    this.map = L.map('map').setView([lat, lng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(this.map);
+
+    L.marker([lat, lng], { icon: defaultIcon })
+      .addTo(this.map)
+      .bindPopup('Lande Location')
+      .openPopup();
   }
 
-  fetchAndDisplayNearbyLocations(lat: number, lng: number): void {
-    const amenities = [
-      { type: 'bank', countProp: 'bankCount' },
-      { type: 'gym', countProp: 'gymCount' },
-      { type: 'restaurant', countProp: 'restaurantCount' },
-      { type: 'hotel', countProp: 'hotelCount' },
-      { type: 'bar', countProp: 'barPubCount' },
-      { type: 'pub', countProp: 'barPubCount' },
-      { type: 'cafe', countProp: 'cafeCount' },
-      { type: 'hospital', countProp: 'hospitalCount' },
-      { type: 'supermarket', countProp: 'supermarketCount' },
-    ];
+  fetchAndDisplayNearbyPlaces(
+    lat: number,
+    lng: number,
+    amenityType: string
+  ): void {
+    const query = `
+      [out:json][timeout:25];
+      node(around:1000, ${lat}, ${lng})["amenity"="${amenityType}"];
+      out center 10;
+    `;
+    const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+      query
+    )}`;
 
-    amenities.forEach((amenity) => {
-      const query = `
-          [out:json][timeout:25];
-          node(around:1000, ${lat}, ${lng})["amenity"="${amenity.type}"];
-          out center 10;  // Limit to 10 actual amenities of this type
-        `;
-      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-        query
-      )}`;
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Update count and display pins
+        this.amenitiesCount[amenityType] = data.elements.length;
+        this.displayMarkers(data.elements, amenityType);
+      })
+      .catch((error) => console.error(`Error fetching ${amenityType}:`, error));
+  }
 
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const count = data.elements ? data.elements.length : 0;
-          (this as any)[amenity.countProp] = count; // Update specific count property
-          this.displayNearbyPlaces(data.elements, amenity.type);
-          this.cdr.detectChanges(); // Update UI counts
-        })
-        .catch((error) => {
-          console.error(
-            `Error fetching nearby ${amenity.type} locations:`,
-            error
-          );
-        });
+  displayMarkers(places: any[], amenityType: string): void {
+    if (!this.map) return;
+
+    // Clear existing markers
+    this.markers.forEach((marker) => this.map?.removeLayer(marker));
+    this.markers = [];
+
+    // Add new markers
+    places.forEach((place) => {
+      if (place.lat && place.lon) {
+        const marker = L.marker([place.lat, place.lon]).addTo(this.map!);
+        marker.bindPopup(
+          `<b>${place.tags.name || 'Unnamed'}</b><br>Type: ${amenityType}`
+        );
+        this.markers.push(marker);
+      }
     });
+  }
+
+  onAmenityClick(amenityType: string): void {
+    if (this.selectedAmenity === amenityType) {
+      console.log(`Amenity ${amenityType} is already displayed.`);
+      return; // Avoid fetching if the same amenity is already selected
+    }
+
+    this.selectedAmenity = amenityType;
+    this.isLoadingAmenity = true;
+
+    const coordinates = this.extractCoordinates(this.lande?.linkMap || '');
+    if (coordinates) {
+      this.fetchAndDisplayNearbyLocations(
+        coordinates.lat,
+        coordinates.lng,
+        amenityType
+      ).finally(() => {
+        this.isLoadingAmenity = false; // Hide spinner after fetching
+      });
+    }
   }
 
   displayNearbyPlaces(places: any[], amenity: string): void {
@@ -532,8 +647,8 @@ export class DetailLandComponent
     });
   }
 
-  fetchLandDetails(): void {
-    this.landService.getLandById(this.landId.toString()).subscribe({
+  fetchLandeDetails(): void {
+    this.landService.getLandById(this.landeId.toString()).subscribe({
       next: (response) => {
         this.lande = response.result;
         if (this.lande) {
@@ -549,13 +664,13 @@ export class DetailLandComponent
               `${this.lande.linkMap}&output=embed`
             );
           }
-          console.log('Fetched updated land details:', this.lande);
+          console.log('Fetched updated lande details:', this.lande);
         }
         this.cdr.detectChanges(); // Ensure the view updates after fetching
       },
       error: (error) => {
         console.error(
-          `Error fetching land details for ID ${this.landId}:`,
+          `Error fetching lande details for ID ${this.landeId}:`,
           error
         );
       },
@@ -567,7 +682,7 @@ export class DetailLandComponent
       Swal.fire({
         icon: 'warning',
         title: 'Not Logged In',
-        text: 'Please log in to favorite this land.',
+        text: 'Please log in to favorite this lande.',
         confirmButtonText: 'Login',
         showCancelButton: true,
         cancelButtonText: 'Cancel',
@@ -579,18 +694,18 @@ export class DetailLandComponent
       return;
     }
 
-    console.log(`Attempting to toggle favorite for land ID: ${this.landId}`);
+    console.log(`Attempting to toggle favorite for lande ID: ${this.landeId}`);
 
-    this.landService.toggleFavorite(this.landId, 'land').subscribe({
+    this.landService.toggleFavorite(this.landeId, 'lande').subscribe({
       next: () => {
         // Toggle the 'favoriteable' status locally without blocking future clicks
         if (this.lande) {
           this.lande.favoriteable = !this.lande.favoriteable;
         }
         console.log(
-          `Successfully toggled favorite for house ID ${this.landId}`
+          `Successfully toggled favorite for lande ID ${this.landeId}`
         );
-        this.getLandDetails(this.landId); // Re-fetch details to confirm state
+        this.goToLand(this.landeId); // Re-fetch details to confirm state
       },
       error: (error) => {
         console.warn(
@@ -612,26 +727,26 @@ export class DetailLandComponent
     });
   }
 
-  loadImages(land: Land): void {
-    if (land.imagePaths && land.imagePaths.length > 0) {
-      land.safeImagePaths = []; // Clear existing paths
+  loadImages(lande: Land): void {
+    if (lande.imagePaths && lande.imagePaths.length > 0) {
+      lande.safeImagePaths = []; // Clear existing paths
 
       // Track the loading order to set the first image consistently
       let imagesLoaded = 0;
 
-      land.imagePaths.forEach((imagePath, index) => {
+      lande.imagePaths.forEach((imagePath, index) => {
         this.landService.getImage(imagePath).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            land.safeImagePaths!.push(safeUrl);
+            lande.safeImagePaths!.push(safeUrl);
 
             imagesLoaded++;
 
             // Set `currentImage` and `currentImageIndex` to the first loaded image
             if (imagesLoaded === 1) {
               this.currentImage = safeUrl;
-              land.currentImageIndex = 0; // Assign 0 since images are available
+              lande.currentImageIndex = 0; // Assign 0 since images are available
             }
           },
           (error) => {
@@ -641,46 +756,46 @@ export class DetailLandComponent
       });
     } else {
       // Handle cases with no images
-      land.safeImagePaths = [];
+      lande.safeImagePaths = [];
       this.currentImage = null;
-      land.currentImageIndex = -1; // Use -1 or any number indicating no images
+      lande.currentImageIndex = -1; // Use -1 or any number indicating no images
     }
   }
 
   // Function to load images specifically for card land in Related Posts
-  loadCardImages(land: Land): void {
-    land.safeImagePaths = []; // Clear any existing images
-    land.imagePaths.forEach((imagePath) => {
+  loadCardImages(lande: Land): void {
+    lande.safeImagePaths = []; // Clear any existing images
+    lande.imagePaths.forEach((imagePath) => {
       this.landService.getImage(imagePath).subscribe(
         (imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          land.safeImagePaths!.push(safeUrl);
+          lande.safeImagePaths!.push(safeUrl);
         },
         (error) => {
           console.error('Error loading image:', error);
         }
       );
     });
-    land.currentImageIndex = 0; // Set default image index
+    lande.currentImageIndex = 0; // Set default image index
   }
 
-  // Function to go to the previous image for a specific card land
-  prevCardImage(land: Land): void {
-    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
-      land.currentImageIndex =
-        land.currentImageIndex > 0
-          ? land.currentImageIndex - 1
-          : land.safeImagePaths.length - 1;
+  // Function to go to the previous image for a specific card lande
+  prevCardImage(lande: Land): void {
+    if (lande.safeImagePaths && lande.safeImagePaths.length > 1) {
+      lande.currentImageIndex =
+        lande.currentImageIndex > 0
+          ? lande.currentImageIndex - 1
+          : lande.safeImagePaths.length - 1;
     }
   }
 
-  // Function to go to the next image for a specific card land
-  nextCardImage(land: Land): void {
-    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
-      land.currentImageIndex =
-        land.currentImageIndex < land.safeImagePaths.length - 1
-          ? land.currentImageIndex + 1
+  // Function to go to the next image for a specific card lande
+  nextCardImage(lande: Land): void {
+    if (lande.safeImagePaths && lande.safeImagePaths.length > 1) {
+      lande.currentImageIndex =
+        lande.currentImageIndex < lande.safeImagePaths.length - 1
+          ? lande.currentImageIndex + 1
           : 0;
     }
   }
@@ -787,8 +902,8 @@ export class DetailLandComponent
     window.history.back();
   }
 
-  loadSafeImagePaths(land: Land): SafeUrl[] {
-    return land.imagePaths.map((path) =>
+  loadSafeImagePaths(lande: Land): SafeUrl[] {
+    return lande.imagePaths.map((path) =>
       this.sanitizer.bypassSecurityTrustUrl(path)
     );
   }
@@ -815,44 +930,44 @@ export class DetailLandComponent
     );
   }
 
-  loadImage(land: any): void {
-    if (land.imagePaths && land.imagePaths.length > 0) {
-      land.safeImagePaths = [];
-      land.imagePaths.forEach((imageUrl: string) => {
+  loadImage(lande: any): void {
+    if (lande.imagePaths && lande.imagePaths.length > 0) {
+      lande.safeImagePaths = [];
+      lande.imagePaths.forEach((imageUrl: string) => {
         this.landService.getImage(imageUrl).subscribe(
           (imageBlob) => {
             const objectURL = URL.createObjectURL(imageBlob);
             const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            land.safeImagePaths.push(safeUrl);
+            lande.safeImagePaths.push(safeUrl);
           },
           (error) => {
             console.error('Error loading image:', error);
           }
         );
       });
-      land.currentImageIndex = 0;
+      lande.currentImageIndex = 0;
     } else {
-      land.safeImagePaths = [];
-      land.currentImageIndex = 0;
+      lande.safeImagePaths = [];
+      lande.currentImageIndex = 0;
     }
   }
 
-  prevImage1(land: Land): void {
+  prevImage1(lande: Land): void {
     // Check if safeImagePaths exists and has images
-    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
-      land.currentImageIndex =
-        land.currentImageIndex > 0
-          ? land.currentImageIndex - 1
-          : land.safeImagePaths.length - 1;
+    if (lande.safeImagePaths && lande.safeImagePaths.length > 1) {
+      lande.currentImageIndex =
+        lande.currentImageIndex > 0
+          ? lande.currentImageIndex - 1
+          : lande.safeImagePaths.length - 1;
     }
   }
 
-  nextImage1(land: Land): void {
+  nextImage1(lande: Land): void {
     // Check if safeImagePaths exists and has images
-    if (land.safeImagePaths && land.safeImagePaths.length > 1) {
-      land.currentImageIndex =
-        land.currentImageIndex < land.safeImagePaths.length - 1
-          ? land.currentImageIndex + 1
+    if (lande.safeImagePaths && lande.safeImagePaths.length > 1) {
+      lande.currentImageIndex =
+        lande.currentImageIndex < lande.safeImagePaths.length - 1
+          ? lande.currentImageIndex + 1
           : 0;
     }
   }
@@ -952,17 +1067,15 @@ export class DetailLandComponent
   }
 
   goToDetailsLand(landId: number): void {
+    this.router.navigate(['/detail-land', landId]);
+  }
+  goToDetailsLand1(landId: number): void {
     this.router.navigate(['/details-land', landId]).then(() => {
       window.location.reload();
-      // this.fetchLandDetails();
+      // this.fetchLandeDetails();
     });
   }
-  goToDetailsLand1(lanId: number): void {
-    this.router.navigate(['/details-land', lanId]).then(() => {
-      window.location.reload();
-      // this.fetchHouseDetails();
-    });
-  }
+
   private fetchLandData(landId: number): void {
     console.log(`Fetching updated data for land ID ${landId}...`);
 

@@ -344,52 +344,28 @@
           </div>
         </div>
       </div>
-
       <div class="map-container" *ngIf="lande && urlSafe">
+        <!-- Inform the user about the nearby radius -->
+        <p class="nearby-info">
+          Nearby locations are within approximately 1 km radius
+        </p>
+
         <!-- Nearby amenities count display -->
-        <div class="nearby-info">
-          <div class="amenity-card">
-            <p class="amenity-type">Banks</p>
-            <p class="amenity-count">{{ bankCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Gyms</p>
-            <p class="amenity-count">{{ gymCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Restaurants</p>
-            <p class="amenity-count">{{ restaurantCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Hotels</p>
-            <p class="amenity-count">{{ hotelCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Pubs</p>
-            <p class="amenity-count">{{ barPubCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Cafes</p>
-            <p class="amenity-count">{{ cafeCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Hospitals</p>
-            <p class="amenity-count">{{ hospitalCount }}</p>
-          </div>
-          <div class="amenity-card">
-            <p class="amenity-type">Supermarkets</p>
-            <p class="amenity-count">{{ supermarketCount }}</p>
-          </div>
+        <div class="amenity-filters">
+          <button
+            *ngFor="let amenity of amenities"
+            [class.active]="selectedAmenity === amenity.type"
+            (click)="onAmenityClick(amenity.type)"
+          >
+            <i [class]="'fas ' + amenity.icon"></i> {{ amenity.label }}
+            <span *ngIf="amenitiesCount[amenity.type] !== undefined">
+              ({{ amenitiesCount[amenity.type] || 0 }})
+            </span>
+          </button>
         </div>
 
         <!-- Display the embedded map -->
-        <iframe
-          width="100%"
-          height="400"
-          [src]="urlSafe"
-          frameborder="0"
-          allowfullscreen
-        ></iframe>
+        <div id="map" style="height: 400px; width: 100%"></div>
       </div>
     </div>
   </div>
