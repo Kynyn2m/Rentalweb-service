@@ -4,6 +4,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { CommentService } from 'src/app/Service/comment.service';
 import Swal from 'sweetalert2';
 
+import * as XLSX from 'xlsx';
+const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 export interface Comment {
   id: number;
   name: string;
@@ -48,6 +52,22 @@ export class CommentComponent implements OnInit, AfterViewInit {
       this.comments.data = response.result.result as Comment[];
       this.totalComments = response.result.totalElements;
     });
+  }
+  exportToExcel(): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.comments.data);
+    const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Create a blob and trigger the download
+    const fileName = 'cmt_data.xlsx';
+    const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(data);
+    link.download = fileName;
+    link.click();
   }
 
   onPageChange(event: PageEvent): void {

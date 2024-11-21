@@ -88,27 +88,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       adminOnly: true,
     },
     {
-      router: '/user', // change to lowercase
-      icon: 'perm_identity',
-      title: 'User',
-      tooltip: 'User',
-      adminOnly: true,
-    },
-    {
-      router: '/role',
-      icon: 'border_color',
-      title: 'Role',
-      tooltip: 'Role',
-      adminOnly: true,
-    },
-    {
-      router: '/comment',
-      icon: 'comment',
-      title: 'Comment',
-      tooltip: 'Comment',
-      adminOnly: true,
-    },
-    {
       router: '/house-list',
       icon: 'house',
       title: 'House',
@@ -127,6 +106,27 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       icon: 'landscape',
       title: 'land',
       tooltip: 'land',
+      adminOnly: true,
+    },
+    {
+      router: '/user',
+      icon: 'perm_identity',
+      title: 'User',
+      tooltip: 'User',
+      adminOnly: true,
+    },
+    {
+      router: '/role',
+      icon: 'border_color',
+      title: 'Role',
+      tooltip: 'Role',
+      adminOnly: true,
+    },
+    {
+      router: '/comment',
+      icon: 'comment',
+      title: 'Comment',
+      tooltip: 'Comment',
       adminOnly: true,
     },
   ];

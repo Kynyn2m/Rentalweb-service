@@ -18,6 +18,11 @@
     <button mat-raised-button color="warn" (click)="clearSearch()">
       Clear
     </button>
+    <!-- <button mat-raised-button
+    style="background-color: rgb(49, 127, 49); color: white;"
+     (click)="exportToExcel()">
+<mat-icon>file_download</mat-icon> Export to Excel
+</button> -->
   </div>
 </section>
 <div class="house-list-container">
@@ -26,7 +31,7 @@
   </div>
   <div class="table-container">
     <div class="mat-elevation-z8">
-      <table mat-table [dataSource]="houses" class="mat-elevation-z8">
+      <table  mat-table [dataSource]="houses" class="mat-elevation-z8">
         <!-- Image Column -->
         <ng-container matColumnDef="image">
           <th mat-header-cell *matHeaderCellDef>Image</th>

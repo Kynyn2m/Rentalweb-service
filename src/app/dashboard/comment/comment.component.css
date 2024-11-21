@@ -1,5 +1,5 @@
 .delete {
-  color: brown;
+  color: red;
   cursor: pointer;
 }
 h2 {
@@ -17,4 +17,25 @@ h2 {
 .header {
   padding: 1rem;
   text-align: center;
+}
+.mat-elevation-z8 {
+  display: flex;
+  flex-direction: column;  /* Set the container to be a column */
+  min-height: 450px;        /* Minimum height for the container */
+  overflow: hidden;         /* Prevent overflowing content */
+  background-color: white;
+}
+
+table.mat-table {
+  flex-grow: 1;             /* Ensure table grows to take up available space */
+  width: 100%;
+  table-layout: fixed;      /* Ensure columns have fixed widths */
+}
+
+mat-paginator {
+  flex-shrink: 0;           /* Prevent the paginator from shrinking */
+  margin-top: auto;         /* Push the paginator to the bottom */
+}
+tr{
+  background-color: white !important;
 }
