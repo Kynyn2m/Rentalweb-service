@@ -110,6 +110,7 @@ import { CommentComponent } from './dashboard/comment/comment.component';
 import { ShareOverlayComponent } from './details/share-overlay/share-overlay.component';
 import { UpdateCommentDialogComponent } from './details/update-comment-dialog/update-comment-dialog.component';
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
+import * as XLSX from 'xlsx';
 @NgModule({
   declarations: [
     AppComponent,

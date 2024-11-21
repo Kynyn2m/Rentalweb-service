@@ -16,6 +16,12 @@ import Swal from 'sweetalert2';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FilterTemplate } from './user';
 import { environment } from 'src/environments/environment';
+import * as XLSX from 'xlsx';
+import { AssignRoleComponent } from './assign-role/assign-role.component';
+import { AssignRoleDialogComponent } from './assign-role-dialog/assign-role-dialog.component';
+
+const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 @Component({
   selector: 'app-user',
@@ -70,7 +76,15 @@ export class UserComponent implements OnInit, AfterViewInit {
           console.log('API Response:', res); // Debugging line
           if (res && res.result) {
             this.pagingModel = res.result;
-            this.dataSource.data = this.pagingModel.result;
+
+            // Filter out users with ID of 0, specifying the user type explicitly
+            const filteredUsers = this.pagingModel.result.filter(
+              (user: USER_TYPE) => user.id !== 0
+            );
+
+            // Assign filtered users to dataSource
+            this.dataSource.data = filteredUsers;
+
             this.paginator.length = this.pagingModel.totalElements;
           } else {
             console.error('Unexpected API response structure:', res);
@@ -86,6 +100,23 @@ export class UserComponent implements OnInit, AfterViewInit {
           console.error('Error fetching data:', error);
         }
       );
+  }
+
+  exportToExcel(): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Create a blob and trigger the download
+    const fileName = 'user_data.xlsx';
+    const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(data);
+    link.download = fileName;
+    link.click();
   }
 
   onSearch() {
@@ -111,7 +142,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     dialogConfig.data = new USER_TYPE();
 
     this.dialog
-      .open(UserFormComponent, dialogConfig)
+      .open(AssignRoleDialogComponent, dialogConfig)
       .afterClosed()
       .subscribe(() => this.getAll());
   }
