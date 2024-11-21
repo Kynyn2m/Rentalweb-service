@@ -27,6 +27,7 @@ export class DistrictService {
     return this.http.get<any>(`${environment.apiUrl}/public/provinces`, {
       headers: {
         'Accept-Language': 'km',
+        'api-version': `1`,
         'Content-Type': 'application/json',
       },
     });
