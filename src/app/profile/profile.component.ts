@@ -155,26 +155,28 @@ export class ProfileComponent implements OnInit {
 
     // Append the image if a file is selected
     if (this.selectedFile) {
-      formData.append('image', this.selectedFile); // Ensure key is 'image'
+        formData.append('image', this.selectedFile); // Ensure key is 'image'
     } else {
-      console.warn('No file selected for upload.'); // Debugging: to check file selection
+        console.warn('No file selected for upload.'); // Debugging: to check file selection
     }
 
     // Call the profile service to update profile data
     this.profileService.updateProfile(formData).subscribe(
-      (response) => {
-        console.log('Profile updated successfully', response);
-        this.snackBar.open('Profile updated successfully', 'Close', {
-          duration: 3000,
-        });
-        this.fetchProfile(); // Refresh profile data to display changes
-      },
-      (error) => {
-        console.error('Error updating profile:', error);
-        this.error = 'Error updating profile';
-      }
+        (response) => {
+            console.log('Profile updated successfully', response);
+            this.snackBar.open('Profile updated successfully', 'Close', {
+                duration: 3000,
+            });
+            // Reload the page after saving the profile
+            window.location.reload();
+        },
+        (error) => {
+            console.error('Error updating profile:', error);
+            this.error = 'Error updating profile';
+        }
     );
-  }
+}
+
 
 
   deleteLand(landId: number): void {
