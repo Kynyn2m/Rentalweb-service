@@ -1101,3 +1101,17 @@ mat-card-content p {
     z-index: 99;
   }
 }
+.banner-container {
+  width: 450px;
+  text-align: center;
+margin: auto;
+padding-top: 1rem;
+}
+
+.banner-image {
+  max-width: 100%;
+  height: auto;
+}
+.banner-container img{
+  border-radius: 7px;
+}
