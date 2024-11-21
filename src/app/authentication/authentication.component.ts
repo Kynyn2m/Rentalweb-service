@@ -60,10 +60,12 @@ export class AuthenticationComponent implements OnInit {
       .pipe(first())
       .subscribe(
         (data) => {
-          // On successful login, redirect to returnUrl or fallback to home
+          // On successful login, redirect and reload the page
           const redirectUrl = this.authenticationService.getRedirectUrl() || this.returnUrl;
-          this.authenticationService.clearRedirectUrl();  // Clear the redirect URL after use
-          this.router.navigate([redirectUrl]);  // Navigate to the redirect URL
+          this.authenticationService.clearRedirectUrl(); // Clear the redirect URL after use
+          this.router.navigate([redirectUrl]).then(() => {
+            window.location.reload(); // Reload the page
+          });
           this.loading = false;
         },
         (error) => {

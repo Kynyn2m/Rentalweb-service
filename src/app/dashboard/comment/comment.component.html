@@ -17,9 +17,16 @@
     <button mat-raised-button color="warn" (click)="clearFilter(searchInput)">
       Clear
     </button>
+
+    <button mat-raised-button
+           style="background-color: rgb(49, 127, 49); color: white;"
+            (click)="exportToExcel()">
+      <mat-icon>file_download</mat-icon> Export to Excel
+    </button>
   </div>
 </section>
-<table mat-table [dataSource]="comments" class="mat-elevation-z8">
+<div class="mat-elevation-z8">
+<table mat-table [dataSource]="comments" >
   <!-- ID Column -->
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -55,7 +62,7 @@
         color="warn"
         (click)="deleteComment(comment.id)"
       ></button> -->
-      <mat-icon mat-button class="delete" (click)="deleteComment(comment.id)"
+      <mat-icon mat-raised-button class="delete" (click)="deleteComment(comment.id)"
         >delete</mat-icon
       >
     </td>
@@ -64,6 +71,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+</div>
 <mat-paginator
   [length]="totalComments"
   [pageSize]="pageSize"

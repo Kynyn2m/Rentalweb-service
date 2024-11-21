@@ -9,6 +9,11 @@ import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
 import { PageEvent } from '@angular/material/paginator';
 
+import * as XLSX from 'xlsx';
+const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+
 interface House {
   id: number;
   title: string;
@@ -91,6 +96,84 @@ export class HouseListComponent implements OnInit {
       }
     );
   }
+
+  exportToExcel(): void {
+    this.loading = true;
+
+    const params = {
+      page: this.currentPage,
+      size: this.size,
+      search: this.searchTerm,
+    };
+
+    this.houseService.getHouses(params).subscribe(
+      (response) => {
+        if (response.code === 200 && response.result?.result) {
+          const houses = response.result.result;
+
+          if (!houses || houses.length === 0) {
+            this.snackBar.open('No data available to export.', 'Close', { duration: 3000 });
+            this.loading = false;
+            return;
+          }
+
+          // Flatten data
+          const flatData = houses.map((house: any) => ({
+            ID: house.id,
+            Title: house.title,
+            Description: house.description,
+            Price: house.price,
+            Width: house.width,
+            Height: house.height,
+            Floor: house.floor,
+            Phone: house.phoneNumber,
+            ImageURLs: house.imagePaths.join(', '),
+            MapLink: house.linkMap,
+            Likes: house.likeCount,
+            Views: house.viewCount,
+            CreatedAt: house.createdAt,
+          }));
+
+          console.log('Flat Data for Excel:', flatData);
+
+          // Create worksheet
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(flatData);
+          console.log('Worksheet:', ws);
+
+          // Create workbook
+          const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['Houses'] };
+
+          // Write workbook to Excel buffer
+          const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+          console.log('Excel Buffer:', excelBuffer);
+
+          // Trigger download
+          const fileName = 'house_data.xlsx';
+          const data: Blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(data);
+          link.download = fileName;
+          link.click();
+        } else {
+          console.error('Error fetching house data for export:', response.message);
+          this.snackBar.open('Failed to fetch data for export.', 'Close', { duration: 3000 });
+        }
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error fetching house data for export:', error);
+        this.loading = false;
+        this.snackBar.open('Failed to fetch data for export.', 'Close', { duration: 3000 });
+      }
+    );
+  }
+
+
+
+
+
 
   onSearch(): void {
     this.currentPage = 0; // Reset to the first page on a new search

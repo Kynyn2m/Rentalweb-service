@@ -99,13 +99,13 @@ export class UserService {
     return this.http.get<ResponseModel>(url); // Use GET for fetching assigned roles
   }
 
-  // getUserRoles(
-  //   id: number,
-  //   roles: { roleId: number }[]
-  // ): Observable<ResponseModel> {
-  //   const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL for assigning roles
-  //   return this.http.post<ResponseModel>(url, roles);
-  // }
+  getUserRoles(
+    id: number,
+    roles: { roleId: number }[]
+  ): Observable<ResponseModel> {
+    const url = `${environment.apiUrl}/users/${id}/roles`; // Adjust URL for assigning roles
+    return this.http.post<ResponseModel>(url, roles);
+  }
 
   postUserRole(
     userId: number,

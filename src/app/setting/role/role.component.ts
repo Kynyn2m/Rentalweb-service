@@ -31,6 +31,12 @@ import { PermissionsService } from './assign-permissions-dialog/permissions.serv
 
 import Swal from 'sweetalert2';
 
+import * as XLSX from 'xlsx';
+
+
+const EXCEL_TYPE =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
@@ -98,6 +104,23 @@ export class RoleComponent implements AfterViewInit, OnInit {
         this.isLoading = false;
       }
     );
+  }
+
+  exportToExcel(): void {
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
+    const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    // Create a blob and trigger the download
+    const fileName = 'role_data.xlsx';
+    const data: Blob = new Blob([excelBuffer], { type: EXCEL_TYPE });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(data);
+    link.download = fileName;
+    link.click();
   }
   newDialog(): void {
     const dialogConfig = new MatDialogConfig();
