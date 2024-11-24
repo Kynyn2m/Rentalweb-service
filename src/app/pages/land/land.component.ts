@@ -327,12 +327,17 @@ export class LandComponent {
   }
 
   fetchLandFromQueryParams(): void {
-    const search = this.searchForm.get('search')?.value || '';
-    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
-    const toPrice = this.searchForm.get('toPrice')?.value || '';
-    this.fetchLand(fromPrice, toPrice, search, this.currentPage);
+    this.fetchLand(
+      this.fromPrice ?? undefined,
+      this.toPrice ?? undefined,
+      this.search,
+      this.provinceId_c ?? undefined,
+      this.districtId_c ?? undefined,
+      this.communeId_c ?? undefined,
+      this.villageId_c ?? undefined,
+      this.currentPage
+    );
   }
-
   toggleFavorite(landId: number): void {
     if (!this.authenticationService.isLoggedIn()) {
       Swal.fire({

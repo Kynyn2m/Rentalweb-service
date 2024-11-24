@@ -292,12 +292,17 @@ export class RoomComponent {
   }
 
   fetchRoomFromQueryParams(): void {
-    const search = this.searchForm.get('search')?.value || '';
-    const fromPrice = this.searchForm.get('fromPrice')?.value || '';
-    const toPrice = this.searchForm.get('toPrice')?.value || '';
-    this.fetchRoom(fromPrice, toPrice, search, this.currentPage);
+    this.fetchRoom(
+      this.fromPrice ?? undefined,
+      this.toPrice ?? undefined,
+      this.search,
+      this.provinceId_c ?? undefined,
+      this.districtId_c ?? undefined,
+      this.communeId_c ?? undefined,
+      this.villageId_c ?? undefined,
+      this.currentPage
+    );
   }
-
   // Dynamically generate page numbers
   get pagesToShow(): number[] {
     const totalVisiblePages = 5; // Number of page numbers to show at a time
