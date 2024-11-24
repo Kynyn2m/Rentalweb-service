@@ -428,18 +428,5 @@
         </mat-card-content>
       </mat-card>
     </div>
-
-    <div class="pagination">
-      <button (click)="loadRelatedHouses(currentPage - 1)"
-              [disabled]="currentPage <= 0"
-              class="pagination-button">
-        Previous
-      </button>
-      <button (click)="loadRelatedHouses(currentPage + 1)"
-              [disabled]="currentPage >= totalPages - 1"
-              class="pagination-button">
-        Next
-      </button>
-    </div>
   </div>
 </div>

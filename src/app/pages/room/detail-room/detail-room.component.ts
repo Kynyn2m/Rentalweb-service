@@ -147,7 +147,7 @@ export class DetailRoomComponent
 
   currentPage = 0;
   totalPages = 1;
-  itemsPerPage = 12;
+  itemsPerPage = 16;
 
   bankCount: number = 0;
   gymCount: number = 0;
