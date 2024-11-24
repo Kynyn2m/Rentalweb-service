@@ -814,9 +814,9 @@ iframe {
   margin-top: 7px;
 }
 
-/* house-list-all */
+/* room-list-all */
 
-.house-list-all {
+.room-list-all {
   gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
@@ -1105,21 +1105,21 @@ mat-card-content p {
   max-width: 100%;
   height: auto;
 }
-.banner-container img{
+.banner-container img {
   border-radius: 7px;
 }
 .banner-container {
   width: 450px;
   text-align: center;
-margin: auto;
-padding-top: 1rem;
-cursor: pointer;
+  margin: auto;
+  padding-top: 1rem;
+  cursor: pointer;
 }
 
 .banner-image {
   max-width: 100%;
   height: auto;
 }
-.banner-container img{
+.banner-container img {
   border-radius: 7px;
 }
