@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   lands: any[] = [];
   currentPage = 0;
   totalPages = 1;
-  itemsPerPage = 8;
+  itemsPerPage = 16;
   searchForm!: FormGroup;
   isLoadingMore = false;
   autoFetchInterval: any;

@@ -1036,8 +1036,9 @@ mat-card-content p {
   color: #666;
   opacity: 0.6;
 }
-.related-posts-container h3{
-  padding: 1rem;
+.related-posts-container h4{
+  margin-bottom: 10px;
+  /* padding: 1rem; */
 }
 .menu-option {
   /* Ensure no hiding styles */

@@ -39,7 +39,7 @@
           <div class="details-info">
             <div class="detail-item">
               <i class="fa fa-map-marker-alt icon"></i>
-              <span><strong>Location:</strong> {{ districtName }},
+              <span><strong>Location:</strong><span *ngIf="provinceName">{{ provinceName }}</span>, {{ districtName }},
                 {{ communeName }}, {{ villageName }}</span>
             </div>
             <div class="detail-item">
@@ -303,7 +303,7 @@
 
           <div class="location-info">
             <i class="fa fa-map-marker-alt"></i>
-            <span>{{ districtName }} , {{ communeName }} , {{ villageName }}</span>
+            <span><span *ngIf="provinceName">{{ provinceName }}</span>, {{ districtName }} , {{ communeName }} , {{ villageName }}</span>
           </div>
         </div>
       </div>
@@ -386,8 +386,8 @@
         </div>
 
         <mat-card-content>
-          <h3>{{ rooms.title }}</h3>
-          <p>Location: {{ rooms.provinceName }}</p>
+          <h4>{{ rooms.title.length > 22 ? (rooms.title | slice:0:22) + '...' : rooms.title }}</h4>
+          <p>Location: {{ rooms.provinceName }} <span *ngIf="provinceName">{{ provinceName }}</span></p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px">
             Price: ${{ rooms.price }}
           </p>

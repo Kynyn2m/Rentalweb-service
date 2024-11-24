@@ -833,63 +833,75 @@ export class DetailRoomComponent
     communeId: number,
     villageId: number
   ): void {
-    this.districtService.getProvincesPublic().subscribe((res) => {
-      const paginatedResponse = res as PaggingModel<Location>;
-      const provinceIdNumber = Number(provinceId); // Convert provinceId to a number
+    console.log('Fetching location details for:', { provinceId, districtId, communeId, villageId });
 
-      const province = Array.isArray(paginatedResponse.result)
-        ? paginatedResponse.result.find((p) => p.id === provinceIdNumber)
-        : null; // Compare as numbers
-      // console.log("res", res);
+    // Fetch province details
+    this.districtService.getProvincesPublic().subscribe(
+      (res) => {
+        const provinces = res?.result?.result || res?.result || [];
+        console.log('Provinces response:', provinces);
 
-      // console.log('Province ID:', provinceIdNumber); // Log the ID
-      // console.log('Provinces array:', paginatedResponse.result); // Log the provinces array
-      // console.log('Found province:', province); // Log the found province
-      // console.log('Province Khmer Name:', province ? province.khmerName : 'Not Found'); // Log the Khmer name
+        const province = provinces.find((p: any) => p.id === provinceId);
+        this.provinceName = province ? province.khmerName || province.englishName : 'Unknown Province';
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching provinces:', error);
+        this.provinceName = 'Error Loading Province';
+        this.cdr.detectChanges();
+      }
+    );
 
-      console.log('province response:', province);
+    // Fetch district details
+    this.districtService.getByProvincePublic(provinceId).subscribe(
+      (res) => {
+        const districts = res?.result?.result || res?.result || [];
+        console.log('Districts response:', districts);
 
-      this.provinceName = province
-        ? province.khmerName || province.englishName
-        : 'Unknown Province';
-      this.cdr.detectChanges();
-    });
+        const district = districts.find((d: any) => d.id === districtId);
+        this.districtName = district ? district.khmerName || district.englishName : 'Unknown District';
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching districts:', error);
+        this.districtName = 'Error Loading District';
+        this.cdr.detectChanges();
+      }
+    );
 
-    this.districtService.getByProvincePublic(provinceId).subscribe((res) => {
-      console.log('Districts response:', res);
-      const paginatedResponse = res as PaggingModel<Location>;
-      const district = Array.isArray(paginatedResponse.result)
-        ? paginatedResponse.result.find((d) => d.id === districtId)
-        : null;
-      this.districtName = district
-        ? district.khmerName || district.englishName
-        : 'Unknown District';
-      this.cdr.detectChanges();
-    });
+    // Fetch commune details
+    this.communeService.getByDistrictPublic(districtId).subscribe(
+      (res) => {
+        const communes = res?.result?.result || res?.result || [];
+        console.log('Communes response:', communes);
 
-    this.communeService.getByDistrictPublic(districtId).subscribe((res) => {
-      console.log('Communes response:', res);
-      const paginatedResponse = res as PaggingModel<Location>;
-      const commune = Array.isArray(paginatedResponse.result)
-        ? paginatedResponse.result.find((c) => c.id === communeId)
-        : null;
-      this.communeName = commune
-        ? commune.khmerName || commune.englishName
-        : 'Unknown Commune';
-      this.cdr.detectChanges();
-    });
+        const commune = communes.find((c: any) => c.id === communeId);
+        this.communeName = commune ? commune.khmerName || commune.englishName : 'Unknown Commune';
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching communes:', error);
+        this.communeName = 'Error Loading Commune';
+        this.cdr.detectChanges();
+      }
+    );
 
-    this.villageService.getByCommunePublic(communeId).subscribe((res) => {
-      console.log('Villages response:', res);
-      const paginatedResponse = res as PaggingModel<Location>;
-      const village = Array.isArray(paginatedResponse.result)
-        ? paginatedResponse.result.find((v) => v.id === villageId)
-        : null;
-      this.villageName = village
-        ? village.khmerName || village.englishName
-        : 'Unknown Village';
-      this.cdr.detectChanges();
-    });
+    // Fetch village details
+    this.villageService.getByCommunePublic(communeId).subscribe(
+      (res) => {
+        const villages = res?.result?.result || res?.result || [];
+        console.log('Villages response:', villages);
+
+        const village = villages.find((v: any) => v.id === villageId);
+        this.villageName = village ? village.khmerName || village.englishName : 'Unknown Village';
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching villages:', error);
+        this.villageName = 'Error Loading Village';
+        this.cdr.detectChanges();
+      }
+    );
   }
 
   openImageInFullScreen(image: SafeUrl): void {
