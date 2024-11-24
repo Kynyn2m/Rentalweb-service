@@ -10,12 +10,7 @@
       <li>Sat - Sun: 8-12am</li>
     </ul>
   </div>
-  <!-- <img
-    src="../../assets/img/right.ico"
-    alt=""
-    style="width: 20px; height: 20px"
-  /> -->
-  <span>contact to assistant: </span><mat-icon class="icon">arrow_drop_down</mat-icon>
+  <span>Contact to Admin: </span>
 
   <div class="photos-grid">
     <mat-card *ngFor="let step of stepsToPost">
@@ -25,6 +20,7 @@
              class="profile-image" />
         <div style="
             font-size: 20px;
+            padding: 10px;
             font-family: Impact, Haettenschweiler, 'Arial Narrow Bold',
               sans-serif;
           ">
@@ -35,7 +31,7 @@
            rel="noopener noreferrer">
           Contact on Telegram
         </a>
-        <div style="color: red">{{ step.phoneNumber }}</div>
+        <div style="color: red; padding: 10px;">{{ step.phoneNumber }}</div>
       </mat-card-content>
     </mat-card>
   </div>
@@ -45,9 +41,10 @@
             height="300"
             frameborder="0"
             style="border: 0"
-            src="https://maps.google.com/maps?q=Phnom%20Penh%20Cambodia&t=&z=13&ie=UTF8&iwloc=&output=embed"
+            src="https://maps.google.com/maps?q=11.5431667,104.8625&z=15&output=embed"
             allowfullscreen>
     </iframe>
   </div>
+
 
 </div>

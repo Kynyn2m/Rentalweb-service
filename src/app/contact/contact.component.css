@@ -24,16 +24,47 @@
 
 .photos-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+  gap: 1rem;
   margin-top: 1rem;
+  justify-content: center;
 }
 
 .photos-grid mat-card {
-  height: 200px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.photos-grid mat-card:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}
+
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* .profile-image:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+} */
+
+.mat-card-content {
+  text-align: center;
 }
 
 .banner-container {
@@ -78,18 +109,17 @@
   }
 
   .photos-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 
   mat-card {
-    width: calc(100% - 20px);
     margin-bottom: 10px;
   }
 }
 
 @media only screen and (max-width: 768px) {
   .photos-grid mat-card {
-    height: 80px;
+    height: auto;
   }
 
   .map-container {
@@ -116,7 +146,8 @@
   }
 
   .photos-grid mat-card {
-    height: 70px;
+    height: auto;
+    padding: 10px;
   }
 
   .contact-info p,
@@ -124,61 +155,34 @@
     font-size: 1rem;
   }
 }
-/* =============== */
-/* img {
-  width: 200px;
-  height: 100px;
-  object-fit: cover;
-} */
 
-.photos-grid {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.profile-image {
-  width: 80px; /* Set the desired width */
-  height: 80px; /* Set the desired height */
-  border-radius: 50%; /* Make the image circular */
-  border: 2px solid #fff; /* Optional: white border */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Optional: shadow effect */
-  object-fit: cover; /* Maintain aspect ratio and cover the area */
-  margin-bottom: 10px; /* Space below the image */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for effects */
-}
-
-/* Hover Effect */
-.profile-image:hover {
-  transform: scale(1.1); /* Slightly enlarge the image */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Increase shadow on hover */
-}
-
-.mat-card-content {
-  text-align: center; /* Center the text and link */
-}
-/* // */
+/* Dropdown Styles */
 .dropdown-content {
-  margin-top: 10px; /* Space above dropdown */
-  padding: 10px; /* Padding inside dropdown */
-  background-color: #f9f9f9; /* Light background color */
-  border: 1px solid #ccc; /* Border around dropdown */
-  border-radius: 4px; /* Rounded corners */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Shadow effect for depth */
-  transition: opacity 0.2s ease; /* Smooth transition */
-  opacity: 0; /* Start hidden */
-  visibility: hidden; /* Start as hidden for smoother transition */
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
 }
 
-/* Show the dropdown */
 .dropdown-content.ng-trigger {
-  opacity: 1; /* Fully visible */
-  visibility: visible; /* Make it visible */
+  opacity: 1;
+  visibility: visible;
 }
+
+/* General Styles */
 span {
-  /* font-family: "Khmer MEF1" !important; */
   font-size: 20px !important;
 }
+
 .icon {
   font-size: 2rem;
   margin-left: -0.2rem;
+}
+mat-card-content a{
+  padding: 10px;
 }

@@ -22,48 +22,12 @@ export class ContactComponent {
     address: 'Khan Steong MeanChey, Phnom Penh',
     country: 'Cambodia',
   };
-
-  // stepsToPost = [
-  //   {
-  //     title: 'admin',
-  //     imageUrl: '../../assets/img/user.png',
-  //     telegramUsername: 'username2',
-  //   },
-  //   {
-  //     title: 'admin',
-  //     imageUrl: '../../assets/img/user.png',
-  //     telegramUsername: 'username2',
-  //   },
-  //   {
-  //     title: 'admin',
-  //     imageUrl: '../../assets/img/user.png',
-  //     telegramUsername: 'username2',
-  //   },
-  //   {
-  //     title: 'Horng',
-  //     imageUrl: '../../assets/img/Screenshot 2022-11-23 205734.png',
-  //     telegramUsername: 'username2',
-  //   },
-  //   // Add more steps as needed
-  // ];
   stepsToPost = [
     {
-      title: 'Admin 1',
-      imageUrl: '../../assets/img/user.png',
+      title: 'Nom kiny',
+      imageUrl: '../../assets/img/1.jpg',
       telegramUsername: '@Kinynom', // Replace with actual username
-      phoneNumber: '06478934',
-    },
-    {
-      title: 'Admin 2',
-      imageUrl: '../../assets/img/user.png',
-      telegramUsername: '@username2', // Replace with actual username
-      phoneNumber: '047484833',
-    },
-    {
-      title: 'Admin 3',
-      imageUrl: '../../assets/img/user.png',
-      telegramUsername: '@username3', // Replace with actual username
-      phoneNumber: '0252666',
+      phoneNumber: '015692014',
     },
     {
       title: 'Horng',

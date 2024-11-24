@@ -685,6 +685,9 @@ export class DetailRoomComponent
       },
     });
   }
+  navigateToContact(): void {
+    this.router.navigate(['/contact']); // Replace '/contact' with your desired route
+  }
 
   isValidGoogleMapsLink(link: string): boolean {
     const googleMapsRegex = /^https:\/\/(www\.)?google\.com\/maps/;

@@ -95,7 +95,7 @@
           </mat-icon>
         </div>
         <mat-card-content>
-          <h3 (click)="$event.stopPropagation()">{{ house.title }}</h3>
+          {{ house.title.length > 25 ? (house.title | slice:0:25) + '...' : house.title }}
           <!-- Stop click propagation here -->
           <p (click)="$event.stopPropagation()">
             {{ "location" | transloco }}: {{ house.provinceName }}
@@ -210,7 +210,8 @@
           </mat-icon>
         </div>
         <mat-card-content>
-          <h3>{{ room.title }}</h3>
+          <h3>{{ room.title.length > 20 ? (room.title | slice:0:20) + '...' : room.title }}
+          </h3>
           <p>{{ "location" | transloco }}: {{ room.provinceName }}</p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px">
             {{ "price" | transloco }}: ${{ room.price }}
@@ -322,7 +323,8 @@
           </mat-icon>
         </div>
         <mat-card-content>
-          <h3>{{ land.title }}</h3>
+          <h3>{{ land.title.length > 25 ? (land.title | slice:0:25) + '...' : land.title }}
+          </h3>
           <p>{{ "location" | transloco }}: {{ land.provinceName }}</p>
           <p style="color: red; font-weight: bold; margin-bottom: 10px">
             {{ "Price" | transloco }}: ${{ land.price }}

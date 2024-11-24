@@ -1063,6 +1063,9 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       },
     });
   }
+  navigateToContact(): void {
+    this.router.navigate(['/contact']); // Replace '/contact' with your desired route
+  }
 
   goToDetails(houseId: number): void {
     this.router.navigate(['/details', houseId]);

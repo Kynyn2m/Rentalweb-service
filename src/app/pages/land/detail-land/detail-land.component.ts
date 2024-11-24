@@ -601,6 +601,9 @@ export class DetailLandComponent
       }
     });
   }
+  navigateToContact(): void {
+    this.router.navigate(['/contact']); // Replace '/contact' with your desired route
+  }
 
   onAmenityClick(amenityType: string): void {
     if (this.selectedAmenity === amenityType) {

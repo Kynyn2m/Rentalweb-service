@@ -1115,6 +1115,7 @@ mat-card-content p {
   text-align: center;
 margin: auto;
 padding-top: 1rem;
+cursor: pointer;
 }
 
 .banner-image {
