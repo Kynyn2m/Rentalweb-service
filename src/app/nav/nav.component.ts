@@ -67,7 +67,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
     {
       router: '/add-post',
       icon: 'add',
-      title: 'Add Post',
+      title: 'add Post',
       tooltip: 'add Post',
       adminOnly: false,
     },
@@ -202,7 +202,6 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       .subscribe();
     if (this.isLoggedIn) {
       this.loadUserProfile();
-
     }
   }
 
