@@ -1,0 +1,95 @@
+.ad-dialog {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 670px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-family: Arial, sans-serif;
+}
+
+.ad-header span {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ffa015; /* Green color for 'Ads' text */
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #888;
+  cursor: pointer;
+}
+
+.ad-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ad-image {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.ad-text {
+  font-size: 1.1em;
+  color: #333;
+  font-family: Arial, sans-serif;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.login-btn {
+  top: 55%;
+  left: 8%;
+  position: absolute;
+  background-color: #4caf4f00;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+/* .login-btn:hover {
+  background-color: #388e3c;
+} */
+
+.ad-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.close-footer-btn {
+  background: #d32f2f;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s;
+}
+
+.close-footer-btn:hover {
+  background: #b71c1c;
+}

@@ -21,7 +21,7 @@ export class RoomComponent {
   room: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
-  itemsPerPage = 12; // 12 room per page
+  itemsPerPage = 16; // 12 room per page
   autoFetchInterval: any;
   search: string = '';
   fromPrice: number | null = null;
