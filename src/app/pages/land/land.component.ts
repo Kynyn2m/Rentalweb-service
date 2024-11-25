@@ -21,7 +21,7 @@ export class LandComponent {
   lands: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
-  itemsPerPage = 12; // 12 land per page
+  itemsPerPage = 16; // 12 land per page
   autoFetchInterval: any;
   search: string = '';
   fromPrice: number | null = null;
@@ -312,6 +312,8 @@ export class LandComponent {
       this.currentPage--;
       this.fetchLandFromQueryParams();
     }
+    this.scrollUpSlightly();
+
   }
 
   nextPage(): void {
@@ -319,11 +321,24 @@ export class LandComponent {
       this.currentPage++;
       this.fetchLandFromQueryParams();
     }
+    this.scrollUpSlightly();
   }
 
   changePage(page: number): void {
     this.currentPage = page;
     this.fetchLandFromQueryParams();
+    this.scrollUpSlightly();
+  }
+
+  private scrollUpSlightly(): void {
+    // Calculate the current scroll position and reduce it by 50px
+    const currentScroll = window.scrollY;
+    const newScrollPosition = currentScroll - 1700;
+
+    window.scrollTo({
+      top: newScrollPosition > 0 ? newScrollPosition : 0, // Prevent negative scrolling
+      behavior: 'smooth',
+    });
   }
 
   fetchLandFromQueryParams(): void {

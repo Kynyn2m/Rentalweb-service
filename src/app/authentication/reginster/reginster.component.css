@@ -40,6 +40,7 @@ mat-form-field {
 form {
   width: 450px;
   margin: auto;
+  padding: 1rem;
 }
 .logo {
   width: 98px;

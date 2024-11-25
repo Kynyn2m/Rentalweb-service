@@ -1,0 +1,23 @@
+<div class="ad-dialog"
+     [@dialogAnimation]="dialogState">
+  <div class="ad-header">
+    <span>Ads</span>
+    <button class="close-btn"
+            (click)="closeDialog()">✖</button>
+  </div>
+  <div class="ad-content">
+    <img src="../../assets/img/White and Orange Simple Modern Housing Area Facebook Ad.png"
+         alt="Ad Content"
+         class="ad-image" />
+    <!-- <p class="ad-text">
+      ចុះឈ្មោះឥឡូវនេះផ្ដល់ការផុសឥតគិតថ្លៃចំនួនបីដង។
+    </p> -->
+    <button class="login-btn"
+            (click)="navigateToLogin()">‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ </button>
+  </div>
+  <div class="ad-footer">
+    <p>Will close automatically in: <span>{{ remainingTime }}</span> seconds</p>
+    <button class="close-footer-btn"
+            (click)="closeDialog()">Close</button>
+  </div>
+</div>

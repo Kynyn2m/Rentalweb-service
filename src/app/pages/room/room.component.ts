@@ -21,7 +21,7 @@ export class RoomComponent {
   room: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
-  itemsPerPage = 12; // 12 room per page
+  itemsPerPage = 16; // 12 room per page
   autoFetchInterval: any;
   search: string = '';
   fromPrice: number | null = null;
@@ -277,6 +277,8 @@ export class RoomComponent {
       this.currentPage--;
       this.fetchRoomFromQueryParams();
     }
+    this.scrollUpSlightly();
+
   }
 
   nextPage(): void {
@@ -284,11 +286,26 @@ export class RoomComponent {
       this.currentPage++;
       this.fetchRoomFromQueryParams();
     }
+    this.scrollUpSlightly();
+
   }
 
   changePage(page: number): void {
     this.currentPage = page;
     this.fetchRoomFromQueryParams();
+    this.scrollUpSlightly();
+
+  }
+
+  private scrollUpSlightly(): void {
+    // Calculate the current scroll position and reduce it by 50px
+    const currentScroll = window.scrollY;
+    const newScrollPosition = currentScroll - 1700;
+
+    window.scrollTo({
+      top: newScrollPosition > 0 ? newScrollPosition : 0, // Prevent negative scrolling
+      behavior: 'smooth',
+    });
   }
 
   fetchRoomFromQueryParams(): void {
