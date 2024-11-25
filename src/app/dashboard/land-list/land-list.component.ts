@@ -8,6 +8,7 @@ import { LandFormComponent } from './land-form/land-form.component';
 import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 interface Land {
   id: number;
@@ -42,7 +43,8 @@ export class LandListComponent {
     'createdAt',
     'actions',
   ];
-  land: Land[] = [];
+  // land: Land[] = [];
+  dataSource = new MatTableDataSource<Land>([]);
   loading: boolean = true;
   pagingModel?: PaggingModel;
   size = environment.pageSize;
@@ -62,53 +64,73 @@ export class LandListComponent {
     this.fetchLand();
   }
 
-  fetchLand(page: number = this.currentPage, size: number = this.size): void {
-    this.loading = true;
-    const params: any = {
-      page: page,
-      size: size,
-    };
+  // fetchLand(page: number = this.currentPage, size: number = this.size): void {
+  //   this.loading = true;
+  //   const params: any = {
+  //     page: page,
+  //     size: size,
+  //   };
 
-    if (this.searchTerm) {
-      params.search = this.searchTerm;
-    }
+  //   if (this.searchTerm) {
+  //     params.search = this.searchTerm;
+  //   }
+
+  //   this.landService.getLand(params).subscribe(
+  //     (response) => {
+  //       if (response.code === 200) {
+  //         this.land = response.result.result as Land[];
+  //         this.pagingModel = response.result.pagingModel;
+
+  //         // Set the length of paginator based on total elements
+  //         if (this.pagingModel) {
+  //           this.paginator.length = this.pagingModel.totalElements;
+  //         }
+
+  //         this.land.forEach((land) => this.loadImage(land));
+  //       }
+  //       this.loading = false;
+  //     },
+  //     (error) => {
+  //       console.error('Error fetching land data', error);
+  //       this.loading = false;
+  //     }
+  //   );
+  // }
+  fetchLand(search?: string): void {
+    this.loading = true;
+    const params = {
+      page: this.currentPage,
+      size: this.size,
+      search: search || '', // Include the search term if provided
+    };
 
     this.landService.getLand(params).subscribe(
       (response) => {
         if (response.code === 200) {
-          this.land = response.result.result as Land[];
-          this.pagingModel = response.result.pagingModel;
-
-          // Set the length of paginator based on total elements
-          if (this.pagingModel) {
-            this.paginator.length = this.pagingModel.totalElements;
-          }
-
-          this.land.forEach((land) => this.loadImage(land));
+          this.dataSource.data = response.result.result as Land[];
+          this.pagingModel = response.result; // Capture pagination data
+          this.dataSource.data.forEach((land) => this.loadImage(land));
         }
         this.loading = false;
       },
       (error) => {
-        console.error('Error fetching land data', error);
+        console.error('Error fetching room data', error);
         this.loading = false;
       }
     );
   }
-
   applyFilter(searchValue: string): void {
-    this.searchTerm = searchValue;
-    this.fetchLand(this.currentPage, this.size); // Fetch with the updated search term
+    this.fetchLand(searchValue); // Call fetchRoom with the search value
   }
 
   clearFilter(searchInput: HTMLInputElement): void {
-    this.searchTerm = '';
     searchInput.value = ''; // Clear the input field
-    this.fetchLand(this.currentPage, this.size); // Fetch without search term to reset the list
+    this.applyFilter(''); // Reset the filter to show all rooms
   }
   pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.fetchLand(this.currentPage, this.size);
+    this.fetchLand(); // Re-fetch rooms on page change
   }
 
   loadImage(land: Land): void {

@@ -10,9 +10,9 @@ import { environment } from 'src/environments/environment';
 import { PageEvent } from '@angular/material/paginator';
 
 import * as XLSX from 'xlsx';
+import { MatTableDataSource } from '@angular/material/table';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
 
 interface House {
   id: number;
@@ -51,14 +51,15 @@ export class HouseListComponent implements OnInit {
     'createdAt',
     'actions',
   ];
-  houses: House[] = [];
+  // houses: House[] = [];
+  dataSource = new MatTableDataSource<House>([]);
   loading: boolean = true;
   pagingModel?: PaggingModel;
   size = environment.pageSize;
   pageSizeOptions: number[] = environment.pageSizeOptions;
   currentPage = 0;
   searchTerm: string = ''; // Added search term
-
+  page = environment.currentPage;
   constructor(
     private houseService: HouseService,
     private sanitizer: DomSanitizer,
@@ -70,23 +71,20 @@ export class HouseListComponent implements OnInit {
     this.fetchHouses();
   }
 
-  fetchHouses(): void {
+  fetchHouses(search?: string): void {
     this.loading = true;
-
     const params = {
       page: this.currentPage,
       size: this.size,
-      search: this.searchTerm, // Include search term in params
+      search: search || '', // Include the search term if provided
     };
 
     this.houseService.getHouses(params).subscribe(
       (response) => {
-        console.log('API Response:', response);
         if (response.code === 200) {
-          this.houses = response.result.result as House[];
-          this.houses.forEach((house) => this.loadImage(house));
-          this.pagingModel = response.result.pagingModel;
-          console.log('Total Elements:', this.pagingModel?.totalElements);
+          this.dataSource.data = response.result.result as House[];
+          this.pagingModel = response.result; // Capture pagination data
+          this.dataSource.data.forEach((house) => this.loadImage(house));
         }
         this.loading = false;
       },
@@ -112,7 +110,9 @@ export class HouseListComponent implements OnInit {
           const houses = response.result.result;
 
           if (!houses || houses.length === 0) {
-            this.snackBar.open('No data available to export.', 'Close', { duration: 3000 });
+            this.snackBar.open('No data available to export.', 'Close', {
+              duration: 3000,
+            });
             this.loading = false;
             return;
           }
@@ -141,10 +141,16 @@ export class HouseListComponent implements OnInit {
           console.log('Worksheet:', ws);
 
           // Create workbook
-          const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['Houses'] };
+          const wb: XLSX.WorkBook = {
+            Sheets: { data: ws },
+            SheetNames: ['Houses'],
+          };
 
           // Write workbook to Excel buffer
-          const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+          const excelBuffer: any = XLSX.write(wb, {
+            bookType: 'xlsx',
+            type: 'array',
+          });
           console.log('Excel Buffer:', excelBuffer);
 
           // Trigger download
@@ -157,23 +163,25 @@ export class HouseListComponent implements OnInit {
           link.download = fileName;
           link.click();
         } else {
-          console.error('Error fetching house data for export:', response.message);
-          this.snackBar.open('Failed to fetch data for export.', 'Close', { duration: 3000 });
+          console.error(
+            'Error fetching house data for export:',
+            response.message
+          );
+          this.snackBar.open('Failed to fetch data for export.', 'Close', {
+            duration: 3000,
+          });
         }
         this.loading = false;
       },
       (error) => {
         console.error('Error fetching house data for export:', error);
         this.loading = false;
-        this.snackBar.open('Failed to fetch data for export.', 'Close', { duration: 3000 });
+        this.snackBar.open('Failed to fetch data for export.', 'Close', {
+          duration: 3000,
+        });
       }
     );
   }
-
-
-
-
-
 
   onSearch(): void {
     this.currentPage = 0; // Reset to the first page on a new search

@@ -31,7 +31,7 @@
   </div>
   <div class="table-container">
     <div class="mat-elevation-z8">
-      <table  mat-table [dataSource]="houses" class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!-- Image Column -->
         <ng-container matColumnDef="image">
           <th mat-header-cell *matHeaderCellDef>Image</th>
@@ -122,14 +122,24 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+      <mat-paginator
+        #paginator
+        [length]="pagingModel?.totalElements"
+        [pageIndex]="page"
+        [pageSize]="size"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        aria-label="Select page"
+      >
+      </mat-paginator>
     </div>
   </div>
-  <mat-paginator
+  <!-- <mat-paginator
     [length]="pagingModel?.totalElements || 0"
     [pageIndex]="currentPage"
     [pageSize]="size"
     [pageSizeOptions]="pageSizeOptions"
     (page)="pageChanged($event)"
   >
-  </mat-paginator>
+  </mat-paginator> -->
 </div>
