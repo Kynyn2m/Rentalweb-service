@@ -1,0 +1,115 @@
+.house-detail {
+  padding: 20px;
+}
+
+.house-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.house-info, .house-additional {
+  margin-bottom: 15px;
+}
+
+.house-info p, .house-additional p {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.house-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px; /* Center the image and add space below */
+}
+
+.image-gallery {
+  display: flex;
+  justify-content: center; /* Center images in case there are multiple */
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.dialog-actions {
+  text-align: right; /* Align action buttons to the right */
+  padding: 10px;
+}
+
+button {
+  font-size: 16px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+i {
+  margin-right: 8px;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button.mat-button {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+button.mat-button:hover {
+  background-color: #e53935; /* Slightly darker red on hover */
+}
+
+button.close-button {
+  background-color: #f44336; /* Red color */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-align: center;
+}
+
+button.close-button:hover {
+  background-color: #e53935;
+}
+
+@media (max-width: 768px) {
+  /* For smaller screens, make adjustments to layout */
+  .house-info p, .house-additional p {
+    font-size: 14px;
+  }
+
+  .house-title {
+    font-size: 20px;
+  }
+}
+
+/* Styling for location row */
+.location-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between each item */
+  margin-bottom: 15px;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  flex: 1 1 22%; /* Allowing the items to wrap responsively */
+  justify-content: space-between;
+}
+
+.location-item strong {
+  font-weight: bold;
+}
+
+.location-item span {
+  font-size: 16px;
+}

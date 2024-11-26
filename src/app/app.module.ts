@@ -112,6 +112,7 @@ import { UpdateCommentDialogComponent } from './details/update-comment-dialog/up
 const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 import * as XLSX from 'xlsx';
 import { AdDialogComponent } from './ad-dialog/ad-dialog.component';
+import { ViewHouseComponent } from './dashboard/house-list/view-house/view-house.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -170,6 +171,7 @@ import { AdDialogComponent } from './ad-dialog/ad-dialog.component';
     ShareOverlayComponent,
     UpdateCommentDialogComponent,
     AdDialogComponent,
+    ViewHouseComponent,
   ],
   imports: [
     BrowserModule,

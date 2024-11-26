@@ -1,0 +1,65 @@
+<h1 mat-dialog-title
+    class="house-title">{{ houseData.title }}</h1>
+
+<div mat-dialog-content
+     class="house-detail">
+
+  <!-- Image Section with Dynamic Size -->
+  <div *ngIf="houseData.imagePaths && houseData.imagePaths.length"
+       class="image-gallery">
+    <img *ngFor="let image of houseData.imagePaths"
+         [src]="houseData.safeImagePath"
+         alt="House Image"
+         class="house-image" />
+  </div>
+
+  <!-- Basic Information Section -->
+  <div class="house-info">
+    <p><strong>Description:</strong> {{ houseData.description }}</p>
+    <p><strong>Price:</strong> ${{ houseData.price }}</p>
+    <p><strong>Size:</strong> {{ houseData.width }}m x {{ houseData.height }}m</p>
+    <p><strong>Floor:</strong> {{ houseData.floor }}</p>
+    <p><strong>Phone:</strong> {{ houseData.phoneNumber }}</p>
+    <p><strong>Location:</strong> <a [href]="houseData.linkMap"
+         target="_blank">
+        <i class="fas fa-map-marker-alt"></i> View on Map</a></p>
+    <p><strong>Created At:</strong> {{ houseData.createdAt | date: 'medium' }}</p>
+    <p><strong>Posted by:</strong> {{ houseData.user.fullName }} ({{ houseData.user.username }})</p>
+  </div>
+
+  <!-- Additional Fields Section -->
+  <div class="house-additional">
+    <p><strong><i class="fas fa-thumbs-up"></i> Like Count:</strong> {{ houseData.likeCount }}</p>
+    <p><strong><i class="fas fa-eye"></i> View Count:</strong> {{ houseData.viewCount }}</p>
+  </div>
+
+  <div class="location-row">
+    <div class="location-item">
+      <strong> Province:</strong>
+      <span>{{ getProvinceName(houseData.province) }}</span>
+    </div>
+    <div class="location-item">
+      <strong> District:</strong>
+      <span>{{ getDistrictName(houseData.district) }}</span>
+    </div>
+    <div class="location-item">
+      <strong>Commune:</strong>
+      <span>{{ getCommuneName(houseData.commune) }}</span>
+    </div>
+    <div class="location-item">
+      <strong>Village:</strong>
+      <span>{{ getVillageName(houseData.village) }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Action Buttons at the Bottom, Right-Aligned -->
+<div mat-dialog-actions
+     align="end"
+     class="dialog-actions">
+  <button mat-button
+          class="close-button"
+          (click)="closeDialog()">
+    <i class="fas fa-times"></i> Close
+  </button>
+</div>

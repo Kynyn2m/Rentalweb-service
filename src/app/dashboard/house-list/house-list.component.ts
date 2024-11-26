@@ -11,6 +11,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 import * as XLSX from 'xlsx';
 import { MatTableDataSource } from '@angular/material/table';
+import { ViewHouseComponent } from './view-house/view-house.component';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -41,14 +42,15 @@ export class HouseListComponent implements OnInit {
   displayedColumns: string[] = [
     'image',
     'title',
-    'location',
-    'price',
-    'width',
-    'height',
-    'floor',
+    // 'location',
+    // 'price',
+    // 'width',
+    // 'height',
+    // 'floor',
     'likeCount',
     'viewCount',
     'createdAt',
+    'status',
     'actions',
   ];
   // houses: House[] = [];
@@ -60,6 +62,13 @@ export class HouseListComponent implements OnInit {
   currentPage = 0;
   searchTerm: string = ''; // Added search term
   page = environment.currentPage;
+
+  startDate: string | null = null; // For the start date
+  endDate: string | null = null;   // For the end date
+
+
+
+
   constructor(
     private houseService: HouseService,
     private sanitizer: DomSanitizer,
@@ -73,6 +82,7 @@ export class HouseListComponent implements OnInit {
 
   fetchHouses(search?: string): void {
     this.loading = true;
+
     const params = {
       page: this.currentPage,
       size: this.size,
@@ -82,7 +92,27 @@ export class HouseListComponent implements OnInit {
     this.houseService.getHouses(params).subscribe(
       (response) => {
         if (response.code === 200) {
-          this.dataSource.data = response.result.result as House[];
+          let houses = response.result.result as House[];
+
+          // Apply date filters if provided
+          if (this.startDate && this.startDate !== '') {
+            const start = new Date(this.startDate); // This is safe now because we ensured it's not null
+            houses = houses.filter((house) => {
+              const createdAt = new Date(house.createdAt);
+              return createdAt >= start;
+            });
+          }
+
+          if (this.endDate && this.endDate !== '') {
+            const end = new Date(this.endDate); // This is safe now because we ensured it's not null
+            houses = houses.filter((house) => {
+              const createdAt = new Date(house.createdAt);
+              return createdAt <= end;
+            });
+          }
+
+          // Set the filtered houses to the data source
+          this.dataSource.data = houses;
           this.pagingModel = response.result; // Capture pagination data
           this.dataSource.data.forEach((house) => this.loadImage(house));
         }
@@ -94,6 +124,56 @@ export class HouseListComponent implements OnInit {
       }
     );
   }
+
+  // Get the status based on the creation date of the house
+  getStatus(createdAt: string): { text: string, className: string } {
+    const today = new Date();
+    const houseDate = new Date(createdAt);
+
+    // Calculate the difference in milliseconds
+    const timeDiff = today.getTime() - houseDate.getTime();
+
+    // Convert the difference to days
+    const dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+    if (dayDiff === 0) {
+      return { text: 'New', className: 'status-new' }; // Added today
+    } else if (dayDiff === 1) {
+      return { text: '1 day ago', className: 'status-recent' }; // Added yesterday
+    } else if (dayDiff === 2) {
+      return { text: '2 days ago', className: 'status-recent' }; // Added 2 days ago
+    } else if (dayDiff === 3) {
+      return { text: '3 days ago', className: 'status-recent' }; // Added 3 days ago
+    } else if (dayDiff < 7) {
+      return { text: `${dayDiff} days ago`, className: 'status-recent' }; // Added within the last week
+    } else if (dayDiff < 30) {
+      return { text: `${Math.floor(dayDiff / 7)} weeks ago`, className: 'status-week-old' }; // Added within the last month
+    } else if (dayDiff < 365) {
+      return { text: `${Math.floor(dayDiff / 30)} months ago`, className: 'status-month-old' }; // Added within the last year
+    } else {
+      return { text: `${Math.floor(dayDiff / 365)} years ago`, className: 'status-old' }; // Added more than a year ago
+    }
+  }
+
+
+  viewHouseData(house: any): void {
+    const dialogRef = this.dialog.open(ViewHouseComponent, {
+      width: '800px',
+      data: house,  // Pass house data to the dialog component
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle any actions after the dialog is closed (if needed)
+        console.log('Dialog closed:', result);
+      }
+    });
+  }
+
+
+
+
+
 
   exportToExcel(): void {
     this.loading = true;
@@ -185,13 +265,18 @@ export class HouseListComponent implements OnInit {
 
   onSearch(): void {
     this.currentPage = 0; // Reset to the first page on a new search
-    this.fetchHouses();
+    this.fetchHouses(this.searchTerm); // Pass searchTerm to fetchHouses
   }
+
+
   clearSearch(): void {
     this.searchTerm = ''; // Clear the search term
+    this.startDate = null; // Clear start date
+    this.endDate = null; // Clear end date
     this.currentPage = 0; // Reset to the first page
     this.fetchHouses(); // Fetch all data without filters
   }
+
   pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
     this.currentPage = event.pageIndex;
@@ -252,19 +337,4 @@ export class HouseListComponent implements OnInit {
     );
   }
 
-  openUpdateDialog(house: House): void {
-    const dialogRef = this.dialog.open(HouseUpdateDialogComponent, {
-      width: '600px',
-      data: {
-        ...house,
-        imagePath: house.imagePaths,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.fetchHouses();
-      }
-    });
-  }
 }
