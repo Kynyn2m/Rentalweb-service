@@ -113,6 +113,8 @@ const httpLoaderFactory = (http: HttpClient) => new TranslocoRootModule();
 import * as XLSX from 'xlsx';
 import { AdDialogComponent } from './ad-dialog/ad-dialog.component';
 import { ViewHouseComponent } from './dashboard/house-list/view-house/view-house.component';
+import { ViewRoomComponent } from './dashboard/room-list/view-room/view-room.component';
+import { ViewLandComponent } from './dashboard/land-list/view-land/view-land.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -172,6 +174,8 @@ import { ViewHouseComponent } from './dashboard/house-list/view-house/view-house
     UpdateCommentDialogComponent,
     AdDialogComponent,
     ViewHouseComponent,
+    ViewRoomComponent,
+    ViewLandComponent,
   ],
   imports: [
     BrowserModule,

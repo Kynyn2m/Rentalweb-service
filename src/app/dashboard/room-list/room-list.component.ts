@@ -9,6 +9,7 @@ import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
 import { PageEvent } from '@angular/material/paginator';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ViewRoomComponent } from './view-room/view-room.component';
 
 interface Room {
   id: number;
@@ -188,6 +189,18 @@ export class RoomListComponent implements OnInit {
     );
   }
 
+  viewRoomData(room: Room): void {
+    const dialogRef = this.dialog.open(ViewRoomComponent, {
+      width: '800px',
+      data: room, // Pass house data to the dialog component
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Handle any actions after the dialog is closed (if needed)
+        console.log('Dialog closed:', result);
+      }
+    });
+  }
   openDeleteDialog(room: Room): void {
     const dialogRef = this.dialog.open(ConfirmComponent, {
       width: '400px',

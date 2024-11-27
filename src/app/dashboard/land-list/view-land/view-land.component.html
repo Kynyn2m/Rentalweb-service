@@ -1,0 +1,122 @@
+<h1 mat-dialog-title class="land-title">Land ID = {{ landData.id }}</h1>
+
+<div mat-dialog-content class="land-detail">
+  <!-- Image Section with Dynamic Size and Navigation -->
+  <div class="image-container">
+    <img
+      *ngIf="currentImage"
+      [src]="currentImage"
+      alt="Land Image"
+      class="land-image"
+    />
+
+    <!-- Navigation buttons for image carousel -->
+    <button
+      *ngIf="landData.imagePaths.length > 1"
+      class="nav-button prev-button"
+      (click)="showPreviousImage()"
+    >
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button
+      *ngIf="landData.imagePaths.length > 1"
+      class="nav-button next-button"
+      (click)="showNextImage()"
+    >
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- User Information Section -->
+
+  <div class="user-info">
+    <div class="user-details">
+      <img
+        [src]="landData.user.safeImagePath"
+        alt="User Avatar"
+        class="user-avatar"
+      />
+      <div class="user-text">
+        <div class="user-row">
+          <div class="user-column">
+            <p>
+              <i class="fas fa-id-card"></i> <strong>ID:</strong>
+              {{ landData.user.id }}
+            </p>
+          </div>
+          <div class="user-column">
+            <p>
+              <i class="fas fa-user"></i> <strong>Username:</strong>
+              {{ landData.user.username }}
+            </p>
+          </div>
+        </div>
+        <div class="user-row">
+          <div class="user-column">
+            <p>
+              <i class="fas fa-envelope"></i> <strong>Gmail:</strong>
+              {{ landData.user.email }}
+            </p>
+          </div>
+          <div class="user-column">
+            <p>
+              <i class="fas fa-venus-mars"></i> <strong>Gender:</strong>
+              {{ landData.user.gender }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Land Information Section -->
+  <div class="land-info">
+    <p><strong>Title:</strong> {{ landData.title }}</p>
+    <p><strong>Description:</strong> {{ landData.description }}</p>
+    <p><strong>Price:</strong> ${{ landData.price }}</p>
+    <p><strong>Size:</strong> {{ landData.landSize }}m</p>
+    <p><strong>Phone:</strong> {{ landData.phoneNumber }}</p>
+    <p>
+      <strong>Location:</strong>
+      <a [href]="landData.linkMap" target="_blank">View on Map</a>
+    </p>
+    <p>
+      <strong>Created At:</strong> {{ landData.createdAt | date : "medium" }}
+    </p>
+  </div>
+
+  <!-- Additional Information Section -->
+  <div class="land-additional">
+    <p>
+      <strong><i class="fas fa-thumbs-up"></i> Like Count:</strong>
+      {{ landData.likeCount }}
+    </p>
+    <p>
+      <strong><i class="fas fa-eye"></i> View Count:</strong>
+      {{ landData.viewCount }}
+    </p>
+  </div>
+
+  <!-- Location Section -->
+  <div class="location-row">
+    <div class="location-item">
+      <strong>Province:</strong> {{ getProvinceName(landData.province) }}
+    </div>
+    <div class="location-item">
+      <strong>District:</strong> {{ getDistrictName(landData.district) }}
+    </div>
+    <div class="location-item">
+      <strong>Commune:</strong> {{ getCommuneName(landData.commune) }}
+    </div>
+    <div class="location-item">
+      <strong>Village:</strong> {{ getVillageName(landData.village) }}
+    </div>
+  </div>
+</div>
+
+<!-- Action Buttons at the Bottom -->
+<div mat-dialog-actions class="dialog-actions" align="end">
+  <button mat-button class="close-button" (click)="closeDialog()">
+    <i class="fas fa-times"></i> Close
+  </button>
+</div>
