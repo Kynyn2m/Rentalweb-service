@@ -76,8 +76,8 @@ body {
 }
 
 .user-avatar {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #007bff;
@@ -99,9 +99,23 @@ body {
   color: #007bff;
 }
 
+/* User Row Styling */
+.user-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.user-column {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
 /* House Information Section */
 .house-info {
-  /* margin-bottom: 30px; */
+  margin-bottom: 30px;
 }
 
 .house-info p {
@@ -146,6 +160,7 @@ body {
 
 /* Dialog Action Buttons */
 .dialog-actions {
+  text-align: right;
   padding-top: 20px;
   padding-bottom: 10px;
   background-color: #f9f9f9;

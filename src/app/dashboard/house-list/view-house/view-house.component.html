@@ -25,26 +25,36 @@
   </div>
 
   <!-- User Information Section -->
+
   <div class="user-info">
     <div class="user-details">
       <img [src]="houseData.user.safeImagePath"
            alt="User Avatar"
            class="user-avatar" />
       <div class="user-text">
-
-        <p><strong>{{ houseData.user.fullName }}</strong></p>
-        <p><i class="fas fa-id-card"></i> <strong>ID:</strong> {{ houseData.user.id }}</p>
-        <p><i class="fas fa-user"></i> <strong>Username:</strong> {{ houseData.user.username }}</p>
-        <p><i class="fas fa-envelope"></i> {{ houseData.user.email }}</p>
-        <p><i class="fas fa-venus-mars"></i> {{ houseData.user.gender }}</p>
-
+        <div class="user-row">
+          <div class="user-column">
+            <p><i class="fas fa-id-card"></i> <strong>ID:</strong> {{ houseData.user.id }}</p>
+          </div>
+          <div class="user-column">
+            <p><i class="fas fa-user"></i> <strong>Username:</strong> {{ houseData.user.username }}</p>
+          </div>
+        </div>
+        <div class="user-row">
+          <div class="user-column">
+            <p><i class="fas fa-envelope"></i> <strong>Gmail:</strong> {{ houseData.user.email }}</p>
+          </div>
+          <div class="user-column">
+            <p><i class="fas fa-venus-mars"></i> <strong>Gender:</strong> {{ houseData.user.gender }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- House Information Section -->
   <div class="house-info">
-    <p><strong>title:</strong> {{ houseData.title }}</p>
+    <p><strong>Title:</strong> {{ houseData.title }}</p>
     <p><strong>Description:</strong> {{ houseData.description }}</p>
     <p><strong>Price:</strong> ${{ houseData.price }}</p>
     <p><strong>Size:</strong> {{ houseData.width }}m x {{ houseData.height }}m</p>
