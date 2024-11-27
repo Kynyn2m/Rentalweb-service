@@ -1,9 +1,23 @@
-.land-list-container {
-  padding: 0px;
-}
-
 table {
   width: 100%;
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  /* background: #f1e1c8; */
+  background: #edd2c1;
+  color: aliceblue;
+}
+tr.example-element-header {
+  background: #f47628;
+  color: aliceblue;
+}
+
+.land-list-container {
+  padding: 0px;
 }
 
 img {

@@ -10,10 +10,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { FilterTemplate, ROLE_TYPE } from './role';
 import { RoleService } from './role.service';
-import {
-  MatDialog,
-  MatDialogConfig,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { PermissionComponent } from './permission/permission.component';
 import { PermissionData } from './permission/permission';
 import { ConfirmService } from 'src/app/components/confirm/confirm.service';
@@ -33,14 +30,13 @@ import Swal from 'sweetalert2';
 
 import * as XLSX from 'xlsx';
 
-
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
-  styleUrls: ['./role.component.css', '../../styles/styled.table.css']
+  styleUrls: ['./role.component.css'],
 })
 export class RoleComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -84,26 +80,28 @@ export class RoleComponent implements AfterViewInit, OnInit {
   // Fetch all roles with pagination and search
   getAll() {
     this.isLoading = true;
-    this.roleService.gets(this.currentPage, this.size, this.searchText, this.filter).subscribe(
-      (res: ResponseModel) => {
-        if (res && res.result && res.result.result) {
-          const pagingModel = res.result;
-          this.pagingModel = pagingModel;
-          console.log("API Response:", res);
-          console.log("Roles:", pagingModel.result);
-          this.dataSource.data = pagingModel.result;
-        } else {
-          console.error('Unexpected API response structure:', res);
+    this.roleService
+      .gets(this.currentPage, this.size, this.searchText, this.filter)
+      .subscribe(
+        (res: ResponseModel) => {
+          if (res && res.result && res.result.result) {
+            const pagingModel = res.result;
+            this.pagingModel = pagingModel;
+            console.log('API Response:', res);
+            console.log('Roles:', pagingModel.result);
+            this.dataSource.data = pagingModel.result;
+          } else {
+            console.error('Unexpected API response structure:', res);
+          }
+          this.isLoading = false;
+          this.changeDetectorRef.detectChanges();
+        },
+        (error) => {
+          this.error = 'Error fetching roles';
+          console.error('Error:', error);
+          this.isLoading = false;
         }
-        this.isLoading = false;
-        this.changeDetectorRef.detectChanges();
-      },
-      (error) => {
-        this.error = 'Error fetching roles';
-        console.error('Error:', error);
-        this.isLoading = false;
-      }
-    );
+      );
   }
 
   exportToExcel(): void {
@@ -143,11 +141,11 @@ export class RoleComponent implements AfterViewInit, OnInit {
         width: '650px',
         data: {
           permissions: permissions, // Pass the permissions to the dialog
-          assignedPermissions: role.permissions // Pass currently assigned permissions
-        }
+          assignedPermissions: role.permissions, // Pass currently assigned permissions
+        },
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // Assign permission IDs to the role (result contains the selected permission IDs)
           this.assignPermissionsToRole(role.id, result);
@@ -158,24 +156,29 @@ export class RoleComponent implements AfterViewInit, OnInit {
 
   // Method to assign permissions to a role
   assignPermissionsToRole(roleId: number, permissionIds: number[]): void {
-    this.permissionsService.assignPermissionsToRole(roleId, permissionIds).subscribe(() => {
-      // Show SweetAlert on success
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Permissions have been successfully assigned to the role.',
-        timer: 3000,  // Optional: Auto-close after 3 seconds
-        showConfirmButton: false
-      });
-    }, error => {
-      console.error('Error assigning permissions:', error);
-      // Show SweetAlert on error
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to assign permissions. Please try again.'
-      });
-    });
+    this.permissionsService
+      .assignPermissionsToRole(roleId, permissionIds)
+      .subscribe(
+        () => {
+          // Show SweetAlert on success
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Permissions have been successfully assigned to the role.',
+            timer: 3000, // Optional: Auto-close after 3 seconds
+            showConfirmButton: false,
+          });
+        },
+        (error) => {
+          console.error('Error assigning permissions:', error);
+          // Show SweetAlert on error
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to assign permissions. Please try again.',
+          });
+        }
+      );
   }
   updateDialog(role: ROLE_TYPE): void {
     const dialogConfig = new MatDialogConfig();
@@ -183,27 +186,36 @@ export class RoleComponent implements AfterViewInit, OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.data = role;
 
-    this.dialog.open(AddRoleDesComponent, dialogConfig).afterClosed().subscribe((updatedRole: ROLE_TYPE) => {
-      if (updatedRole) {
-        this.roleService.updateRole(updatedRole).subscribe(
-          (res) => {
-            const message = res?.message || 'Role updated successfully';
-            this.snackBar.open(message, 'Close', { duration: 3000 });
-            this.getAll();  // Refresh the role list after update
-          },
-          (error) => {
-            this.snackBar.open('Error updating role', 'Close', { duration: 3000 });
-            console.error('Error:', error);
-          }
-        );
-      }
-    });
+    this.dialog
+      .open(AddRoleDesComponent, dialogConfig)
+      .afterClosed()
+      .subscribe((updatedRole: ROLE_TYPE) => {
+        if (updatedRole) {
+          this.roleService.updateRole(updatedRole).subscribe(
+            (res) => {
+              const message = res?.message || 'Role updated successfully';
+              this.snackBar.open(message, 'Close', { duration: 3000 });
+              this.getAll(); // Refresh the role list after update
+            },
+            (error) => {
+              this.snackBar.open('Error updating role', 'Close', {
+                duration: 3000,
+              });
+              console.error('Error:', error);
+            }
+          );
+        }
+      });
   }
 
   deleteConfirm(role: ROLE_TYPE): void {
     const options = {
-      title: `${this.translocoService.translate('delete')} ${this.translocoService.translate('role')}`,
-      message: `${this.translocoService.translate('delete-confirmation')} ${role.name}?`,
+      title: `${this.translocoService.translate(
+        'delete'
+      )} ${this.translocoService.translate('role')}`,
+      message: `${this.translocoService.translate('delete-confirmation')} ${
+        role.name
+      }?`,
       cancelText: this.translocoService.translate('cancel'),
       confirmText: this.translocoService.translate('yes'),
     };
@@ -218,14 +230,15 @@ export class RoleComponent implements AfterViewInit, OnInit {
             this.getAll();
           },
           (error) => {
-            this.snackBar.open('Error deleting role', 'Close', { duration: 3000 });
+            this.snackBar.open('Error deleting role', 'Close', {
+              duration: 3000,
+            });
             console.error('Error:', error);
           }
         );
       }
     });
   }
-
 
   // Handle pagination change
   pageChanged(event: PageEvent): void {

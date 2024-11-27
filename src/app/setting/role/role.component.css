@@ -13,21 +13,37 @@
 }
 .mat-elevation-z8 {
   display: flex;
-  flex-direction: column;  /* Set the container to be a column */
-  min-height: 450px;        /* Minimum height for the container */
-  overflow: hidden;         /* Prevent overflowing content */
+  flex-direction: column; /* Set the container to be a column */
+  min-height: 450px; /* Minimum height for the container */
+  overflow: hidden; /* Prevent overflowing content */
   background-color: white;
 }
-table.mat-table {
-  flex-grow: 1;             /* Ensure table grows to take up available space */
+
+table {
   width: 100%;
-  table-layout: fixed;      /* Ensure columns have fixed widths */
 }
 
-mat-paginator {
-  flex-shrink: 0;           /* Prevent the paginator from shrinking */
-  margin-top: auto;         /* Push the paginator to the bottom */
+tr.example-detail-row {
+  height: 0;
 }
-tr{
-  background-color: white !important;
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: #edd2c1;
+  color: aliceblue;
+}
+tr.example-element-header {
+  background: #f47628;
+  color: aliceblue;
+}
+
+.land-list-container {
+  padding: 0px;
+}
+
+table {
+  width: 100%;
+}
+
+table {
+  width: 100%;
 }
