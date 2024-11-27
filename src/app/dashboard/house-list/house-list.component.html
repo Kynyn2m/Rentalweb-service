@@ -3,75 +3,72 @@
 <section class="section">
   <mat-form-field class="btn-search">
     <mat-label>{{ "search" | transloco }}</mat-label>
-    <input type="text"
-           matInput
-           [(ngModel)]="searchTerm"
-           placeholder="Search house" />
+    <input
+      type="text"
+      matInput
+      [(ngModel)]="searchTerm"
+      placeholder="Search house"
+    />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
   <mat-form-field class="btn-search">
     <mat-label>Start Date</mat-label>
-    <input matInput
-           [matDatepicker]="startDatePicker"
-           [(ngModel)]="startDate"
-           placeholder="Start Date">
-    <mat-datepicker-toggle matSuffix
-                           [for]="startDatePicker"></mat-datepicker-toggle>
+    <input
+      matInput
+      [matDatepicker]="startDatePicker"
+      [(ngModel)]="startDate"
+      placeholder="Start Date"
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="startDatePicker"
+    ></mat-datepicker-toggle>
     <mat-datepicker #startDatePicker></mat-datepicker>
   </mat-form-field>
 
   <mat-form-field class="btn-search">
     <mat-label>End Date</mat-label>
-    <input matInput
-           [matDatepicker]="endDatePicker"
-           [(ngModel)]="endDate"
-           placeholder="End Date">
-    <mat-datepicker-toggle matSuffix
-                           [for]="endDatePicker"></mat-datepicker-toggle>
+    <input
+      matInput
+      [matDatepicker]="endDatePicker"
+      [(ngModel)]="endDate"
+      placeholder="End Date"
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="endDatePicker"
+    ></mat-datepicker-toggle>
     <mat-datepicker #endDatePicker></mat-datepicker>
   </mat-form-field>
 
-
   <div class="button-search">
-    <button mat-raised-button
-            color="success"
-            (click)="onSearch()">
+    <button mat-raised-button color="success" (click)="onSearch()">
       {{ "search" | transloco }}
     </button>
-    <button mat-raised-button
-            color="warn"
-            (click)="clearSearch()">
+    <button mat-raised-button color="warn" (click)="clearSearch()">
       Clear
     </button>
   </div>
 </section>
 <div class="house-list-container">
-  <div *ngIf="loading"
-       class="loading-container">
+  <div *ngIf="loading" class="loading-container">
     <mat-spinner></mat-spinner>
   </div>
   <div class="table-container">
     <div class="mat-elevation-z8">
-      <table mat-table
-             [dataSource]="dataSource"
-             class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
         <!-- Image Column -->
         <ng-container matColumnDef="image">
-          <th mat-header-cell
-              *matHeaderCellDef>Image</th>
-          <td mat-cell
-              *matCellDef="let house">
-            <img [src]="house?.safeImagePath"
-                 alt="{{ house?.title }}" />
+          <th mat-header-cell *matHeaderCellDef>Image</th>
+          <td mat-cell *matCellDef="let house">
+            <img [src]="house?.safeImagePath" alt="{{ house?.title }}" />
           </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
-          <th mat-header-cell
-              *matHeaderCellDef>Title</th>
-          <td mat-cell
-              *matCellDef="let house">{{ house.title }}</td>
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let house">{{ house.title }}</td>
         </ng-container>
 
         <!-- <ng-container matColumnDef="location">
@@ -83,10 +80,8 @@
 
         <!-- Price Column -->
         <ng-container matColumnDef="price">
-          <th mat-header-cell
-              *matHeaderCellDef>Price</th>
-          <td mat-cell
-              *matCellDef="let house">{{ house.price | currency }}</td>
+          <th mat-header-cell *matHeaderCellDef>Price</th>
+          <td mat-cell *matCellDef="let house">{{ house.price | currency }}</td>
         </ng-container>
 
         <!-- Width Column -->
@@ -115,73 +110,75 @@
 
         <!-- Like Count Column -->
         <ng-container matColumnDef="likeCount">
-          <th mat-header-cell
-              *matHeaderCellDef>Likes</th>
-          <td mat-cell
-              *matCellDef="let house">{{ house.likeCount }}</td>
+          <th mat-header-cell *matHeaderCellDef>Likes</th>
+          <td mat-cell *matCellDef="let house">{{ house.likeCount }}</td>
         </ng-container>
 
         <!-- View Count Column -->
         <ng-container matColumnDef="viewCount">
-          <th mat-header-cell
-              *matHeaderCellDef>Views</th>
-          <td mat-cell
-              *matCellDef="let house">{{ house.viewCount }}</td>
+          <th mat-header-cell *matHeaderCellDef>Views</th>
+          <td mat-cell *matCellDef="let house">{{ house.viewCount }}</td>
         </ng-container>
 
         <!-- CreatedAt Column -->
         <ng-container matColumnDef="createdAt">
-          <th mat-header-cell
-              *matHeaderCellDef>Created At</th>
-          <td mat-cell
-              *matCellDef="let house">
+          <th mat-header-cell *matHeaderCellDef>Created At</th>
+          <td mat-cell *matCellDef="let house">
             {{ house.createdAt | date : "short" }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="status">
-          <th mat-header-cell
-              *matHeaderCellDef> Status </th>
-          <td mat-cell
-              *matCellDef="let house">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let house">
             <span [ngClass]="getStatus(house.createdAt).className">
               {{ getStatus(house.createdAt).text }}
             </span>
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="actions"
-                      sticky>
-          <th mat-header-cell
-              *matHeaderCellDef>Actions</th>
-          <td mat-cell
-              *matCellDef="let house">
-            <button mat-icon-button
-                    style="color: blue"
-                    (click)="viewHouseData(house)">
+        <ng-container matColumnDef="actions" sticky>
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let house">
+            <button
+              mat-icon-button
+              style="color: blue"
+              (click)="viewHouseData(house)"
+            >
               <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-icon-button
-                    style="color: red"
-                    (click)="openDeleteDialog(house)">
+            <button
+              mat-icon-button
+              style="color: red"
+              (click)="openDeleteDialog(house)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </td>
         </ng-container>
 
         <!-- Define Header and Rows -->
-        <tr mat-header-row
-            *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row
-            *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+          class="example-element-header"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="example-element-row"
+        ></tr>
       </table>
-      <mat-paginator #paginator
-                     [length]="pagingModel?.totalElements"
-                     [pageIndex]="page"
-                     [pageSize]="size"
-                     [pageSizeOptions]="pageSizeOptions"
-                     (page)="pageChanged($event)"
-                     aria-label="Select page">
+      <mat-paginator
+        #paginator
+        [length]="pagingModel?.totalElements"
+        [pageIndex]="page"
+        [pageSize]="size"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        aria-label="Select page"
+      >
       </mat-paginator>
     </div>
   </div>
