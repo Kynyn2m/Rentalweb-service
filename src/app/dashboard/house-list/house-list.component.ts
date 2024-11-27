@@ -15,23 +15,38 @@ import { ViewHouseComponent } from './view-house/view-house.component';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-interface House {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  price: number;
-  width: number;
-  height: number;
-  floor: number;
-  phoneNumber: string;
-  imagePaths: string[];
-  safeImagePath?: SafeUrl;
-  likeCount: number;
-  linkMap: string;
-  viewCount: number;
-  createdAt: string;
-}
+  export interface House {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    width: number;
+    height: number;
+    floor: number;
+    imagePaths: string[];
+    phoneNumber: string;
+    safeImagePath?: SafeUrl;  // Will store the sanitized image URL
+    linkMap: string;
+    createdAt: string;
+    likeCount: number;
+    viewCount: number;
+    province: number;
+    district: number;
+    commune: number;
+    village: number;
+    type: string;
+    likeable: boolean;
+    favoriteable: boolean;
+    user: {
+      id: number;
+      fullName: string;
+      email: string;
+      username: string;
+      gender: string;
+      imagePaths: string[]; // assuming user has image paths for avatar
+      safeImagePath?: SafeUrl; // Will store the sanitized avatar URL
+    };
+  }
 
 @Component({
   selector: 'app-house-list',
@@ -156,7 +171,7 @@ export class HouseListComponent implements OnInit {
   }
 
 
-  viewHouseData(house: any): void {
+  viewHouseData(house: House): void {
     const dialogRef = this.dialog.open(ViewHouseComponent, {
       width: '800px',
       data: house,  // Pass house data to the dialog component

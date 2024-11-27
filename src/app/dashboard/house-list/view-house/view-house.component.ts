@@ -33,6 +33,9 @@ export interface House {
     fullName: string;
     email: string;
     username: string;
+    gender: string;
+    image: string; // Note: image is used for the user avatar
+    safeImagePath?: SafeUrl; // Will store the sanitized avatar URL
   };
 }
 
@@ -45,6 +48,7 @@ export class ViewHouseComponent implements OnInit {
 
   currentImageIndex: number = 0;
   currentImage: string = '';
+  currentUserAvatar: string = '';
 
   provinces: any[] = [];
   districts: any[] = [];
@@ -65,34 +69,56 @@ export class ViewHouseComponent implements OnInit {
   ngOnInit(): void {
     // Load provinces
     this.loadProvinces();
+
+    // Load house images if any
     if (this.houseData.imagePaths && this.houseData.imagePaths.length > 0) {
       this.loadImage(this.houseData);
     }
+
+    // Load user avatar if available (using the correct field: image)
+    if (this.houseData.user.image) {
+      this.loadUserAvatar(this.houseData.user);
+    }
   }
 
-  // Load the first image and sanitize it using image blob
+  // Load the first house image and sanitize it using image blob
   loadImage(house: House): void {
     if (!house.imagePaths || house.imagePaths.length === 0) {
       console.error('No image paths available for house:', house);
       return;
     }
 
-    // Load the first image from the list of image paths
-    const firstImagePath = house.imagePaths[0]; // You can modify to show different images based on index or condition
+    const firstImagePath = house.imagePaths[0]; // Use the first image path
 
     this.houseService.getImage(firstImagePath).subscribe(
       (imageBlob) => {
-        // Convert the image Blob to a URL
         const objectURL = URL.createObjectURL(imageBlob);
-
-        // Sanitize the image URL before assigning it to the house
         house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-
-        // Update the currentImage to be the first image URL
         this.currentImage = objectURL;
       },
       (error) => {
-        console.error('Error loading image:', error);
+        console.error('Error loading house image:', error);
+      }
+    );
+  }
+
+  // Load user avatar image and sanitize it
+  loadUserAvatar(user: any): void {
+    if (!user.image) {
+      console.error('No image available for user:', user);
+      return;
+    }
+
+    const imagePath = user.image; // Use the avatar image URL
+
+    this.houseService.getImage(imagePath).subscribe(
+      (imageBlob) => {
+        const objectURL = URL.createObjectURL(imageBlob);
+        user.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        this.currentUserAvatar = objectURL; // Optional, for direct use
+      },
+      (error) => {
+        console.error('Error loading user avatar:', error);
       }
     );
   }
@@ -144,6 +170,7 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
+  // Handling selection of province
   onProvinceSelected(provinceId: number) {
     this.districtService.getByProvincePublic(provinceId).subscribe(
       (res) => {
@@ -191,6 +218,7 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
+  // Utility methods for getting names based on IDs
   getProvinceName(provinceId: number): string {
     const province = this.provinces.find(p => p.id === provinceId);
     return province ? province.khmerName || province.englishName : 'Unknown Province';
@@ -211,6 +239,7 @@ export class ViewHouseComponent implements OnInit {
     return village ? village.khmerName || village.englishName : 'Unknown Village';
   }
 
+  // Close dialog
   closeDialog(): void {
     this.dialogRef.close();
   }
