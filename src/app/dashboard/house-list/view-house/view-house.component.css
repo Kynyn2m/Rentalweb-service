@@ -91,23 +91,21 @@ button.close-button:hover {
   }
 }
 
-/* Styling for location row */
 .location-row {
-  display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Space between each item */
+  gap: 20px;
   margin-bottom: 15px;
 }
 
 .location-item {
-  display: flex;
   align-items: center;
-  flex: 1 1 22%; /* Allowing the items to wrap responsively */
+  flex: 1 1 22%;
   justify-content: space-between;
 }
 
 .location-item strong {
   font-weight: bold;
+  margin-right: 10px;
 }
 
 .location-item span {
