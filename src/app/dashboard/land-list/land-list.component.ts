@@ -35,12 +35,15 @@ export class LandListComponent {
   displayedColumns: string[] = [
     'image',
     'title',
-    'location',
-    'price',
-    'landSize',
+    // 'location',
+    // 'price',
+    // 'width',
+    // 'height',
+    // 'floor',
     'likeCount',
     'viewCount',
     'createdAt',
+    'status',
     'actions',
   ];
   // land: Land[] = [];
@@ -52,6 +55,8 @@ export class LandListComponent {
   currentPage = 0;
   page = environment.currentPage;
   searchTerm: string = '';
+  startDate: string | null = null; // For the start date
+  endDate: string | null = null; // For the end date
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(
     private landService: LandService,
@@ -64,40 +69,9 @@ export class LandListComponent {
     this.fetchLand();
   }
 
-  // fetchLand(page: number = this.currentPage, size: number = this.size): void {
-  //   this.loading = true;
-  //   const params: any = {
-  //     page: page,
-  //     size: size,
-  //   };
-
-  //   if (this.searchTerm) {
-  //     params.search = this.searchTerm;
-  //   }
-
-  //   this.landService.getLand(params).subscribe(
-  //     (response) => {
-  //       if (response.code === 200) {
-  //         this.land = response.result.result as Land[];
-  //         this.pagingModel = response.result.pagingModel;
-
-  //         // Set the length of paginator based on total elements
-  //         if (this.pagingModel) {
-  //           this.paginator.length = this.pagingModel.totalElements;
-  //         }
-
-  //         this.land.forEach((land) => this.loadImage(land));
-  //       }
-  //       this.loading = false;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching land data', error);
-  //       this.loading = false;
-  //     }
-  //   );
-  // }
   fetchLand(search?: string): void {
     this.loading = true;
+
     const params = {
       page: this.currentPage,
       size: this.size,
@@ -107,9 +81,29 @@ export class LandListComponent {
     this.landService.getLand(params).subscribe(
       (response) => {
         if (response.code === 200) {
-          this.dataSource.data = response.result.result as Land[];
+          let land = response.result.result as Land[];
+
+          // Apply date filters if provided
+          if (this.startDate && this.startDate !== '') {
+            const start = new Date(this.startDate); // This is safe now because we ensured it's not null
+            land = land.filter((room) => {
+              const createdAt = new Date(room.createdAt);
+              return createdAt >= start;
+            });
+          }
+
+          if (this.endDate && this.endDate !== '') {
+            const end = new Date(this.endDate); // This is safe now because we ensured it's not null
+            land = land.filter((room) => {
+              const createdAt = new Date(room.createdAt);
+              return createdAt <= end;
+            });
+          }
+
+          // Set the filtered land to the data source
+          this.dataSource.data = land;
           this.pagingModel = response.result; // Capture pagination data
-          this.dataSource.data.forEach((land) => this.loadImage(land));
+          this.dataSource.data.forEach((room) => this.loadImage(room));
         }
         this.loading = false;
       },
@@ -119,18 +113,68 @@ export class LandListComponent {
       }
     );
   }
+  onSearch(): void {
+    this.currentPage = 0; // Reset to the first page on a new search
+    this.fetchLand(this.searchTerm); // Pass searchTerm to fetchLand
+  }
+  clearSearch(): void {
+    this.searchTerm = ''; // Clear the search term
+    this.startDate = null; // Clear start date
+    this.endDate = null; // Clear end date
+    this.currentPage = 0; // Reset to the first page
+    this.fetchLand(); // Fetch all data without filters
+  }
+
+  getStatus(createdAt: string): { text: string; className: string } {
+    const today = new Date();
+    const roomDate = new Date(createdAt);
+
+    // Calculate the difference in milliseconds
+    const timeDiff = today.getTime() - roomDate.getTime();
+
+    // Convert the difference to days
+    const dayDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+    if (dayDiff === 0) {
+      return { text: 'New', className: 'status-new' }; // Added today
+    } else if (dayDiff === 1) {
+      return { text: '1 day ago', className: 'status-recent' }; // Added yesterday
+    } else if (dayDiff === 2) {
+      return { text: '2 days ago', className: 'status-recent' }; // Added 2 days ago
+    } else if (dayDiff === 3) {
+      return { text: '3 days ago', className: 'status-recent' }; // Added 3 days ago
+    } else if (dayDiff < 7) {
+      return { text: `${dayDiff} days ago`, className: 'status-recent' }; // Added within the last week
+    } else if (dayDiff < 30) {
+      return {
+        text: `${Math.floor(dayDiff / 7)} weeks ago`,
+        className: 'status-week-old',
+      }; // Added within the last month
+    } else if (dayDiff < 365) {
+      return {
+        text: `${Math.floor(dayDiff / 30)} months ago`,
+        className: 'status-month-old',
+      }; // Added within the last year
+    } else {
+      return {
+        text: `${Math.floor(dayDiff / 365)} years ago`,
+        className: 'status-old',
+      }; // Added more than a year ago
+    }
+  }
+
   applyFilter(searchValue: string): void {
     this.fetchLand(searchValue); // Call fetchRoom with the search value
   }
 
   clearFilter(searchInput: HTMLInputElement): void {
     searchInput.value = ''; // Clear the input field
-    this.applyFilter(''); // Reset the filter to show all rooms
+    this.applyFilter(''); // Reset the filter to show all land
   }
   pageChanged(event: PageEvent): void {
     this.size = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.fetchLand(); // Re-fetch rooms on page change
+    this.fetchLand(); // Re-fetch land on page change
   }
 
   loadImage(land: Land): void {

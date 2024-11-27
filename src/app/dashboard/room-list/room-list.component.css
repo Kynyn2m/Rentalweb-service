@@ -1,4 +1,4 @@
-.house-list-container {
+.room-list-container {
   padding: 0px;
 }
 
@@ -7,6 +7,8 @@ table {
 }
 
 img {
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 8px;
 }
@@ -61,7 +63,6 @@ table {
 table {
   width: 100%;
   height: 100%;
-  min-height: 400px; /* Ensures the table has a height even with no data */
 }
 
 .no-data-container {
@@ -74,6 +75,7 @@ table {
   justify-content: center;
   align-items: center;
 }
+/* searh */
 .section {
   display: flex;
   flex-wrap: wrap;
@@ -83,7 +85,44 @@ table {
   column-gap: 0.5rem;
   margin-left: 0rem;
 }
-.header {
-  padding: 1rem;
-  text-align: center;
+
+/* Status styles */
+.status-new {
+  color: white;
+  background-color: #4caf50; /* Green */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.status-recent {
+  color: white;
+  background-color: #2196f3; /* Blue */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.status-week-old {
+  color: white;
+  background-color: #ff9800; /* Orange */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.status-month-old {
+  color: white;
+  background-color: #ff5722; /* Deep Orange */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.status-old {
+  color: white;
+  background-color: #9e9e9e; /* Grey */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
 }
