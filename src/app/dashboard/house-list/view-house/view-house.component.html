@@ -4,49 +4,62 @@
 <div mat-dialog-content
      class="house-detail">
 
-  <!-- Image Section with Dynamic Size -->
-  <div *ngIf="houseData.imagePaths && houseData.imagePaths.length"
-       class="image-gallery">
-    <img *ngFor="let image of houseData.imagePaths"
-         [src]="houseData.safeImagePath"
+  <!-- Image Section with Dynamic Size and Navigation -->
+  <div class="image-container">
+    <img *ngIf="currentImage"
+         [src]="currentImage"
          alt="House Image"
          class="house-image" />
+
+    <!-- Show Previous button only if there are multiple images -->
+    <button *ngIf="houseData.imagePaths.length > 1"
+            class="nav-button prev-button"
+            (click)="showPreviousImage()">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <!-- Show Next button only if there are multiple images -->
+    <button *ngIf="houseData.imagePaths.length > 1"
+            class="nav-button next-button"
+            (click)="showNextImage()">
+      <i class="fas fa-chevron-right"></i>
+    </button>
   </div>
 
   <!-- Basic Information Section -->
   <div class="house-info">
-    <p><strong>Description:</strong> {{ houseData.description }}</p>
-    <p><strong>Price:</strong> ${{ houseData.price }}</p>
-    <p><strong>Size:</strong> {{ houseData.width }}m x {{ houseData.height }}m</p>
-    <p><strong>Floor:</strong> {{ houseData.floor }}</p>
-    <p><strong>Phone:</strong> {{ houseData.phoneNumber }}</p>
-    <p><strong>Location:</strong> <a [href]="houseData.linkMap"
+    <p class="info-item spaced-text"><strong>Description:</strong> {{ houseData.description }}</p>
+    <p class="info-item spaced-text"><strong>Price:</strong> ${{ houseData.price }}</p>
+    <p class="info-item spaced-text"><strong>Size:</strong> {{ houseData.width }}m x {{ houseData.height }}m</p>
+    <p class="info-item spaced-text"><strong>Floor:</strong> {{ houseData.floor }}</p>
+    <p class="info-item spaced-text"><strong>Phone:</strong> {{ houseData.phoneNumber }}</p>
+    <p class="info-item spaced-text"><strong>Location:</strong> <a [href]="houseData.linkMap"
          target="_blank">
-        <i class="fas fa-map-marker-alt"></i> View on Map</a></p>
-    <p><strong>Created At:</strong> {{ houseData.createdAt | date: 'medium' }}</p>
-    <p><strong>Posted by:</strong> {{ houseData.user.fullName }} ({{ houseData.user.username }})</p>
+        View on Map</a></p>
+    <p class="info-item spaced-text"><strong>Created At:</strong> {{ houseData.createdAt | date: 'medium' }}</p>
+    <p class="info-item spaced-text"><strong>Posted by:</strong> {{ houseData.user.fullName }} ({{ houseData.user.username }})</p>
   </div>
 
   <!-- Additional Fields Section -->
   <div class="house-additional">
-    <p><strong><i class="fas fa-thumbs-up"></i> Like Count:</strong> {{ houseData.likeCount }}</p>
-    <p><strong><i class="fas fa-eye"></i> View Count:</strong> {{ houseData.viewCount }}</p>
+    <p><strong><i class="fas fa-thumbs-up spaced-text"></i> Like Count:</strong> {{ houseData.likeCount }}</p>
+    <p><strong><i class="fas fa-eye spaced-text"></i> View Count:</strong> {{ houseData.viewCount }}</p>
   </div>
 
   <div class="location-row">
-    <div class="location-item">
+    <div class="location-item spaced-text">
       <strong> Province:</strong>
       <span>{{ getProvinceName(houseData.province) }}</span>
     </div>
-    <div class="location-item">
+    <div class="location-item spaced-text">
       <strong> District:</strong>
       <span>{{ getDistrictName(houseData.district) }}</span>
     </div>
-    <div class="location-item">
+    <div class="location-item spaced-text">
       <strong>Commune:</strong>
       <span>{{ getCommuneName(houseData.commune) }}</span>
     </div>
-    <div class="location-item">
+    <div class="location-item spaced-text">
       <strong>Village:</strong>
       <span>{{ getVillageName(houseData.village) }}</span>
     </div>

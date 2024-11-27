@@ -6,7 +6,6 @@ import { DistrictService } from 'src/app/address/district.service';
 import { VillageService } from 'src/app/address/village.service';
 import { HouseService } from 'src/app/Service/house.service';
 
-
 export interface House {
   id: number;
   title: string;
@@ -17,7 +16,7 @@ export interface House {
   floor: number;
   imagePaths: string[];
   phoneNumber: string;
-  safeImagePath?: SafeUrl;
+  safeImagePath?: SafeUrl;  // Will store the sanitized image URL
   linkMap: string;
   createdAt: string;
   likeCount: number;
@@ -37,7 +36,6 @@ export interface House {
   };
 }
 
-
 @Component({
   selector: 'app-view-house',
   templateUrl: './view-house.component.html',
@@ -45,44 +43,86 @@ export interface House {
 })
 export class ViewHouseComponent implements OnInit {
 
-  provinces: any[] = []; // Array of provinces with id and name
-  districts: any[] = []; // Array of districts with id and name
-  communes: any[] = [];  // Array of communes with id and name
-  villages: any[] = [];  // Array of villages with id and name
+  currentImageIndex: number = 0;
+  currentImage: string = '';
+
+  provinces: any[] = [];
+  districts: any[] = [];
+  communes: any[] = [];
+  villages: any[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<ViewHouseComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public houseData: House,
+    @Inject(MAT_DIALOG_DATA) public houseData: House,
     private cdr: ChangeDetectorRef,
     private districtService: DistrictService,
     private communeService: CommuneService,
     private villageService: VillageService,
     private houseService: HouseService,
-    private sanitizer: DomSanitizer,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
     // Load provinces
     this.loadProvinces();
+    if (this.houseData.imagePaths && this.houseData.imagePaths.length > 0) {
+      this.loadImage(this.houseData);
+    }
   }
 
+  // Load the first image and sanitize it using image blob
   loadImage(house: House): void {
     if (!house.imagePaths || house.imagePaths.length === 0) {
       console.error('No image paths available for house:', house);
       return;
     }
 
-    const firstImagePath = house.imagePaths[0]; // Use the first image path or modify as needed
+    // Load the first image from the list of image paths
+    const firstImagePath = house.imagePaths[0]; // You can modify to show different images based on index or condition
 
     this.houseService.getImage(firstImagePath).subscribe(
       (imageBlob) => {
         // Convert the image Blob to a URL
         const objectURL = URL.createObjectURL(imageBlob);
+
         // Sanitize the image URL before assigning it to the house
         house.safeImagePath = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+
+        // Update the currentImage to be the first image URL
+        this.currentImage = objectURL;
       },
       (error) => {
         console.error('Error loading image:', error);
+      }
+    );
+  }
+
+  // Show the previous image
+  showPreviousImage(): void {
+    if (this.houseData.imagePaths && this.houseData.imagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex - 1 + this.houseData.imagePaths.length) % this.houseData.imagePaths.length;
+      this.updateCurrentImage();
+    }
+  }
+
+  // Show the next image
+  showNextImage(): void {
+    if (this.houseData.imagePaths && this.houseData.imagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.houseData.imagePaths.length;
+      this.updateCurrentImage();
+    }
+  }
+
+  // Update the current image to the new image based on index
+  updateCurrentImage(): void {
+    const imagePath = this.houseData.imagePaths[this.currentImageIndex];
+    this.houseService.getImage(imagePath).subscribe(
+      (imageBlob) => {
+        const objectURL = URL.createObjectURL(imageBlob);
+        this.currentImage = objectURL;
+      },
+      (error) => {
+        console.error('Error loading next/previous image:', error);
       }
     );
   }
@@ -91,10 +131,9 @@ export class ViewHouseComponent implements OnInit {
   loadProvinces() {
     this.districtService.getProvincesPublic().subscribe(
       (res) => {
-        this.provinces = res.result.result || []; // Store provinces in the `provinces` array
+        this.provinces = res.result.result || [];
         this.cdr.detectChanges();
 
-        // If a province is already selected in houseData, load districts
         if (this.houseData.province) {
           this.onProvinceSelected(this.houseData.province);
         }
@@ -105,17 +144,14 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
-
-  // Load districts based on selected province
   onProvinceSelected(provinceId: number) {
     this.districtService.getByProvincePublic(provinceId).subscribe(
       (res) => {
-        this.districts = res.result || [];  // Populate districts array
+        this.districts = res.result || [];
         this.communes = [];
         this.villages = [];
         this.cdr.detectChanges();
 
-        // If district is already selected, load communes
         if (this.houseData.district) {
           this.onDistrictSelected(this.houseData.district);
         }
@@ -126,15 +162,13 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
-  // Load communes based on selected district
   onDistrictSelected(districtId: number) {
     this.communeService.getByDistrictPublic(districtId).subscribe(
       (res) => {
-        this.communes = res.result || [];  // Populate communes array
+        this.communes = res.result || [];
         this.villages = [];
         this.cdr.detectChanges();
 
-        // If commune is already selected, load villages
         if (this.houseData.commune) {
           this.onCommuneSelected(this.houseData.commune);
         }
@@ -145,11 +179,10 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
-  // Load villages based on selected commune
   onCommuneSelected(communeId: number) {
     this.villageService.getByCommunePublic(communeId).subscribe(
       (res) => {
-        this.villages = res.result || [];  // Populate villages array
+        this.villages = res.result || [];
         this.cdr.detectChanges();
       },
       (error) => {
@@ -158,7 +191,6 @@ export class ViewHouseComponent implements OnInit {
     );
   }
 
-  // Helper functions to get names from ID
   getProvinceName(provinceId: number): string {
     const province = this.provinces.find(p => p.id === provinceId);
     return province ? province.khmerName || province.englishName : 'Unknown Province';
@@ -179,7 +211,7 @@ export class ViewHouseComponent implements OnInit {
     return village ? village.khmerName || village.englishName : 'Unknown Village';
   }
 
-    closeDialog(): void {
-      this.dialogRef.close();
-    }
+  closeDialog(): void {
+    this.dialogRef.close();
+  }
 }
