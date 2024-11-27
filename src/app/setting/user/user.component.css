@@ -28,8 +28,7 @@ tr.example-detail-row {
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
-  background: #edd2c1;
-  color: aliceblue;
+  background-color: #f1f1f1;
 }
 tr.example-element-header {
   background: #f47628;
