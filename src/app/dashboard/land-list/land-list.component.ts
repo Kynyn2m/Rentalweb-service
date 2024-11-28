@@ -9,6 +9,7 @@ import { PaggingModel } from 'src/app/_helpers/response-model';
 import { environment } from 'src/environments/environment';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { ViewLandComponent } from './view-land/view-land.component';
 
 interface Land {
   id: number;
@@ -112,6 +113,19 @@ export class LandListComponent {
         this.loading = false;
       }
     );
+  }
+
+  viewLandData(room: Land): void {
+    const dialogRef = this.dialog.open(ViewLandComponent, {
+      width: '800px',
+      data: room, // Pass house data to the dialog component
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Handle any actions after the dialog is closed (if needed)
+        console.log('Dialog closed:', result);
+      }
+    });
   }
   onSearch(): void {
     this.currentPage = 0; // Reset to the first page on a new search

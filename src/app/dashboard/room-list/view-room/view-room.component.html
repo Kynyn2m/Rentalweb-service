@@ -1,0 +1,123 @@
+<h1 mat-dialog-title class="room-title">Room ID = {{ roomData.id }}</h1>
+
+<div mat-dialog-content class="room-detail">
+  <!-- Image Section with Dynamic Size and Navigation -->
+  <div class="image-container">
+    <img
+      *ngIf="currentImage"
+      [src]="currentImage"
+      alt="Room Image"
+      class="room-image"
+    />
+
+    <!-- Navigation buttons for image carousel -->
+    <button
+      *ngIf="roomData.imagePaths.length > 1"
+      class="nav-button prev-button"
+      (click)="showPreviousImage()"
+    >
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button
+      *ngIf="roomData.imagePaths.length > 1"
+      class="nav-button next-button"
+      (click)="showNextImage()"
+    >
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- User Information Section -->
+
+  <div class="user-info">
+    <div class="user-details">
+      <img
+        [src]="roomData.user.safeImagePath"
+        alt="User Avatar"
+        class="user-avatar"
+      />
+      <div class="user-text">
+        <div class="user-row">
+          <div class="user-column">
+            <p>
+              <i class="fas fa-id-card"></i> <strong>ID:</strong>
+              {{ roomData.user.id }}
+            </p>
+          </div>
+          <div class="user-column">
+            <p>
+              <i class="fas fa-user"></i> <strong>Username:</strong>
+              {{ roomData.user.username }}
+            </p>
+          </div>
+        </div>
+        <div class="user-row">
+          <div class="user-column">
+            <p>
+              <i class="fas fa-envelope"></i> <strong>Gmail:</strong>
+              {{ roomData.user.email }}
+            </p>
+          </div>
+          <div class="user-column">
+            <p>
+              <i class="fas fa-venus-mars"></i> <strong>Gender:</strong>
+              {{ roomData.user.gender }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Room Information Section -->
+  <div class="room-info">
+    <p><strong>Title:</strong> {{ roomData.title }}</p>
+    <p><strong>Description:</strong> {{ roomData.description }}</p>
+    <p><strong>Price:</strong> ${{ roomData.price }}</p>
+    <p><strong>Size:</strong> {{ roomData.width }}m x {{ roomData.height }}m</p>
+    <p><strong>Floor:</strong> {{ roomData.floor }}</p>
+    <p><strong>Phone:</strong> {{ roomData.phoneNumber }}</p>
+    <p>
+      <strong>Location:</strong>
+      <a [href]="roomData.linkMap" target="_blank">View on Map</a>
+    </p>
+    <p>
+      <strong>Created At:</strong> {{ roomData.createdAt | date : "medium" }}
+    </p>
+  </div>
+
+  <!-- Additional Information Section -->
+  <div class="room-additional">
+    <p>
+      <strong><i class="fas fa-thumbs-up"></i> Like Count:</strong>
+      {{ roomData.likeCount }}
+    </p>
+    <p>
+      <strong><i class="fas fa-eye"></i> View Count:</strong>
+      {{ roomData.viewCount }}
+    </p>
+  </div>
+
+  <!-- Location Section -->
+  <div class="location-row">
+    <div class="location-item">
+      <strong>Province:</strong> {{ getProvinceName(roomData.province) }}
+    </div>
+    <div class="location-item">
+      <strong>District:</strong> {{ getDistrictName(roomData.district) }}
+    </div>
+    <div class="location-item">
+      <strong>Commune:</strong> {{ getCommuneName(roomData.commune) }}
+    </div>
+    <div class="location-item">
+      <strong>Village:</strong> {{ getVillageName(roomData.village) }}
+    </div>
+  </div>
+</div>
+
+<!-- Action Buttons at the Bottom -->
+<div mat-dialog-actions class="dialog-actions" align="end">
+  <button mat-button class="close-button" (click)="closeDialog()">
+    <i class="fas fa-times"></i> Close
+  </button>
+</div>
