@@ -31,7 +31,7 @@ export class ContactComponent {
     },
     {
       title: 'Horng',
-      imageUrl: '../../assets/img/Screenshot 2022-11-23 205734.png',
+      imageUrl: '../../assets/img/horng.jpg',
       telegramUsername: '@R_Horng', // User's Telegram username
       phoneNumber: '09393845',
     },
