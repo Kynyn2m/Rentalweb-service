@@ -38,8 +38,8 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
   menuItems = [
     {
       router: '/home',
-      icon: 'home',
-      title: 'home',
+      icon: 'reorder',
+      title: 'all',
       tooltip: 'home',
       adminOnly: false,
     },
