@@ -68,7 +68,7 @@ export class NavComponent implements AfterViewChecked, AfterViewInit, OnInit {
       router: '/add-post',
       icon: 'add',
       title: 'add-post',
-      tooltip: 'add Post',
+      tooltip: 'add-post',
       adminOnly: false,
     },
     {
