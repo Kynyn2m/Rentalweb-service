@@ -123,7 +123,7 @@ mat-icon {
 /* table */
 .dashboard-table-container {
   margin-top: 30px;
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -223,15 +223,57 @@ mat-icon {
     height: 6px;
   }
 }
+/* Chart container styling */
 .chart-container {
-  position: relative;
-  height: 400px; /* Ensure there's enough space */
-  width: 100%; /* Make the chart responsive */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 equal columns for charts */
+  gap: 20px;
+margin-bottom: 20px;
+  border-radius: 10px;
 }
 
-canvas {
-  display: block; /* Ensure the canvas is a block element */
-  width: 100% !important; /* Allow the chart to fill the container */
-  height: auto !important; /* Maintain the aspect ratio */
+/* Card styling for the chart */
+.chart-card {
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out elements inside the card */
+  align-items: stretch; /* Allow the chart to take full width */
 }
 
+/* Chart title styling */
+.chart-card h3 {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+/* Ensure chart takes full width and height inside the card */
+.chart-card p-chart {
+  width: 85%; /* Make sure the chart takes full width */
+  height: 80%; /* Make sure the chart takes full height */
+  flex-grow: 1; /* Allow the chart to grow and fill available space */
+  margin-top: 10px; /* Add a little space from the title */
+margin: auto;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .chart-container {
+    grid-template-columns: 1fr; /* Stack charts vertically on smaller screens */
+    padding: 15px;
+  }
+
+  .chart-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .chart-card p-chart {
+    height: 250px; /* Adjust chart height for smaller screens */
+  }
+}

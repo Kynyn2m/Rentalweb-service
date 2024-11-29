@@ -1,57 +1,94 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HouseService } from 'src/app/Service/house.service';
-import { House } from './house-list.component';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+import { House } from '../house-list/house-list.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class HouseDataService {
+export class DashboardDataService {
+  loading$ = new BehaviorSubject<boolean>(false);
+  private housesSubject = new BehaviorSubject<House[]>([]);
+  public houses$ = this.housesSubject.asObservable();
+  public postsByWeek: { week: string; posts: number }[] = [];
+
   constructor(private houseService: HouseService) {}
 
-  // Fetch house data from the server
-  getHouses(params: any): Observable<any> {
-    return this.houseService.getHouses(params);
-  }
+  // Fetch houses data from the server
+  fetchHouses(page: number = 0, size: number = 10, search: string = ''): void {
+    const params = { page, size, search };
 
-  getWeekNumber(date: Date): number {
-    const startDate = new Date(date.getFullYear(), 0, 1);
-    const diff = date.getTime() - startDate.getTime();
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
-    return Math.ceil((dayOfYear + 1) / 7);
-  }
+    this.houseService.getHouses(params).subscribe(
+      (response) => {
+        if (response.code === 200) {
+          const houses = response.result.result as House[];
 
-  // Group houses by week
-  getPostsByWeek(houses: House[], selectedMonth: number, selectedYear: number): { week: string, posts: number }[] {
-    const weeklyData: { [key: string]: number } = {};
+          // Update houses data
+          this.housesSubject.next(houses);
 
-    houses.forEach(house => {
-      const createdAt = new Date(house.createdAt);
-      const month = createdAt.getMonth() + 1; // Months are zero-indexed, so we add 1
-      const year = createdAt.getFullYear();
+          // Calculate posts per week
+          this.postsByWeek = this.getPostsByWeek(houses);
 
-      // Filter by the selected month and year
-      if (month === selectedMonth && year === selectedYear) {
-        const weekNumber = this.getWeekNumber(createdAt); // Get the week number for the house's creation date
-        const weekLabel = `Week ${weekNumber} - ${year}`;
-
-        if (weeklyData[weekLabel]) {
-          weeklyData[weekLabel]++;
-        } else {
-          weeklyData[weekLabel] = 1;
+          // Call method to update the chart
+          this.updateChartData();
         }
+      },
+      (error) => {
+        console.error('Error fetching house data', error);
+      }
+    );
+  }
+
+  // Calculate the number of posts per week for the dashboard
+  getPostsByWeek(houses: House[]): { week: string; posts: number }[] {
+    const postsByWeek: { week: string; posts: number }[] = [];
+
+    houses.forEach((house) => {
+      const createdAt = new Date(house.createdAt); // Convert createdAt to Date object
+      const weekNumber = this.getWeekNumber(createdAt); // Get the week number
+
+      // Find existing week or add a new entry
+      const existingWeek = postsByWeek.find((item) => item.week === weekNumber);
+      if (existingWeek) {
+        existingWeek.posts += 1;
+      } else {
+        postsByWeek.push({ week: weekNumber, posts: 1 });
       }
     });
 
-    // Log the weekly data to check
-    console.log("Weekly Post Data: ", weeklyData);
-
-    // Convert the object to an array of { week: string, posts: number }
-    return Object.keys(weeklyData).map(key => ({
-      week: key,
-      posts: weeklyData[key],
-    }));
+    return postsByWeek;
   }
 
+  // Helper method to calculate the ISO week number from a date
+  private getWeekNumber(date: Date): string {
+    const startDate = new Date(date.getFullYear(), 0, 1); // Start of the year
+    const diff = date.getTime() - startDate.getTime();
+    const oneDay = 1000 * 60 * 60 * 24; // One day in milliseconds
+    const dayOfYear = Math.floor(diff / oneDay); // Calculate day of year
+    const weekNumber = Math.ceil((dayOfYear + 1) / 7); // Calculate week number
+    return `Week ${weekNumber}`;
+  }
+
+  // Update chart data based on posts per week
+  updateChartData(): void {
+    const chartData = {
+      labels: this.postsByWeek.map((item) => item.week),
+      datasets: [
+        {
+          label: 'Posts per Week',
+          data: this.postsByWeek.map((item) => item.posts),
+          backgroundColor: '#42A5F5',
+          borderColor: '#1E88E5',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Now update the chart with the new data
+    console.log('Updated chart data:', chartData);
+    // If you're using a charting library, you should update the chart here
+    // For example:
+    // this.chart.update(chartData);
+  }
 }

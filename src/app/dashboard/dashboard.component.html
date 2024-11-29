@@ -2,15 +2,12 @@
   <h1 class="dashboard-title">Rental Web Service - Admin Dashboard</h1>
 
   <div class="dashboard-statistics">
-    <mat-card class="stat-card orange-card"
-              (click)="goToUser()">
+    <!-- Card for Total Users -->
+    <mat-card class="stat-card orange-card" (click)="goToUser()">
       <mat-card-header class="card-header">
         <div class="stat-content">
           <mat-card-title class="tx">Total Users</mat-card-title>
           <p class="stat-value">{{ totalUsers }}</p>
-          <div class="stat-footer">
-            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
-          </div>
         </div>
         <div class="icon-container">
           <mat-icon class="card-icon">group</mat-icon>
@@ -18,15 +15,12 @@
       </mat-card-header>
     </mat-card>
 
-    <mat-card class="stat-card yellow-card"
-              (click)="goToRoomList()">
+    <!-- Card for Total Room -->
+    <mat-card class="stat-card yellow-card" (click)="goToRoomList()">
       <mat-card-header class="card-header">
         <div class="stat-content">
           <mat-card-title class="tx">Total Room</mat-card-title>
           <p class="stat-value">{{ totalRoom }}</p>
-          <div class="stat-footer">
-            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
-          </div>
         </div>
         <div class="icon-container">
           <mat-icon class="card-icon">meeting_room</mat-icon>
@@ -34,15 +28,12 @@
       </mat-card-header>
     </mat-card>
 
-    <mat-card class="stat-card green-card"
-              (click)="goToLandList()">
+    <!-- Card for Total Land -->
+    <mat-card class="stat-card green-card" (click)="goToLandList()">
       <mat-card-header class="card-header">
         <div class="stat-content">
           <mat-card-title class="tx">Total Land</mat-card-title>
           <p class="stat-value">{{ totalLand }}</p>
-          <div class="stat-footer">
-            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
-          </div>
         </div>
         <div class="icon-container">
           <mat-icon class="card-icon">terrain</mat-icon>
@@ -50,15 +41,12 @@
       </mat-card-header>
     </mat-card>
 
-    <mat-card class="stat-card blue-card"
-              (click)="goToHouseList()">
+    <!-- Card for Total House -->
+    <mat-card class="stat-card blue-card" (click)="goToHouseList()">
       <mat-card-header class="card-header">
         <div class="stat-content">
           <mat-card-title class="tx">Total House</mat-card-title>
           <p class="stat-value">{{ totalHouse }}</p>
-          <div class="stat-footer">
-            <!-- <span class="stat-change positive">↑ 3.48% Since last month</span> -->
-          </div>
         </div>
         <div class="icon-container">
           <mat-icon class="card-icon">home</mat-icon>
@@ -68,7 +56,34 @@
   </div>
 </div>
 
-<!-- table -->
+<!-- Chart containers with card-like appearance -->
+<div class="chart-container">
+  <mat-card class="chart-card">
+    <h3>Total Users, Rooms, Lands, Houses, and Posts</h3>
+    <p-chart type="bar" [data]="totalDataChart" [options]="chartOptions"></p-chart>
+  </mat-card>
+
+  <mat-card class="chart-card">
+    <h3>House Posts Each Day</h3>
+    <p-chart type="bar" [data]="houseChartData" [options]="chartOptions"></p-chart>
+  </mat-card>
+</div>
+
+<div class="chart-container">
+  <mat-card class="chart-card">
+    <h3>Room Posts Each Day</h3>
+    <p-chart type="bar" [data]="roomChartData" [options]="chartOptions"></p-chart>
+  </mat-card>
+
+  <mat-card class="chart-card">
+    <h3>Land Posts Each Day</h3>
+    <p-chart type="bar" [data]="landChartData" [options]="chartOptions"></p-chart>
+  </mat-card>
+</div>
+
+
+
+<!-- Table for summary data -->
 <div class="dashboard-table-container">
   <h2 class="table-title">Summary of Data</h2>
   <table class="dashboard-table">
@@ -76,42 +91,29 @@
       <tr>
         <th>Category</th>
         <th>Total Count</th>
-        <!-- <th>Completion</th> -->
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>Total Users</td>
         <td>{{ totalUsers }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>Total Rooms</td>
         <td>{{ totalRoom }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>Total Lands</td>
         <td>{{ totalLand }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>Total Houses</td>
         <td>{{ totalHouse }}</td>
-        <td></td>
       </tr>
       <tr>
         <td>Total Posts</td>
         <td>{{ totalPost }}</td>
-        <td></td>
       </tr>
     </tbody>
   </table>
-</div>
-
-<div class="chart-container">
-  <p-chart type="bar"
-           [data]="chartData"
-           *ngIf="chartData"></p-chart>
-
 </div>

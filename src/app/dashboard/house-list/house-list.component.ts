@@ -12,7 +12,8 @@ import { PageEvent } from '@angular/material/paginator';
 import * as XLSX from 'xlsx';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewHouseComponent } from './view-house/view-house.component';
-import { HouseDataService } from './HouseDataService';
+import { DashboardDataService } from './HouseDataService';
+
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -84,7 +85,8 @@ export class HouseListComponent implements OnInit {
   startDate: string | null = null; // For the start date
   endDate: string | null = null;   // For the end date
 
-  postsByWeek: { week: string, posts: number }[] = [];
+  postsByWeek: { week: string; posts: number }[] = [];
+  chartData: any; // Chart data for p-chart
 
 
 
@@ -94,18 +96,25 @@ export class HouseListComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private houseDataService: HouseDataService,
+    private dashboardDataService: DashboardDataService
+
   ) {}
 
   ngOnInit(): void {
     this.fetchHouses();
+
+    this.dashboardDataService.houses$.subscribe(
+      (houses) => {
+        this.houses = houses;
+        // Any additional logic can be added here
+      }
+    );
+  }
+  reloadHouses(): void {
+    this.dashboardDataService.fetchHouses();
   }
 
-  getPostsByWeek(): { week: string, posts: number }[] {
-    const selectedMonth = new Date().getMonth() + 1; // Example: current month
-    const selectedYear = new Date().getFullYear(); // Example: current year
-    return this.houseDataService.getPostsByWeek(this.houses, selectedMonth, selectedYear);
-  }
+
 
 
   fetchHouses(search?: string): void {
@@ -117,6 +126,7 @@ export class HouseListComponent implements OnInit {
       search: search || '', // Include the search term if provided
     };
 
+    // Call the service to fetch houses
     this.houseService.getHouses(params).subscribe(
       (response) => {
         if (response.code === 200) {
@@ -124,7 +134,7 @@ export class HouseListComponent implements OnInit {
 
           // Apply date filters if provided
           if (this.startDate && this.startDate !== '') {
-            const start = new Date(this.startDate); // This is safe now because we ensured it's not null
+            const start = new Date(this.startDate);
             houses = houses.filter((house) => {
               const createdAt = new Date(house.createdAt);
               return createdAt >= start;
@@ -132,16 +142,23 @@ export class HouseListComponent implements OnInit {
           }
 
           if (this.endDate && this.endDate !== '') {
-            const end = new Date(this.endDate); // This is safe now because we ensured it's not null
+            const end = new Date(this.endDate);
             houses = houses.filter((house) => {
               const createdAt = new Date(house.createdAt);
               return createdAt <= end;
             });
           }
 
-          // Set the filtered houses to the data source
+
+          // Optionally add any further filtering logic here, e.g., by house status
+
+          // Update the data source with the filtered houses
           this.dataSource.data = houses;
-          this.pagingModel = response.result; // Capture pagination data
+
+          // Capture the pagination data
+          this.pagingModel = response.result;
+
+          // Load images for each house
           this.dataSource.data.forEach((house) => this.loadImage(house));
         }
         this.loading = false;
@@ -152,6 +169,7 @@ export class HouseListComponent implements OnInit {
       }
     );
   }
+
 
   // Get the status based on the creation date of the house
   getStatus(createdAt: string): { text: string, className: string } {

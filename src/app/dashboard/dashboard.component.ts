@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardService } from './dashboard.service';
 import { Router } from '@angular/router';
-import { ChartOptions } from 'chart.js';
-import { House, HouseListComponent } from './house-list/house-list.component';
-import { HouseDataService } from './house-list/HouseDataService';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
+import { HouseService } from '../Service/house.service';
+import { LandService } from '../add-post/add-post-land/land.service';
+import { RoomService } from '../Service/room.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,16 +13,7 @@ import { HouseDataService } from './house-list/HouseDataService';
 })
 export class DashboardComponent implements OnInit {
 
-  // Data for the chart
-  chartData: any;
-  chartOptions: ChartOptions = {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
+  postsByWeek: { week: string; posts: number }[] = [];
 
 
   totalUsers: number = 0;
@@ -30,79 +22,138 @@ export class DashboardComponent implements OnInit {
   totalHouse: number = 0;
   totalPost: number = 0;
 
-  selectedMonth: number = 5; // May
-  selectedYear: number = 2024; // Example year
+  houseChartData: ChartData = {
+    datasets: []
+  };
+  roomChartData: ChartData = {
+    datasets: []
+  };
+  landChartData: ChartData = {
+    datasets: []
+  };
+  totalDataChart: ChartData = {
+    datasets: []
+  }; // New chart data for total values
+  chartOptions: any;
 
   constructor(
     private readonly dashboardService: DashboardService,
     private router: Router,
-    private houseDataService: HouseDataService
+    private houseService: HouseService,
+    private roomService: RoomService,
+    private landService: LandService
   ) {}
 
   ngOnInit(): void {
     this.fetchDashboardData();
-    this.fetchhouseData();
-    this.chartData = {
-      labels: [],
+
+    this.totalDataChart = {
+      labels: ['Users', 'Rooms', 'Lands', 'Houses', 'Posts'],
       datasets: [
         {
-          data: [],
-          label: 'Posts per Month',
-          backgroundColor: '#42A5F5',
-          borderColor: '#1E88E5',
-          borderWidth: 1,
-        },
-      ],
-    };
-  }
-
-  fetchhouseData(): void {
-    const params = {
-      page: 0,
-      size: 10,
-      search: '',
-    };
-
-    // Get house data
-    this.houseDataService.getHouses(params).subscribe(
-      (response) => {
-        if (response.code === 200) {
-          const houses: House[] = response.result.result;
-
-          // Get posts grouped by week in the selected month and year
-          const weeklyPostData = this.houseDataService.getPostsByWeek(houses, this.selectedMonth, this.selectedYear);
-
-          // Log the weeklyPostData to verify the structure
-          console.log("Weekly Post Data for Chart: ", weeklyPostData);
-
-          // Extract weeks and post counts from the data
-          const labels = weeklyPostData.map(item => item.week);  // Get week labels (e.g., "Week 1", "Week 2")
-          const data = weeklyPostData.map(item => item.posts);   // Get the number of posts for each week
-
-          // Set up chart data
-          this.chartData = {
-            labels: labels, // Set weeks as chart labels
-            datasets: [
-              {
-                data: data, // Set post counts for each week
-                label: 'Posts per Week',
-                backgroundColor: '#42A5F5',
-                borderColor: '#1E88E5',
-                borderWidth: 1,
-              },
-            ],
-          };
+          label: 'Total Count',
+          data: [this.totalUsers, this.totalRoom, this.totalLand, this.totalHouse, this.totalPost],
+          backgroundColor: ['#ff7043', '#26a69a', '#4caf50', '#ffca28', '#1e88e5'],
+          borderColor: ['#ff7043', '#26a69a', '#4caf50', '#ffca28', '#1e88e5'],
+          borderWidth: 1
         }
-      },
-      (error) => {
-        console.error('Error fetching house data', error);
-      }
-    );
+      ]
+    };
+
+    // Fetching house data
+    this.houseService.getHouses().subscribe(response => {
+      console.log('House Data:', response.result);  // Log the result object for houses
+      const houses = response.result.result; // Assuming houses are under result.result
+      const postsByDay = this.getPostsByDay(houses);
+      this.updateChartData(postsByDay, 'house');
+    }, error => {
+      console.error('Error fetching houses:', error);
+    });
+
+    // Fetching room data
+    this.roomService.getRooms().subscribe(response => {
+      console.log('Room Data:', response.result);  // Log the result object for rooms
+      const rooms = response.result.result; // Assuming rooms are under result.result
+      const postsByDay = this.getPostsByDay(rooms);
+      this.updateChartData(postsByDay, 'room');
+    }, error => {
+      console.error('Error fetching rooms:', error);
+    });
+
+    // Fetching land data
+    this.landService.getLand().subscribe(response => {
+      console.log('Land Data:', response.result);  // Log the result object for lands
+      const lands = response.result.result; // Assuming lands are under result.result
+      const postsByDay = this.getPostsByDay(lands);
+      this.updateChartData(postsByDay, 'land');
+    }, error => {
+      console.error('Error fetching lands:', error);
+    });
   }
 
 
+  getPostsByDay(posts: any[]): any {
+    let dayCounts: { [key: string]: number } = {};
 
+    posts.forEach(post => {
+      const createdDate = new Date(post.createdAt);
+      const year = createdDate.getFullYear();
+      const month = createdDate.getMonth() + 1;
+      const day = createdDate.getDate();
 
+      const dateKey = `${year}-${this.padZero(month)}-${this.padZero(day)}`;
+      dayCounts[dateKey] = (dayCounts[dateKey] || 0) + 1;
+    });
+
+    const sortedDateKeys = Object.keys(dayCounts).sort();
+    const dateLabels = sortedDateKeys;
+    const dateValues = sortedDateKeys.map(key => dayCounts[key]);
+
+    return {
+      labels: dateLabels,
+      values: dateValues
+    };
+  }
+
+  padZero(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
+  updateChartData(postsByDay: any, type: string): void {
+    const chartData: ChartData = {
+      labels: postsByDay.labels,
+      datasets: [
+        {
+          label: `${type.charAt(0).toUpperCase() + type.slice(1)} Posts Each Day`,
+          data: postsByDay.values,
+          backgroundColor: type === 'house' ? 'rgba(0, 123, 255, 0.6)' :
+                            type === 'room' ? 'rgba(75, 192, 192, 0.6)' :
+                            'rgba(255, 99, 132, 0.6)',
+          borderColor: type === 'house' ? 'rgba(0, 123, 255, 1)' :
+                       type === 'room' ? 'rgba(75, 192, 192, 1)' :
+                       'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }
+      ]
+    };
+
+    this.chartOptions = {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    };
+
+    if (type === 'house') {
+      this.houseChartData = chartData;
+    } else if (type === 'room') {
+      this.roomChartData = chartData;
+    } else if (type === 'land') {
+      this.landChartData = chartData;
+    }
+  }
 
   fetchDashboardData(): void {
     this.dashboardService.getDashboardData().subscribe(
@@ -115,8 +166,8 @@ export class DashboardComponent implements OnInit {
           this.totalHouse = result.totalHouse;
           this.totalPost = result.totalPost;
 
-          // Update chart data dynamically after fetching data
-          this.updateChartData();
+          // After getting the data, update the chart
+          this.updateTotalDataChart();
         }
       },
       (error) => {
@@ -125,14 +176,19 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  updateChartData(): void {
-    this.chartData.datasets[0].data = [
-      this.totalUsers,
-      this.totalRoom,
-      this.totalLand,
-      this.totalHouse,
-      this.totalPost,
-    ];
+  updateTotalDataChart(): void {
+    this.totalDataChart = {
+      labels: ['Users', 'Rooms', 'Lands', 'Houses', 'Posts'],
+      datasets: [
+        {
+          label: 'Total Count',
+          data: [this.totalUsers, this.totalRoom, this.totalLand, this.totalHouse, this.totalPost],
+          backgroundColor: ['#ff7043', '#26a69a', '#4caf50', '#ffca28', '#1e88e5'],
+          borderColor: ['#ff7043', '#26a69a', '#4caf50', '#ffca28', '#1e88e5'],
+          borderWidth: 1
+        }
+      ]
+    };
   }
 
   // Navigation functions
