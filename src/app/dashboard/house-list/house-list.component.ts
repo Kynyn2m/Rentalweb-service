@@ -12,6 +12,7 @@ import { PageEvent } from '@angular/material/paginator';
 import * as XLSX from 'xlsx';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewHouseComponent } from './view-house/view-house.component';
+import { HouseDataService } from './HouseDataService';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -54,6 +55,8 @@ const EXCEL_TYPE =
   styleUrls: ['./house-list.component.css'],
 })
 export class HouseListComponent implements OnInit {
+
+  houses: House[] = [];
   displayedColumns: string[] = [
     'image',
     'title',
@@ -81,6 +84,8 @@ export class HouseListComponent implements OnInit {
   startDate: string | null = null; // For the start date
   endDate: string | null = null;   // For the end date
 
+  postsByWeek: { week: string, posts: number }[] = [];
+
 
 
 
@@ -88,12 +93,20 @@ export class HouseListComponent implements OnInit {
     private houseService: HouseService,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private houseDataService: HouseDataService,
   ) {}
 
   ngOnInit(): void {
     this.fetchHouses();
   }
+
+  getPostsByWeek(): { week: string, posts: number }[] {
+    const selectedMonth = new Date().getMonth() + 1; // Example: current month
+    const selectedYear = new Date().getFullYear(); // Example: current year
+    return this.houseDataService.getPostsByWeek(this.houses, selectedMonth, selectedYear);
+  }
+
 
   fetchHouses(search?: string): void {
     this.loading = true;

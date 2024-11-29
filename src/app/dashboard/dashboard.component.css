@@ -223,3 +223,15 @@ mat-icon {
     height: 6px;
   }
 }
+.chart-container {
+  position: relative;
+  height: 400px; /* Ensure there's enough space */
+  width: 100%; /* Make the chart responsive */
+}
+
+canvas {
+  display: block; /* Ensure the canvas is a block element */
+  width: 100% !important; /* Allow the chart to fill the container */
+  height: auto !important; /* Maintain the aspect ratio */
+}
+

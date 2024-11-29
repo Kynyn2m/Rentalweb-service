@@ -115,6 +115,7 @@ import { AdDialogComponent } from './ad-dialog/ad-dialog.component';
 import { ViewHouseComponent } from './dashboard/house-list/view-house/view-house.component';
 import { ViewRoomComponent } from './dashboard/room-list/view-room/view-room.component';
 import { ViewLandComponent } from './dashboard/land-list/view-land/view-land.component';
+import { ChartModule } from 'primeng/chart';
 @NgModule({
   declarations: [
     AppComponent,
@@ -229,6 +230,7 @@ import { ViewLandComponent } from './dashboard/land-list/view-land/view-land.com
     DropdownModule,
     InputNumberModule,
     ToastModule,
+    ChartModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
