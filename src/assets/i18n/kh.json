@@ -158,5 +158,11 @@
   "created date": "កាលបរិច្ឆេទបង្កើត",
   "create by": "បង្កើតដោយ",
   "assign role": "ចាត់តាំងតួនាទី",
-  "assign": "ចាត់តាំង"
+  "assign": "ចាត់តាំង",
+  "view-more": "មើលច្រើនទៀត",
+  "add-room": "បង្ហោះបន្ទប់",
+  "add-house": "បង្ហោះផ្ទះ",
+  "add-land": "បង្ហោះដី",
+  "Welcome to Rental Post":"សូមស្វាគមន៍មកកាន់គេហទំព័រការជួល",
+  "Choose an option below to add a new listing for a room, house, or land.":"ជ្រើសរើសជម្រើសខាងក្រោមដើម្បីបន្ថែមការចុះបញ្ជីថ្មីសម្រាប់បន្ទប់ ផ្ទះ ឬដី។"
 }

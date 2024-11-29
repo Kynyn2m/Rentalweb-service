@@ -2,9 +2,9 @@
 <div class="home-container">
   <!-- Hero Section -->
   <section class="hero-section">
-    <h1>Welcome to Rental Post</h1>
+    <h1>{{ "Welcome to Rental Post" | transloco }}</h1>
     <p>
-      Choose an option below to add a new listing for a room, house, or land.
+      {{ "Choose an option below to add a new listing for a room, house, or land." | transloco }}
     </p>
   </section>
 
@@ -15,7 +15,7 @@
          (click)="navigateToPost('Room')">
       <div class="card-content">
         <mat-icon class="card-icon">meeting_room</mat-icon>
-        <h3>Add Room</h3>
+        <h3>{{ "add-room" | transloco }}</h3>
         <p>
           List your available rooms for rent and connect with renters quickly.
         </p>
@@ -28,7 +28,7 @@
          (click)="navigateToPost('House')">
       <div class="card-content">
         <mat-icon class="card-icon">house</mat-icon>
-        <h3>Add House</h3>
+        <h3>{{ "add-house" | transloco }}</h3>
         <p>
           Have a house for rent? Add a listing now to attract potential renters.
         </p>
@@ -40,7 +40,7 @@
          (click)="navigateToPost('Land')">
       <div class="card-content">
         <mat-icon class="card-icon">terrain</mat-icon>
-        <h3>Add Land</h3>
+        <h3>{{ "add-land" | transloco }}</h3>
         <p>
           Post details about land available for lease or rent, and get
           connected.

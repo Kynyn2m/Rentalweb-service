@@ -144,5 +144,12 @@
   "create by": "Create by",
   "assign role": "Assign role",
   "assign": "Assign ",
-  "full name": " Full name"
+  "full name": " Full name",
+  "view-more": "View More",
+  "add-room": "Add Room",
+  "add-house": "Add House",
+  "add-land": "Add Land",
+  "Welcome to Rental Post":"Welcome to Rental Post",
+  "Choose an option below to add a new listing for a room, house, or land.":"Choose an option below to add a new listing for a room, house, or land."
+
 }

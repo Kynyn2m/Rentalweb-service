@@ -144,7 +144,7 @@
     <button mat-raised-button
             color="success"
             (click)="loadMoreHouses()">
-      View More
+      {{ "view-more" | transloco }}
     </button>
     <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
   </div>
@@ -256,7 +256,7 @@
     <button mat-raised-button
             color="success"
             (click)="loadMoreroom()">
-      View More
+      {{ "view-more" | transloco }}
     </button>
     <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
   </div>
@@ -364,7 +364,7 @@
     <button mat-raised-button
             color="success"
             (click)="loadMoreland()">
-      View More
+      {{ "view-more" | transloco }}
     </button>
     <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
   </div>
