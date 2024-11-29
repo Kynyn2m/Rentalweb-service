@@ -775,7 +775,7 @@ h3 {
 .actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  /* gap: 15px; */
 }
 .like-container {
   display: flex;
