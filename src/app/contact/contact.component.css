@@ -1,188 +1,131 @@
+/* General container styling */
 .contact-container {
-  max-width: 700px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* Title Styling */
+.contact-title {
   text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 40px;
 }
 
-.contact-info p,
-.contact-info ul li {
-  font-size: 1.2rem;
-  margin: 10px 0;
+/* Working hours section */
+.contact-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.contact-info ul {
+.contact-info p {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.working-hours-list {
   list-style-type: none;
   padding: 0;
+  font-size: 16px;
 }
 
-.map-container {
-  width: 100%;
-  height: 300px;
-  margin: 20px 0;
+.working-hours-list li {
+  margin-bottom: 8px;
 }
 
+/* Profile card grid - Centered layout */
 .photos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
-  gap: 1rem;
-  margin-top: 1rem;
-  justify-content: center;
+  display: flex;
+  justify-content: center; /* Centers the cards horizontally */
+  align-items: center;     /* Centers the cards vertically */
+  gap: 30px;
+  margin-bottom: 30px;
 }
 
-.photos-grid mat-card {
+/* Contact card styling */
+.contact-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Fixed width */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.photos-grid mat-card:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
-}
-
-.profile-image {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  object-fit: cover;
-  margin-bottom: 10px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* .profile-image:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-} */
-
-.mat-card-content {
+  justify-content: space-between; /* Ensures content is spaced inside */
   text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.banner-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px auto;
-  width: 100%;
+.contact-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.banner-column {
-  display: flex;
-  justify-content: center;
-  width: auto;
+/* Profile image */
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
 }
 
-.banner-image-container {
-  width: 100%;
-  max-width: 700px;
-  display: flex;
-  justify-content: center;
+/* Card title */
+.card-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.banner-img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
+/* Telegram link styling */
+.telegram-link {
+  font-size: 16px;
+  color: #0088cc;
+  text-decoration: none;
+  margin-bottom: 15px;
+  display: inline-block;
+  font-weight: 600;
 }
 
-/* Responsive Styles */
-@media only screen and (max-width: 1179px) {
-  .banner-container {
-    flex-direction: column;
-  }
+.telegram-link:hover {
+  color: #005f88;
+}
 
-  .banner-img {
-    width: 100%;
-    margin-bottom: 15px;
-  }
+/* Phone number */
+.phone-number {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+}
 
-  .contact-container {
-    width: 95%;
+/* Map container styling */
+.map-container iframe {
+  border-radius: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .contact-title {
+    font-size: 30px;
   }
 
   .photos-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    flex-direction: column; /* Stack cards vertically on smaller screens */
+    align-items: center;
   }
 
-  mat-card {
-    margin-bottom: 10px;
-  }
-}
-
-@media only screen and (max-width: 768px) {
-  .photos-grid mat-card {
-    height: auto;
-  }
-
-  .map-container {
-    height: 250px;
-  }
-
-  .contact-info p,
-  .contact-info ul li {
-    font-size: 1.1rem;
+  .contact-card {
+    width: 280px;
+    height: auto; /* Adjust height for small screens */
   }
 }
-
-@media only screen and (max-width: 480px) {
-  .contact-container {
-    padding: 10px;
-  }
-
-  .map-container {
-    height: 200px;
-  }
-
-  .photos-grid {
-    gap: 5px;
-  }
-
-  .photos-grid mat-card {
-    height: auto;
-    padding: 10px;
-  }
-
-  .contact-info p,
-  .contact-info ul li {
-    font-size: 1rem;
-  }
-}
-
-/* Dropdown Styles */
-.dropdown-content {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: opacity 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.dropdown-content.ng-trigger {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* General Styles */
-span {
-  font-size: 20px !important;
-}
-
-.icon {
-  font-size: 2rem;
-  margin-left: -0.2rem;
-}
-mat-card-content a{
-  padding: 10px;
+.contact-container p{
+  margin-bottom: 10px;
 }
