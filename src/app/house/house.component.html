@@ -2,12 +2,12 @@
 <div class="top-bar"></div>
 <div class="search-container">
   <div class="result-header">
-    <h2>Complete Your Result</h2>
+    <h2>{{ "Customize Your Search" | transloco }}</h2>
   </div>
   <form (ngSubmit)="onSearch()">
     <!-- Search and Price in the first row -->
     <div class="row">
-      <div class="form-group">
+      <div class="form-group search-field">
         <mat-form-field class="full-width"
                         appearance="outline">
           <mat-label>{{ "search" | transloco }}</mat-label>
@@ -39,6 +39,7 @@
                  name="toPrice"
                  type="number"
                  placeholder="To Price" />
+          <mat-icon matPrefix>attach_money</mat-icon>
         </mat-form-field>
       </div>
     </div>
@@ -111,6 +112,7 @@
     </div>
   </form>
 </div>
+
 
 
 <div class="content-container">

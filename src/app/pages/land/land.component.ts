@@ -21,7 +21,7 @@ export class LandComponent {
   lands: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
-  itemsPerPage = 16; // 12 land per page
+  itemsPerPage = 24; // 12 land per page
   autoFetchInterval: any;
   search: string = '';
   fromPrice: number | null = null;

@@ -50,43 +50,25 @@
   margin: 0 auto;
 }
 
-h2 {
-  text-align: center;
-  padding: 1.5rem;
-}
-
 .card-grid {
-  display: grid;
-  justify-items: center;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  row-gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
   margin: 20px 0;
+  position: relative;
+  /* z-index: 99; */
 }
 
 mat-card {
-  border-radius: 10px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+
   width: calc(25% - 20px); /* 25% width for 4 columns with 20px gap */
-  max-width: 300px;
+
 }
 /* mat-card Styling */
-mat-card {
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly more pronounced shadow */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  width: calc(25% - 20px); /* Keeping 4 columns with 20px gap */
-  width: 100%;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  overflow: hidden;
-}
+
 
 mat-card:hover {
   transform: translateY(-5px); /* Slight hover effect */
@@ -143,6 +125,7 @@ button.like-button {
   color: white;
 }
 
+
 .image-container {
   position: relative;
 }
@@ -151,6 +134,7 @@ button.like-button {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
 
 .prev-image-button {
   left: 10px;
@@ -173,6 +157,7 @@ button.like-button {
   transform: scale(0.6);
   color: white;
 }
+
 
 mat-card-content {
   flex-grow: 1;
@@ -212,13 +197,7 @@ mat-card-content p {
     width: calc(100% - 20px);
   }
 }
-.search-container {
-  border: 1px solid #ccc;
-  /* padding: 20px; */
-  border-radius: 10px;
-  max-width: 500px;
-  margin: 0 auto;
-}
+
 
 .search-container h2 {
   text-align: center;
@@ -240,18 +219,18 @@ mat-card-content p {
   flex: 1 1 15%; /* Flex to fit each item within the row */
   min-width: 150px; /* Ensure a minimum width for each field */
 }
-.full-waith {
+.full-waith{
   width: 100%;
 }
-form {
+form{
   padding: 1rem;
 }
-.search-container {
+/* .search-container {
   border: 1px solid #ccc;
   border-radius: 10px;
   max-width: 500px;
   margin: 0 auto;
-}
+} */
 
 .search-container h2 {
   text-align: center;
@@ -525,6 +504,10 @@ button.mat-raised-button:hover {
   }
 }
 
+
+
+
+
 .prev-image-button {
   left: 10px;
 }
@@ -614,7 +597,7 @@ button[disabled] {
 }
 
 .like-button mat-icon {
-  color: white;
+ color: white;
 }
 
 /* .like-button:hover {
@@ -736,12 +719,63 @@ h3 {
 .next-image-button:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
+.no-data {
+  text-align: center;
+  font-size: 18px;
+  color: red;
+  margin: 20px 0;
+  padding: 10rem;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.search-button-container {
+  margin-top: 20px;
+}
+
+.pagination-buttons {
+  margin-top: 20px;
+}
 .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 300px; /* Adjust this height based on your design */
+  height: 500px;
+  position: absolute;
+  z-index: 100;
+
+    right: 47%;
+}
+.favorited mat-icon {
+  color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 50%;
+}.favorited {
+  color: red; /* Background color when favorited */
+}
+.not-favorited {
+  color: grey; /* Outline or different color when not favorited */
+}
+.actions {
+  display: flex;
+  align-items: center;
+  /* gap: 15px; */
+}
+.like-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.like-icon {
+  transform: scale(1.5);
+  color: #1877f2;
 }
 
 .favorite-icon-container {
@@ -780,4 +814,56 @@ h3 {
 
 .favorite-icon.favorited {
   color: #e53935; /* Red color when favorited */
+}
+
+
+
+.search-container {
+  width: 80%; /* Set container width to 80% */
+  margin: 0 auto; /* Center the container */
+}
+
+.result-header h2 {
+  margin: 0;
+}
+
+/* Grid for form groups */
+.row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal-width columns */
+  gap: 20px;
+}
+
+.search-field {
+  grid-column: span 2; /* Makes search field span 2 columns */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end; /* Aligns buttons to the right */
+}
+
+
+/* Optional: Make sure the form is mobile-friendly */
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr; /* Stack fields vertically on small screens */
+  }
+}
+h2 {
+  text-align: center;
+  padding: 1.5rem;
+}
+.result-header h2{
+  padding: 0.7rem;
 }
