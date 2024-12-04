@@ -22,7 +22,7 @@ export class HouseComponent implements OnInit {
   houses: any[] = [];
   currentPage = 0;
   totalPages = 1; // Total pages for pagination
-  itemsPerPage = 16; // 12 houses per page
+  itemsPerPage = 24; // 12 houses per page
   loading: boolean = false;
 
   search: string = '';

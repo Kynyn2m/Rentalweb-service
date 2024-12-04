@@ -113,7 +113,7 @@
   "location": "ទីតាំង",
   "views": "អ្នក​មើល",
   "likes": "ចូលចិត្ត",
-  " View Details": "មើលព័ត៌មានលម្អិត",
+  " View Details": "ព័ត៌មានលម្អិត",
   "Province": "ខេត្ត",
   "City": "ទីក្រុង",
   "Commune": "ឃុំ",
@@ -177,7 +177,10 @@
   "About Rental Web Service":"អំពីសេវាកម្មគេហទំព័រជួល",
   "Facebook":"ហ្វេសប៊ុក",
   "Youtube":"យូធូប",
-  "Instagram":"អុីនស្តាក្រាម"
+  "Instagram":"អុីនស្តាក្រាម",
+  "Customize Your Search":"ស្វែងរកតាមបំណងរបស់អ្នក"
+
+
 
 
 }

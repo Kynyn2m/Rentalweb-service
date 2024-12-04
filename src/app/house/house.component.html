@@ -2,118 +2,118 @@
 <div class="top-bar"></div>
 <div class="search-container">
   <div class="result-header">
-    <h2>Complete Your Result</h2>
+    <h2>{{ "Customize Your Search" | transloco }}</h2>
   </div>
   <form (ngSubmit)="onSearch()">
-    <mat-form-field class="full-waith"
-                    appearance="outline">
-      <mat-label>{{ "search" | transloco }}</mat-label>
-      <input matInput
-             [(ngModel)]="search"
-             name="search"
-             placeholder="Enter location" />
-    </mat-form-field>
+    <!-- Search and Price in the first row -->
+    <div class="row">
+      <div class="form-group search-field">
+        <mat-form-field class="full-width"
+                        appearance="outline">
+          <mat-label>{{ "search" | transloco }}</mat-label>
+          <input matInput
+                 [(ngModel)]="search"
+                 name="search"
+                 placeholder="Enter location" />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
 
-    <!-- Province and District -->
-    <div fxLayout="row wrap"
-         fxLayoutGap="16px">
-      <mat-form-field appearance="outline"
-                      fxFlex="100%"
-                      fxFlex.gt-sm="48%">
-        <mat-label>{{ "Province" | transloco }}/{{ "City" | transloco }}</mat-label>
-        <mat-select [(ngModel)]="provinceId_c"
-                    name="provinceId_c"
-                    (selectionChange)="onProvinceSelected($event)">
-          <mat-option *ngFor="let province of provinces_c"
-                      [value]="province.id">
-            {{ province.khmerName }} / {{ province.englishName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "From Price" | transloco }}</mat-label>
+          <input matInput
+                 [(ngModel)]="fromPrice"
+                 name="fromPrice"
+                 type="number"
+                 placeholder="From Price" />
+          <mat-icon matPrefix>attach_money</mat-icon>
+        </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline"
-                      fxFlex="100%"
-                      fxFlex.gt-sm="48%">
-        <mat-label>{{ "District" | transloco }}/{{ "Khan" | transloco }}</mat-label>
-        <mat-select [(ngModel)]="districtId_c"
-                    name="districtId_c"
-                    (selectionChange)="onDistrictSelected($event)">
-          <mat-option *ngFor="let district of districts_c"
-                      [value]="district.id">
-            {{ district.khmerName }} / {{ district.englishName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "To Price" | transloco }}</mat-label>
+          <input matInput
+                 [(ngModel)]="toPrice"
+                 name="toPrice"
+                 type="number"
+                 placeholder="To Price" />
+          <mat-icon matPrefix>attach_money</mat-icon>
+        </mat-form-field>
+      </div>
     </div>
 
-    <!-- Commune and Village -->
-    <div fxLayout="row wrap"
-         fxLayoutGap="16px">
-      <mat-form-field appearance="outline"
-                      fxFlex="100%"
-                      fxFlex.gt-sm="48%">
-        <mat-label>{{ "Commune" | transloco }}/{{ "Sangkat" | transloco }}</mat-label>
-        <mat-select [(ngModel)]="communeId_c"
-                    name="communeId_c"
-                    (selectionChange)="onCommuneSelected($event)">
-          <mat-option *ngFor="let commune of communes_c"
-                      [value]="commune.id">
-            {{ commune.khmerName }} / {{ commune.englishName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+    <!-- Province, District, Commune, and Village in the second row -->
+    <div class="row">
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Province" | transloco }}/{{ "City" | transloco }}</mat-label>
+          <mat-select [(ngModel)]="provinceId_c"
+                      name="provinceId_c"
+                      (selectionChange)="onProvinceSelected($event)">
+            <mat-option *ngFor="let province of provinces_c"
+                        [value]="province.id">
+              {{ province.khmerName }} / {{ province.englishName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline"
-                      fxFlex="100%"
-                      fxFlex.gt-sm="48%">
-        <mat-label>{{ "Village" | transloco }}</mat-label>
-        <mat-select [(ngModel)]="villageId_c"
-                    name="villageId_c">
-          <mat-option *ngFor="let village of villages_c"
-                      [value]="village.id">
-            {{ village.khmerName }} / {{ village.englishName }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "District" | transloco }}/{{ "Khan" | transloco }}</mat-label>
+          <mat-select [(ngModel)]="districtId_c"
+                      name="districtId_c"
+                      (selectionChange)="onDistrictSelected($event)">
+            <mat-option *ngFor="let district of districts_c"
+                        [value]="district.id">
+              {{ district.khmerName }} / {{ district.englishName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Commune" | transloco }}/{{ "Sangkat" | transloco }}</mat-label>
+          <mat-select [(ngModel)]="communeId_c"
+                      name="communeId_c"
+                      (selectionChange)="onCommuneSelected($event)">
+            <mat-option *ngFor="let commune of communes_c"
+                        [value]="commune.id">
+              {{ commune.khmerName }} / {{ commune.englishName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ "Village" | transloco }}</mat-label>
+          <mat-select [(ngModel)]="villageId_c"
+                      name="villageId_c">
+            <mat-option *ngFor="let village of villages_c"
+                        [value]="village.id">
+              {{ village.khmerName }} / {{ village.englishName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
-    <div class="search-field price-field">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ "From Price" | transloco }}</mat-label>
-        <input matInput
-               [(ngModel)]="fromPrice"
-               name="fromPrice"
-               type="number"
-               placeholder="From Price" />
-      </mat-form-field>
-
-      <span class="price-separator">-</span>
-
-      <mat-form-field appearance="outline">
-        <mat-label>{{ "To Price" | transloco }}</mat-label>
-        <input matInput
-               [(ngModel)]="toPrice"
-               name="toPrice"
-               type="number"
-               placeholder="To Price" />
-      </mat-form-field>
-    </div>
-
-    <div class="search-button-container">
-      <button class="full-waith"
-              mat-raised-button
-              color="success">
-        {{ "Find" | transloco }}
-      </button>
-      <button class="full-waith"
-              mat-raised-button
+    <!-- Buttons -->
+    <div class="button-container">
+      <button mat-raised-button
+              color="success">{{ "Find" | transloco }}</button>
+      <button mat-raised-button
               color="warn"
-              (click)="onClear()">
-        {{ "Clear" | transloco }}
-      </button>
+              (click)="onClear()">{{ "Clear" | transloco }}</button>
     </div>
   </form>
 </div>
+
+
 
 <div class="content-container">
   <section>

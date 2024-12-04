@@ -304,6 +304,7 @@ td {
 }
 .search-container{
   background-color: white;
+  border-radius: 8px;
 }
 .related-posts-container h3{
   padding: 1rem 1rem 1rem 0rem;

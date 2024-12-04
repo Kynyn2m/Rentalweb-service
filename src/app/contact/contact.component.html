@@ -1,37 +1,37 @@
 <app-ads></app-ads>
 
 <div class="contact-container">
-  <h2>Contact Us</h2>
+  <h2 class="contact-title">Contact Us</h2>
 
   <div class="contact-info">
-    <p>Working Hour:</p>
-    <ul>
-      <li>For Monday-Friday: 7-11am, 1-5pm</li>
-      <li>Sat - Sun: 8-12am</li>
+    <p><strong>Working Hours:</strong></p>
+    <ul class="working-hours-list">
+      <li><strong>Monday - Friday:</strong> 7:00 AM - 11:00 AM, 1:00 PM - 5:00 PM</li>
+      <li><strong>Saturday - Sunday:</strong> 8:00 AM - 12:00 PM</li>
     </ul>
   </div>
-  <span>Contact to Admin: </span>
-
   <div class="photos-grid">
-    <mat-card *ngFor="let step of stepsToPost">
-      <mat-card-content>
-        <img [src]="step.imageUrl"
-             alt="{{ step.title }}"
-             class="profile-image" />
-        <div style="
-            font-size: 20px;
-            padding: 10px;
-            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold',
-              sans-serif;
-          ">
-          {{ step.title }}
+    <mat-card *ngFor="let step of stepsToPost"
+              class="contact-card">
+      <mat-card-content class="card-content">
+        <div class="card-left">
+          <img [src]="step.imageUrl"
+               alt="{{ step.title }}"
+               class="profile-image" />
         </div>
-        <a [href]="'https://t.me/' + step.telegramUsername.slice(1)"
-           target="_blank"
-           rel="noopener noreferrer">
-          Contact on Telegram
-        </a>
-        <div style="color: red; padding: 10px;">{{ step.phoneNumber }}</div>
+
+        <div class="card-right">
+          <div class="card-title">{{ step.title }}</div>
+
+          <a [href]="'https://t.me/' + step.telegramUsername.slice(1)"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="telegram-link">
+            <i class="fab fa-telegram-plane"></i> Contact on Telegram
+          </a>
+
+          <div class="phone-number">{{ step.phoneNumber }}</div>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>
@@ -42,9 +42,6 @@
             frameborder="0"
             style="border: 0"
             src="https://maps.google.com/maps?q=11.5431667,104.8625&z=15&output=embed"
-            allowfullscreen>
-    </iframe>
+            allowfullscreen></iframe>
   </div>
-
-
 </div>

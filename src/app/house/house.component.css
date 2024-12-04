@@ -50,11 +50,6 @@
   margin: 0 auto;
 }
 
-h2 {
-  text-align: center;
-  padding: 1.5rem;
-}
-
 .card-grid {
   display: flex;
   flex-wrap: wrap;
@@ -202,13 +197,7 @@ mat-card-content p {
     width: calc(100% - 20px);
   }
 }
-.search-container {
-  border: 1px solid #ccc;
-  /* padding: 20px; */
-  border-radius: 10px;
-  max-width: 500px;
-  margin: 0 auto;
-}
+
 
 .search-container h2 {
   text-align: center;
@@ -236,12 +225,12 @@ mat-card-content p {
 form{
   padding: 1rem;
 }
-.search-container {
+/* .search-container {
   border: 1px solid #ccc;
   border-radius: 10px;
   max-width: 500px;
   margin: 0 auto;
-}
+} */
 
 .search-container h2 {
   text-align: center;
@@ -825,4 +814,56 @@ h3 {
 
 .favorite-icon.favorited {
   color: #e53935; /* Red color when favorited */
+}
+
+
+
+.search-container {
+  width: 77%; /* Set container width to 80% */
+  margin: 0 auto; /* Center the container */
+}
+
+.result-header h2 {
+  margin: 0;
+}
+
+/* Grid for form groups */
+.row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 equal-width columns */
+  gap: 20px;
+}
+
+.search-field {
+  grid-column: span 2; /* Makes search field span 2 columns */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end; /* Aligns buttons to the right */
+}
+
+
+/* Optional: Make sure the form is mobile-friendly */
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr; /* Stack fields vertically on small screens */
+  }
+}
+h2 {
+  text-align: center;
+  padding: 1.5rem;
+}
+.result-header h2{
+  padding: 0.7rem;
 }
