@@ -152,6 +152,8 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
   amenityCache: { [key: string]: any[] } = {};
   isLoadingAmenity: boolean = false;
 
+  currentImageIndex: number = 0;
+
 
   currentPage = 0;
   totalPages = 1;
@@ -216,9 +218,6 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       console.error('Invalid house ID');
     }
   }
-
-
-
 
   loadComments(houseId: number): void {
     this.houseService.getComments(houseId).subscribe(
@@ -758,6 +757,23 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
     }
   }
 
+  prevImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.house?.safeImagePaths && this.house.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex - 1 + this.house.safeImagePaths.length) % this.house.safeImagePaths.length;
+      this.currentImage = this.house.safeImagePaths[this.currentImageIndex];
+    }
+  }
+
+  // Go to next image
+  nextImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.house?.safeImagePaths && this.house.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.house.safeImagePaths.length;
+      this.currentImage = this.house.safeImagePaths[this.currentImageIndex];
+    }
+  }
+
   // Function to load images specifically for card houses in Related Posts
   loadCardImages(house: House): void {
     house.safeImagePaths = []; // Clear any existing images
@@ -884,23 +900,6 @@ export class DetailsComponent implements OnInit, AfterViewInit, AmenityCounts {
       data: { image },
       panelClass: 'full-screen-modal',
     });
-  }
-  previousImage(): void {
-    if (this.house && this.house.safeImagePaths) {
-      const index = this.house.safeImagePaths.indexOf(this.currentImage!);
-      if (index > 0) {
-        this.currentImage = this.house.safeImagePaths[index - 1];
-      }
-    }
-  }
-
-  nextImage(): void {
-    if (this.house && this.house.safeImagePaths) {
-      const index = this.house.safeImagePaths.indexOf(this.currentImage!);
-      if (index < this.house.safeImagePaths.length - 1) {
-        this.currentImage = this.house.safeImagePaths[index + 1];
-      }
-    }
   }
   selectImage(image: SafeUrl): void {
     this.currentImage = image;

@@ -309,3 +309,6 @@ td {
 .related-posts-container h3{
   padding: 1rem 1rem 1rem 0rem;
 }
+.button-size{
+  width: 100px;
+}

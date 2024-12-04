@@ -849,8 +849,8 @@ h3 {
 
 .button-container {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end; /* Aligns buttons to the right */
+  gap: 20px;
+  justify-content: center; /* Aligns buttons to the right */
 }
 
 
