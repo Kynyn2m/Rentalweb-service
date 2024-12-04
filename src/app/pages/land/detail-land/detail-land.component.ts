@@ -140,6 +140,8 @@ export class DetailLandComponent
   newCommentText: string = '';
   activeMenu: number | null = null;
 
+  currentImageIndex: number = 0;
+
   map: L.Map | null = null;
   userMarker: any;
   markers: L.Marker[] = [];
@@ -916,23 +918,26 @@ export class DetailLandComponent
       panelClass: 'full-screen-modal',
     });
   }
-  previousImage(): void {
-    if (this.lande && this.lande.safeImagePaths) {
-      const index = this.lande.safeImagePaths.indexOf(this.currentImage!);
-      if (index > 0) {
-        this.currentImage = this.lande.safeImagePaths[index - 1];
-      }
+
+
+  prevImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.lande?.safeImagePaths && this.lande.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex - 1 + this.lande.safeImagePaths.length) % this.lande.safeImagePaths.length;
+      this.currentImage = this.lande.safeImagePaths[this.currentImageIndex];
     }
   }
 
-  nextImage(): void {
-    if (this.lande && this.lande.safeImagePaths) {
-      const index = this.lande.safeImagePaths.indexOf(this.currentImage!);
-      if (index < this.lande.safeImagePaths.length - 1) {
-        this.currentImage = this.lande.safeImagePaths[index + 1];
-      }
+  // Go to next image
+  nextImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.lande?.safeImagePaths && this.lande.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.lande.safeImagePaths.length;
+      this.currentImage = this.lande.safeImagePaths[this.currentImageIndex];
     }
   }
+
+
   selectImage(image: SafeUrl): void {
     this.currentImage = image;
   }

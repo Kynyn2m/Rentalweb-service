@@ -138,6 +138,8 @@ export class DetailRoomComponent
   newCommentText: string = '';
   activeMenu: number | null = null;
 
+  currentImageIndex: number = 0;
+
   map: L.Map | null = null;
   userMarker: any;
   markers: L.Marker[] = [];
@@ -802,6 +804,22 @@ export class DetailRoomComponent
   }
 
   // Function to go to the previous image for a specific card rooms
+  prevImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.rooms?.safeImagePaths && this.rooms.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex - 1 + this.rooms.safeImagePaths.length) % this.rooms.safeImagePaths.length;
+      this.currentImage = this.rooms.safeImagePaths[this.currentImageIndex];
+    }
+  }
+
+  // Go to next image
+  nextImage(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.rooms?.safeImagePaths && this.rooms.safeImagePaths.length > 0) {
+      this.currentImageIndex = (this.currentImageIndex + 1) % this.rooms.safeImagePaths.length;
+      this.currentImage = this.rooms.safeImagePaths[this.currentImageIndex];
+    }
+  }
   prevCardImage(rooms: Room): void {
     if (rooms.safeImagePaths && rooms.safeImagePaths.length > 1) {
       rooms.currentImageIndex =
@@ -820,6 +838,7 @@ export class DetailRoomComponent
           : 0;
     }
   }
+
 
   openImageViewer(image: SafeUrl): void {
     this.dialog.open(ImageDialogComponent, {
@@ -910,23 +929,7 @@ export class DetailRoomComponent
       panelClass: 'full-screen-modal',
     });
   }
-  previousImage(): void {
-    if (this.rooms && this.rooms.safeImagePaths) {
-      const index = this.rooms.safeImagePaths.indexOf(this.currentImage!);
-      if (index > 0) {
-        this.currentImage = this.rooms.safeImagePaths[index - 1];
-      }
-    }
-  }
 
-  nextImage(): void {
-    if (this.rooms && this.rooms.safeImagePaths) {
-      const index = this.rooms.safeImagePaths.indexOf(this.currentImage!);
-      if (index < this.rooms.safeImagePaths.length - 1) {
-        this.currentImage = this.rooms.safeImagePaths[index + 1];
-      }
-    }
-  }
   selectImage(image: SafeUrl): void {
     this.currentImage = image;
   }

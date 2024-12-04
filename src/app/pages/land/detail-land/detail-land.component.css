@@ -1117,3 +1117,48 @@ mat-card-content p {
 .banner-container img {
   border-radius: 7px;
 }
+
+
+/* Main Image container */
+.main-image {
+  position: relative; /* Enable positioning of buttons within this container */
+  z-index: 9;
+}
+
+/* Navigation Buttons Container (Positioning over the image) */
+.navigation-buttons {
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for exact centering */
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 20px; /* Optional, adds space on the sides */
+  z-index: 10;
+}
+
+/* Style for Previous and Next buttons */
+.prev-btn, .next-btn {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  padding: 15px; /* Add padding */
+  font-size: 24px; /* Larger icon size */
+  cursor: pointer; /* Change cursor to pointer */
+  border-radius: 50%; /* Circular button */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover effect for buttons */
+.prev-btn:hover, .next-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7); /* Darker background when hovered */
+}
+
+/* Font Awesome icons */
+.prev-btn i, .next-btn i {
+  font-size: 20px; /* Icon size */
+}
