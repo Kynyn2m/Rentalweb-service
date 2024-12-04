@@ -259,12 +259,11 @@ export class HouseComponent implements OnInit {
   }
 
   private scrollUpSlightly(): void {
-    // Calculate the current scroll position and reduce it by 50px
     const currentScroll = window.scrollY;
-    const newScrollPosition = currentScroll - 1700;
+    const newScrollPosition = currentScroll - 2550;
 
     window.scrollTo({
-      top: newScrollPosition > 0 ? newScrollPosition : 0, // Prevent negative scrolling
+      top: newScrollPosition > 0 ? newScrollPosition : 0,
       behavior: 'smooth',
     });
   }
