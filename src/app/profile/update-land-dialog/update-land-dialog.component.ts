@@ -37,6 +37,8 @@ export class UpdateLandDialogComponent {
   selectedFiles: File[] = [];
   imagePreviews: SafeUrl[] = [];
 
+  existingImagePaths: string[] = [];
+
   map: any;
   userMarker: any;
 
@@ -200,6 +202,7 @@ export class UpdateLandDialogComponent {
   }
 
   loadImages(imagePaths: string[]): void {
+    this.existingImagePaths = [...imagePaths];
     this.imagePreviews = [];
     imagePaths.forEach((imagePath) => {
       this.landService.getImage(imagePath).subscribe(
@@ -256,6 +259,7 @@ export class UpdateLandDialogComponent {
       villageId: this.landData.villageId,
     };
 
+    // Initialize FormData and append non-file fields
     const formData = new FormData();
     for (const key in landUpdateData) {
       if (landUpdateData.hasOwnProperty(key)) {
@@ -263,10 +267,43 @@ export class UpdateLandDialogComponent {
       }
     }
 
-    for (const file of this.selectedFiles) {
-      formData.append('images', file);
-    }
+    // If there are existing images, fetch them as binary blobs and append to FormData
+    if (this.existingImagePaths.length > 0) {
+      this.existingImagePaths.forEach((imagePath, index) => {
+        this.landService.getImage(imagePath).subscribe(
+          (imageBlob: Blob) => {
+            // Append the existing image to FormData as binary data (Blob)
+            formData.append('images', imageBlob, `existingImage_${index}.jpg`);
 
+            // Check if all images are appended before making the API call
+            if (index === this.existingImagePaths.length - 1) {
+              this.appendNewImagesAndSave(formData); // Append new images and submit
+            }
+          },
+          (error) => {
+            console.error('Error fetching existing image:', error);
+          }
+        );
+      });
+    } else {
+      // If no existing images, directly append new images and make API call
+      this.appendNewImagesAndSave(formData);
+    }
+  }
+
+  // Function to append new image files and make the API call
+  private appendNewImagesAndSave(formData: FormData): void {
+    // Append new image files to FormData
+    this.selectedFiles.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // Log FormData for debugging
+    formData.forEach((value, key) => {
+      console.log(`FormData key: ${key}, value:`, value);
+    });
+
+    // Make the API call to update land data
     this.landService.updateLand(this.landData.id, formData).subscribe(
       (response) => {
         console.log('Land updated successfully', response);
@@ -283,6 +320,7 @@ export class UpdateLandDialogComponent {
       }
     );
   }
+
 
   cancel(): void {
     this.dialogRef.close({ success: false });

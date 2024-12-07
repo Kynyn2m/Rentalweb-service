@@ -37,6 +37,8 @@ export class UpdateRoomDialogComponent {
   imagePreview: SafeUrl | null = null; // Change type to SafeUrl
   selectedFile: File | null = null;
 
+  existingImagePaths: string[] = [];
+
   selectedFiles: File[] = []; // Array to hold multiple selected files
   imagePreviews: SafeUrl[] = []; // Array for image previews
   constructor(
@@ -209,6 +211,7 @@ export class UpdateRoomDialogComponent {
   }
 
   loadImages(imagePaths: string[]): void {
+    this.existingImagePaths = [...imagePaths];
     this.imagePreviews = []; // Clear existing previews
     imagePaths.forEach((imagePath) => {
       this.roomService.getImage(imagePath).subscribe(
@@ -277,10 +280,41 @@ export class UpdateRoomDialogComponent {
       }
     }
 
-    // If files are selected, append them to the form data
-    for (const file of this.selectedFiles) {
-      formData.append('images', file); // Append each selected file
+    // If there are existing images, fetch them as binary (Blob) and append to FormData
+    if (this.existingImagePaths.length > 0) {
+      this.existingImagePaths.forEach((imagePath, index) => {
+        this.roomService.getImage(imagePath).subscribe(
+          (imageBlob: Blob) => {
+            // Append the existing image to FormData as binary data (Blob)
+            formData.append('images', imageBlob, `existingImage_${index}.jpg`);
+
+            // Check if all images are appended before making the API call
+            if (index === this.existingImagePaths.length - 1) {
+              this.appendNewImagesAndSave(formData); // Append new images and submit
+            }
+          },
+          (error) => {
+            console.error('Error fetching existing image:', error);
+          }
+        );
+      });
+    } else {
+      // If no existing images, directly append new images and make the API call
+      this.appendNewImagesAndSave(formData);
     }
+  }
+
+  // Function to append new image files and make the API call
+  private appendNewImagesAndSave(formData: FormData): void {
+    // Append new image files to FormData
+    this.selectedFiles.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // Log FormData for debugging
+    formData.forEach((value, key) => {
+      console.log(`FormData key: ${key}, value:`, value);
+    });
 
     // Call the updateRoom method from the room service
     this.roomService.updateRoom(this.roomData.id, formData).subscribe(
@@ -299,6 +333,7 @@ export class UpdateRoomDialogComponent {
       }
     );
   }
+
 
   cancel(): void {
     this.dialogRef.close({ success: false });

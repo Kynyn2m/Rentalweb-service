@@ -270,12 +270,32 @@ export class UpdateHouseDialogComponent implements OnInit {
       }
     }
 
-    // Append existing images as URLs
-    this.existingImagePaths.forEach((path, index) => {
-      formData.append(`existingImages[${index}]`, path);
+    // Fetch and append existing images as binary (Blob) to FormData
+    this.existingImagePaths.forEach((imagePath, index) => {
+      // Fetch the existing image as a binary blob
+      this.houseService.getImage(imagePath).subscribe(
+        (imageBlob: Blob) => {
+          // Append the existing image to FormData as binary data (Blob)
+          formData.append('images', imageBlob, `existingImage_${index}.jpg`);
+
+          // Check if all files are appended before making the API call
+          if (index === this.existingImagePaths.length - 1) {
+            this.appendNewImagesAndSave(formData);
+          }
+        },
+        (error) => {
+          console.error('Error fetching existing image:', error);
+        }
+      );
     });
 
-    // Append each selected file (new images) to FormData
+    // If there are no existing images, append new images and send the formData
+
+  }
+
+  // Function to append new image files and make the API call
+  private appendNewImagesAndSave(formData: FormData): void {
+    // Append new image files to FormData
     this.selectedFiles.forEach((file) => {
       formData.append('images', file);
     });
@@ -302,6 +322,7 @@ export class UpdateHouseDialogComponent implements OnInit {
       }
     );
   }
+
 
   cancel(): void {
     this.dialogRef.close({ success: false });
