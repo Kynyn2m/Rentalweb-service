@@ -139,7 +139,7 @@ export class UpdateRoomDialogComponent {
         console.log(
           'Selected Province after fetching:',
           this.roomData.provinceId
-        ); // Check if provinceId is correct
+        );
       }
     });
   }
@@ -150,13 +150,11 @@ export class UpdateRoomDialogComponent {
         (res) => {
           this.districts = res.result || [];
 
-          // Pre-select district if it exists in roomData
           if (this.roomData.district) {
-            this.roomData.districtId = this.roomData.district; // Pre-select the district
-            this.onDistrictSelected(this.roomData.districtId); // Trigger commune loading
+            this.roomData.districtId = this.roomData.district;
+            this.onDistrictSelected(this.roomData.districtId);
           }
 
-          // Clear communes and villages when the province changes
           this.communes = [];
           this.villages = [];
           this.roomData.communeId = null;
@@ -175,13 +173,11 @@ export class UpdateRoomDialogComponent {
         (res) => {
           this.communes = res.result || [];
 
-          // Pre-select commune if it exists in roomData
           if (this.roomData.commune) {
-            this.roomData.communeId = this.roomData.commune; // Pre-select the commune
-            this.onCommuneSelected(this.roomData.communeId); // Trigger village loading
+            this.roomData.communeId = this.roomData.commune;
+            this.onCommuneSelected(this.roomData.communeId);
           }
 
-          // Clear villages when the district changes
           this.villages = [];
           this.roomData.villageId = null;
         },
@@ -198,9 +194,8 @@ export class UpdateRoomDialogComponent {
         (res) => {
           this.villages = res.result || [];
 
-          // Pre-select village if it exists in roomData
           if (this.roomData.village) {
-            this.roomData.villageId = this.roomData.village; // Pre-select the village
+            this.roomData.villageId = this.roomData.village;
           }
         },
         (error) => {
@@ -212,13 +207,13 @@ export class UpdateRoomDialogComponent {
 
   loadImages(imagePaths: string[]): void {
     this.existingImagePaths = [...imagePaths];
-    this.imagePreviews = []; // Clear existing previews
+    this.imagePreviews = [];
     imagePaths.forEach((imagePath) => {
       this.roomService.getImage(imagePath).subscribe(
         (imageBlob) => {
           const objectURL = URL.createObjectURL(imageBlob);
           const safeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          this.imagePreviews.push(safeUrl); // Push sanitized URLs to the array
+          this.imagePreviews.push(safeUrl);
         },
         (error) => {
           console.error('Error loading image:', error);

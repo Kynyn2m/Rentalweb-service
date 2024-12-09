@@ -45,7 +45,11 @@ export class AuthenticationService {
     // Clear the stored redirect URL after navigating
     clearRedirectUrl(): void {
       this.redirectUrl = null;
-    }
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/public/forgot-password/email`, { email });
+  }
 
   // Login method
   login(username: string, password: string): Observable<any> {

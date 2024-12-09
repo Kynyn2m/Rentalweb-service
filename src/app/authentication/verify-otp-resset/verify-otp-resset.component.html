@@ -1,0 +1,76 @@
+<h1 mat-dialog-title
+    align="center">Reset Password</h1>
+
+<div mat-dialog-content>
+  <p style="font-size: 14px; color: #f96507;">
+    OTP will be sent to your email: <strong>{{ data.email }}</strong>
+  </p>
+
+  <form [formGroup]="otpForm"
+        (ngSubmit)="onSubmit()">
+    <!-- OTP Input -->
+    <mat-form-field appearance="outline">
+      <mat-label>Enter OTP</mat-label>
+      <input matInput
+             formControlName="otp" />
+      <mat-error *ngIf="f['otp'].hasError('required')">OTP is required</mat-error>
+      <mat-error *ngIf="f['otp'].hasError('minlength')">OTP must be 6 digits</mat-error>
+      <mat-error *ngIf="f['otp'].hasError('maxlength')">OTP must be 6 digits</mat-error>
+    </mat-form-field>
+
+    <!-- New Password Input -->
+    <mat-form-field appearance="outline">
+      <mat-label>Enter New Password</mat-label>
+      <input matInput
+             [type]="hidePassword ? 'password' : 'text'"
+             formControlName="newPassword" />
+      <mat-icon matSuffix
+                (click)="togglePasswordVisibility()"
+                style="cursor: pointer;">
+        {{ hidePassword ? 'visibility_off' : 'visibility' }}
+      </mat-icon>
+      <mat-error *ngIf="f['newPassword'].hasError('required')">New password is required</mat-error>
+      <mat-error *ngIf="f['newPassword'].hasError('minlength')">Password must be at least 8 characters long</mat-error>
+    </mat-form-field>
+
+    <!-- Confirm Password Input -->
+    <mat-form-field appearance="outline">
+      <mat-label>Confirm Password</mat-label>
+      <input matInput
+             [type]="hideConfirmPassword ? 'password' : 'text'"
+             formControlName="confirmPassword" />
+      <mat-icon matSuffix
+                (click)="toggleConfirmPasswordVisibility()"
+                style="cursor: pointer;">
+        {{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}
+      </mat-icon>
+      <mat-error *ngIf="f['confirmPassword'].hasError('required')">Confirm password is required</mat-error>
+      <mat-error *ngIf="f['confirmPassword'].value !== f['newPassword'].value">
+        Passwords do not match
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Error Message -->
+    <div *ngIf="error"
+         style="color: red; font-size: 14px;">
+      <p>{{ error }}</p>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading"
+         style="text-align: center;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button
+          (click)="onCancel()"
+          color="warn">Cancel</button>
+  <button mat-raised-button
+          color="primary"
+          (click)="onSubmit()">
+    Verify
+  </button>
+</div>

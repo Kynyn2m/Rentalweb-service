@@ -116,6 +116,7 @@ import { ViewHouseComponent } from './dashboard/house-list/view-house/view-house
 import { ViewRoomComponent } from './dashboard/room-list/view-room/view-room.component';
 import { ViewLandComponent } from './dashboard/land-list/view-land/view-land.component';
 import { ChartModule } from 'primeng/chart';
+import { VerifyOtpRessetComponent } from './authentication/verify-otp-resset/verify-otp-resset.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -177,6 +178,7 @@ import { ChartModule } from 'primeng/chart';
     ViewHouseComponent,
     ViewRoomComponent,
     ViewLandComponent,
+    VerifyOtpRessetComponent,
   ],
   imports: [
     BrowserModule,
