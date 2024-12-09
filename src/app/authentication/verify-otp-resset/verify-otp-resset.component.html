@@ -32,7 +32,6 @@
       </mat-icon>
       <mat-error *ngIf="f['newPassword'].hasError('required')">New password is required</mat-error>
       <mat-error *ngIf="f['newPassword'].hasError('minlength')">Password must be at least 8 characters long</mat-error>
-      <mat-error *ngIf="f['newPassword'].hasError('pattern')">Password must contain numbers, lowercase, uppercase, and special characters</mat-error>
     </mat-form-field>
 
 
@@ -60,20 +59,20 @@
     </div> -->
 
     <!-- Loading Spinner -->
+    <!-- Show loading spinner when submitting -->
     <div *ngIf="loading"
-         style="text-align: center;">
-      <mat-spinner diameter="40"></mat-spinner>
+         class="loading-overlay">
+      <mat-progress-spinner mode="indeterminate"
+                            diameter="50"></mat-progress-spinner>
     </div>
-  </form>
-</div>
 
-<div mat-dialog-actions>
-  <button mat-button
-          (click)="onCancel()"
-          color="warn">Cancel</button>
-  <button mat-raised-button
-          color="primary"
-          (click)="onSubmit()">
-    Verify
-  </button>
-</div>
+    <div mat-dialog-actions>
+      <button mat-button
+              (click)="onCancel()"
+              color="warn">Cancel</button>
+      <button mat-raised-button
+              color="primary"
+              (click)="onSubmit()">
+        Verify
+      </button>
+    </div>

@@ -5,6 +5,13 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
+interface ApiResponse {
+  code: number;
+  message: string;
+  result: string;
+}
+
+
 @Component({
   selector: 'app-verify-otp-resset',
   templateUrl: './verify-otp-resset.component.html',
@@ -34,7 +41,6 @@ export class VerifyOtpRessetComponent implements OnInit {
       newPassword: ['', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$') // Password pattern
       ]],
       confirmPassword: ['', [Validators.required]],  // Confirm password field
     });
@@ -44,7 +50,6 @@ export class VerifyOtpRessetComponent implements OnInit {
     return this.otpForm.controls;
   }
 
-  // Method to handle OTP verification and password reset
   onSubmit(): void {
     if (this.otpForm.invalid) {
       return;
@@ -57,47 +62,62 @@ export class VerifyOtpRessetComponent implements OnInit {
 
     this.loading = true;
 
-    // Prepare the body for the API request
     const resetData = {
-      email: this.data.email,          // User's email passed in data
-      otp: this.f['otp'].value,        // OTP entered by the user
-      newPassword: this.f['newPassword'].value, // New password entered by the user
+      email: this.data.email,
+      otp: this.f['otp'].value,
+      newPassword: this.f['newPassword'].value,
     };
 
-    // Call the reset password API
-    this.http.post(`${environment.apiUrl}/public/forgot-password/verify-otp`, resetData).subscribe({
-      next: (response) => {
-        console.log('API response:', response);  // Log the response to inspect its structure
+    this.http.post<ApiResponse>(`${environment.apiUrl}/public/forgot-password/verify-otp`, resetData).subscribe({
+      next: (response: ApiResponse) => {  // Use the ApiResponse interface
+        console.log('API response:', response);
 
-        // Assuming the request is successful, trigger SweetAlert
-        Swal.fire({
-          title: 'Success!',
-          text: 'OTP verified successfully and password has been reset.',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          timer: 3000,  // Auto-close after 3 seconds
-        }).then(() => {
-          this.dialogRef.close(true);  // Close the dialog after SweetAlert closes
-        });
+        if (response.code === 200.0 && response.result === 'OTP verified successfully') {
+          Swal.fire({
+            title: 'Success!',
+            text: response.result,
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            this.dialogRef.close(true);
+          });
+        } else if (response.code === 400.0 && response.result === 'Invalid OTP') {
+          // Handle invalid OTP case
+          this.error = 'Invalid OTP. Please try again.';
+          this.loading = false;
+          Swal.fire({
+            title: 'Error!',
+            text: this.error,
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        } else {
+          // Handle other unexpected responses
+          this.error = 'Unexpected response from the server';
+          this.loading = false;
+          Swal.fire({
+            title: 'Error!',
+            text: this.error,
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        }
       },
       error: (err) => {
-        console.error('Error during OTP verification:', err);  // Log the error to understand its structure
+        console.error('Error during OTP verification:', err);
         this.error = err?.error?.message || 'An error occurred during OTP verification.';
         this.loading = false;
-
-        // Trigger SweetAlert for errors
         Swal.fire({
-          title: 'Success!',
-          text: 'OTP verified successfully and password has been reset.',
-          icon: 'success',
+          title: 'Error!',
+          text: this.error,
+          icon: 'error',
           confirmButtonText: 'OK',
-          timer: 3000,  // Auto-close after 3 seconds
-        }).then(() => {
-          this.dialogRef.close(true);  // Close the dialog after SweetAlert closes
         });
       }
     });
   }
+
+
 
   // Close the dialog if the user cancels
   onCancel(): void {
