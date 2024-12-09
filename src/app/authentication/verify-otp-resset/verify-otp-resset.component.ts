@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
@@ -41,16 +41,37 @@ export class VerifyOtpRessetComponent implements OnInit {
       newPassword: ['', [
         Validators.required,
         Validators.minLength(8),
+        this.passwordStrengthValidator
       ]],
-      confirmPassword: ['', [Validators.required]],  // Confirm password field
+      confirmPassword: ['', [Validators.required,this.passwordStrengthValidator]],  // Confirm password field
     });
   }
+
+  passwordStrengthValidator(control: any): ValidationErrors | null {
+    const value = control.value;
+    if (!value) {
+      return null; // If no value is provided, return null (valid)
+    }
+
+    // Regular expressions to check for each condition
+    const hasUpperCase = /[A-Z]/.test(value);  // Check for uppercase letter
+    const hasLowerCase = /[a-z]/.test(value);  // Check for lowercase letter
+    const hasNumeric = /[0-9]/.test(value);    // Check for number
+    const hasSpecial = /[\W_]/.test(value);    // Check for special character
+    const isValidLength = value.length >= 8;   // Check for at least 8 characters
+
+    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial && isValidLength;
+
+    return passwordValid ? null : { passwordStrength: true }; // If valid, return null, else return error object
+  }
+
 
   get f() {
     return this.otpForm.controls;
   }
 
   onSubmit(): void {
+
     if (this.otpForm.invalid) {
       return;
     }
@@ -93,7 +114,7 @@ export class VerifyOtpRessetComponent implements OnInit {
           });
         } else {
           // Handle other unexpected responses
-          this.error = 'Unexpected response from the server';
+          this.error = 'Invalid OTP. Please try again.';
           this.loading = false;
           Swal.fire({
             title: 'Error!',
@@ -105,7 +126,7 @@ export class VerifyOtpRessetComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error during OTP verification:', err);
-        this.error = err?.error?.message || 'An error occurred during OTP verification.';
+        this.error = err?.error?.message || 'Invalid OTP. Please try again.';
         this.loading = false;
         Swal.fire({
           title: 'Error!',

@@ -18,8 +18,6 @@
       <mat-error *ngIf="f['otp'].hasError('maxlength')">OTP must be 6 digits</mat-error>
     </mat-form-field>
 
-    <!-- New Password Input -->
-    <!-- New Password Input -->
     <mat-form-field appearance="outline">
       <mat-label>Enter New Password</mat-label>
       <input matInput
@@ -30,8 +28,17 @@
                 style="cursor: pointer;">
         {{ hidePassword ? 'visibility_off' : 'visibility' }}
       </mat-icon>
-      <mat-error *ngIf="f['newPassword'].hasError('required')">New password is required</mat-error>
-      <mat-error *ngIf="f['newPassword'].hasError('minlength')">Password must be at least 8 characters long</mat-error>
+
+      <!-- Error messages -->
+      <mat-error *ngIf="f['newPassword'].hasError('required')">
+        New password is required
+      </mat-error>
+      <mat-error *ngIf="f['newPassword'].hasError('minlength')">
+        Password must be at least 8 characters long
+      </mat-error>
+      <mat-error *ngIf="f['newPassword'].hasError('passwordStrength')">
+        Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special characters
+      </mat-error>
     </mat-form-field>
 
 

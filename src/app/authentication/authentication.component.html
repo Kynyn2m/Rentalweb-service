@@ -1,13 +1,12 @@
 <div class="login-container animate__animated animate__fadeInUp">
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()">
     <mat-card class="example-card">
       <!-- Logo Section -->
       <div style="text-align: center">
-        <img
-          src="/assets/img/ren_logo-2.png"
-          alt="Logo"
-          style="width: 200px; height: auto"
-        />
+        <img src="/assets/img/ren_logo-2.png"
+             alt="Logo"
+             style="width: 200px; height: auto" />
       </div>
 
       <mat-card-header>
@@ -23,13 +22,12 @@
         <!-- Username Field -->
         <mat-form-field appearance="outline">
           <mat-label>{{ "username" | transloco }} </mat-label>
-          <input
-            type="text"
-            formControlName="username"
-            matInput
-            (input)="clearError()"
-          />
-          <a mat-icon-button matSuffix>
+          <input type="text"
+                 formControlName="username"
+                 matInput
+                 (input)="clearError()" />
+          <a mat-icon-button
+             matSuffix>
             <mat-icon>person</mat-icon>
           </a>
         </mat-form-field>
@@ -38,53 +36,46 @@
         <!-- Password Field -->
         <mat-form-field appearance="outline">
           <mat-label>{{ "password" | transloco }}</mat-label>
-          <input
-            matInput
-            formControlName="password"
-            [type]="hide ? 'password' : 'text'"
-            (input)="clearError()"
-          />
-          <a
-            mat-icon-button
-            matSuffix
-            (click)="hide = !hide"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
-          >
+          <input matInput
+                 formControlName="password"
+                 [type]="hide ? 'password' : 'text'"
+                 (input)="clearError()" />
+          <a mat-icon-button
+             matSuffix
+             (click)="hide = !hide"
+             [attr.aria-label]="'Hide password'"
+             [attr.aria-pressed]="hide">
             <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
           </a>
         </mat-form-field>
         <br />
 
         <!-- Submit Button -->
-        <button
-          type="submit"
-          id="btnsubmit"
-          color="succes"
-          style="
+        <button type="submit"
+                id="btnsubmit"
+                color="succes"
+                style="
             background-color: #f96507;
             width: 100%;
             color: white;
             height: 40px;
           "
-          mat-raised-button
-        >
+                mat-raised-button>
           {{ "login" | transloco }}
         </button>
 
         <!-- Error Message -->
-        <div
-          *ngIf="error"
-          class="error-message"
-          style="color: red; text-align: center"
-        >
+        <div *ngIf="error"
+             class="error-message"
+             style="color: red; text-align: center">
           {{ error }}
         </div>
 
         <mat-card-actions>
           <div class="actions">
             <span>
-              <a style="margin-left: 43px" routerLink="/register">{{
+              <a style="margin-left: 43px"
+                 routerLink="/reginster">{{
                 "register" | transloco
               }}</a>
             </span>
@@ -96,10 +87,8 @@
       </mat-card-content>
 
       <!-- Loading Spinner -->
-      <mat-progress-bar
-        [class.is__loading]="loading"
-        mode="indeterminate"
-      ></mat-progress-bar>
+      <mat-progress-bar [class.is__loading]="loading"
+                        mode="indeterminate"></mat-progress-bar>
     </mat-card>
   </form>
 </div>
