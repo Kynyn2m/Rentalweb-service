@@ -1,6 +1,3 @@
-<section>
-  <div class="bg"></div>
-</section>
 <div class="login-container animate__animated animate__fadeInUp">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <mat-card class="example-card">
@@ -23,20 +20,29 @@
         <mat-divider></mat-divider>
         <br />
 
+        <!-- Username Field -->
         <mat-form-field appearance="outline">
           <mat-label>{{ "username" | transloco }} </mat-label>
-          <input type="text" formControlName="username" matInput />
+          <input
+            type="text"
+            formControlName="username"
+            matInput
+            (input)="clearError()"
+          />
           <a mat-icon-button matSuffix>
             <mat-icon>person</mat-icon>
           </a>
         </mat-form-field>
         <br />
+
+        <!-- Password Field -->
         <mat-form-field appearance="outline">
           <mat-label>{{ "password" | transloco }}</mat-label>
           <input
             matInput
             formControlName="password"
             [type]="hide ? 'password' : 'text'"
+            (input)="clearError()"
           />
           <a
             mat-icon-button
@@ -49,6 +55,8 @@
           </a>
         </mat-form-field>
         <br />
+
+        <!-- Submit Button -->
         <button
           type="submit"
           id="btnsubmit"
@@ -63,21 +71,33 @@
         >
           {{ "login" | transloco }}
         </button>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="error"
+          class="error-message"
+          style="color: red; text-align: center"
+        >
+          {{ error }}
+        </div>
+
         <mat-card-actions>
           <div class="actions">
             <span>
-              <a style="margin-left: 43px" routerLink="/reginster">{{
+              <a style="margin-left: 43px" routerLink="/register">{{
                 "register" | transloco
-              }}</a></span
-            >
+              }}</a>
+            </span>
             <a routerLink="/forget-password">{{
               "forget-password" | transloco
             }}</a>
           </div>
         </mat-card-actions>
       </mat-card-content>
+
+      <!-- Loading Spinner -->
       <mat-progress-bar
-        [class.is__loading]="!loading"
+        [class.is__loading]="loading"
         mode="indeterminate"
       ></mat-progress-bar>
     </mat-card>

@@ -45,6 +45,7 @@ export class AuthenticationComponent implements OnInit {
     return this.loginForm.controls;
   }
 
+  // Login submission
   onSubmit(): void {
     // Stop if form is invalid
     if (this.loginForm.invalid) {
@@ -61,7 +62,8 @@ export class AuthenticationComponent implements OnInit {
       .subscribe(
         (data) => {
           // On successful login, redirect and reload the page
-          const redirectUrl = this.authenticationService.getRedirectUrl() || this.returnUrl;
+          const redirectUrl =
+            this.authenticationService.getRedirectUrl() || this.returnUrl;
           this.authenticationService.clearRedirectUrl(); // Clear the redirect URL after use
           this.router.navigate([redirectUrl]).then(() => {
             window.location.reload(); // Reload the page
@@ -74,5 +76,10 @@ export class AuthenticationComponent implements OnInit {
           this.loading = false;
         }
       );
+  }
+
+  // Clear error message on input change
+  clearError(): void {
+    this.error = '';
   }
 }

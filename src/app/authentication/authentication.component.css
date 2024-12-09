@@ -45,7 +45,9 @@ form {
   height: 98px;
   margin: auto;
   border-radius: 50%;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
 .logo img {
@@ -66,10 +68,10 @@ mat-card-actions {
   padding: 1rem 0 0;
   column-gap: 1rem;
 }
-.actions a{
- margin: 10px;
+.actions a {
+  margin: 10px;
 }
-mat-card-actions a{
+mat-card-actions a {
   display: flex;
 }
 
@@ -85,4 +87,23 @@ mat-card-actions a{
   .title {
     text-align: center;
   }
+}
+/* jj */
+/* Styling for the error message */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ffcccc;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+mat-progress-bar.is__loading {
+  visibility: visible;
+}
+
+mat-progress-bar {
+  visibility: hidden;
 }
