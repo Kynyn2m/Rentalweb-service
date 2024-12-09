@@ -31,7 +31,11 @@ export class VerifyOtpRessetComponent implements OnInit {
     // Initialize the form with OTP and new password fields
     this.otpForm = this.fb.group({
       otp: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
-      newPassword: ['', [Validators.required, Validators.minLength(8)]],  // New password field
+      newPassword: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$') // Password pattern
+      ]],
       confirmPassword: ['', [Validators.required]],  // Confirm password field
     });
   }

@@ -19,6 +19,7 @@
     </mat-form-field>
 
     <!-- New Password Input -->
+    <!-- New Password Input -->
     <mat-form-field appearance="outline">
       <mat-label>Enter New Password</mat-label>
       <input matInput
@@ -31,7 +32,9 @@
       </mat-icon>
       <mat-error *ngIf="f['newPassword'].hasError('required')">New password is required</mat-error>
       <mat-error *ngIf="f['newPassword'].hasError('minlength')">Password must be at least 8 characters long</mat-error>
+      <mat-error *ngIf="f['newPassword'].hasError('pattern')">Password must contain numbers, lowercase, uppercase, and special characters</mat-error>
     </mat-form-field>
+
 
     <!-- Confirm Password Input -->
     <mat-form-field appearance="outline">
@@ -51,10 +54,10 @@
     </mat-form-field>
 
     <!-- Error Message -->
-    <div *ngIf="error"
+    <!-- <div *ngIf="error"
          style="color: red; font-size: 14px;">
       <p>{{ error }}</p>
-    </div>
+    </div> -->
 
     <!-- Loading Spinner -->
     <div *ngIf="loading"
